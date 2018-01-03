@@ -1,1 +1,10 @@
 * Varadhi Broker
+
+*** Generating Flatbuffers schema
+    (this is already generated)
+    - From root directory of the project, run:
+      /code/src/oss/flatbuffers/flatc -o ./src/main/java/ --java schema/message.fbs
+    - The above should put the Message.java file under the project src/main/java directory
+
+*** Building the project
+    ./gradlew build

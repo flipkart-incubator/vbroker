@@ -7,13 +7,24 @@ repositories {
 dependencies {
     //logging
     compile 'org.slf4j:slf4j-api:1.7.13'
-    compile 'ch.qos.logback:logback-classic:1.2.3'
+    compile('ch.qos.logback:logback-classic:1.2.3') {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
+
+    //idls + encode/decode
+    //compile 'com.google.flatbuffers:flatbuffers-parent:1.8.0'
+    compile 'com.google.flatbuffers:flatbuffers-java:1.8.0'
 
     //networking
     compile 'io.netty:netty-all:4.1.19.Final'
 
     //coordination
-    compile 'org.apache.curator:curator-x-async:4.0.0'
+    compile('org.apache.curator:curator-x-async:4.0.0') {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'log4j', module: 'log4j'
+        exclude group: 'io.netty', module: 'netty'
+        exclude group: 'com.google.guava', module: 'guava'
+    }
 
     //utils
     compile 'com.google.guava:guava:23.6-jre'
