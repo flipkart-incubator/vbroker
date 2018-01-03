@@ -2,71 +2,175 @@
 
 package com.flipkart.vbroker.entities;
 
-import java.nio.*;
-import java.lang.*;
-import java.util.*;
-import com.google.flatbuffers.*;
+import com.google.flatbuffers.FlatBufferBuilder;
+import com.google.flatbuffers.Table;
+
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 @SuppressWarnings("unused")
 public final class Message extends Table {
-  public static Message getRootAsMessage(ByteBuffer _bb) { return getRootAsMessage(_bb, new Message()); }
-  public static Message getRootAsMessage(ByteBuffer _bb, Message obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; }
-  public Message __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+    public static Message getRootAsMessage(ByteBuffer _bb) {
+        return getRootAsMessage(_bb, new Message());
+    }
 
-  public String messageId() { int o = __offset(4); return o != 0 ? __string(o + bb_pos) : null; }
-  public ByteBuffer messageIdAsByteBuffer() { return __vector_as_bytebuffer(4, 1); }
-  public String groupId() { int o = __offset(6); return o != 0 ? __string(o + bb_pos) : null; }
-  public ByteBuffer groupIdAsByteBuffer() { return __vector_as_bytebuffer(6, 1); }
-  public byte crc() { int o = __offset(8); return o != 0 ? bb.get(o + bb_pos) : 0; }
-  public byte version() { int o = __offset(10); return o != 0 ? bb.get(o + bb_pos) : 0; }
-  public short seqNo() { int o = __offset(12); return o != 0 ? bb.getShort(o + bb_pos) : 0; }
-  public short topicId() { int o = __offset(14); return o != 0 ? bb.getShort(o + bb_pos) : 0; }
-  public int attributes() { int o = __offset(16); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
-  public int bodyLength() { int o = __offset(18); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
-  public byte bodyPayload(int j) { int o = __offset(20); return o != 0 ? bb.get(__vector(o) + j * 1) : 0; }
-  public int bodyPayloadLength() { int o = __offset(20); return o != 0 ? __vector_len(o) : 0; }
-  public ByteBuffer bodyPayloadAsByteBuffer() { return __vector_as_bytebuffer(20, 1); }
+    public static Message getRootAsMessage(ByteBuffer _bb, Message obj) {
+        _bb.order(ByteOrder.LITTLE_ENDIAN);
+        return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
+    }
 
-  public static int createMessage(FlatBufferBuilder builder,
-      int messageIdOffset,
-      int groupIdOffset,
-      byte crc,
-      byte version,
-      short seqNo,
-      short topicId,
-      int attributes,
-      int bodyLength,
-      int bodyPayloadOffset) {
-    builder.startObject(9);
-    Message.addBodyPayload(builder, bodyPayloadOffset);
-    Message.addBodyLength(builder, bodyLength);
-    Message.addAttributes(builder, attributes);
-    Message.addGroupId(builder, groupIdOffset);
-    Message.addMessageId(builder, messageIdOffset);
-    Message.addTopicId(builder, topicId);
-    Message.addSeqNo(builder, seqNo);
-    Message.addVersion(builder, version);
-    Message.addCrc(builder, crc);
-    return Message.endMessage(builder);
-  }
+    public static int createMessage(FlatBufferBuilder builder,
+                                    int messageIdOffset,
+                                    int groupIdOffset,
+                                    byte crc,
+                                    byte version,
+                                    short seqNo,
+                                    short topicId,
+                                    int attributes,
+                                    int bodyLength,
+                                    int bodyPayloadOffset) {
+        builder.startObject(9);
+        Message.addBodyPayload(builder, bodyPayloadOffset);
+        Message.addBodyLength(builder, bodyLength);
+        Message.addAttributes(builder, attributes);
+        Message.addGroupId(builder, groupIdOffset);
+        Message.addMessageId(builder, messageIdOffset);
+        Message.addTopicId(builder, topicId);
+        Message.addSeqNo(builder, seqNo);
+        Message.addVersion(builder, version);
+        Message.addCrc(builder, crc);
+        return Message.endMessage(builder);
+    }
 
-  public static void startMessage(FlatBufferBuilder builder) { builder.startObject(9); }
-  public static void addMessageId(FlatBufferBuilder builder, int messageIdOffset) { builder.addOffset(0, messageIdOffset, 0); }
-  public static void addGroupId(FlatBufferBuilder builder, int groupIdOffset) { builder.addOffset(1, groupIdOffset, 0); }
-  public static void addCrc(FlatBufferBuilder builder, byte crc) { builder.addByte(2, crc, 0); }
-  public static void addVersion(FlatBufferBuilder builder, byte version) { builder.addByte(3, version, 0); }
-  public static void addSeqNo(FlatBufferBuilder builder, short seqNo) { builder.addShort(4, seqNo, 0); }
-  public static void addTopicId(FlatBufferBuilder builder, short topicId) { builder.addShort(5, topicId, 0); }
-  public static void addAttributes(FlatBufferBuilder builder, int attributes) { builder.addInt(6, attributes, 0); }
-  public static void addBodyLength(FlatBufferBuilder builder, int bodyLength) { builder.addInt(7, bodyLength, 0); }
-  public static void addBodyPayload(FlatBufferBuilder builder, int bodyPayloadOffset) { builder.addOffset(8, bodyPayloadOffset, 0); }
-  public static int createBodyPayloadVector(FlatBufferBuilder builder, byte[] data) { builder.startVector(1, data.length, 1); for (int i = data.length - 1; i >= 0; i--) builder.addByte(data[i]); return builder.endVector(); }
-  public static void startBodyPayloadVector(FlatBufferBuilder builder, int numElems) { builder.startVector(1, numElems, 1); }
-  public static int endMessage(FlatBufferBuilder builder) {
-    int o = builder.endObject();
-    return o;
-  }
-  public static void finishMessageBuffer(FlatBufferBuilder builder, int offset) { builder.finish(offset); }
+    public static void startMessage(FlatBufferBuilder builder) {
+        builder.startObject(9);
+    }
+
+    public static void addMessageId(FlatBufferBuilder builder, int messageIdOffset) {
+        builder.addOffset(0, messageIdOffset, 0);
+    }
+
+    public static void addGroupId(FlatBufferBuilder builder, int groupIdOffset) {
+        builder.addOffset(1, groupIdOffset, 0);
+    }
+
+    public static void addCrc(FlatBufferBuilder builder, byte crc) {
+        builder.addByte(2, crc, 0);
+    }
+
+    public static void addVersion(FlatBufferBuilder builder, byte version) {
+        builder.addByte(3, version, 0);
+    }
+
+    public static void addSeqNo(FlatBufferBuilder builder, short seqNo) {
+        builder.addShort(4, seqNo, 0);
+    }
+
+    public static void addTopicId(FlatBufferBuilder builder, short topicId) {
+        builder.addShort(5, topicId, 0);
+    }
+
+    public static void addAttributes(FlatBufferBuilder builder, int attributes) {
+        builder.addInt(6, attributes, 0);
+    }
+
+    public static void addBodyLength(FlatBufferBuilder builder, int bodyLength) {
+        builder.addInt(7, bodyLength, 0);
+    }
+
+    public static void addBodyPayload(FlatBufferBuilder builder, int bodyPayloadOffset) {
+        builder.addOffset(8, bodyPayloadOffset, 0);
+    }
+
+    public static int createBodyPayloadVector(FlatBufferBuilder builder, byte[] data) {
+        builder.startVector(1, data.length, 1);
+        for (int i = data.length - 1; i >= 0; i--) builder.addByte(data[i]);
+        return builder.endVector();
+    }
+
+    public static void startBodyPayloadVector(FlatBufferBuilder builder, int numElems) {
+        builder.startVector(1, numElems, 1);
+    }
+
+    public static int endMessage(FlatBufferBuilder builder) {
+        int o = builder.endObject();
+        return o;
+    }
+
+    public static void finishMessageBuffer(FlatBufferBuilder builder, int offset) {
+        builder.finish(offset);
+    }
+
+    public void __init(int _i, ByteBuffer _bb) {
+        bb_pos = _i;
+        bb = _bb;
+    }
+
+    public Message __assign(int _i, ByteBuffer _bb) {
+        __init(_i, _bb);
+        return this;
+    }
+
+    public String messageId() {
+        int o = __offset(4);
+        return o != 0 ? __string(o + bb_pos) : null;
+    }
+
+    public ByteBuffer messageIdAsByteBuffer() {
+        return __vector_as_bytebuffer(4, 1);
+    }
+
+    public String groupId() {
+        int o = __offset(6);
+        return o != 0 ? __string(o + bb_pos) : null;
+    }
+
+    public ByteBuffer groupIdAsByteBuffer() {
+        return __vector_as_bytebuffer(6, 1);
+    }
+
+    public byte crc() {
+        int o = __offset(8);
+        return o != 0 ? bb.get(o + bb_pos) : 0;
+    }
+
+    public byte version() {
+        int o = __offset(10);
+        return o != 0 ? bb.get(o + bb_pos) : 0;
+    }
+
+    public short seqNo() {
+        int o = __offset(12);
+        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+    }
+
+    public short topicId() {
+        int o = __offset(14);
+        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+    }
+
+    public int attributes() {
+        int o = __offset(16);
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
+    }
+
+    public int bodyLength() {
+        int o = __offset(18);
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
+    }
+
+    public byte bodyPayload(int j) {
+        int o = __offset(20);
+        return o != 0 ? bb.get(__vector(o) + j * 1) : 0;
+    }
+
+    public int bodyPayloadLength() {
+        int o = __offset(20);
+        return o != 0 ? __vector_len(o) : 0;
+    }
+
+    public ByteBuffer bodyPayloadAsByteBuffer() {
+        return __vector_as_bytebuffer(20, 1);
+    }
 }
 

@@ -1,55 +1,51 @@
 package com.flipkart.vbroker.client;
 
-import com.flipkart.vbroker.entities.Message;
-import com.google.flatbuffers.FlatBufferBuilder;
+import com.flipkart.vbroker.VBrokerConfig;
+import com.flipkart.vbroker.protocol.VRequest;
+import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.Channel;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 @Slf4j
 public class VBrokerClient {
 
-    public static void main(String args[]) {
-        ByteBuffer byteBuffer = encodeSampleMsg();
-        //byte[] bytes = builder.sizedByteArray();
-        log.info("Message bytes encoded with flatbuffers: {}", byteBuffer);
+    public static void main(String args[]) throws InterruptedException, IOException {
 
-        Message decodedMsg = Message.getRootAsMessage(byteBuffer);
-        ByteBuffer payloadByteBuf = decodedMsg.bodyPayloadAsByteBuffer();
-        int payloadLength = decodedMsg.bodyPayloadLength();
+        VBrokerConfig config = VBrokerConfig.newConfig("broker.properties");
+        log.info("Configs: ", config);
 
-        byte[] bytes = new byte[1024];
-        ByteBuffer payloadBuf = payloadByteBuf.asReadOnlyBuffer().get(bytes, 0, payloadLength);
-        log.info("Decoded msg with msgId: {} and payload: {};", decodedMsg.messageId(), new String(bytes));
-    }
+        EventLoopGroup group = new NioEventLoopGroup();
+        try {
+            Bootstrap bootstrap = new Bootstrap();
+            bootstrap.group(group)
+                    .channel(NioSocketChannel.class)
+                    .handler(new VBrokerClientInitializer());
 
-    private static ByteBuffer encodeSampleMsg() {
-        FlatBufferBuilder builder = new FlatBufferBuilder(1024);
+            Channel channel = bootstrap.connect(config.getBrokerHost(), config.getBrokerPort()).sync().channel();
+//            channel.writeAndFlush((short) 101);
 
-        int messageId = builder.createString("msg-1001");
-        int groupId = builder.createString("group-1001");
-        byte crc = '1';
-        byte version = '1';
-        short seqNo = 1;
-        short topicId = 101;
+            VRequest request = new VRequest();
+            request.setVersion((short) 1);
+            request.setApiKey((short) 101);
 
-        byte[] payload = String.valueOf("This is a Varadhi Message").getBytes();
+            ByteBuffer byteBuffer = VBrokerSampleEncoder.encodeSampleMsg();
+            ByteBuf byteBuf = Unpooled.copiedBuffer(byteBuffer);
 
-        int sampleMsg = Message.createMessage(
-                builder,
-                messageId,
-                groupId,
-                crc,
-                version,
-                seqNo,
-                topicId,
-                201,
-                payload.length,
-                builder.createByteVector(payload)
-        );
+            request.setRequestLength(byteBuf.readableBytes());
+            request.setRequestPayload(byteBuf);
 
-        builder.finish(sampleMsg);
-
-        return builder.dataBuffer();
+            channel.writeAndFlush(request);
+            channel.closeFuture().sync();
+        } finally {
+            group.shutdownGracefully();
+        }
     }
 }

@@ -8,3 +8,9 @@
 
 *** Building the project
     ./gradlew build
+
+*** Running the server
+    From IntelliJ, run VBrokerServer
+
+*** Sending message from a client and getting response
+    From IntelliJ, run VBrokerClient - it sends a sample message and gets it
