@@ -1,7 +1,6 @@
 package com.flipkart.vbroker.server;
 
-import com.flipkart.vbroker.protocol.VRequestDecoder;
-import com.flipkart.vbroker.protocol.VResponseEncoder;
+import com.flipkart.vbroker.protocol.codecs.VBrokerServerCodec;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -16,11 +15,9 @@ public class VBrokerServerInitializer extends ChannelInitializer<SocketChannel> 
 
 //        pipeline.addLast(new VRequestDecoder());
 //        pipeline.addLast(new VResponseEncoder());
-        //pipeline.addLast(new BytesToShortDecoder());
+//        pipeline.addLast(new BytesToShortDecoder());
 
-        pipeline.addLast(new VRequestDecoder());
-        pipeline.addLast(new VResponseEncoder());
-
+        pipeline.addLast(new VBrokerServerCodec());
         pipeline.addLast(new VBrokerServerHandler());
     }
 }
