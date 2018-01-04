@@ -1,5 +1,6 @@
 package com.flipkart.vbroker.protocol;
 
+import com.flipkart.vbroker.protocol.apis.ProduceRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ReplayingDecoder;
@@ -18,7 +19,9 @@ public class VRequestDecoder extends ReplayingDecoder<Void> {
         request.setVersion(in.readShort());
         log.info("read version");
 
-        request.setApiKey(in.readShort());
+        //VRequest.ApiKey
+
+        request.setApiKey(VRequest.ApiKey.getKey(in.readShort()));
         log.info("read apiKey");
 
         int requestLength = in.readInt();
@@ -29,7 +32,8 @@ public class VRequestDecoder extends ReplayingDecoder<Void> {
         log.info("read reqPayload");
 
         // 1 => ProduceRequest
-        if (request.getApiKey() == 1) {
+        if (request instanceof ProduceRequest ||
+                VRequest.ApiKey.PRODUCE_REQUEST.equals(request.getApiKey())) {
             log.info("Decoded request is a ProduceRequest");
         }
 

@@ -1,10 +1,8 @@
 package com.flipkart.vbroker.client;
 
 import com.flipkart.vbroker.VBrokerConfig;
-import com.flipkart.vbroker.protocol.VRequest;
+import com.flipkart.vbroker.protocol.apis.ProduceRequest;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -12,7 +10,6 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 @Slf4j
 public class VBrokerClient {
@@ -30,18 +27,8 @@ public class VBrokerClient {
                     .handler(new VBrokerClientInitializer());
 
             Channel channel = bootstrap.connect(config.getBrokerHost(), config.getBrokerPort()).sync().channel();
-//            channel.writeAndFlush((short) 101);
 
-            VRequest request = new VRequest();
-            request.setVersion((short) 1);
-            request.setApiKey((short) 101);
-
-            ByteBuffer byteBuffer = VBrokerSampleEncoder.encodeSampleMsg();
-            ByteBuf byteBuf = Unpooled.copiedBuffer(byteBuffer);
-
-            request.setRequestLength(byteBuf.readableBytes());
-            request.setRequestPayload(byteBuf);
-
+            ProduceRequest request = new ProduceRequest(VBrokerSampleEncoder.encodeSampleMsg());
             channel.writeAndFlush(request);
             channel.closeFuture().sync();
         } finally {

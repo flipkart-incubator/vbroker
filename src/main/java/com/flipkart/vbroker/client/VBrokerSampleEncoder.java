@@ -27,7 +27,7 @@ public class VBrokerSampleEncoder {
     }
 
     public static ByteBuffer encodeSampleMsg() {
-        FlatBufferBuilder builder = new FlatBufferBuilder(1024);
+        FlatBufferBuilder builder = new FlatBufferBuilder();
 
         int messageId = builder.createString("msg-1001");
         int groupId = builder.createString("group-1001");
