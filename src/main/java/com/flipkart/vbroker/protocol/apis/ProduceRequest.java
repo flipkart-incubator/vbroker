@@ -7,6 +7,7 @@ import io.netty.buffer.Unpooled;
 import lombok.ToString;
 
 import java.nio.ByteBuffer;
+import java.util.Random;
 
 @ToString
 public class ProduceRequest extends VRequest {
@@ -18,6 +19,7 @@ public class ProduceRequest extends VRequest {
          * later we can have ProduceRequestV1, ProduceRequestV2 classes.etc.
          */
         super.setVersion((short) 1);
+        setCorrelationId(new Random().nextInt());
         setRequest(byteBuffer);
     }
 

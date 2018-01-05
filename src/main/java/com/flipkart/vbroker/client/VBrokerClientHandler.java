@@ -11,6 +11,9 @@ public class VBrokerClientHandler extends SimpleChannelInboundHandler<VResponse>
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, VResponse msg) throws Exception {
         log.info("Received VResponse from server {}", msg);
+        byte[] dstMsg = new byte[msg.getResponseLength()];
+        msg.getResponsePayload().readBytes(dstMsg);
+        log.info("VResponse payload: {}", new String(dstMsg));
         ctx.close();
     }
 

@@ -14,8 +14,10 @@ public class VRequest {
 
     private short version;
     private ApiKey apiKey;
-    private Integer requestLength;
+    private int correlationId;
+    private int requestLength;
     private ByteBuf requestPayload;
+
     @AllArgsConstructor
     @Getter
     public enum ApiKey {

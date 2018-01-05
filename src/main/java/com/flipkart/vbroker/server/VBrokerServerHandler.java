@@ -5,6 +5,7 @@ import com.flipkart.vbroker.protocol.VRequest;
 import com.flipkart.vbroker.protocol.VResponse;
 import com.flipkart.vbroker.protocol.apis.ProduceRequest;
 import com.google.common.base.Charsets;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -17,6 +18,13 @@ public class VBrokerServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 
+        VResponse response = new VResponse();
+        int correlationId = 1001;
+        response.setCorrelationId(correlationId);
+        String respMsg = String.format("VResponse for msg with correlationId: %d", correlationId);
+        response.setResponseLength(respMsg.length());
+        response.setResponsePayload(Unpooled.wrappedBuffer(respMsg.getBytes()));
+
         if (msg instanceof ProduceRequest) {
             log.info("== Received ProduceRequest ==");
             ProduceRequest request = (ProduceRequest) msg;
@@ -24,11 +32,7 @@ public class VBrokerServerHandler extends ChannelInboundHandlerAdapter {
             ByteBuffer byteBuffer = message.bodyPayloadAsByteBuffer();
             log.info("Decoded msg with msgId: {} and payload: {};", message.messageId(),
                     Charsets.UTF_8.decode(byteBuffer).toString());
-
-            VResponse response = new VResponse();
-            response.setStatus(200);
             ctx.write(response).addListener(ChannelFutureListener.CLOSE);
-
         } else if (msg instanceof VRequest) {
             log.info("== Received VRequest ==");
             VRequest request = (VRequest) msg;
@@ -39,9 +43,6 @@ public class VBrokerServerHandler extends ChannelInboundHandlerAdapter {
             byte[] bytes = new byte[1024];
             payloadByteBuf.asReadOnlyBuffer().get(bytes, 0, payloadLength);
             log.info("Decoded msg with msgId: {} and payload: {};", decodedMsg.messageId(), new String(bytes));
-
-            VResponse response = new VResponse();
-            response.setStatus(200);
             ctx.write(response).addListener(ChannelFutureListener.CLOSE);
         } else if (msg instanceof Short) {
             log.info("Msg is an instance of short");

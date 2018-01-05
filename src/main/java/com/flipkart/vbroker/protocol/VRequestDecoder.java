@@ -24,6 +24,9 @@ public class VRequestDecoder extends ReplayingDecoder<Void> {
         request.setApiKey(VRequest.ApiKey.getKey(in.readShort()));
         log.info("read apiKey");
 
+        request.setCorrelationId(in.readInt());
+        log.info("read correlationId");
+
         int requestLength = in.readInt();
         log.info("read reqLength as {}", requestLength);
 

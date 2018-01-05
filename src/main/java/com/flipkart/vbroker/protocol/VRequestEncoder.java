@@ -10,6 +10,7 @@ public class VRequestEncoder extends MessageToByteEncoder<VRequest> {
     protected void encode(ChannelHandlerContext ctx, VRequest msg, ByteBuf out) throws Exception {
         out.writeShort(msg.getVersion());
         out.writeShort(msg.getApiKey().getValue());
+        out.writeInt(msg.getCorrelationId());
         out.writeInt(msg.getRequestLength());
         out.writeBytes(msg.getRequestPayload());
     }
