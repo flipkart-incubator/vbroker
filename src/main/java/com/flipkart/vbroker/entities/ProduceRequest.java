@@ -20,8 +20,8 @@ public final class ProduceRequest extends Table {
     }
 
     public static int createProduceRequest(FlatBufferBuilder builder,
-                                           byte topicId,
-                                           byte partitionId,
+                                           short topicId,
+                                           short partitionId,
                                            short requiredAcks,
                                            int messageSetOffset) {
         builder.startObject(4);
@@ -36,12 +36,12 @@ public final class ProduceRequest extends Table {
         builder.startObject(4);
     }
 
-    public static void addTopicId(FlatBufferBuilder builder, byte topicId) {
-        builder.addByte(0, topicId, 0);
+    public static void addTopicId(FlatBufferBuilder builder, short topicId) {
+        builder.addShort(0, topicId, 0);
     }
 
-    public static void addPartitionId(FlatBufferBuilder builder, byte partitionId) {
-        builder.addByte(1, partitionId, 0);
+    public static void addPartitionId(FlatBufferBuilder builder, short partitionId) {
+        builder.addShort(1, partitionId, 0);
     }
 
     public static void addRequiredAcks(FlatBufferBuilder builder, short requiredAcks) {
@@ -67,14 +67,14 @@ public final class ProduceRequest extends Table {
         return this;
     }
 
-    public byte topicId() {
+    public short topicId() {
         int o = __offset(4);
-        return o != 0 ? bb.get(o + bb_pos) : 0;
+        return o != 0 ? bb.getShort(o + bb_pos) : 0;
     }
 
-    public byte partitionId() {
+    public short partitionId() {
         int o = __offset(6);
-        return o != 0 ? bb.get(o + bb_pos) : 0;
+        return o != 0 ? bb.getShort(o + bb_pos) : 0;
     }
 
     public short requiredAcks() {

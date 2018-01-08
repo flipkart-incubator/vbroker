@@ -1,6 +1,9 @@
 package com.flipkart.vbroker.client;
 
+import com.flipkart.vbroker.entities.HttpHeader;
+import com.flipkart.vbroker.entities.HttpMethod;
 import com.flipkart.vbroker.entities.Message;
+import com.flipkart.vbroker.entities.MessageConstants;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,6 +47,19 @@ public class MessageStore {
         short seqNo = 1;
         short topicId = 101;
 
+        int httpUri = builder.createString("http://localhost:12001/messages");
+        byte httpMethod = HttpMethod.POST;
+        short callbackTopicId = 101;
+        int callbackHttpUri = builder.createString("http://localhost:12002/messages");
+        byte callbackHttpMethod = HttpMethod.POST;
+
+        int httpHeader = HttpHeader.createHttpHeader(builder,
+                builder.createString(MessageConstants.APP_ID_HEADER),
+                builder.createString("pass-vbroker"));
+
+        int[] headers = new int[1];
+        headers[0] = httpHeader;
+        int headersVector = Message.createHeadersVector(builder, headers);
         byte[] payload = String.valueOf("This is a Varadhi Message").getBytes();
 
         return Message.createMessage(
@@ -55,6 +71,12 @@ public class MessageStore {
                 seqNo,
                 topicId,
                 201,
+                httpUri,
+                httpMethod,
+                callbackTopicId,
+                callbackHttpUri,
+                callbackHttpMethod,
+                headersVector,
                 payload.length,
                 builder.createByteVector(payload)
         );

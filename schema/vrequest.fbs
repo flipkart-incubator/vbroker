@@ -4,10 +4,17 @@ enum ApiKey:byte {ProduceRequest=0, ProduceResponse=1, TopicCreateRequest=2, Top
 
 union RequestMessage { ProduceRequest }
 
+enum HttpMethod:byte {POST=0, PUT=1, DELETE=2, PATCH=3}
+
 table VRequest {
       version:int8;
       correlationId:int32;
       requestMessage:RequestMessage;
+}
+
+table HttpHeader {
+      key:string;
+      value:string;
 }
 
 table Message {
@@ -18,6 +25,12 @@ table Message {
       seqNo:int32;
       topicId:int16;
       attributes:int32;
+      httpUri:string;
+      httpMethod:HttpMethod;
+      callbackTopicId:int16;
+      callbackHttpUri:string;
+      callbackHttpMethod:HttpMethod;
+      headers:[HttpHeader];
       bodyLength:int32;
       bodyPayload:[int8];
 }
@@ -27,8 +40,8 @@ table MessageSet {
 }
 
 table ProduceRequest {
-      topicId:int8;
-      partitionId:int8;
+      topicId:int16;
+      partitionId:int16;
       requiredAcks:int16;
       messageSet:MessageSet;
 }

@@ -42,8 +42,8 @@ public class VBrokerClient {
             int messagesVector = MessageSet.createMessagesVector(builder, messages);
             int messageSet = MessageSet.createMessageSet(builder, messagesVector);
             int produceRequest = ProduceRequest.createProduceRequest(builder,
-                    (byte) 11,
-                    (byte) 1,
+                    (short) 11,
+                    (short) 1,
                     (short) 1,
                     messageSet);
             int vRequest = VRequest.createVRequest(builder,

@@ -27,23 +27,35 @@ public final class Message extends Table {
                                     int seqNo,
                                     short topicId,
                                     int attributes,
+                                    int httpUriOffset,
+                                    byte httpMethod,
+                                    short callbackTopicId,
+                                    int callbackHttpUriOffset,
+                                    byte callbackHttpMethod,
+                                    int headersOffset,
                                     int bodyLength,
                                     int bodyPayloadOffset) {
-        builder.startObject(9);
+        builder.startObject(15);
         Message.addBodyPayload(builder, bodyPayloadOffset);
         Message.addBodyLength(builder, bodyLength);
+        Message.addHeaders(builder, headersOffset);
+        Message.addCallbackHttpUri(builder, callbackHttpUriOffset);
+        Message.addHttpUri(builder, httpUriOffset);
         Message.addAttributes(builder, attributes);
         Message.addSeqNo(builder, seqNo);
         Message.addGroupId(builder, groupIdOffset);
         Message.addMessageId(builder, messageIdOffset);
+        Message.addCallbackTopicId(builder, callbackTopicId);
         Message.addTopicId(builder, topicId);
+        Message.addCallbackHttpMethod(builder, callbackHttpMethod);
+        Message.addHttpMethod(builder, httpMethod);
         Message.addVersion(builder, version);
         Message.addCrc(builder, crc);
         return Message.endMessage(builder);
     }
 
     public static void startMessage(FlatBufferBuilder builder) {
-        builder.startObject(9);
+        builder.startObject(15);
     }
 
     public static void addMessageId(FlatBufferBuilder builder, int messageIdOffset) {
@@ -74,12 +86,46 @@ public final class Message extends Table {
         builder.addInt(6, attributes, 0);
     }
 
+    public static void addHttpUri(FlatBufferBuilder builder, int httpUriOffset) {
+        builder.addOffset(7, httpUriOffset, 0);
+    }
+
+    public static void addHttpMethod(FlatBufferBuilder builder, byte httpMethod) {
+        builder.addByte(8, httpMethod, 0);
+    }
+
+    public static void addCallbackTopicId(FlatBufferBuilder builder, short callbackTopicId) {
+        builder.addShort(9, callbackTopicId, 0);
+    }
+
+    public static void addCallbackHttpUri(FlatBufferBuilder builder, int callbackHttpUriOffset) {
+        builder.addOffset(10, callbackHttpUriOffset, 0);
+    }
+
+    public static void addCallbackHttpMethod(FlatBufferBuilder builder, byte callbackHttpMethod) {
+        builder.addByte(11, callbackHttpMethod, 0);
+    }
+
+    public static void addHeaders(FlatBufferBuilder builder, int headersOffset) {
+        builder.addOffset(12, headersOffset, 0);
+    }
+
+    public static int createHeadersVector(FlatBufferBuilder builder, int[] data) {
+        builder.startVector(4, data.length, 4);
+        for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]);
+        return builder.endVector();
+    }
+
+    public static void startHeadersVector(FlatBufferBuilder builder, int numElems) {
+        builder.startVector(4, numElems, 4);
+    }
+
     public static void addBodyLength(FlatBufferBuilder builder, int bodyLength) {
-        builder.addInt(7, bodyLength, 0);
+        builder.addInt(13, bodyLength, 0);
     }
 
     public static void addBodyPayload(FlatBufferBuilder builder, int bodyPayloadOffset) {
-        builder.addOffset(8, bodyPayloadOffset, 0);
+        builder.addOffset(14, bodyPayloadOffset, 0);
     }
 
     public static int createBodyPayloadVector(FlatBufferBuilder builder, byte[] data) {
@@ -150,23 +196,70 @@ public final class Message extends Table {
         return o != 0 ? bb.getInt(o + bb_pos) : 0;
     }
 
-    public int bodyLength() {
+    public String httpUri() {
         int o = __offset(18);
+        return o != 0 ? __string(o + bb_pos) : null;
+    }
+
+    public ByteBuffer httpUriAsByteBuffer() {
+        return __vector_as_bytebuffer(18, 1);
+    }
+
+    public byte httpMethod() {
+        int o = __offset(20);
+        return o != 0 ? bb.get(o + bb_pos) : 0;
+    }
+
+    public short callbackTopicId() {
+        int o = __offset(22);
+        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+    }
+
+    public String callbackHttpUri() {
+        int o = __offset(24);
+        return o != 0 ? __string(o + bb_pos) : null;
+    }
+
+    public ByteBuffer callbackHttpUriAsByteBuffer() {
+        return __vector_as_bytebuffer(24, 1);
+    }
+
+    public byte callbackHttpMethod() {
+        int o = __offset(26);
+        return o != 0 ? bb.get(o + bb_pos) : 0;
+    }
+
+    public HttpHeader headers(int j) {
+        return headers(new HttpHeader(), j);
+    }
+
+    public HttpHeader headers(HttpHeader obj, int j) {
+        int o = __offset(28);
+        return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null;
+    }
+
+    public int headersLength() {
+        int o = __offset(28);
+        return o != 0 ? __vector_len(o) : 0;
+    }
+
+    public int bodyLength() {
+        int o = __offset(30);
         return o != 0 ? bb.getInt(o + bb_pos) : 0;
     }
 
     public byte bodyPayload(int j) {
-        int o = __offset(20);
+        int o = __offset(32);
         return o != 0 ? bb.get(__vector(o) + j * 1) : 0;
     }
 
     public int bodyPayloadLength() {
-        int o = __offset(20);
+        int o = __offset(32);
         return o != 0 ? __vector_len(o) : 0;
     }
 
     public ByteBuffer bodyPayloadAsByteBuffer() {
-        return __vector_as_bytebuffer(20, 1);
+        return __vector_as_bytebuffer(32, 1);
     }
 }
 

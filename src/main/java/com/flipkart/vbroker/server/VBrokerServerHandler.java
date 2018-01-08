@@ -36,13 +36,16 @@ public class VBrokerServerHandler extends ChannelInboundHandlerAdapter {
                         ByteBuffer byteBuffer = message.bodyPayloadAsByteBuffer();
                         log.info("Decoded msg with msgId: {} and payload: {}", message.messageId(),
                                 Charsets.UTF_8.decode(byteBuffer).toString());
+                        log.info("Message httpUri: {} and httpMethod: {}",
+                                message.httpUri(),
+                                HttpMethod.name(message.httpMethod()));
                     }
 
                     FlatBufferBuilder builder = new FlatBufferBuilder();
                     int produceResponse = ProduceResponse.createProduceResponse(
                             builder,
-                            (short) produceRequest.topicId(),
-                            (short) produceRequest.partitionId(),
+                            produceRequest.topicId(),
+                            produceRequest.partitionId(),
                             (short) 200);
                     int vResponse = VResponse.createVResponse(builder,
                             request.correlationId(),
