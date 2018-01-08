@@ -1,0 +1,40 @@
+namespace com.flipkart.vbroker.entities;
+
+enum ApiKey:byte {ProduceRequest=0, ProduceResponse=1, TopicCreateRequest=2, TopicCreateResponse=3}
+
+union RequestMessage { ProduceRequest }
+
+table VRequest {
+      version:int8;
+      correlationId:int32;
+      requestMessage:RequestMessage;
+}
+
+table Message {
+      messageId:string;
+      groupId:string;
+      crc:int8;
+      version:int8;
+      seqNo:int32;
+      topicId:int16;
+      attributes:int32;
+      bodyLength:int32;
+      bodyPayload:[int8];
+}
+
+table MessageSet {
+      messages:[Message];
+}
+
+table ProduceRequest {
+      topicId:int8;
+      partitionId:int8;
+      requiredAcks:int16;
+      messageSet:MessageSet;
+}
+
+table TopicCreateRequest {
+      topicId:int8;
+}
+
+root_type VRequest;

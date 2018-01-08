@@ -1,10 +1,10 @@
 package com.flipkart.vbroker.server;
 
-import com.flipkart.vbroker.entities.Message;
-import com.flipkart.vbroker.protocol.VRequest;
-import com.flipkart.vbroker.protocol.VResponse;
-import com.flipkart.vbroker.protocol.apis.ProduceRequest;
-import com.google.common.base.Charsets;
+import com.flipkart.vbroker.entities.*;
+import com.flipkart.vbroker.exceptions.VBrokerException;
+import com.flipkart.vbroker.protocol.Response;
+import com.google.flatbuffers.FlatBufferBuilder;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -17,37 +17,52 @@ import java.nio.ByteBuffer;
 public class VBrokerServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        log.info("== ChannelRead0 ==");
 
-        VResponse response = new VResponse();
-        int correlationId = 1001;
-        response.setCorrelationId(correlationId);
-        String respMsg = String.format("VResponse for msg with correlationId: %d", correlationId);
-        response.setResponseLength(respMsg.length());
-        response.setResponsePayload(Unpooled.wrappedBuffer(respMsg.getBytes()));
+        FlatBufferBuilder builder = new FlatBufferBuilder();
+        int produceResponse = ProduceResponse.createProduceResponse(
+                builder,
+                (short) 101,
+                (short) 0,
+                (short) 200);
+        int vResponse = VResponse.createVResponse(builder,
+                1001,
+                ResponseMessage.ProduceResponse,
+                produceResponse
+        );
+        builder.finish(vResponse);
+        ByteBuffer responseByteBuffer = builder.dataBuffer();
+        ByteBuf byteBuf = Unpooled.wrappedBuffer(responseByteBuffer);
 
-        if (msg instanceof ProduceRequest) {
-            log.info("== Received ProduceRequest ==");
-            ProduceRequest request = (ProduceRequest) msg;
-            Message message = request.getMessage();
-            ByteBuffer byteBuffer = message.bodyPayloadAsByteBuffer();
-            log.info("Decoded msg with msgId: {} and payload: {};", message.messageId(),
-                    Charsets.UTF_8.decode(byteBuffer).toString());
-            ctx.write(response).addListener(ChannelFutureListener.CLOSE);
-        } else if (msg instanceof VRequest) {
-            log.info("== Received VRequest ==");
+        Response response = new Response(byteBuf.readableBytes(), byteBuf);
+
+        if (msg instanceof VRequest) {
             VRequest request = (VRequest) msg;
+            log.info("== Received VRequest {} with type {} ==", request, request.requestMessageType());
 
-            Message decodedMsg = Message.getRootAsMessage(request.getRequestPayload().nioBuffer());
-            ByteBuffer payloadByteBuf = decodedMsg.bodyPayloadAsByteBuffer();
-            int payloadLength = decodedMsg.bodyPayloadLength();
-            byte[] bytes = new byte[1024];
-            payloadByteBuf.asReadOnlyBuffer().get(bytes, 0, payloadLength);
-            log.info("Decoded msg with msgId: {} and payload: {};", decodedMsg.messageId(), new String(bytes));
-            ctx.write(response).addListener(ChannelFutureListener.CLOSE);
+            switch (request.requestMessageType()) {
+                case RequestMessage.ProduceRequest:
+                    log.info("Request is of type ProduceRequest");
+                    ProduceRequest produceRequest = (ProduceRequest) request.requestMessage(new ProduceRequest());
+                    assert produceRequest != null;
+                    log.info("Getting messageSet for topic {} and partition {}", produceRequest.topicId(), produceRequest.partitionId());
+//                    MessageSet messageSet = produceRequest.messageSet();
+//                    log.info("MessageSet Length: {}", messageSet.messagesLength());
+//                    for (int i = 0; i <= messageSet.messagesLength(); i++) {
+//                        Message message = messageSet.messages(i);
+//                        ByteBuffer byteBuffer = message.bodyPayloadAsByteBuffer();
+//                        log.info("Decoded msg with msgId: {} and payload: {};", message.messageId(),
+//                                Charsets.UTF_8.decode(byteBuffer).toString());
+//                    }
+                    ctx.write(response).addListener(ChannelFutureListener.CLOSE);
+                    break;
+            }
         } else if (msg instanceof Short) {
             log.info("Msg is an instance of short");
             Short aShort = (short) 1;
             ctx.write(aShort).addListener(ChannelFutureListener.CLOSE);
+        } else {
+            throw new VBrokerException("Unknown msg type - expected VRequest/Short");
         }
     }
 

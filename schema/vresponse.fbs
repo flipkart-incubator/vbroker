@@ -1,0 +1,16 @@
+namespace com.flipkart.vbroker.entities;
+
+union ResponseMessage { ProduceResponse }
+
+table VResponse {
+      correlationId:int32;
+      responseMessage:ResponseMessage;
+}
+
+table ProduceResponse {
+      topicId:int16;
+      partitionId:int16;
+      statusCode:int16;
+}
+
+root_type VResponse;

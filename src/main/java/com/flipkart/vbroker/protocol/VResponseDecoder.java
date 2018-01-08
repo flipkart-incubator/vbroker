@@ -1,20 +1,23 @@
 package com.flipkart.vbroker.protocol;
 
+import com.flipkart.vbroker.entities.VResponse;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ReplayingDecoder;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+@Slf4j
 public class VResponseDecoder extends ReplayingDecoder<Void> {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        VResponse response = new VResponse();
-        response.setCorrelationId(in.readInt());
-        response.setResponseLength(in.readInt());
-        //TODO: check if the buf.readBytes() below creates a new bytebuf and change it to not create one
-        response.setResponsePayload(in.readBytes(response.getResponseLength()));
+        log.info("Decoding VResponse bytebuf");
+        int responseLength = in.readInt();
+        ByteBuf byteBuf = in.readBytes(responseLength);
+        log.info("Decoded bytebuf as VResponse");
+        VResponse response = VResponse.getRootAsVResponse(byteBuf.nioBuffer());
         out.add(response);
     }
 }

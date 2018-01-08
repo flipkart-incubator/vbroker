@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.nio.ByteBuffer;
 
 @Slf4j
-public class VBrokerSampleEncoder {
+public class MessageStore {
 
     public static void main(String args[]) {
         ByteBuffer byteBuffer = encodeSampleMsg();
@@ -29,6 +29,14 @@ public class VBrokerSampleEncoder {
     public static ByteBuffer encodeSampleMsg() {
         FlatBufferBuilder builder = new FlatBufferBuilder();
 
+        int sampleMsg = getSampleMsg(builder);
+
+        builder.finish(sampleMsg);
+
+        return builder.dataBuffer();
+    }
+
+    public static int getSampleMsg(FlatBufferBuilder builder) {
         int messageId = builder.createString("msg-1001");
         int groupId = builder.createString("group-1001");
         byte crc = '1';
@@ -38,7 +46,7 @@ public class VBrokerSampleEncoder {
 
         byte[] payload = String.valueOf("This is a Varadhi Message").getBytes();
 
-        int sampleMsg = Message.createMessage(
+        return Message.createMessage(
                 builder,
                 messageId,
                 groupId,
@@ -50,9 +58,5 @@ public class VBrokerSampleEncoder {
                 payload.length,
                 builder.createByteVector(payload)
         );
-
-        builder.finish(sampleMsg);
-
-        return builder.dataBuffer();
     }
 }

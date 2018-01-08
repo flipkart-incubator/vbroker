@@ -24,7 +24,7 @@ public final class Message extends Table {
                                     int groupIdOffset,
                                     byte crc,
                                     byte version,
-                                    short seqNo,
+                                    int seqNo,
                                     short topicId,
                                     int attributes,
                                     int bodyLength,
@@ -33,10 +33,10 @@ public final class Message extends Table {
         Message.addBodyPayload(builder, bodyPayloadOffset);
         Message.addBodyLength(builder, bodyLength);
         Message.addAttributes(builder, attributes);
+        Message.addSeqNo(builder, seqNo);
         Message.addGroupId(builder, groupIdOffset);
         Message.addMessageId(builder, messageIdOffset);
         Message.addTopicId(builder, topicId);
-        Message.addSeqNo(builder, seqNo);
         Message.addVersion(builder, version);
         Message.addCrc(builder, crc);
         return Message.endMessage(builder);
@@ -62,8 +62,8 @@ public final class Message extends Table {
         builder.addByte(3, version, 0);
     }
 
-    public static void addSeqNo(FlatBufferBuilder builder, short seqNo) {
-        builder.addShort(4, seqNo, 0);
+    public static void addSeqNo(FlatBufferBuilder builder, int seqNo) {
+        builder.addInt(4, seqNo, 0);
     }
 
     public static void addTopicId(FlatBufferBuilder builder, short topicId) {
@@ -95,10 +95,6 @@ public final class Message extends Table {
     public static int endMessage(FlatBufferBuilder builder) {
         int o = builder.endObject();
         return o;
-    }
-
-    public static void finishMessageBuffer(FlatBufferBuilder builder, int offset) {
-        builder.finish(offset);
     }
 
     public void __init(int _i, ByteBuffer _bb) {
@@ -139,9 +135,9 @@ public final class Message extends Table {
         return o != 0 ? bb.get(o + bb_pos) : 0;
     }
 
-    public short seqNo() {
+    public int seqNo() {
         int o = __offset(12);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
     }
 
     public short topicId() {

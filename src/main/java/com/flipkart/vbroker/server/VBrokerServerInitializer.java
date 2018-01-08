@@ -13,10 +13,6 @@ public class VBrokerServerInitializer extends ChannelInitializer<SocketChannel> 
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
 
-//        pipeline.addLast(new VRequestDecoder());
-//        pipeline.addLast(new VResponseEncoder());
-//        pipeline.addLast(new BytesToShortDecoder());
-
         pipeline.addLast(new VBrokerServerCodec());
         pipeline.addLast(new VBrokerServerHandler());
     }
