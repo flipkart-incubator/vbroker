@@ -3,6 +3,7 @@ package com.flipkart.vbroker.server;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.protocol.Response;
+import com.google.common.base.Charsets;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -46,14 +47,13 @@ public class VBrokerServerHandler extends ChannelInboundHandlerAdapter {
                     ProduceRequest produceRequest = (ProduceRequest) request.requestMessage(new ProduceRequest());
                     assert produceRequest != null;
                     log.info("Getting messageSet for topic {} and partition {}", produceRequest.topicId(), produceRequest.partitionId());
-//                    MessageSet messageSet = produceRequest.messageSet();
-//                    log.info("MessageSet Length: {}", messageSet.messagesLength());
-//                    for (int i = 0; i <= messageSet.messagesLength(); i++) {
-//                        Message message = messageSet.messages(i);
-//                        ByteBuffer byteBuffer = message.bodyPayloadAsByteBuffer();
-//                        log.info("Decoded msg with msgId: {} and payload: {};", message.messageId(),
-//                                Charsets.UTF_8.decode(byteBuffer).toString());
-//                    }
+                    MessageSet messageSet = produceRequest.messageSet();
+                    for (int i = 0; i < messageSet.messagesLength(); i++) {
+                        Message message = messageSet.messages(i);
+                        ByteBuffer byteBuffer = message.bodyPayloadAsByteBuffer();
+                        log.info("Decoded msg with msgId: {} and payload: {}", message.messageId(),
+                                Charsets.UTF_8.decode(byteBuffer).toString());
+                    }
                     ctx.write(response).addListener(ChannelFutureListener.CLOSE);
                     break;
             }

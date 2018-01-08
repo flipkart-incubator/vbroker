@@ -40,11 +40,12 @@ public class VBrokerClient {
             int[] messages = new int[1];
             messages[0] = MessageStore.getSampleMsg(builder);
             int messagesVector = MessageSet.createMessagesVector(builder, messages);
+            int messageSet = MessageSet.createMessageSet(builder, messagesVector);
             int produceRequest = ProduceRequest.createProduceRequest(builder,
                     (byte) 11,
                     (byte) 1,
                     (short) 1,
-                    messagesVector);
+                    messageSet);
             int vRequest = VRequest.createVRequest(builder,
                     (byte) 1,
                     1001,
