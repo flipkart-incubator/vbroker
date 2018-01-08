@@ -20,26 +20,9 @@ public class VBrokerServerHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         log.info("== ChannelRead0 ==");
 
-        FlatBufferBuilder builder = new FlatBufferBuilder();
-        int produceResponse = ProduceResponse.createProduceResponse(
-                builder,
-                (short) 101,
-                (short) 0,
-                (short) 200);
-        int vResponse = VResponse.createVResponse(builder,
-                1001,
-                ResponseMessage.ProduceResponse,
-                produceResponse
-        );
-        builder.finish(vResponse);
-        ByteBuffer responseByteBuffer = builder.dataBuffer();
-        ByteBuf byteBuf = Unpooled.wrappedBuffer(responseByteBuffer);
-
-        Response response = new Response(byteBuf.readableBytes(), byteBuf);
-
         if (msg instanceof VRequest) {
             VRequest request = (VRequest) msg;
-            log.info("== Received VRequest {} with type {} ==", request, request.requestMessageType());
+            log.info("== Received VRequest {} with correlationId {} and type {} ==", request, request.correlationId(), request.requestMessageType());
 
             switch (request.requestMessageType()) {
                 case RequestMessage.ProduceRequest:
@@ -54,6 +37,23 @@ public class VBrokerServerHandler extends ChannelInboundHandlerAdapter {
                         log.info("Decoded msg with msgId: {} and payload: {}", message.messageId(),
                                 Charsets.UTF_8.decode(byteBuffer).toString());
                     }
+
+                    FlatBufferBuilder builder = new FlatBufferBuilder();
+                    int produceResponse = ProduceResponse.createProduceResponse(
+                            builder,
+                            (short) produceRequest.topicId(),
+                            (short) produceRequest.partitionId(),
+                            (short) 200);
+                    int vResponse = VResponse.createVResponse(builder,
+                            request.correlationId(),
+                            ResponseMessage.ProduceResponse,
+                            produceResponse
+                    );
+                    builder.finish(vResponse);
+                    ByteBuffer responseByteBuffer = builder.dataBuffer();
+                    ByteBuf byteBuf = Unpooled.wrappedBuffer(responseByteBuffer);
+
+                    Response response = new Response(byteBuf.readableBytes(), byteBuf);
                     ctx.write(response).addListener(ChannelFutureListener.CLOSE);
                     break;
             }
