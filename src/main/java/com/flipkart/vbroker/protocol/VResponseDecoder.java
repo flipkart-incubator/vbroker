@@ -15,7 +15,7 @@ public class VResponseDecoder extends ReplayingDecoder<Void> {
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         log.info("Decoding VResponse bytebuf");
         int responseLength = in.readInt();
-        ByteBuf byteBuf = in.readBytes(responseLength);
+        ByteBuf byteBuf = in.slice(Integer.SIZE/8,responseLength);
         log.info("Decoded bytebuf as VResponse");
         VResponse response = VResponse.getRootAsVResponse(byteBuf.nioBuffer());
         out.add(response);
