@@ -30,8 +30,26 @@ public class VBrokerServer {
                     .handler(new LoggingHandler(LogLevel.INFO))
                     .childHandler(new VBrokerServerInitializer());
 
+//            Bootstrap bootstrap = new Bootstrap();
+//            bootstrap.group(bossGroup)
+//                    .channel(NioSocketChannel.class)
+//                    .handler(new VBrokerServerInitializer());
+
             Channel channel = bootstrap.bind(config.getBrokerPort()).sync().channel();
             log.info("Broker now listening on port {}", config.getBrokerPort());
+//
+//            HttpRequest httpRequest = new DefaultFullHttpRequest(
+//                    HttpVersion.HTTP_1_1,
+//                    io.netty.handler.codec.http.HttpMethod.POST,
+//                    "http://localhost:12000/messages",
+//                    Unpooled.wrappedBuffer("{}".getBytes()));
+//            httpRequest.headers().set(MessageConstants.MESSAGE_ID_HEADER, "msg-123");
+//            httpRequest.headers().set(MessageConstants.GROUP_ID_HEADER, "group-123");
+//
+//            log.info("Making httpRequest to httpUri: {} and httpMethod: {}",
+//                    httpRequest.uri(),
+//                    httpRequest.method());
+//            channel.writeAndFlush(httpRequest);
 
             channel.closeFuture().sync();
         } catch (InterruptedException e) {

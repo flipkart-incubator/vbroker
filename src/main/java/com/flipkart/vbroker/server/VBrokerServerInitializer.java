@@ -15,5 +15,13 @@ public class VBrokerServerInitializer extends ChannelInitializer<SocketChannel> 
 
         pipeline.addLast(new VBrokerServerCodec());
         pipeline.addLast(new VBrokerServerHandler());
+
+        //pipeline.addLast(new HttpServerCodec());
+        //pipeline.addLast(new HttpObjectAggregator(10000));
+        //pipeline.addLast(new HttpRequestDecoder());
+        //pipeline.addLast(new VHttpIncomingHandler());
+
+//        pipeline.addLast(new HttpClientCodec());
+//        pipeline.addLast(new VBrokerServerResponseHandler());
     }
 }
