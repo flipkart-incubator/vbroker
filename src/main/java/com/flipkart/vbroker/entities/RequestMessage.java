@@ -3,12 +3,14 @@
 package com.flipkart.vbroker.entities;
 
 public final class RequestMessage {
-    public static final byte NONE = 0;
-    public static final byte ProduceRequest = 1;
-    public static final String[] names = {"NONE", "ProduceRequest",};
-
     private RequestMessage() {
     }
+
+    public static final byte NONE = 0;
+    public static final byte ProduceRequest = 1;
+    public static final byte TopicCreateRequest = 2;
+
+    public static final String[] names = {"NONE", "ProduceRequest", "TopicCreateRequest",};
 
     public static String name(int e) {
         return names[e];

@@ -1,5 +1,6 @@
 package com.flipkart.vbroker.server;
 
+import com.flipkart.vbroker.controller.TopicService;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.protocol.Response;
@@ -16,6 +17,14 @@ import java.nio.ByteBuffer;
 
 @Slf4j
 public class VBrokerServerHandler extends ChannelInboundHandlerAdapter {
+
+    TopicService topicService;
+
+    public VBrokerServerHandler(TopicService topicService) {
+        super();
+        this.topicService = topicService;
+    }
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         log.info("== ChannelRead0 ==");
@@ -58,6 +67,33 @@ public class VBrokerServerHandler extends ChannelInboundHandlerAdapter {
 
                     Response response = new Response(byteBuf.readableBytes(), byteBuf);
                     ctx.write(response).addListener(ChannelFutureListener.CLOSE);
+                    break;
+                case RequestMessage.TopicCreateRequest:
+                    log.info("Request is of type TopicCreateRequest");
+                    TopicCreateRequest topicCreateRequest = (TopicCreateRequest) request.requestMessage(new TopicCreateRequest());
+                    log.info("Got request to create topic with name {}", topicCreateRequest.topicName());
+                    topicService.createTopic(topicCreateRequest.topicName(), topicCreateRequest.team(), topicCreateRequest.grouped(),
+                            topicCreateRequest.replicationFactor(), topicCreateRequest.partitions(), TopicType.name(topicCreateRequest.topicType()),
+                            TopicCategory.name(topicCreateRequest.topicCategory()));
+
+
+                    FlatBufferBuilder topicResponseBuilder = new FlatBufferBuilder();
+                    int topicResponse = ProduceResponse.createProduceResponse(
+                            topicResponseBuilder,
+                            (short) 1,
+                            (short) 1,
+                            (short) 200);
+                    int topicVResponse = VResponse.createVResponse(topicResponseBuilder,
+                            request.correlationId(),
+                            ResponseMessage.ProduceResponse,
+                            topicResponse
+                    );
+                    topicResponseBuilder.finish(topicVResponse);
+                    ByteBuffer topicResponseBuffer = topicResponseBuilder.dataBuffer();
+                    ByteBuf res = Unpooled.wrappedBuffer(topicResponseBuffer);
+
+                    Response topResponse = new Response(res.readableBytes(), res);
+                    ctx.write(topResponse).addListener(ChannelFutureListener.CLOSE);
                     break;
             }
         } else if (msg instanceof Short) {

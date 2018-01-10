@@ -24,7 +24,9 @@ dependencies {
         exclude group: 'log4j', module: 'log4j'
         exclude group: 'io.netty', module: 'netty'
         exclude group: 'com.google.guava', module: 'guava'
+        exclude group: 'org.apache.zookeeper', module: 'zookeeper'
     }
+    compile 'org.apache.zookeeper:zookeeper:3.4.10'
 
     //utils
     compile 'com.google.guava:guava:23.6-jre'

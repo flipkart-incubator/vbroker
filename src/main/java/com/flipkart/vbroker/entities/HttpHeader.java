@@ -19,32 +19,6 @@ public final class HttpHeader extends Table {
         return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
     }
 
-    public static int createHttpHeader(FlatBufferBuilder builder,
-                                       int keyOffset,
-                                       int valueOffset) {
-        builder.startObject(2);
-        HttpHeader.addValue(builder, valueOffset);
-        HttpHeader.addKey(builder, keyOffset);
-        return HttpHeader.endHttpHeader(builder);
-    }
-
-    public static void startHttpHeader(FlatBufferBuilder builder) {
-        builder.startObject(2);
-    }
-
-    public static void addKey(FlatBufferBuilder builder, int keyOffset) {
-        builder.addOffset(0, keyOffset, 0);
-    }
-
-    public static void addValue(FlatBufferBuilder builder, int valueOffset) {
-        builder.addOffset(1, valueOffset, 0);
-    }
-
-    public static int endHttpHeader(FlatBufferBuilder builder) {
-        int o = builder.endObject();
-        return o;
-    }
-
     public void __init(int _i, ByteBuffer _bb) {
         bb_pos = _i;
         bb = _bb;
@@ -71,6 +45,32 @@ public final class HttpHeader extends Table {
 
     public ByteBuffer valueAsByteBuffer() {
         return __vector_as_bytebuffer(6, 1);
+    }
+
+    public static int createHttpHeader(FlatBufferBuilder builder,
+                                       int keyOffset,
+                                       int valueOffset) {
+        builder.startObject(2);
+        HttpHeader.addValue(builder, valueOffset);
+        HttpHeader.addKey(builder, keyOffset);
+        return HttpHeader.endHttpHeader(builder);
+    }
+
+    public static void startHttpHeader(FlatBufferBuilder builder) {
+        builder.startObject(2);
+    }
+
+    public static void addKey(FlatBufferBuilder builder, int keyOffset) {
+        builder.addOffset(0, keyOffset, 0);
+    }
+
+    public static void addValue(FlatBufferBuilder builder, int valueOffset) {
+        builder.addOffset(1, valueOffset, 0);
+    }
+
+    public static int endHttpHeader(FlatBufferBuilder builder) {
+        int o = builder.endObject();
+        return o;
     }
 }
 

@@ -19,6 +19,36 @@ public final class VRequest extends Table {
         return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
     }
 
+    public void __init(int _i, ByteBuffer _bb) {
+        bb_pos = _i;
+        bb = _bb;
+    }
+
+    public VRequest __assign(int _i, ByteBuffer _bb) {
+        __init(_i, _bb);
+        return this;
+    }
+
+    public byte version() {
+        int o = __offset(4);
+        return o != 0 ? bb.get(o + bb_pos) : 0;
+    }
+
+    public int correlationId() {
+        int o = __offset(6);
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
+    }
+
+    public byte requestMessageType() {
+        int o = __offset(8);
+        return o != 0 ? bb.get(o + bb_pos) : 0;
+    }
+
+    public Table requestMessage(Table obj) {
+        int o = __offset(10);
+        return o != 0 ? __union(obj, o) : null;
+    }
+
     public static int createVRequest(FlatBufferBuilder builder,
                                      byte version,
                                      int correlationId,
@@ -59,36 +89,6 @@ public final class VRequest extends Table {
 
     public static void finishVRequestBuffer(FlatBufferBuilder builder, int offset) {
         builder.finish(offset);
-    }
-
-    public void __init(int _i, ByteBuffer _bb) {
-        bb_pos = _i;
-        bb = _bb;
-    }
-
-    public VRequest __assign(int _i, ByteBuffer _bb) {
-        __init(_i, _bb);
-        return this;
-    }
-
-    public byte version() {
-        int o = __offset(4);
-        return o != 0 ? bb.get(o + bb_pos) : 0;
-    }
-
-    public int correlationId() {
-        int o = __offset(6);
-        return o != 0 ? bb.getInt(o + bb_pos) : 0;
-    }
-
-    public byte requestMessageType() {
-        int o = __offset(8);
-        return o != 0 ? bb.get(o + bb_pos) : 0;
-    }
-
-    public Table requestMessage(Table obj) {
-        int o = __offset(10);
-        return o != 0 ? __union(obj, o) : null;
     }
 }
 

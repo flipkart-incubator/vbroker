@@ -19,6 +19,30 @@ public final class MessageSet extends Table {
         return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
     }
 
+    public void __init(int _i, ByteBuffer _bb) {
+        bb_pos = _i;
+        bb = _bb;
+    }
+
+    public MessageSet __assign(int _i, ByteBuffer _bb) {
+        __init(_i, _bb);
+        return this;
+    }
+
+    public Message messages(int j) {
+        return messages(new Message(), j);
+    }
+
+    public Message messages(Message obj, int j) {
+        int o = __offset(4);
+        return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null;
+    }
+
+    public int messagesLength() {
+        int o = __offset(4);
+        return o != 0 ? __vector_len(o) : 0;
+    }
+
     public static int createMessageSet(FlatBufferBuilder builder,
                                        int messagesOffset) {
         builder.startObject(1);
@@ -47,30 +71,6 @@ public final class MessageSet extends Table {
     public static int endMessageSet(FlatBufferBuilder builder) {
         int o = builder.endObject();
         return o;
-    }
-
-    public void __init(int _i, ByteBuffer _bb) {
-        bb_pos = _i;
-        bb = _bb;
-    }
-
-    public MessageSet __assign(int _i, ByteBuffer _bb) {
-        __init(_i, _bb);
-        return this;
-    }
-
-    public Message messages(int j) {
-        return messages(new Message(), j);
-    }
-
-    public Message messages(Message obj, int j) {
-        int o = __offset(4);
-        return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null;
-    }
-
-    public int messagesLength() {
-        int o = __offset(4);
-        return o != 0 ? __vector_len(o) : 0;
     }
 }
 

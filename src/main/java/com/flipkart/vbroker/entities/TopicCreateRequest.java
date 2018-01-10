@@ -19,26 +19,6 @@ public final class TopicCreateRequest extends Table {
         return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
     }
 
-    public static int createTopicCreateRequest(FlatBufferBuilder builder,
-                                               byte topicId) {
-        builder.startObject(1);
-        TopicCreateRequest.addTopicId(builder, topicId);
-        return TopicCreateRequest.endTopicCreateRequest(builder);
-    }
-
-    public static void startTopicCreateRequest(FlatBufferBuilder builder) {
-        builder.startObject(1);
-    }
-
-    public static void addTopicId(FlatBufferBuilder builder, byte topicId) {
-        builder.addByte(0, topicId, 0);
-    }
-
-    public static int endTopicCreateRequest(FlatBufferBuilder builder) {
-        int o = builder.endObject();
-        return o;
-    }
-
     public void __init(int _i, ByteBuffer _bb) {
         bb_pos = _i;
         bb = _bb;
@@ -49,9 +29,103 @@ public final class TopicCreateRequest extends Table {
         return this;
     }
 
-    public byte topicId() {
+    public String topicName() {
         int o = __offset(4);
+        return o != 0 ? __string(o + bb_pos) : null;
+    }
+
+    public ByteBuffer topicNameAsByteBuffer() {
+        return __vector_as_bytebuffer(4, 1);
+    }
+
+    public String team() {
+        int o = __offset(6);
+        return o != 0 ? __string(o + bb_pos) : null;
+    }
+
+    public ByteBuffer teamAsByteBuffer() {
+        return __vector_as_bytebuffer(6, 1);
+    }
+
+    public boolean grouped() {
+        int o = __offset(8);
+        return o != 0 ? 0 != bb.get(o + bb_pos) : false;
+    }
+
+    public int partitions() {
+        int o = __offset(10);
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
+    }
+
+    public int replicationFactor() {
+        int o = __offset(12);
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
+    }
+
+    public byte topicType() {
+        int o = __offset(14);
         return o != 0 ? bb.get(o + bb_pos) : 0;
+    }
+
+    public byte topicCategory() {
+        int o = __offset(16);
+        return o != 0 ? bb.get(o + bb_pos) : 0;
+    }
+
+    public static int createTopicCreateRequest(FlatBufferBuilder builder,
+                                               int topicNameOffset,
+                                               int teamOffset,
+                                               boolean grouped,
+                                               int partitions,
+                                               int replicationFactor,
+                                               byte topicType,
+                                               byte topicCategory) {
+        builder.startObject(7);
+        TopicCreateRequest.addReplicationFactor(builder, replicationFactor);
+        TopicCreateRequest.addPartitions(builder, partitions);
+        TopicCreateRequest.addTeam(builder, teamOffset);
+        TopicCreateRequest.addTopicName(builder, topicNameOffset);
+        TopicCreateRequest.addTopicCategory(builder, topicCategory);
+        TopicCreateRequest.addTopicType(builder, topicType);
+        TopicCreateRequest.addGrouped(builder, grouped);
+        return TopicCreateRequest.endTopicCreateRequest(builder);
+    }
+
+    public static void startTopicCreateRequest(FlatBufferBuilder builder) {
+        builder.startObject(7);
+    }
+
+    public static void addTopicName(FlatBufferBuilder builder, int topicNameOffset) {
+        builder.addOffset(0, topicNameOffset, 0);
+    }
+
+    public static void addTeam(FlatBufferBuilder builder, int teamOffset) {
+        builder.addOffset(1, teamOffset, 0);
+    }
+
+    public static void addGrouped(FlatBufferBuilder builder, boolean grouped) {
+        builder.addBoolean(2, grouped, false);
+    }
+
+    public static void addPartitions(FlatBufferBuilder builder, int partitions) {
+        builder.addInt(3, partitions, 0);
+    }
+
+    public static void addReplicationFactor(FlatBufferBuilder builder, int replicationFactor) {
+        builder.addInt(4, replicationFactor, 0);
+    }
+
+    public static void addTopicType(FlatBufferBuilder builder, byte topicType) {
+        builder.addByte(5, topicType, 0);
+    }
+
+    public static void addTopicCategory(FlatBufferBuilder builder, byte topicCategory) {
+        builder.addByte(6, topicCategory, 0);
+    }
+
+    public static int endTopicCreateRequest(FlatBufferBuilder builder) {
+        int o = builder.endObject();
+        return o;
     }
 }
 

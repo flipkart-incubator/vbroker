@@ -1,6 +1,7 @@
 package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.VBrokerConfig;
+import com.flipkart.vbroker.controller.CuratorService;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
@@ -14,9 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 public class VBrokerServer {
 
     private final VBrokerConfig config;
+    private CuratorService curatorService;
 
-    public VBrokerServer(VBrokerConfig config) {
+    public VBrokerServer(VBrokerConfig config, CuratorService curatorService) {
         this.config = config;
+        this.curatorService = curatorService;
     }
 
     public void start() {
@@ -28,7 +31,7 @@ public class VBrokerServer {
             bootstrap.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
-                    .childHandler(new VBrokerServerInitializer());
+                    .childHandler(new VBrokerServerInitializer(curatorService));
 
             Channel channel = bootstrap.bind(config.getBrokerPort()).sync().channel();
             log.info("Broker now listening on port {}", config.getBrokerPort());
