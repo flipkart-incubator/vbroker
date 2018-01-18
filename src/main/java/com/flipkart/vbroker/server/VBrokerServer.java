@@ -43,6 +43,7 @@ public class VBrokerServer {
 
         ProducerService producerService = new ProducerService();
         RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactory(producerService);
+        ResponseHandlerFactory responseHandlerFactory = new ResponseHandlerFactory();
 
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
@@ -103,7 +104,7 @@ public class VBrokerServer {
                                 @Override
                                 protected void initChannel(Channel ch) {
                                     pipeline.addLast(new VBrokerClientCodec());
-                                    pipeline.addLast(new VBrokerClientHandler());
+                                    pipeline.addLast(new VBrokerClientHandler(responseHandlerFactory));
                                 }
                             });
                         }
