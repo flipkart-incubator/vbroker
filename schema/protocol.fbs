@@ -2,7 +2,7 @@ namespace com.flipkart.vbroker.entities;
 
 enum ApiKey:byte {ProduceRequest=0, ProduceResponse=1, TopicCreateRequest=2, TopicCreateResponse=3}
 
-union RequestMessage { ProduceRequest }
+union RequestMessage { ProduceRequest, FetchRequest }
 
 enum HttpMethod:byte {POST=0, PUT=1, DELETE=2, PATCH=3}
 
@@ -46,8 +46,39 @@ table ProduceRequest {
       messageSet:MessageSet;
 }
 
+table FetchRequest {
+      topicId:int16;
+      partitionId:int16;
+      noOfMessages:int16;
+}
+
 table TopicCreateRequest {
       topicId:int8;
 }
 
 root_type VRequest;
+
+
+// responses
+
+union ResponseMessage { ProduceResponse, FetchResponse }
+
+table VResponse {
+      correlationId:int32;
+      responseMessage:ResponseMessage;
+}
+
+table ProduceResponse {
+      topicId:int16;
+      partitionId:int16;
+      statusCode:int16;
+}
+
+table FetchResponse {
+      topicId:int16;
+      partitionId:int16;
+      statusCode:int16;
+      messageSet:MessageSet;
+}
+
+root_type VResponse;

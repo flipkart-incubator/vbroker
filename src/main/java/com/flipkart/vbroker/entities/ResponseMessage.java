@@ -3,15 +3,13 @@
 package com.flipkart.vbroker.entities;
 
 public final class ResponseMessage {
-    public static final byte NONE = 0;
-    public static final byte ProduceResponse = 1;
-    public static final String[] names = {"NONE", "ProduceResponse",};
+  private ResponseMessage() { }
+  public static final byte NONE = 0;
+  public static final byte ProduceResponse = 1;
+  public static final byte FetchResponse = 2;
 
-    private ResponseMessage() {
-    }
+  public static final String[] names = { "NONE", "ProduceResponse", "FetchResponse", };
 
-    public static String name(int e) {
-        return names[e];
-    }
+  public static String name(int e) { return names[e]; }
 }
 

@@ -64,7 +64,7 @@ public class ProduceRequestHandler implements RequestHandler {
                             ChannelPipeline pipeline = ch.pipeline();
                             pipeline.addLast(new HttpClientCodec());
                             pipeline.addLast(new VResponseEncoder());
-                            pipeline.addLast(new HttpResponseHandler(ctx));
+                            pipeline.addLast(new HttpResponseHandler());
                         }
                     });
 

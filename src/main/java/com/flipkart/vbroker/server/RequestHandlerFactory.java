@@ -1,5 +1,6 @@
 package com.flipkart.vbroker.server;
 
+import com.flipkart.vbroker.entities.FetchRequest;
 import com.flipkart.vbroker.entities.ProduceRequest;
 import com.flipkart.vbroker.entities.RequestMessage;
 import com.flipkart.vbroker.entities.VRequest;
@@ -22,6 +23,11 @@ public class RequestHandlerFactory {
                 log.info("Request is of type ProduceRequest");
                 ProduceRequest produceRequest = (ProduceRequest) request.requestMessage(new ProduceRequest());
                 requestHandler = new ProduceRequestHandler(ctx, produceRequest, producerService);
+                break;
+            case RequestMessage.FetchRequest:
+                log.info("Request is of type FetchRequest");
+                FetchRequest fetchRequest = (FetchRequest) request.requestMessage(new FetchRequest());
+                requestHandler = new FetchRequestHandler(ctx, fetchRequest);
                 break;
             default:
                 throw new VBrokerException("Unknown RequestMessageType: " + request.requestMessageType());

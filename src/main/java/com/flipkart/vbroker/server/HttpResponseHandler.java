@@ -8,7 +8,6 @@ import com.google.common.base.Charsets;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpContent;
@@ -24,7 +23,7 @@ import java.nio.ByteBuffer;
 @Slf4j
 public class HttpResponseHandler extends SimpleChannelInboundHandler<HttpObject> {
 
-    private final ChannelHandlerContext gCtx;
+    //private final ChannelHandlerContext gCtx;
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HttpObject msg) {
@@ -61,8 +60,8 @@ public class HttpResponseHandler extends SimpleChannelInboundHandler<HttpObject>
 
                 log.info("Writing Response to gCtx");
                 Response response = new Response(byteBuf.readableBytes(), byteBuf);
-                gCtx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
-                log.info("Done writing Response to gCtx");
+                //gCtx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+                //log.info("Done writing Response to gCtx");
                 ctx.close();
             }
         }
