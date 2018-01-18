@@ -30,7 +30,7 @@ public class VBrokerClient {
 
         EventLoopGroup group = new NioEventLoopGroup();
         try {
-            ResponseHandlerFactory responseHandlerFactory = new ResponseHandlerFactory();
+            ResponseHandlerFactory responseHandlerFactory = new ResponseHandlerFactory(null);
 
             Bootstrap bootstrap = new Bootstrap();
             bootstrap.group(group)

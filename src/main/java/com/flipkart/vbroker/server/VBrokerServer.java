@@ -20,6 +20,9 @@ import io.netty.channel.local.LocalChannel;
 import io.netty.channel.local.LocalServerChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.http.HttpClientCodec;
+import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +46,6 @@ public class VBrokerServer {
 
         ProducerService producerService = new ProducerService();
         RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactory(producerService);
-        ResponseHandlerFactory responseHandlerFactory = new ResponseHandlerFactory();
 
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
@@ -79,19 +81,21 @@ public class VBrokerServer {
             Channel serverLocalChannel = serverLocalBootstrap.bind(address).sync().channel();
             log.info("Consumer now listening on port {}", config.getConsumerPort());
 
-//            Bootstrap clientBootstrap = new Bootstrap()
-//                    .group(new NioEventLoopGroup(1))
-//                    .channel(NioSocketChannel.class)
-//                    .handler(new ChannelInitializer<Channel>() {
-//                        @Override
-//                        protected void initChannel(Channel ch) {
-//                            ChannelPipeline pipeline = ch.pipeline();
-//                            pipeline.addLast(new HttpClientCodec());
-//                            pipeline.addLast(new VResponseEncoder());
-//                            pipeline.addLast(new HttpResponseHandler());
-//                        }
-//                    });
-//            MessageProcessor messageProcessor = new HttpMessageProcessor(clientBootstrap);
+            Bootstrap clientBootstrap = new Bootstrap()
+                    .group(new NioEventLoopGroup(1))
+                    .channel(NioSocketChannel.class)
+                    .handler(new ChannelInitializer<Channel>() {
+                        @Override
+                        protected void initChannel(Channel ch) {
+                            ChannelPipeline pipeline = ch.pipeline();
+                            pipeline.addLast(new HttpClientCodec());
+                            pipeline.addLast(new HttpObjectAggregator(1024 * 1024)); //1MB max
+                            //pipeline.addLast(new VResponseEncoder());
+                            pipeline.addLast(new HttpResponseHandler());
+                        }
+                    });
+
+            ResponseHandlerFactory responseHandlerFactory = new ResponseHandlerFactory(clientBootstrap);
 
             Bootstrap consumerBootstrap = new Bootstrap()
                     .group(localGroup)
