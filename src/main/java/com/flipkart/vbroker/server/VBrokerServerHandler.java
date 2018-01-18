@@ -10,12 +10,14 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class VBrokerServerHandler extends SimpleChannelInboundHandler<VRequest> {
 
+    private final RequestHandlerFactory requestHandlerFactory;
+
     @Override
-    public void channelRead0(ChannelHandlerContext ctx, VRequest request) throws Exception {
+    public void channelRead0(ChannelHandlerContext ctx, VRequest request) {
         log.info("== ChannelRead0 ==");
         log.info("== Received VRequest {} with correlationId {} and type {} ==", request, request.correlationId(), request.requestMessageType());
 
-        RequestHandler requestHandler = new RequestHandlerFactory(ctx).getRequestHandler(request);
+        RequestHandler requestHandler = requestHandlerFactory.getRequestHandler(request, ctx);
         requestHandler.handle();
     }
 
@@ -25,12 +27,12 @@ public class VBrokerServerHandler extends SimpleChannelInboundHandler<VRequest> 
     }
 
     @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+    public void channelReadComplete(ChannelHandlerContext ctx) {
         ctx.flush();
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         log.error("Exception caught in server handling", cause);
         ctx.close();
     }

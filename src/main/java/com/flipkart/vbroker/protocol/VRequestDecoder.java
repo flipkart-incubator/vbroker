@@ -15,7 +15,7 @@ public class VRequestDecoder extends ReplayingDecoder<Void> {
     }
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
         log.info("Decoding VRequest bytebuf");
 
         int requestLength = in.readInt();

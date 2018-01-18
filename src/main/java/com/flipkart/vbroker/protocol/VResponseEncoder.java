@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 public class VResponseEncoder extends MessageToByteEncoder<Response> {
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, Response msg, ByteBuf out) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, Response msg, ByteBuf out) {
         log.info("Encoding VResponse as bytes");
         out.writeInt(msg.getResponseLength());
         out.writeBytes(msg.getVResponse());

@@ -3,6 +3,7 @@ package com.flipkart.vbroker.server;
 import com.flipkart.vbroker.entities.HttpMethod;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.protocol.VResponseEncoder;
+import com.flipkart.vbroker.services.ProducerService;
 import com.google.common.base.Charsets;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -23,6 +24,7 @@ public class ProduceRequestHandler implements RequestHandler {
 
     private final ChannelHandlerContext ctx;
     private final ProduceRequest produceRequest;
+    private final ProducerService producerService;
 
     @Override
     public void handle() {
@@ -34,6 +36,8 @@ public class ProduceRequestHandler implements RequestHandler {
             ByteBuf byteBuf = Unpooled.wrappedBuffer(byteBuffer);
             log.info("Decoded msg with msgId: {} and payload: {}", message.messageId(),
                     Charsets.UTF_8.decode(byteBuffer).toString());
+
+            producerService.produceMessage(message);
 
             // Prepare the HTTP request.
             FullHttpRequest httpRequest = new DefaultFullHttpRequest(
@@ -56,7 +60,7 @@ public class ProduceRequestHandler implements RequestHandler {
                     .channel(NioSocketChannel.class)
                     .handler(new ChannelInitializer<Channel>() {
                         @Override
-                        protected void initChannel(Channel ch) throws Exception {
+                        protected void initChannel(Channel ch) {
                             ChannelPipeline pipeline = ch.pipeline();
                             pipeline.addLast(new HttpClientCodec());
                             pipeline.addLast(new VResponseEncoder());

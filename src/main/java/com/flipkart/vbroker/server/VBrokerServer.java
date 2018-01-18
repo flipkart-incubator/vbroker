@@ -1,6 +1,7 @@
 package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.VBrokerConfig;
+import com.flipkart.vbroker.services.ProducerService;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
@@ -23,12 +24,15 @@ public class VBrokerServer {
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
 
+        ProducerService producerService = new ProducerService();
+        RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactory(producerService);
+
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
-                    .childHandler(new VBrokerServerInitializer());
+                    .childHandler(new VBrokerServerInitializer(requestHandlerFactory));
 
 //            Bootstrap bootstrap = new Bootstrap();
 //            bootstrap.group(bossGroup)

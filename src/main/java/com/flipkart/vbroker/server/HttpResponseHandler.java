@@ -27,7 +27,7 @@ public class HttpResponseHandler extends SimpleChannelInboundHandler<HttpObject>
     private final ChannelHandlerContext gCtx;
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, HttpObject msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, HttpObject msg) {
         if (msg instanceof HttpResponse) {
             HttpResponse httpResponse = (HttpResponse) msg;
             log.info("== Got HttpResponse with status {} ==", httpResponse.status());
@@ -69,12 +69,12 @@ public class HttpResponseHandler extends SimpleChannelInboundHandler<HttpObject>
     }
 
     @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+    public void channelReadComplete(ChannelHandlerContext ctx) {
         ctx.flush();
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         log.error("Exception caught in server handling", cause);
         ctx.close();
     }
