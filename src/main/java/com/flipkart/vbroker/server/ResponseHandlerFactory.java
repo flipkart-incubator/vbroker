@@ -22,8 +22,8 @@ public class ResponseHandlerFactory {
             case ResponseMessage.ProduceResponse:
                 ProduceResponse produceResponse = (ProduceResponse) msg.responseMessage(new ProduceResponse());
                 assert produceResponse != null;
-                short statusCode = produceResponse.statusCode();
-                log.info("Received ProduceResponse with statusCode {}", statusCode);
+                log.info("Received ProduceResponse with statusCode {}", produceResponse.statusCode());
+                responseHandler = new ProduceResponseHandler(produceResponse);
                 break;
             case ResponseMessage.FetchResponse:
                 FetchResponse fetchResponse = (FetchResponse) msg.responseMessage(new FetchResponse());
