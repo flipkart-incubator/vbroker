@@ -11,13 +11,27 @@ import java.io.IOException;
 @Slf4j
 public class VBrokerApp {
 
-    public static void main(String args[]) throws IOException {
+    public static void main(String args[]) throws IOException, InterruptedException {
+        log.info("== Starting VBrokerApp ==");
+
         VBrokerConfig config = VBrokerConfig.newConfig("broker.properties");
         log.info("Configs: {}", config);
 
         VBrokerServer server = new VBrokerServer(config);
-        server.start();
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                server.stop();
+            } catch (InterruptedException e) {
+                log.error("Exception in closing channels", e);
+            }
+            log.info("== Shutting down VBrokerServer ==");
+        }));
 
-        log.info("Hello, World VBroker!");
+        log.info("Starting VBrokerServer");
+        Thread thread = new Thread(server);
+        thread.start();
+
+        thread.join();
+        log.info("== Shutting down VBrokerApp ==");
     }
 }
