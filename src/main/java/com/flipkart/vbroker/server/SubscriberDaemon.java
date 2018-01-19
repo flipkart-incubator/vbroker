@@ -25,8 +25,13 @@ public class SubscriberDaemon implements Runnable {
     @Override
     public void run() {
         log.info("Subscriber now running");
+
         while (true) {
             try {
+                long timeMs = 1000;
+                log.info("Sleeping for {} milli secs before connecting to server", timeMs);
+                Thread.sleep(timeMs);
+
                 log.info("Subscriber connecting to server at address {}", address);
                 Channel consumerChannel = consumerBootstrap.connect(address).sync().channel();
                 log.info("Subscriber connected to local server address {}", address);
@@ -61,6 +66,4 @@ public class SubscriberDaemon implements Runnable {
         }
         log.info("== Subscriber shutdown ==");
     }
-
-
 }

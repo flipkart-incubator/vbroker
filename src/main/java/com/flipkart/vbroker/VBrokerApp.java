@@ -18,6 +18,7 @@ public class VBrokerApp {
         log.info("Configs: {}", config);
 
         VBrokerServer server = new VBrokerServer(config);
+
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
                 server.stop();
