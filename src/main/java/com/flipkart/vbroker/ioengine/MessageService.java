@@ -2,23 +2,26 @@ package com.flipkart.vbroker.ioengine;
 
 import com.flipkart.vbroker.entities.Message;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 public class MessageService {
 
-    private final List<Message> messages = new LinkedList<>();
+    private final Queue<Message> messageQueue = new ArrayBlockingQueue<>(100);
 
-    public void store(Message message) {
-        messages.add(message);
+    public void add(Message message) {
+        messageQueue.add(message);
     }
 
-    public Iterator<Message> messageIterator() {
-        return messages.iterator();
+    public boolean hasNext() {
+        return messageQueue.peek() != null;
+    }
+
+    public Message poll() {
+        return messageQueue.poll();
     }
 
     public int size() {
-        return messages.size();
+        return messageQueue.size();
     }
 }

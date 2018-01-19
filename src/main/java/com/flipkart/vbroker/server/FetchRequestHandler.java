@@ -11,7 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.ByteBuffer;
-import java.util.Iterator;
 
 import static java.util.Objects.requireNonNull;
 
@@ -38,11 +37,10 @@ public class FetchRequestHandler implements RequestHandler {
         FlatBufferBuilder builder = new FlatBufferBuilder();
 
         log.info("No of messages in store are {}", messageService.size());
-        Iterator<Message> messageIterator = messageService.messageIterator();
         int i = 0;
-        while (messageIterator.hasNext() && i < noOfMessagesToFetch) {
+        while (messageService.hasNext() && i < noOfMessagesToFetch) {
             log.info("No of messages in store are {}", messageService.size());
-            Message message = messageIterator.next();
+            Message message = messageService.poll();
 
             int headersVector = Message.createHeadersVector(builder, new int[0]);
 
