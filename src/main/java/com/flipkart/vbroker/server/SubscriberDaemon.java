@@ -10,23 +10,30 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.local.LocalAddress;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.ByteBuffer;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
-@AllArgsConstructor
 public class SubscriberDaemon implements Runnable {
 
     private final LocalAddress address;
     private final Bootstrap consumerBootstrap;
+    private volatile AtomicBoolean running = new AtomicBoolean(true);
+
+    public SubscriberDaemon(LocalAddress address,
+                            Bootstrap consumerBootstrap) {
+        this.address = address;
+        this.consumerBootstrap = consumerBootstrap;
+    }
 
     @Override
     public void run() {
+        this.running.set(true);
         log.info("Subscriber now running");
 
-        while (true) {
+        while (running.get()) {
             try {
                 long timeMs = 1000;
                 log.info("Sleeping for {} milli secs before connecting to server", timeMs);
@@ -36,23 +43,28 @@ public class SubscriberDaemon implements Runnable {
                 Channel consumerChannel = consumerBootstrap.connect(address).sync().channel();
                 log.info("Subscriber connected to local server address {}", address);
 
-                FlatBufferBuilder builder = new FlatBufferBuilder();
-                int fetchRequest = FetchRequest.createFetchRequest(builder,
-                        (short) 11,
-                        (short) 1,
-                        (short) 1);
-                int vRequest = VRequest.createVRequest(builder,
-                        (byte) 1,
-                        1001,
-                        RequestMessage.FetchRequest,
-                        fetchRequest);
-                builder.finish(vRequest);
-                ByteBuffer byteBuffer = builder.dataBuffer();
-                ByteBuf byteBuf = Unpooled.wrappedBuffer(byteBuffer);
-                Request request = new Request(byteBuf.readableBytes(), byteBuf);
+                long pollTimeMs = 5000;
+                while (running.get()) {
+                    Thread.sleep(pollTimeMs);
 
-                log.info("Sending FetchRequest to broker");
-                consumerChannel.writeAndFlush(request);
+                    FlatBufferBuilder builder = new FlatBufferBuilder();
+                    int fetchRequest = FetchRequest.createFetchRequest(builder,
+                            (short) 11,
+                            (short) 1,
+                            (short) 1);
+                    int vRequest = VRequest.createVRequest(builder,
+                            (byte) 1,
+                            1001,
+                            RequestMessage.FetchRequest,
+                            fetchRequest);
+                    builder.finish(vRequest);
+                    ByteBuffer byteBuffer = builder.dataBuffer();
+                    ByteBuf byteBuf = Unpooled.wrappedBuffer(byteBuffer);
+                    Request request = new Request(byteBuf.readableBytes(), byteBuf);
+
+                    log.info("Sending FetchRequest to broker");
+                    consumerChannel.writeAndFlush(request);
+                }
 
                 consumerChannel.closeFuture().sync();
                 break;
@@ -65,5 +77,9 @@ public class SubscriberDaemon implements Runnable {
             }
         }
         log.info("== Subscriber shutdown ==");
+    }
+
+    public void stop() {
+        this.running.set(false);
     }
 }

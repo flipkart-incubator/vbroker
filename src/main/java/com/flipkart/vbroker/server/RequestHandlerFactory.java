@@ -5,6 +5,7 @@ import com.flipkart.vbroker.entities.ProduceRequest;
 import com.flipkart.vbroker.entities.RequestMessage;
 import com.flipkart.vbroker.entities.VRequest;
 import com.flipkart.vbroker.exceptions.VBrokerException;
+import com.flipkart.vbroker.ioengine.MessageService;
 import com.flipkart.vbroker.services.ProducerService;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RequestHandlerFactory {
 
     private final ProducerService producerService;
+    private final MessageService messageService;
 
     public RequestHandler getRequestHandler(VRequest request, ChannelHandlerContext ctx) {
         RequestHandler requestHandler;
@@ -27,7 +29,7 @@ public class RequestHandlerFactory {
             case RequestMessage.FetchRequest:
                 log.info("Request is of type FetchRequest");
                 FetchRequest fetchRequest = (FetchRequest) request.requestMessage(new FetchRequest());
-                requestHandler = new FetchRequestHandler(ctx, fetchRequest);
+                requestHandler = new FetchRequestHandler(ctx, fetchRequest, messageService);
                 break;
             default:
                 throw new VBrokerException("Unknown RequestMessageType: " + request.requestMessageType());

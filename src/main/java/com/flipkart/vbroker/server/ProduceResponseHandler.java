@@ -12,7 +12,7 @@ public class ProduceResponseHandler implements ResponseHandler {
 
     @Override
     public void handle() {
-        log.info("Handling fetchResponse for topic {} and partition {}", produceResponse.topicId(), produceResponse.partitionId());
+        log.info("Handling ProduceResponse for topic {} and partition {}", produceResponse.topicId(), produceResponse.partitionId());
         log.info("Response code for handling produceRequest is {}", produceResponse.statusCode());
     }
 }

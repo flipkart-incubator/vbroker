@@ -2,6 +2,7 @@ package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.client.VBrokerClientHandler;
+import com.flipkart.vbroker.ioengine.MessageService;
 import com.flipkart.vbroker.protocol.codecs.VBrokerClientCodec;
 import com.flipkart.vbroker.services.ProducerService;
 import io.netty.bootstrap.Bootstrap;
@@ -46,8 +47,9 @@ public class VBrokerServer implements Runnable {
         EventLoopGroup workerGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("server_worker"));
         EventLoopGroup localGroup = new DefaultEventLoopGroup(1, new DefaultThreadFactory("server_local"));
 
-        ProducerService producerService = new ProducerService();
-        RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactory(producerService);
+        MessageService messageService = new MessageService();
+        ProducerService producerService = new ProducerService(messageService);
+        RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactory(producerService, messageService);
 
         CountDownLatch latch = new CountDownLatch(2);
         try {
@@ -159,6 +161,7 @@ public class VBrokerServer implements Runnable {
 
         ExecutorService executorService = Executors.newSingleThreadExecutor(new DefaultThreadFactory("subscriber"));
         SubscriberDaemon subscriber = new SubscriberDaemon(address, consumerBootstrap);
+        log.info("Submitting SubscriberDaemon");
         executorService.submit(subscriber);
     }
 
