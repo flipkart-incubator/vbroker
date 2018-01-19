@@ -21,7 +21,7 @@ public class VBrokerClientHandler extends SimpleChannelInboundHandler<VResponse>
         ResponseHandler responseHandler = responseHandlerFactory.getResponseHandler(msg, ctx);
         responseHandler.handle();
 
-        ctx.close();
+        //ctx.close();
     }
 
     @Override

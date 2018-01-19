@@ -6,7 +6,6 @@ import com.flipkart.vbroker.protocol.Response;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,16 +29,28 @@ public class FetchRequestHandler implements RequestHandler {
         log.info("Handling FetchRequest for {} messages for topic {} and partition {}",
                 noOfMessagesToFetch, fetchRequest.topicId(), fetchRequest.partitionId());
 
-        FlatBufferBuilder builder = new FlatBufferBuilder();
-        int[] messages = new int[noOfMessagesToFetch];
+        int toFetchNoOfMessages = noOfMessagesToFetch;
+        if (messageService.size() < noOfMessagesToFetch) {
+            toFetchNoOfMessages = messageService.size();
+        }
 
+        int[] messages = new int[toFetchNoOfMessages];
+        FlatBufferBuilder builder = new FlatBufferBuilder();
+
+        log.info("No of messages in store are {}", messageService.size());
         Iterator<Message> messageIterator = messageService.messageIterator();
         int i = 0;
         while (messageIterator.hasNext() && i < noOfMessagesToFetch) {
+            log.info("No of messages in store are {}", messageService.size());
             Message message = messageIterator.next();
 
             int headersVector = Message.createHeadersVector(builder, new int[0]);
-            messages[i++] = Message.createMessage(
+
+            ByteBuffer payloadByteBuffer = message.bodyPayloadAsByteBuffer();
+            byte[] messageBytes = new byte[payloadByteBuffer.remaining()];
+            payloadByteBuffer.get(messageBytes);
+
+            int messageOffset = Message.createMessage(
                     builder,
                     builder.createString(requireNonNull(message.messageId())),
                     builder.createString(requireNonNull(message.groupId())),
@@ -54,8 +65,9 @@ public class FetchRequestHandler implements RequestHandler {
                     builder.createString(requireNonNull(message.callbackHttpUri())),
                     message.callbackHttpMethod(),
                     headersVector,
-                    message.bodyPayloadLength(),
-                    builder.createByteVector(new byte[]{}));
+                    messageBytes.length,
+                    builder.createByteVector(messageBytes));
+            messages[i] = messageOffset;
         }
 
         int messagesVector = MessageSet.createMessagesVector(builder, messages);
@@ -74,6 +86,6 @@ public class FetchRequestHandler implements RequestHandler {
         ByteBuf byteBuf = Unpooled.wrappedBuffer(byteBuffer);
 
         Response response = new Response(byteBuf.readableBytes(), byteBuf);
-        ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+        ctx.writeAndFlush(response);//.addListener(ChannelFutureListener.CLOSE);
     }
 }

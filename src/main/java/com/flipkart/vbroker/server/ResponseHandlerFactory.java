@@ -30,6 +30,7 @@ public class ResponseHandlerFactory {
                 assert fetchResponse != null;
                 log.info("Received FetchResponse with statusCode {}", fetchResponse.statusCode());
                 responseHandler = new FetchResponseHandler(clientBootstrap, fetchResponse);
+                //ctx.close().addListener(ChannelFutureListener.CLOSE);
         }
 
         return responseHandler;

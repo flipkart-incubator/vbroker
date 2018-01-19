@@ -89,6 +89,7 @@ public class VBrokerServer implements Runnable {
                     log.info("Consumer now listening on address {}", address);
 
                     serverLocalChannel.closeFuture().sync();
+                    log.info("Consumer serverLocalChannel closed");
                     latch.countDown();
                 } catch (InterruptedException e) {
                     log.error("Exception in channel sync", e);

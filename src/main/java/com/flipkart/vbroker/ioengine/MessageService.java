@@ -8,7 +8,7 @@ import java.util.List;
 
 public class MessageService {
 
-    List<Message> messages = new LinkedList<>();
+    private final List<Message> messages = new LinkedList<>();
 
     public void store(Message message) {
         messages.add(message);
@@ -16,5 +16,9 @@ public class MessageService {
 
     public Iterator<Message> messageIterator() {
         return messages.iterator();
+    }
+
+    public int size() {
+        return messages.size();
     }
 }
