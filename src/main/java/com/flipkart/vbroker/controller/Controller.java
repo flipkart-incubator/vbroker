@@ -23,7 +23,7 @@ public class Controller {
 
 	public void watch() throws Exception {
 
-		System.out.println("Setting watch on topics path...");
+		log.info("Setting watch on topics path...");
 		CompletionStage<WatchedEvent> s = curatorService.watchNode(path);
 		handleWatchedStage(s);
 	}
@@ -31,12 +31,12 @@ public class Controller {
 	private void handleWatchedStage(CompletionStage<WatchedEvent> watchedStage) {
 		watchedStage.handleAsync((data, exception) -> {
 			if (exception != null) {
-				System.out.println("Exception occured..");
+				log.error("Exception occured..");
 				AsyncEventException asyncEx = (AsyncEventException) exception;
 				asyncEx.printStackTrace(); // handle the error as needed
 				handleWatchedStage(asyncEx.reset());
 			} else {
-				System.out.println(data.getState() + " " + data.getPath() + " " + data.getType());
+				log.info(data.getState() + " " + data.getPath() + " " + data.getType());
 				try {
 					this.watch();
 				} catch (Exception e) {
