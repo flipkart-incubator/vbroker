@@ -18,6 +18,10 @@ public class TopicService {
                             String topicType, String topicCategory) {
         Topic topic = new Topic(team, topicName, grouped, noOfPartitions, replicationFactor);
         curatorService.createNodeAndSetData(topicsPath + "/" + topicName, CreateMode.PERSISTENT,
-                topic.toString().getBytes());
+                topic.toString().getBytes()).handle((data, exception)->{
+                	if(exception!=null){
+                		System.out.println("Failure in creating exception!" );
+                	}
+                	return null;});
     }
 }

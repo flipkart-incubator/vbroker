@@ -47,7 +47,7 @@ public class CuratorService {
     }
 
     public CompletionStage<WatchedEvent> watchNode(String path) {
-        return asyncZkClient.watched().getData().forPath(path).event();
+        return asyncZkClient.watched().checkExists().forPath(path).event();
     }
 
     public AsyncStage<byte[]> getData(String path) {

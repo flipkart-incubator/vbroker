@@ -1,33 +1,51 @@
 package com.flipkart.vbroker.controller;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.zookeeper.Watcher.Event.EventType;
-
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+
+import org.apache.curator.x.async.AsyncEventException;
+import org.apache.zookeeper.WatchedEvent;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class Controller {
 
-    private String path = "/vbroker/vbrokers/topics";
-    private CuratorService curatorService;
+	private String path = "/topics";
+	private CuratorService curatorService;
+	private Executor executor = Executors.newSingleThreadExecutor();
 
-    public Controller(CuratorService curatorService) {
-        super();
-        this.curatorService = curatorService;
-    }
+	public Controller(CuratorService curatorService) {
+		super();
+		this.curatorService = curatorService;
+	}
 
-    public void watch() throws Exception {
+	public void watch() throws Exception {
 
-        Executor executor = Executors.newFixedThreadPool(1);
-        curatorService.watchNode(path).handleAsync((data, exception) -> {
-            String path = data.getPath();
-            EventType type = data.getType();
-            if (EventType.NodeCreated.equals(type)) {
-                log.info("New topic detected. Run allocation and write to co-ordinator");
-            }
-            return null;
-        }, executor);
-    }
+		System.out.println("Setting watch on topics path...");
+		CompletionStage<WatchedEvent> s = curatorService.watchNode(path);
+		handleWatchedStage(s);
+	}
+
+	private void handleWatchedStage(CompletionStage<WatchedEvent> watchedStage) {
+		watchedStage.handleAsync((data, exception) -> {
+			if (exception != null) {
+				System.out.println("Exception occured..");
+				AsyncEventException asyncEx = (AsyncEventException) exception;
+				asyncEx.printStackTrace(); // handle the error as needed
+				handleWatchedStage(asyncEx.reset());
+			} else {
+				System.out.println(data.getState() + " " + data.getPath() + " " + data.getType());
+				try {
+					this.watch();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			return null;
+		}, executor);
+	}
 
 }
