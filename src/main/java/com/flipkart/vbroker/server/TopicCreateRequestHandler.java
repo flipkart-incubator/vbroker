@@ -1,9 +1,9 @@
 package com.flipkart.vbroker.server;
 
-import com.flipkart.vbroker.controller.TopicService;
 import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.protocol.Response;
+import com.flipkart.vbroker.services.TopicService;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

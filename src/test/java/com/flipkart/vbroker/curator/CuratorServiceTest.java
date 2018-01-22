@@ -1,7 +1,8 @@
 package com.flipkart.vbroker.curator;
 
-import com.flipkart.vbroker.controller.CuratorService;
 import com.flipkart.vbroker.exceptions.VBrokerException;
+import com.flipkart.vbroker.services.CuratorService;
+
 import org.apache.curator.x.async.AsyncStage;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;

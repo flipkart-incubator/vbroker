@@ -1,8 +1,9 @@
 package com.flipkart.vbroker.curator;
 
-import com.flipkart.vbroker.controller.CuratorService;
 import org.apache.zookeeper.WatchedEvent;
 import org.testng.annotations.Test;
+
+import com.flipkart.vbroker.services.CuratorService;
 
 import java.util.concurrent.CompletionStage;
 

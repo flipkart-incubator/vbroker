@@ -1,4 +1,4 @@
-package com.flipkart.vbroker.controller;
+package com.flipkart.vbroker.services;
 
 import com.flipkart.vbroker.VBrokerConfig;
 import org.apache.curator.framework.CuratorFramework;

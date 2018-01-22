@@ -1,7 +1,8 @@
 package com.flipkart.vbroker.server;
 
-import com.flipkart.vbroker.controller.TopicService;
 import com.flipkart.vbroker.entities.VRequest;
+import com.flipkart.vbroker.services.TopicService;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.AllArgsConstructor;

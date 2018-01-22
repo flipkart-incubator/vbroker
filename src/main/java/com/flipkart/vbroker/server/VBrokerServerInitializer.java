@@ -1,8 +1,9 @@
 package com.flipkart.vbroker.server;
 
-import com.flipkart.vbroker.controller.CuratorService;
-import com.flipkart.vbroker.controller.TopicService;
 import com.flipkart.vbroker.protocol.codecs.VBrokerServerCodec;
+import com.flipkart.vbroker.services.CuratorService;
+import com.flipkart.vbroker.services.TopicService;
+
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;

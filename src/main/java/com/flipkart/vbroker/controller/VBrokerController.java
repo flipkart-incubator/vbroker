@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.x.async.AsyncEventException;
 import org.apache.zookeeper.WatchedEvent;
 
+import com.flipkart.vbroker.services.CuratorService;
+
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;

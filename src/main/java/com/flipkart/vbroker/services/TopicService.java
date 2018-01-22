@@ -1,4 +1,4 @@
-package com.flipkart.vbroker.controller;
+package com.flipkart.vbroker.services;
 
 import com.flipkart.vbroker.core.Topic;
 import org.apache.zookeeper.CreateMode;

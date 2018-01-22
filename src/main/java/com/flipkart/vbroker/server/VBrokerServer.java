@@ -2,11 +2,12 @@ package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.client.VBrokerClientHandler;
-import com.flipkart.vbroker.controller.CuratorService;
-import com.flipkart.vbroker.controller.TopicService;
 import com.flipkart.vbroker.ioengine.MessageService;
 import com.flipkart.vbroker.protocol.codecs.VBrokerClientCodec;
+import com.flipkart.vbroker.services.CuratorService;
 import com.flipkart.vbroker.services.ProducerService;
+import com.flipkart.vbroker.services.TopicService;
+
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -46,7 +47,7 @@ public class VBrokerServer implements Runnable {
         this.topicService = topicService;
     }
 
-    private void start() {
+    public void start() {
         Thread.currentThread().setName("vbroker_server");
 
         EventLoopGroup bossGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("server_boss"));

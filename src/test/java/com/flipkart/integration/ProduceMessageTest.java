@@ -2,9 +2,9 @@ package com.flipkart.integration;
 
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.client.VBrokerClient;
-import com.flipkart.vbroker.controller.CuratorService;
-import com.flipkart.vbroker.controller.TopicService;
 import com.flipkart.vbroker.server.VBrokerServer;
+import com.flipkart.vbroker.services.CuratorService;
+import com.flipkart.vbroker.services.TopicService;
 import com.xebialabs.restito.semantics.Condition;
 import com.xebialabs.restito.server.StubServer;
 import org.glassfish.grizzly.http.Method;

@@ -1,10 +1,11 @@
 package com.flipkart.vbroker;
 
 
-import com.flipkart.vbroker.controller.CuratorService;
-import com.flipkart.vbroker.controller.TopicService;
 import com.flipkart.vbroker.controller.VBrokerController;
 import com.flipkart.vbroker.server.VBrokerServer;
+import com.flipkart.vbroker.services.CuratorService;
+import com.flipkart.vbroker.services.TopicService;
+
 import lombok.extern.slf4j.Slf4j;
 
 /*

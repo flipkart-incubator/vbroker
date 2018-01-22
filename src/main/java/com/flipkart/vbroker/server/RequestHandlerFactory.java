@@ -1,10 +1,11 @@
 package com.flipkart.vbroker.server;
 
-import com.flipkart.vbroker.controller.TopicService;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.ioengine.MessageService;
 import com.flipkart.vbroker.services.ProducerService;
+import com.flipkart.vbroker.services.TopicService;
+
 import io.netty.channel.ChannelHandlerContext;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
