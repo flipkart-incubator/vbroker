@@ -23,7 +23,7 @@ import static com.xebialabs.restito.semantics.Condition.uri;
  * Created by kaushal.hooda on 16/01/18.
  */
 public class ProduceMessageTest {
-    public static final int MOCK_CONSUMER_PORT = 12000;
+    public static final int MOCK_CONSUMER_PORT = 15000;
     VBrokerServer server;
     StubServer consumer;
 
@@ -34,7 +34,7 @@ public class ProduceMessageTest {
         Thread t = new Thread(new Runnable() {
             public void run() {
                 server = new VBrokerServer(config);
-                server.start();
+                server.run();
             }
         });
 
@@ -56,7 +56,7 @@ public class ProduceMessageTest {
     }
 
     @AfterSuite
-    public void stopServer(){
+    public void stopServer() {
         consumer.stop();
     }
 }
