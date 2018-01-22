@@ -16,15 +16,9 @@ public class WatchTest {
     }
 
     private static void handleWatchedStage(CompletionStage<WatchedEvent> watchedStage) throws Exception {
-        // async handling of Watchers is complicated because watchers can
-        // trigger multiple times
-        // and CompletionStage don't support this behavior
-
-        // thenAccept() handles normal watcher triggering.
         watchedStage.thenAccept(event -> {
             System.out.println(event.getType());
             System.out.println(event);
-            // etc.
         }).toCompletableFuture().get();
 
     }

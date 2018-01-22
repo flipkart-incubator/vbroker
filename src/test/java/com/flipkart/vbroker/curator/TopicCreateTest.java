@@ -59,7 +59,6 @@ public class TopicCreateTest {
             ChannelPipeline pipeline = ch.pipeline();
             pipeline.addLast(new VBrokerClientCodec());
             ResponseHandlerFactory responseHandlerFactory = new ResponseHandlerFactory(null);
-            // add same handler since its the same dummy response from server.
             pipeline.addLast(new VBrokerClientHandler(responseHandlerFactory));
 
         }

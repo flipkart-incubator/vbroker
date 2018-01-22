@@ -2,6 +2,8 @@ package com.flipkart.integration;
 
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.client.VBrokerClient;
+import com.flipkart.vbroker.controller.CuratorService;
+import com.flipkart.vbroker.controller.TopicService;
 import com.flipkart.vbroker.server.VBrokerServer;
 import com.xebialabs.restito.semantics.Condition;
 import com.xebialabs.restito.server.StubServer;
@@ -30,10 +32,12 @@ public class ProduceMessageTest {
     @BeforeSuite
     public void startServer() throws IOException {
         VBrokerConfig config = VBrokerConfig.newConfig("broker.properties");
+        CuratorService curatorService  = new CuratorService();
+        TopicService topicService = new TopicService(curatorService);
 
         Thread t = new Thread(new Runnable() {
             public void run() {
-                server = new VBrokerServer(config);
+                server = new VBrokerServer(config, curatorService, topicService);
                 server.start();
             }
         });
