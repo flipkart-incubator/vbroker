@@ -9,12 +9,12 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 @SuppressWarnings("unused")
-public final class ProduceResponse extends Table {
-    public static ProduceResponse getRootAsProduceResponse(ByteBuffer _bb) {
-        return getRootAsProduceResponse(_bb, new ProduceResponse());
+public final class FetchRequest extends Table {
+    public static FetchRequest getRootAsFetchRequest(ByteBuffer _bb) {
+        return getRootAsFetchRequest(_bb, new FetchRequest());
     }
 
-    public static ProduceResponse getRootAsProduceResponse(ByteBuffer _bb, ProduceResponse obj) {
+    public static FetchRequest getRootAsFetchRequest(ByteBuffer _bb, FetchRequest obj) {
         _bb.order(ByteOrder.LITTLE_ENDIAN);
         return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
     }
@@ -24,7 +24,7 @@ public final class ProduceResponse extends Table {
         bb = _bb;
     }
 
-    public ProduceResponse __assign(int _i, ByteBuffer _bb) {
+    public FetchRequest __assign(int _i, ByteBuffer _bb) {
         __init(_i, _bb);
         return this;
     }
@@ -39,23 +39,23 @@ public final class ProduceResponse extends Table {
         return o != 0 ? bb.getShort(o + bb_pos) : 0;
     }
 
-    public short statusCode() {
+    public short noOfMessages() {
         int o = __offset(8);
         return o != 0 ? bb.getShort(o + bb_pos) : 0;
     }
 
-    public static int createProduceResponse(FlatBufferBuilder builder,
-                                            short topicId,
-                                            short partitionId,
-                                            short statusCode) {
+    public static int createFetchRequest(FlatBufferBuilder builder,
+                                         short topicId,
+                                         short partitionId,
+                                         short noOfMessages) {
         builder.startObject(3);
-        ProduceResponse.addStatusCode(builder, statusCode);
-        ProduceResponse.addPartitionId(builder, partitionId);
-        ProduceResponse.addTopicId(builder, topicId);
-        return ProduceResponse.endProduceResponse(builder);
+        FetchRequest.addNoOfMessages(builder, noOfMessages);
+        FetchRequest.addPartitionId(builder, partitionId);
+        FetchRequest.addTopicId(builder, topicId);
+        return FetchRequest.endFetchRequest(builder);
     }
 
-    public static void startProduceResponse(FlatBufferBuilder builder) {
+    public static void startFetchRequest(FlatBufferBuilder builder) {
         builder.startObject(3);
     }
 
@@ -67,11 +67,11 @@ public final class ProduceResponse extends Table {
         builder.addShort(1, partitionId, 0);
     }
 
-    public static void addStatusCode(FlatBufferBuilder builder, short statusCode) {
-        builder.addShort(2, statusCode, 0);
+    public static void addNoOfMessages(FlatBufferBuilder builder, short noOfMessages) {
+        builder.addShort(2, noOfMessages, 0);
     }
 
-    public static int endProduceResponse(FlatBufferBuilder builder) {
+    public static int endFetchRequest(FlatBufferBuilder builder) {
         int o = builder.endObject();
         return o;
     }

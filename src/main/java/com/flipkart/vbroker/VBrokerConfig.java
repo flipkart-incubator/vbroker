@@ -19,6 +19,8 @@ public class VBrokerConfig {
     private int brokerPort;
     private String zookeeperUrl;
 
+    private int consumerPort;
+
     public VBrokerConfig(Properties props) {
         this.properties = props;
         reloadConfigs();
@@ -37,5 +39,6 @@ public class VBrokerConfig {
         this.brokerHost = properties.getProperty("broker.host");
         this.brokerPort = Ints.tryParse(properties.getProperty("broker.port"));
         this.zookeeperUrl = properties.getProperty("zookeeper.url");
+        this.consumerPort = Ints.tryParse(properties.getProperty("consumer.port"));
     }
 }

@@ -5,6 +5,7 @@ import com.flipkart.vbroker.client.VBrokerClientHandler;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.protocol.Request;
 import com.flipkart.vbroker.protocol.codecs.VBrokerClientCodec;
+import com.flipkart.vbroker.server.ResponseHandlerFactory;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -38,7 +39,7 @@ public class TopicCreateTest {
         int topicName = builder.createString("topic3");
         int team = builder.createString("varadhi");
 
-        int topicCreateRequest = TopicCreateRequest.createTopicCreateRequest(builder, topicName, team, true, 1, 3,
+        int topicCreateRequest = TopicCreateRequest.createTopicCreateRequest(builder, (short) 1, topicName, team, true, (short) 1, (short) 3,
                 TopicType.MAIN, TopicCategory.TOPIC);
         int vRequest = VRequest.createVRequest(builder, (byte) 1, 1002, RequestMessage.TopicCreateRequest,
                 topicCreateRequest);
@@ -57,8 +58,9 @@ public class TopicCreateTest {
         protected void initChannel(SocketChannel ch) throws Exception {
             ChannelPipeline pipeline = ch.pipeline();
             pipeline.addLast(new VBrokerClientCodec());
+            ResponseHandlerFactory responseHandlerFactory = new ResponseHandlerFactory(null);
             // add same handler since its the same dummy response from server.
-            pipeline.addLast(new VBrokerClientHandler());
+            pipeline.addLast(new VBrokerClientHandler(responseHandlerFactory));
 
         }
     }

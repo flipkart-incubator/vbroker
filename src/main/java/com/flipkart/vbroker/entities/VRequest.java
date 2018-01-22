@@ -86,9 +86,5 @@ public final class VRequest extends Table {
         int o = builder.endObject();
         return o;
     }
-
-    public static void finishVRequestBuffer(FlatBufferBuilder builder, int offset) {
-        builder.finish(offset);
-    }
 }
 

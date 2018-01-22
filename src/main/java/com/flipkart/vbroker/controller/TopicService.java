@@ -14,10 +14,8 @@ public class TopicService {
         this.curatorService = curatorService;
     }
 
-    public void createTopic(String topicName, String team, Boolean grouped, int replicationFactor, int noOfPartitions,
-                            String topicType, String topicCategory) {
-        Topic topic = new Topic(team, topicName, grouped, noOfPartitions, replicationFactor);
-        curatorService.createNodeAndSetData(topicsPath + "/" + topicName, CreateMode.PERSISTENT,
+    public void createTopic(Topic topic) {
+        curatorService.createNodeAndSetData(topicsPath + "/" + topic.getName(), CreateMode.PERSISTENT,
                 topic.toString().getBytes()).handle((data, exception) -> {
             if (exception != null) {
                 System.out.println("Failure in creating topic!");

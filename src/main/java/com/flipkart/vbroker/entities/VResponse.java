@@ -19,6 +19,31 @@ public final class VResponse extends Table {
         return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
     }
 
+    public void __init(int _i, ByteBuffer _bb) {
+        bb_pos = _i;
+        bb = _bb;
+    }
+
+    public VResponse __assign(int _i, ByteBuffer _bb) {
+        __init(_i, _bb);
+        return this;
+    }
+
+    public int correlationId() {
+        int o = __offset(4);
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
+    }
+
+    public byte responseMessageType() {
+        int o = __offset(6);
+        return o != 0 ? bb.get(o + bb_pos) : 0;
+    }
+
+    public Table responseMessage(Table obj) {
+        int o = __offset(8);
+        return o != 0 ? __union(obj, o) : null;
+    }
+
     public static int createVResponse(FlatBufferBuilder builder,
                                       int correlationId,
                                       byte responseMessage_type,
@@ -53,31 +78,6 @@ public final class VResponse extends Table {
 
     public static void finishVResponseBuffer(FlatBufferBuilder builder, int offset) {
         builder.finish(offset);
-    }
-
-    public void __init(int _i, ByteBuffer _bb) {
-        bb_pos = _i;
-        bb = _bb;
-    }
-
-    public VResponse __assign(int _i, ByteBuffer _bb) {
-        __init(_i, _bb);
-        return this;
-    }
-
-    public int correlationId() {
-        int o = __offset(4);
-        return o != 0 ? bb.getInt(o + bb_pos) : 0;
-    }
-
-    public byte responseMessageType() {
-        int o = __offset(6);
-        return o != 0 ? bb.get(o + bb_pos) : 0;
-    }
-
-    public Table responseMessage(Table obj) {
-        int o = __offset(8);
-        return o != 0 ? __union(obj, o) : null;
     }
 }
 

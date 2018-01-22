@@ -1,117 +1,42 @@
 package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.controller.TopicService;
-import com.flipkart.vbroker.entities.*;
-import com.flipkart.vbroker.exceptions.VBrokerException;
-import com.flipkart.vbroker.protocol.Response;
-import com.google.common.base.Charsets;
-import com.google.flatbuffers.FlatBufferBuilder;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelFutureListener;
+import com.flipkart.vbroker.entities.VRequest;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.SimpleChannelInboundHandler;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.nio.ByteBuffer;
-
 @Slf4j
-public class VBrokerServerHandler extends ChannelInboundHandlerAdapter {
+@AllArgsConstructor
+public class VBrokerServerHandler extends SimpleChannelInboundHandler<VRequest> {
 
-    TopicService topicService;
-
-    public VBrokerServerHandler(TopicService topicService) {
-        super();
-        this.topicService = topicService;
-    }
+    private final TopicService topicService;
+    ;
+    private final RequestHandlerFactory requestHandlerFactory;
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void channelRead0(ChannelHandlerContext ctx, VRequest request) {
         log.info("== ChannelRead0 ==");
+        log.info("== Received VRequest {} with correlationId {} and type {} ==", request, request.correlationId(),
+                request.requestMessageType());
 
-        if (msg instanceof VRequest) {
-            VRequest request = (VRequest) msg;
-            log.info("== Received VRequest {} with correlationId {} and type {} ==", request, request.correlationId(), request.requestMessageType());
-
-            switch (request.requestMessageType()) {
-                case RequestMessage.ProduceRequest:
-                    log.info("Request is of type ProduceRequest");
-                    ProduceRequest produceRequest = (ProduceRequest) request.requestMessage(new ProduceRequest());
-                    assert produceRequest != null;
-                    log.info("Getting messageSet for topic {} and partition {}", produceRequest.topicId(), produceRequest.partitionId());
-                    MessageSet messageSet = produceRequest.messageSet();
-                    for (int i = 0; i < messageSet.messagesLength(); i++) {
-                        Message message = messageSet.messages(i);
-                        ByteBuffer byteBuffer = message.bodyPayloadAsByteBuffer();
-                        log.info("Decoded msg with msgId: {} and payload: {}", message.messageId(),
-                                Charsets.UTF_8.decode(byteBuffer).toString());
-                        log.info("Message httpUri: {} and httpMethod: {}",
-                                message.httpUri(),
-                                HttpMethod.name(message.httpMethod()));
-                    }
-
-                    FlatBufferBuilder builder = new FlatBufferBuilder();
-                    int produceResponse = ProduceResponse.createProduceResponse(
-                            builder,
-                            produceRequest.topicId(),
-                            produceRequest.partitionId(),
-                            (short) 200);
-                    int vResponse = VResponse.createVResponse(builder,
-                            request.correlationId(),
-                            ResponseMessage.ProduceResponse,
-                            produceResponse
-                    );
-                    builder.finish(vResponse);
-                    ByteBuffer responseByteBuffer = builder.dataBuffer();
-                    ByteBuf byteBuf = Unpooled.wrappedBuffer(responseByteBuffer);
-
-                    Response response = new Response(byteBuf.readableBytes(), byteBuf);
-                    ctx.write(response).addListener(ChannelFutureListener.CLOSE);
-                    break;
-                case RequestMessage.TopicCreateRequest:
-                    log.info("Request is of type TopicCreateRequest");
-                    TopicCreateRequest topicCreateRequest = (TopicCreateRequest) request.requestMessage(new TopicCreateRequest());
-                    log.info("Got request to create topic with name {}", topicCreateRequest.topicName());
-                    topicService.createTopic(topicCreateRequest.topicName(), topicCreateRequest.team(), topicCreateRequest.grouped(),
-                            topicCreateRequest.replicationFactor(), topicCreateRequest.partitions(), TopicType.name(topicCreateRequest.topicType()),
-                            TopicCategory.name(topicCreateRequest.topicCategory()));
-
-
-                    FlatBufferBuilder topicResponseBuilder = new FlatBufferBuilder();
-                    int topicResponse = ProduceResponse.createProduceResponse(
-                            topicResponseBuilder,
-                            (short) 1,
-                            (short) 1,
-                            (short) 200);
-                    int topicVResponse = VResponse.createVResponse(topicResponseBuilder,
-                            request.correlationId(),
-                            ResponseMessage.ProduceResponse,
-                            topicResponse
-                    );
-                    topicResponseBuilder.finish(topicVResponse);
-                    ByteBuffer topicResponseBuffer = topicResponseBuilder.dataBuffer();
-                    ByteBuf res = Unpooled.wrappedBuffer(topicResponseBuffer);
-
-                    Response topResponse = new Response(res.readableBytes(), res);
-                    ctx.write(topResponse).addListener(ChannelFutureListener.CLOSE);
-                    break;
-            }
-        } else if (msg instanceof Short) {
-            log.info("Msg is an instance of short");
-            Short aShort = (short) 1;
-            ctx.write(aShort).addListener(ChannelFutureListener.CLOSE);
-        } else {
-            throw new VBrokerException("Unknown msg type - expected VRequest/Short");
-        }
+        RequestHandler requestHandler = requestHandlerFactory.getRequestHandler(request, ctx);
+        requestHandler.handle();
     }
 
     @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        super.userEventTriggered(ctx, evt);
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) {
         ctx.flush();
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         log.error("Exception caught in server handling", cause);
         ctx.close();
     }

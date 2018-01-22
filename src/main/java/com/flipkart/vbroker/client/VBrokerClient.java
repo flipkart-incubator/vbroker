@@ -6,6 +6,7 @@ import com.flipkart.vbroker.entities.ProduceRequest;
 import com.flipkart.vbroker.entities.RequestMessage;
 import com.flipkart.vbroker.entities.VRequest;
 import com.flipkart.vbroker.protocol.Request;
+import com.flipkart.vbroker.server.ResponseHandlerFactory;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -29,10 +30,12 @@ public class VBrokerClient {
 
         EventLoopGroup group = new NioEventLoopGroup();
         try {
+            ResponseHandlerFactory responseHandlerFactory = new ResponseHandlerFactory(null);
+
             Bootstrap bootstrap = new Bootstrap();
             bootstrap.group(group)
                     .channel(NioSocketChannel.class)
-                    .handler(new VBrokerClientInitializer());
+                    .handler(new VBrokerClientInitializer(responseHandlerFactory));
 
             Channel channel = bootstrap.connect(config.getBrokerHost(), config.getBrokerPort()).sync().channel();
 

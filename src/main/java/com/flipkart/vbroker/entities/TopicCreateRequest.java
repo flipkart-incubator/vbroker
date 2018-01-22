@@ -29,62 +29,69 @@ public final class TopicCreateRequest extends Table {
         return this;
     }
 
-    public String topicName() {
+    public short id() {
         int o = __offset(4);
-        return o != 0 ? __string(o + bb_pos) : null;
+        return o != 0 ? bb.getShort(o + bb_pos) : 0;
     }
 
-    public ByteBuffer topicNameAsByteBuffer() {
-        return __vector_as_bytebuffer(4, 1);
-    }
-
-    public String team() {
+    public String topicName() {
         int o = __offset(6);
         return o != 0 ? __string(o + bb_pos) : null;
     }
 
-    public ByteBuffer teamAsByteBuffer() {
+    public ByteBuffer topicNameAsByteBuffer() {
         return __vector_as_bytebuffer(6, 1);
     }
 
-    public boolean grouped() {
+    public String team() {
         int o = __offset(8);
+        return o != 0 ? __string(o + bb_pos) : null;
+    }
+
+    public ByteBuffer teamAsByteBuffer() {
+        return __vector_as_bytebuffer(8, 1);
+    }
+
+    public boolean grouped() {
+        int o = __offset(10);
         return o != 0 ? 0 != bb.get(o + bb_pos) : false;
     }
 
-    public int partitions() {
-        int o = __offset(10);
-        return o != 0 ? bb.getInt(o + bb_pos) : 0;
+    public short partitions() {
+        int o = __offset(12);
+        return o != 0 ? bb.getShort(o + bb_pos) : 0;
     }
 
-    public int replicationFactor() {
-        int o = __offset(12);
-        return o != 0 ? bb.getInt(o + bb_pos) : 0;
+    public short replicationFactor() {
+        int o = __offset(14);
+        return o != 0 ? bb.getShort(o + bb_pos) : 0;
     }
 
     public byte topicType() {
-        int o = __offset(14);
-        return o != 0 ? bb.get(o + bb_pos) : 0;
-    }
-
-    public byte topicCategory() {
         int o = __offset(16);
         return o != 0 ? bb.get(o + bb_pos) : 0;
     }
 
+    public byte topicCategory() {
+        int o = __offset(18);
+        return o != 0 ? bb.get(o + bb_pos) : 0;
+    }
+
     public static int createTopicCreateRequest(FlatBufferBuilder builder,
+                                               short id,
                                                int topicNameOffset,
                                                int teamOffset,
                                                boolean grouped,
-                                               int partitions,
-                                               int replicationFactor,
+                                               short partitions,
+                                               short replicationFactor,
                                                byte topicType,
                                                byte topicCategory) {
-        builder.startObject(7);
-        TopicCreateRequest.addReplicationFactor(builder, replicationFactor);
-        TopicCreateRequest.addPartitions(builder, partitions);
+        builder.startObject(8);
         TopicCreateRequest.addTeam(builder, teamOffset);
         TopicCreateRequest.addTopicName(builder, topicNameOffset);
+        TopicCreateRequest.addReplicationFactor(builder, replicationFactor);
+        TopicCreateRequest.addPartitions(builder, partitions);
+        TopicCreateRequest.addId(builder, id);
         TopicCreateRequest.addTopicCategory(builder, topicCategory);
         TopicCreateRequest.addTopicType(builder, topicType);
         TopicCreateRequest.addGrouped(builder, grouped);
@@ -92,35 +99,39 @@ public final class TopicCreateRequest extends Table {
     }
 
     public static void startTopicCreateRequest(FlatBufferBuilder builder) {
-        builder.startObject(7);
+        builder.startObject(8);
+    }
+
+    public static void addId(FlatBufferBuilder builder, short id) {
+        builder.addShort(0, id, 0);
     }
 
     public static void addTopicName(FlatBufferBuilder builder, int topicNameOffset) {
-        builder.addOffset(0, topicNameOffset, 0);
+        builder.addOffset(1, topicNameOffset, 0);
     }
 
     public static void addTeam(FlatBufferBuilder builder, int teamOffset) {
-        builder.addOffset(1, teamOffset, 0);
+        builder.addOffset(2, teamOffset, 0);
     }
 
     public static void addGrouped(FlatBufferBuilder builder, boolean grouped) {
-        builder.addBoolean(2, grouped, false);
+        builder.addBoolean(3, grouped, false);
     }
 
-    public static void addPartitions(FlatBufferBuilder builder, int partitions) {
-        builder.addInt(3, partitions, 0);
+    public static void addPartitions(FlatBufferBuilder builder, short partitions) {
+        builder.addShort(4, partitions, 0);
     }
 
-    public static void addReplicationFactor(FlatBufferBuilder builder, int replicationFactor) {
-        builder.addInt(4, replicationFactor, 0);
+    public static void addReplicationFactor(FlatBufferBuilder builder, short replicationFactor) {
+        builder.addShort(5, replicationFactor, 0);
     }
 
     public static void addTopicType(FlatBufferBuilder builder, byte topicType) {
-        builder.addByte(5, topicType, 0);
+        builder.addByte(6, topicType, 0);
     }
 
     public static void addTopicCategory(FlatBufferBuilder builder, byte topicCategory) {
-        builder.addByte(6, topicCategory, 0);
+        builder.addByte(7, topicCategory, 0);
     }
 
     public static int endTopicCreateRequest(FlatBufferBuilder builder) {

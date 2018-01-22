@@ -12,7 +12,7 @@ import java.util.List;
 public class VResponseDecoder extends ReplayingDecoder<Void> {
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
         log.info("Decoding VResponse bytebuf");
         int responseLength = in.readInt();
         ByteBuf byteBuf = in.readBytes(responseLength);
