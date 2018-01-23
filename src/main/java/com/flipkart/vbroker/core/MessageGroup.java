@@ -18,11 +18,11 @@ public class MessageGroup {
     private List<Message> messages = new LinkedList<>();
     private Level level;
 
-    public enum Level {
-        L1, L2, L3
-    }
-
     public void appendMessage(Message message) {
         this.messages.add(message);
+    }
+
+    public enum Level {
+        L1, L2, L3
     }
 }

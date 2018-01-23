@@ -10,8 +10,8 @@ import java.util.List;
  */
 
 public class SubscriptionGroup implements Iterable<Message> {
-    private short topicId;
     MessageGroup messageGroup;
+    private short topicId;
     private QType qType;
     private int currSeqNo;
 
@@ -24,15 +24,15 @@ public class SubscriptionGroup implements Iterable<Message> {
         return null;
     }
 
-    public enum QType {
-        MAIN, SIDELINE, RETRY_1, RETRY_2, RETRY_3
-    }
-
     public void sidelineGroup() {
         this.qType = QType.SIDELINE;
     }
 
     public void setQType(QType qType) {
         this.qType = qType;
+    }
+
+    public enum QType {
+        MAIN, SIDELINE, RETRY_1, RETRY_2, RETRY_3
     }
 }

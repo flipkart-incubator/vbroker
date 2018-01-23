@@ -30,11 +30,9 @@ import java.util.concurrent.Executors;
 public class VBrokerServer implements Runnable {
 
     private final VBrokerConfig config;
-
+    private final CountDownLatch mainLatch = new CountDownLatch(1);
     private Channel serverChannel;
     private Channel serverLocalChannel;
-
-    private final CountDownLatch mainLatch = new CountDownLatch(1);
 
     public VBrokerServer(VBrokerConfig config) {
         this.config = config;

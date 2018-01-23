@@ -2,45 +2,93 @@
 
 package com.flipkart.vbroker.entities;
 
-import java.nio.*;
-import java.lang.*;
-import java.util.*;
-import com.google.flatbuffers.*;
+import com.google.flatbuffers.FlatBufferBuilder;
+import com.google.flatbuffers.Table;
+
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 @SuppressWarnings("unused")
 public final class FetchResponse extends Table {
-  public static FetchResponse getRootAsFetchResponse(ByteBuffer _bb) { return getRootAsFetchResponse(_bb, new FetchResponse()); }
-  public static FetchResponse getRootAsFetchResponse(ByteBuffer _bb, FetchResponse obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; }
-  public FetchResponse __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+    public static FetchResponse getRootAsFetchResponse(ByteBuffer _bb) {
+        return getRootAsFetchResponse(_bb, new FetchResponse());
+    }
 
-  public short topicId() { int o = __offset(4); return o != 0 ? bb.getShort(o + bb_pos) : 0; }
-  public short partitionId() { int o = __offset(6); return o != 0 ? bb.getShort(o + bb_pos) : 0; }
-  public short statusCode() { int o = __offset(8); return o != 0 ? bb.getShort(o + bb_pos) : 0; }
-  public MessageSet messageSet() { return messageSet(new MessageSet()); }
-  public MessageSet messageSet(MessageSet obj) { int o = __offset(10); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
+    public static FetchResponse getRootAsFetchResponse(ByteBuffer _bb, FetchResponse obj) {
+        _bb.order(ByteOrder.LITTLE_ENDIAN);
+        return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
+    }
 
-  public static int createFetchResponse(FlatBufferBuilder builder,
-      short topicId,
-      short partitionId,
-      short statusCode,
-      int messageSetOffset) {
-    builder.startObject(4);
-    FetchResponse.addMessageSet(builder, messageSetOffset);
-    FetchResponse.addStatusCode(builder, statusCode);
-    FetchResponse.addPartitionId(builder, partitionId);
-    FetchResponse.addTopicId(builder, topicId);
-    return FetchResponse.endFetchResponse(builder);
-  }
+    public static int createFetchResponse(FlatBufferBuilder builder,
+                                          short topicId,
+                                          short partitionId,
+                                          short statusCode,
+                                          int messageSetOffset) {
+        builder.startObject(4);
+        FetchResponse.addMessageSet(builder, messageSetOffset);
+        FetchResponse.addStatusCode(builder, statusCode);
+        FetchResponse.addPartitionId(builder, partitionId);
+        FetchResponse.addTopicId(builder, topicId);
+        return FetchResponse.endFetchResponse(builder);
+    }
 
-  public static void startFetchResponse(FlatBufferBuilder builder) { builder.startObject(4); }
-  public static void addTopicId(FlatBufferBuilder builder, short topicId) { builder.addShort(0, topicId, 0); }
-  public static void addPartitionId(FlatBufferBuilder builder, short partitionId) { builder.addShort(1, partitionId, 0); }
-  public static void addStatusCode(FlatBufferBuilder builder, short statusCode) { builder.addShort(2, statusCode, 0); }
-  public static void addMessageSet(FlatBufferBuilder builder, int messageSetOffset) { builder.addOffset(3, messageSetOffset, 0); }
-  public static int endFetchResponse(FlatBufferBuilder builder) {
-    int o = builder.endObject();
-    return o;
-  }
+    public static void startFetchResponse(FlatBufferBuilder builder) {
+        builder.startObject(4);
+    }
+
+    public static void addTopicId(FlatBufferBuilder builder, short topicId) {
+        builder.addShort(0, topicId, 0);
+    }
+
+    public static void addPartitionId(FlatBufferBuilder builder, short partitionId) {
+        builder.addShort(1, partitionId, 0);
+    }
+
+    public static void addStatusCode(FlatBufferBuilder builder, short statusCode) {
+        builder.addShort(2, statusCode, 0);
+    }
+
+    public static void addMessageSet(FlatBufferBuilder builder, int messageSetOffset) {
+        builder.addOffset(3, messageSetOffset, 0);
+    }
+
+    public static int endFetchResponse(FlatBufferBuilder builder) {
+        int o = builder.endObject();
+        return o;
+    }
+
+    public void __init(int _i, ByteBuffer _bb) {
+        bb_pos = _i;
+        bb = _bb;
+    }
+
+    public FetchResponse __assign(int _i, ByteBuffer _bb) {
+        __init(_i, _bb);
+        return this;
+    }
+
+    public short topicId() {
+        int o = __offset(4);
+        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+    }
+
+    public short partitionId() {
+        int o = __offset(6);
+        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+    }
+
+    public short statusCode() {
+        int o = __offset(8);
+        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+    }
+
+    public MessageSet messageSet() {
+        return messageSet(new MessageSet());
+    }
+
+    public MessageSet messageSet(MessageSet obj) {
+        int o = __offset(10);
+        return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null;
+    }
 }
 

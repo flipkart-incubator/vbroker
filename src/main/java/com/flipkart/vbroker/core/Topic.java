@@ -29,7 +29,7 @@ public class Topic {
         return id == topic.id;
     }
 
-    public enum TopicCategory{
+    public enum TopicCategory {
         QUEUE, TOPIC
     }
 }
