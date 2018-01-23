@@ -68,10 +68,18 @@ table VResponse {
       responseMessage:ResponseMessage;
 }
 
-table ProduceResponse {
-      topicId:int16;
+table TopicPartitionProduceResponse {
       partitionId:int16;
       statusCode:int16;
+}
+
+table TopicProduceResponse {
+      topicId:int16;
+      partitionResponses:[TopicPartitionProduceResponse];
+}
+
+table ProduceResponse {
+      topicResponses:[TopicProduceResponse];
 }
 
 table FetchResponse {

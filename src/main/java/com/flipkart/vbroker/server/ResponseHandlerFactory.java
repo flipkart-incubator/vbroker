@@ -22,7 +22,7 @@ public class ResponseHandlerFactory {
             case ResponseMessage.ProduceResponse:
                 ProduceResponse produceResponse = (ProduceResponse) msg.responseMessage(new ProduceResponse());
                 assert produceResponse != null;
-                log.info("Received ProduceResponse with statusCode {}", produceResponse.statusCode());
+                //log.info("Received ProduceResponse with statusCode {}", produceResponse.statusCode());
                 responseHandler = new ProduceResponseHandler(produceResponse);
                 break;
             case ResponseMessage.FetchResponse:

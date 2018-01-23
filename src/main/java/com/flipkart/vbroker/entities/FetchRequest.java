@@ -2,78 +2,40 @@
 
 package com.flipkart.vbroker.entities;
 
-import com.google.flatbuffers.FlatBufferBuilder;
-import com.google.flatbuffers.Table;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.nio.*;
+import java.lang.*;
+import java.util.*;
+import com.google.flatbuffers.*;
 
 @SuppressWarnings("unused")
 public final class FetchRequest extends Table {
-    public static FetchRequest getRootAsFetchRequest(ByteBuffer _bb) {
-        return getRootAsFetchRequest(_bb, new FetchRequest());
-    }
+  public static FetchRequest getRootAsFetchRequest(ByteBuffer _bb) { return getRootAsFetchRequest(_bb, new FetchRequest()); }
+  public static FetchRequest getRootAsFetchRequest(ByteBuffer _bb, FetchRequest obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; }
+  public FetchRequest __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-    public static FetchRequest getRootAsFetchRequest(ByteBuffer _bb, FetchRequest obj) {
-        _bb.order(ByteOrder.LITTLE_ENDIAN);
-        return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
-    }
+  public short topicId() { int o = __offset(4); return o != 0 ? bb.getShort(o + bb_pos) : 0; }
+  public short partitionId() { int o = __offset(6); return o != 0 ? bb.getShort(o + bb_pos) : 0; }
+  public short noOfMessages() { int o = __offset(8); return o != 0 ? bb.getShort(o + bb_pos) : 0; }
 
-    public static int createFetchRequest(FlatBufferBuilder builder,
-                                         short topicId,
-                                         short partitionId,
-                                         short noOfMessages) {
-        builder.startObject(3);
-        FetchRequest.addNoOfMessages(builder, noOfMessages);
-        FetchRequest.addPartitionId(builder, partitionId);
-        FetchRequest.addTopicId(builder, topicId);
-        return FetchRequest.endFetchRequest(builder);
-    }
+  public static int createFetchRequest(FlatBufferBuilder builder,
+      short topicId,
+      short partitionId,
+      short noOfMessages) {
+    builder.startObject(3);
+    FetchRequest.addNoOfMessages(builder, noOfMessages);
+    FetchRequest.addPartitionId(builder, partitionId);
+    FetchRequest.addTopicId(builder, topicId);
+    return FetchRequest.endFetchRequest(builder);
+  }
 
-    public static void startFetchRequest(FlatBufferBuilder builder) {
-        builder.startObject(3);
-    }
-
-    public static void addTopicId(FlatBufferBuilder builder, short topicId) {
-        builder.addShort(0, topicId, 0);
-    }
-
-    public static void addPartitionId(FlatBufferBuilder builder, short partitionId) {
-        builder.addShort(1, partitionId, 0);
-    }
-
-    public static void addNoOfMessages(FlatBufferBuilder builder, short noOfMessages) {
-        builder.addShort(2, noOfMessages, 0);
-    }
-
-    public static int endFetchRequest(FlatBufferBuilder builder) {
-        int o = builder.endObject();
-        return o;
-    }
-
-    public void __init(int _i, ByteBuffer _bb) {
-        bb_pos = _i;
-        bb = _bb;
-    }
-
-    public FetchRequest __assign(int _i, ByteBuffer _bb) {
-        __init(_i, _bb);
-        return this;
-    }
-
-    public short topicId() {
-        int o = __offset(4);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
-    }
-
-    public short partitionId() {
-        int o = __offset(6);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
-    }
-
-    public short noOfMessages() {
-        int o = __offset(8);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
-    }
+  public static void startFetchRequest(FlatBufferBuilder builder) { builder.startObject(3); }
+  public static void addTopicId(FlatBufferBuilder builder, short topicId) { builder.addShort(0, topicId, 0); }
+  public static void addPartitionId(FlatBufferBuilder builder, short partitionId) { builder.addShort(1, partitionId, 0); }
+  public static void addNoOfMessages(FlatBufferBuilder builder, short noOfMessages) { builder.addShort(2, noOfMessages, 0); }
+  public static int endFetchRequest(FlatBufferBuilder builder) {
+    int o = builder.endObject();
+    return o;
+  }
 }
 
