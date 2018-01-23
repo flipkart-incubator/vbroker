@@ -22,15 +22,13 @@ public class ResponseHandlerFactory {
             case ResponseMessage.ProduceResponse:
                 ProduceResponse produceResponse = (ProduceResponse) msg.responseMessage(new ProduceResponse());
                 assert produceResponse != null;
-                //log.info("Received ProduceResponse with statusCode {}", produceResponse.statusCode());
                 responseHandler = new ProduceResponseHandler(produceResponse);
                 break;
             case ResponseMessage.FetchResponse:
                 FetchResponse fetchResponse = (FetchResponse) msg.responseMessage(new FetchResponse());
                 assert fetchResponse != null;
-                log.info("Received FetchResponse with statusCode {}", fetchResponse.statusCode());
                 responseHandler = new FetchResponseHandler(clientBootstrap, fetchResponse);
-                //ctx.close().addListener(ChannelFutureListener.CLOSE);
+                break;
         }
 
         return responseHandler;

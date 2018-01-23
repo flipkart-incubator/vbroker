@@ -54,10 +54,19 @@ table ProduceRequest {
       topicRequests:[TopicProduceRequest];
 }
 
-table FetchRequest {
-      topicId:int16;
+
+table TopicPartitionFetchRequest {
       partitionId:int16;
       noOfMessages:int16;
+}
+
+table TopicFetchRequest {
+      topicId:int16;
+      partitionRequests:[TopicPartitionFetchRequest];
+}
+
+table FetchRequest {
+      topicRequests:[TopicFetchRequest];
 }
 
 table TopicCreateRequest {
@@ -76,6 +85,8 @@ table VResponse {
       responseMessage:ResponseMessage;
 }
 
+//ProduceResponse
+
 table TopicPartitionProduceResponse {
       partitionId:int16;
       statusCode:int16;
@@ -90,11 +101,21 @@ table ProduceResponse {
       topicResponses:[TopicProduceResponse];
 }
 
-table FetchResponse {
-      topicId:int16;
+//FetchResponse
+
+table TopicPartitionFetchResponse {
       partitionId:int16;
       statusCode:int16;
       messageSet:MessageSet;
+}
+
+table TopicFetchResponse {
+      topicId:int16;
+      partitionResponses:[TopicPartitionFetchResponse];
+}
+
+table FetchResponse {
+      topicResponses:[TopicFetchResponse];
 }
 
 root_type VResponse;

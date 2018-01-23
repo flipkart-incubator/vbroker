@@ -24,57 +24,83 @@ public class FetchRequestHandler implements RequestHandler {
 
     @Override
     public void handle() {
-        short noOfMessagesToFetch = fetchRequest.noOfMessages();
-        log.info("Handling FetchRequest for {} messages for topic {} and partition {}",
-                noOfMessagesToFetch, fetchRequest.topicId(), fetchRequest.partitionId());
-
-        int toFetchNoOfMessages = noOfMessagesToFetch;
-        if (messageService.size() < noOfMessagesToFetch) {
-            toFetchNoOfMessages = messageService.size();
-        }
-
-        int[] messages = new int[toFetchNoOfMessages];
         FlatBufferBuilder builder = new FlatBufferBuilder();
 
-        log.info("No of messages in store are {}", messageService.size());
-        int i = 0;
-        while (messageService.hasNext() && i < noOfMessagesToFetch) {
-            log.info("No of messages in store are {}", messageService.size());
-            Message message = messageService.poll();
+        int noOfTopics = fetchRequest.topicRequestsLength();
+        int[] topicFetchResponses = new int[noOfTopics];
 
-            int headersVector = Message.createHeadersVector(builder, new int[0]);
+        for (int i = 0; i < noOfTopics; i++) {
+            TopicFetchRequest topicFetchRequest = fetchRequest.topicRequests(i);
 
-            ByteBuffer payloadByteBuffer = message.bodyPayloadAsByteBuffer();
-            byte[] messageBytes = new byte[payloadByteBuffer.remaining()];
-            payloadByteBuffer.get(messageBytes);
+            int noOfPartitions = topicFetchRequest.partitionRequestsLength();
+            int[] partitionFetchResponses = new int[noOfPartitions];
 
-            int messageOffset = Message.createMessage(
+            for (int j = 0; j < noOfPartitions; j++) {
+                TopicPartitionFetchRequest topicPartitionFetchRequest = topicFetchRequest.partitionRequests(j);
+
+                short noOfMessagesToFetch = topicPartitionFetchRequest.noOfMessages();
+                log.info("Handling FetchRequest for {} messages for topic {} and partition {}",
+                        noOfMessagesToFetch, topicFetchRequest.topicId(), topicPartitionFetchRequest.partitionId());
+
+                int toFetchNoOfMessages = noOfMessagesToFetch;
+                if (messageService.size() < noOfMessagesToFetch) {
+                    toFetchNoOfMessages = messageService.size();
+                }
+
+                int[] messages = new int[toFetchNoOfMessages];
+                int m = 0;
+                while (messageService.hasNext() && m < noOfMessagesToFetch) {
+                    log.info("No of messages in store are {}", messageService.size());
+                    Message message = messageService.poll();
+
+                    int headersVector = Message.createHeadersVector(builder, new int[0]);
+
+                    ByteBuffer payloadByteBuffer = message.bodyPayloadAsByteBuffer();
+                    byte[] messageBytes = new byte[payloadByteBuffer.remaining()];
+                    payloadByteBuffer.get(messageBytes);
+
+                    int messageOffset = Message.createMessage(
+                            builder,
+                            builder.createString(requireNonNull(message.messageId())),
+                            builder.createString(requireNonNull(message.groupId())),
+                            message.crc(),
+                            message.version(),
+                            message.seqNo(),
+                            message.topicId(),
+                            201,
+                            builder.createString(requireNonNull(message.httpUri())),
+                            message.httpMethod(),
+                            message.callbackTopicId(),
+                            builder.createString(requireNonNull(message.callbackHttpUri())),
+                            message.callbackHttpMethod(),
+                            headersVector,
+                            messageBytes.length,
+                            builder.createByteVector(messageBytes));
+                    messages[m] = messageOffset;
+                }
+
+                int messagesVector = MessageSet.createMessagesVector(builder, messages);
+                int messageSet = MessageSet.createMessageSet(builder, messagesVector);
+
+                int topicPartitionFetchResponse = TopicPartitionFetchResponse.createTopicPartitionFetchResponse(
+                        builder,
+                        topicPartitionFetchRequest.partitionId(),
+                        (short) 200,
+                        messageSet);
+                partitionFetchResponses[m] = topicPartitionFetchResponse;
+            }
+
+            int partitionResponsesVector = TopicFetchResponse.createPartitionResponsesVector(builder, partitionFetchResponses);
+            int topicFetchResponse = TopicFetchResponse.createTopicFetchResponse(
                     builder,
-                    builder.createString(requireNonNull(message.messageId())),
-                    builder.createString(requireNonNull(message.groupId())),
-                    message.crc(),
-                    message.version(),
-                    message.seqNo(),
-                    message.topicId(),
-                    201,
-                    builder.createString(requireNonNull(message.httpUri())),
-                    message.httpMethod(),
-                    message.callbackTopicId(),
-                    builder.createString(requireNonNull(message.callbackHttpUri())),
-                    message.callbackHttpMethod(),
-                    headersVector,
-                    messageBytes.length,
-                    builder.createByteVector(messageBytes));
-            messages[i] = messageOffset;
+                    topicFetchRequest.topicId(),
+                    partitionResponsesVector);
+            topicFetchResponses[i] = topicFetchResponse;
         }
 
-        int messagesVector = MessageSet.createMessagesVector(builder, messages);
-        int messageSet = MessageSet.createMessageSet(builder, messagesVector);
-        int fetchResponse = FetchResponse.createFetchResponse(builder,
-                fetchRequest.topicId(),
-                fetchRequest.partitionId(),
-                (short) 200,
-                messageSet);
+        int topicResponsesVector = FetchResponse.createTopicResponsesVector(builder, topicFetchResponses);
+        int fetchResponse = FetchResponse.createFetchResponse(builder, topicResponsesVector);
+
         int vResponse = VResponse.createVResponse(builder,
                 1001,
                 ResponseMessage.FetchResponse,

@@ -26,15 +26,23 @@ public class FetchResponseHandler implements ResponseHandler {
 
     @Override
     public void handle() {
-        log.info("Handling fetchResponse for topic {} and partition {}", fetchResponse.topicId(), fetchResponse.partitionId());
-        MessageSet messageSet = fetchResponse.messageSet();
-        for (int i = 0; i < messageSet.messagesLength(); i++) {
-            Message message = messageSet.messages(i);
-            ByteBuffer byteBuffer = message.bodyPayloadAsByteBuffer();
-            ByteBuf byteBuf = Unpooled.wrappedBuffer(byteBuffer);
-            log.info("Decoded msg with msgId: {} and payload: {}", message.messageId(),
-                    Charsets.UTF_8.decode(byteBuffer).toString());
-            makeHttpRequest(message);
+        for (int i = 0; i < fetchResponse.topicResponsesLength(); i++) {
+            TopicFetchResponse topicFetchResponse = fetchResponse.topicResponses(i);
+            for (int j = 0; j < topicFetchResponse.partitionResponsesLength(); j++) {
+                TopicPartitionFetchResponse topicPartitionFetchResponse = topicFetchResponse.partitionResponses(j);
+                log.info("Handling fetchResponse for topic {} and partition {}",
+                        topicFetchResponse.topicId(), topicPartitionFetchResponse.partitionId());
+
+                MessageSet messageSet = topicPartitionFetchResponse.messageSet();
+                for (int m = 0; m < messageSet.messagesLength(); m++) {
+                    Message message = messageSet.messages(m);
+                    ByteBuffer byteBuffer = message.bodyPayloadAsByteBuffer();
+                    ByteBuf byteBuf = Unpooled.wrappedBuffer(byteBuffer);
+                    log.info("Decoded msg with msgId: {} and payload: {}", message.messageId(),
+                            Charsets.UTF_8.decode(byteBuffer).toString());
+                    makeHttpRequest(message);
+                }
+            }
         }
     }
 

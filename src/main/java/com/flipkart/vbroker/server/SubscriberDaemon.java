@@ -1,8 +1,6 @@
 package com.flipkart.vbroker.server;
 
-import com.flipkart.vbroker.entities.FetchRequest;
-import com.flipkart.vbroker.entities.RequestMessage;
-import com.flipkart.vbroker.entities.VRequest;
+import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.protocol.Request;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.bootstrap.Bootstrap;
@@ -48,10 +46,24 @@ public class SubscriberDaemon implements Runnable {
                     Thread.sleep(pollTimeMs);
 
                     FlatBufferBuilder builder = new FlatBufferBuilder();
-                    int fetchRequest = FetchRequest.createFetchRequest(builder,
-                            (short) 11,
+
+                    int[] tpFetchRequests = new int[1];
+                    int topicPartitionFetchRequest = TopicPartitionFetchRequest.createTopicPartitionFetchRequest(
+                            builder,
                             (short) 1,
                             (short) 1);
+                    tpFetchRequests[0] = topicPartitionFetchRequest;
+
+                    int[] topicFetchRequests = new int[1];
+                    int partitionRequestsVector = TopicFetchRequest.createPartitionRequestsVector(builder, tpFetchRequests);
+
+                    int topicFetchRequest = TopicFetchRequest.createTopicFetchRequest(builder,
+                            (short) 11,
+                            partitionRequestsVector);
+                    topicFetchRequests[0] = topicFetchRequest;
+                    int topicRequestsVector = FetchRequest.createTopicRequestsVector(builder, topicFetchRequests);
+
+                    int fetchRequest = FetchRequest.createFetchRequest(builder, topicRequestsVector);
                     int vRequest = VRequest.createVRequest(builder,
                             (byte) 1,
                             1001,

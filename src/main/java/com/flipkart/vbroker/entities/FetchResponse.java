@@ -20,36 +20,28 @@ public final class FetchResponse extends Table {
     }
 
     public static int createFetchResponse(FlatBufferBuilder builder,
-                                          short topicId,
-                                          short partitionId,
-                                          short statusCode,
-                                          int messageSetOffset) {
-        builder.startObject(4);
-        FetchResponse.addMessageSet(builder, messageSetOffset);
-        FetchResponse.addStatusCode(builder, statusCode);
-        FetchResponse.addPartitionId(builder, partitionId);
-        FetchResponse.addTopicId(builder, topicId);
+                                          int topicResponsesOffset) {
+        builder.startObject(1);
+        FetchResponse.addTopicResponses(builder, topicResponsesOffset);
         return FetchResponse.endFetchResponse(builder);
     }
 
     public static void startFetchResponse(FlatBufferBuilder builder) {
-        builder.startObject(4);
+        builder.startObject(1);
     }
 
-    public static void addTopicId(FlatBufferBuilder builder, short topicId) {
-        builder.addShort(0, topicId, 0);
+    public static void addTopicResponses(FlatBufferBuilder builder, int topicResponsesOffset) {
+        builder.addOffset(0, topicResponsesOffset, 0);
     }
 
-    public static void addPartitionId(FlatBufferBuilder builder, short partitionId) {
-        builder.addShort(1, partitionId, 0);
+    public static int createTopicResponsesVector(FlatBufferBuilder builder, int[] data) {
+        builder.startVector(4, data.length, 4);
+        for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]);
+        return builder.endVector();
     }
 
-    public static void addStatusCode(FlatBufferBuilder builder, short statusCode) {
-        builder.addShort(2, statusCode, 0);
-    }
-
-    public static void addMessageSet(FlatBufferBuilder builder, int messageSetOffset) {
-        builder.addOffset(3, messageSetOffset, 0);
+    public static void startTopicResponsesVector(FlatBufferBuilder builder, int numElems) {
+        builder.startVector(4, numElems, 4);
     }
 
     public static int endFetchResponse(FlatBufferBuilder builder) {
@@ -67,28 +59,18 @@ public final class FetchResponse extends Table {
         return this;
     }
 
-    public short topicId() {
+    public TopicFetchResponse topicResponses(int j) {
+        return topicResponses(new TopicFetchResponse(), j);
+    }
+
+    public TopicFetchResponse topicResponses(TopicFetchResponse obj, int j) {
         int o = __offset(4);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+        return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null;
     }
 
-    public short partitionId() {
-        int o = __offset(6);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
-    }
-
-    public short statusCode() {
-        int o = __offset(8);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
-    }
-
-    public MessageSet messageSet() {
-        return messageSet(new MessageSet());
-    }
-
-    public MessageSet messageSet(MessageSet obj) {
-        int o = __offset(10);
-        return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null;
+    public int topicResponsesLength() {
+        int o = __offset(4);
+        return o != 0 ? __vector_len(o) : 0;
     }
 }
 
