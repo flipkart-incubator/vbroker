@@ -1,10 +1,7 @@
 package com.flipkart.vbroker.client;
 
 import com.flipkart.vbroker.VBrokerConfig;
-import com.flipkart.vbroker.entities.MessageSet;
-import com.flipkart.vbroker.entities.ProduceRequest;
-import com.flipkart.vbroker.entities.RequestMessage;
-import com.flipkart.vbroker.entities.VRequest;
+import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.protocol.Request;
 import com.flipkart.vbroker.server.ResponseHandlerFactory;
 import com.google.flatbuffers.FlatBufferBuilder;
@@ -40,15 +37,27 @@ public class VBrokerClient {
             Channel channel = bootstrap.connect(config.getBrokerHost(), config.getBrokerPort()).sync().channel();
 
             FlatBufferBuilder builder = new FlatBufferBuilder();
+
             int[] messages = new int[1];
             messages[0] = MessageStore.getSampleMsg(builder);
             int messagesVector = MessageSet.createMessagesVector(builder, messages);
             int messageSet = MessageSet.createMessageSet(builder, messagesVector);
-            int produceRequest = ProduceRequest.createProduceRequest(builder,
-                    (short) 11,
+            int topicPartitionProduceRequest = TopicPartitionProduceRequest.createTopicPartitionProduceRequest(
+                    builder,
                     (short) 1,
                     (short) 1,
                     messageSet);
+
+            int[] partitionRequests = new int[1];
+            partitionRequests[0] = topicPartitionProduceRequest;
+            int partitionRequestsVector = TopicProduceRequest.createPartitionRequestsVector(builder, partitionRequests);
+
+            int topicProduceRequest = TopicProduceRequest.createTopicProduceRequest(builder, (short) 11, partitionRequestsVector);
+            int[] topicRequests = new int[1];
+            topicRequests[0] = topicProduceRequest;
+            int topicRequestsVector = ProduceRequest.createTopicRequestsVector(builder, topicRequests);
+
+            int produceRequest = ProduceRequest.createProduceRequest(builder, topicRequestsVector);
             int vRequest = VRequest.createVRequest(builder,
                     (byte) 1,
                     1001,

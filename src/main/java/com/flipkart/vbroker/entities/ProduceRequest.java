@@ -20,36 +20,28 @@ public final class ProduceRequest extends Table {
     }
 
     public static int createProduceRequest(FlatBufferBuilder builder,
-                                           short topicId,
-                                           short partitionId,
-                                           short requiredAcks,
-                                           int messageSetOffset) {
-        builder.startObject(4);
-        ProduceRequest.addMessageSet(builder, messageSetOffset);
-        ProduceRequest.addRequiredAcks(builder, requiredAcks);
-        ProduceRequest.addPartitionId(builder, partitionId);
-        ProduceRequest.addTopicId(builder, topicId);
+                                           int topicRequestsOffset) {
+        builder.startObject(1);
+        ProduceRequest.addTopicRequests(builder, topicRequestsOffset);
         return ProduceRequest.endProduceRequest(builder);
     }
 
     public static void startProduceRequest(FlatBufferBuilder builder) {
-        builder.startObject(4);
+        builder.startObject(1);
     }
 
-    public static void addTopicId(FlatBufferBuilder builder, short topicId) {
-        builder.addShort(0, topicId, 0);
+    public static void addTopicRequests(FlatBufferBuilder builder, int topicRequestsOffset) {
+        builder.addOffset(0, topicRequestsOffset, 0);
     }
 
-    public static void addPartitionId(FlatBufferBuilder builder, short partitionId) {
-        builder.addShort(1, partitionId, 0);
+    public static int createTopicRequestsVector(FlatBufferBuilder builder, int[] data) {
+        builder.startVector(4, data.length, 4);
+        for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]);
+        return builder.endVector();
     }
 
-    public static void addRequiredAcks(FlatBufferBuilder builder, short requiredAcks) {
-        builder.addShort(2, requiredAcks, 0);
-    }
-
-    public static void addMessageSet(FlatBufferBuilder builder, int messageSetOffset) {
-        builder.addOffset(3, messageSetOffset, 0);
+    public static void startTopicRequestsVector(FlatBufferBuilder builder, int numElems) {
+        builder.startVector(4, numElems, 4);
     }
 
     public static int endProduceRequest(FlatBufferBuilder builder) {
@@ -67,28 +59,18 @@ public final class ProduceRequest extends Table {
         return this;
     }
 
-    public short topicId() {
+    public TopicProduceRequest topicRequests(int j) {
+        return topicRequests(new TopicProduceRequest(), j);
+    }
+
+    public TopicProduceRequest topicRequests(TopicProduceRequest obj, int j) {
         int o = __offset(4);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+        return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null;
     }
 
-    public short partitionId() {
-        int o = __offset(6);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
-    }
-
-    public short requiredAcks() {
-        int o = __offset(8);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
-    }
-
-    public MessageSet messageSet() {
-        return messageSet(new MessageSet());
-    }
-
-    public MessageSet messageSet(MessageSet obj) {
-        int o = __offset(10);
-        return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null;
+    public int topicRequestsLength() {
+        int o = __offset(4);
+        return o != 0 ? __vector_len(o) : 0;
     }
 }
 

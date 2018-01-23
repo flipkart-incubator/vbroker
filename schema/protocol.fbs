@@ -39,11 +39,19 @@ table MessageSet {
       messages:[Message];
 }
 
-table ProduceRequest {
-      topicId:int16;
+table TopicPartitionProduceRequest {
       partitionId:int16;
       requiredAcks:int16;
       messageSet:MessageSet;
+}
+
+table TopicProduceRequest {
+      topicId:int16;
+      partitionRequests:[TopicPartitionProduceRequest];
+}
+
+table ProduceRequest {
+      topicRequests:[TopicProduceRequest];
 }
 
 table FetchRequest {

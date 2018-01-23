@@ -28,30 +28,34 @@ public class ProduceRequestHandler implements RequestHandler {
 
     @Override
     public void handle() {
-        log.info("Getting messageSet for topic {} and partition {}", produceRequest.topicId(), produceRequest.partitionId());
-        MessageSet messageSet = produceRequest.messageSet();
-
         FlatBufferBuilder builder = new FlatBufferBuilder();
         Map<Short, List<Integer>> topicPartitionResponseMap = new HashMap<>();
 
-        for (int i = 0; i < messageSet.messagesLength(); i++) {
-            Message message = messageSet.messages(i);
-            ByteBuffer byteBuffer = message.bodyPayloadAsByteBuffer();
-            ByteBuf byteBuf = Unpooled.wrappedBuffer(byteBuffer);
-            log.info("Decoded msg with msgId: {} and payload: {}", message.messageId(),
-                    Charsets.UTF_8.decode(byteBuffer).toString());
+        for (int i = 0; i < produceRequest.topicRequestsLength(); i++) {
+            TopicProduceRequest topicProduceRequest = produceRequest.topicRequests(i);
+            for (int j = 0; j < topicProduceRequest.partitionRequestsLength(); j++) {
+                TopicPartitionProduceRequest topicPartitionProduceRequest = topicProduceRequest.partitionRequests(j);
+                log.info("Getting messageSet for topic {} and partition {}", topicProduceRequest.topicId(), topicPartitionProduceRequest.partitionId());
+                MessageSet messageSet = topicPartitionProduceRequest.messageSet();
 
-            producerService.produceMessage(message);
+                for (int m = 0; m < messageSet.messagesLength(); m++) {
+                    Message message = messageSet.messages(m);
+                    ByteBuffer byteBuffer = message.bodyPayloadAsByteBuffer();
+                    ByteBuf byteBuf = Unpooled.wrappedBuffer(byteBuffer);
+                    log.info("Decoded msg with msgId: {} and payload: {}", message.messageId(),
+                            Charsets.UTF_8.decode(byteBuffer).toString());
 
-            produceRequest.topicId();
-            int topicPartitionProduceResponse = TopicPartitionProduceResponse.createTopicPartitionProduceResponse(
-                    builder,
-                    produceRequest.partitionId(),
-                    (short) 200);
+                    producerService.produceMessage(message);
 
-            topicPartitionResponseMap.computeIfAbsent(produceRequest.topicId(),
-                    o -> new LinkedList<>())
-                    .add(topicPartitionProduceResponse);
+                    int topicPartitionProduceResponse = TopicPartitionProduceResponse.createTopicPartitionProduceResponse(
+                            builder,
+                            topicPartitionProduceRequest.partitionId(),
+                            (short) 200);
+                    topicPartitionResponseMap.computeIfAbsent(topicProduceRequest.topicId(),
+                            o -> new LinkedList<>())
+                            .add(topicPartitionProduceResponse);
+                }
+            }
         }
 
         int noOfTopics = topicPartitionResponseMap.keySet().size();
@@ -68,7 +72,7 @@ public class ProduceRequestHandler implements RequestHandler {
             int partitionResponsesVector = TopicProduceResponse.createPartitionResponsesVector(builder, partitionResponses);
             int topicProduceResponse = TopicProduceResponse.createTopicProduceResponse(
                     builder,
-                    produceRequest.topicId(),
+                    topicId,
                     partitionResponsesVector);
             topicProduceResponses[i++] = topicProduceResponse;
         }
