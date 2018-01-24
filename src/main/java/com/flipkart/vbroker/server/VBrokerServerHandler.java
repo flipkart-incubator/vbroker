@@ -15,7 +15,7 @@ public class VBrokerServerHandler extends SimpleChannelInboundHandler<VRequest> 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, VRequest request) {
         log.info("== ChannelRead0 ==");
-        log.info("== Received VRequest {} with correlationId {} and type {} ==", request, request.correlationId(), request.requestMessageType());
+        log.info("== Received VRequest with correlationId {} and type {} ==", request.correlationId(), request.requestMessageType());
 
         RequestHandler requestHandler = requestHandlerFactory.getRequestHandler(request, ctx);
         requestHandler.handle();

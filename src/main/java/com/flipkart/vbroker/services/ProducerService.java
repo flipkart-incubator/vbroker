@@ -1,5 +1,6 @@
 package com.flipkart.vbroker.services;
 
+import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.ioengine.MessageService;
 import lombok.AllArgsConstructor;
@@ -11,8 +12,8 @@ public class ProducerService {
 
     private final MessageService messageService;
 
-    public void produceMessage(Message message) {
+    public void produceMessage(TopicPartition topicPartition, Message message) {
         log.info("Producing message with msg_id: {} and group_id: {}", message.messageId(), message.groupId());
-        messageService.add(message);
+        topicPartition.addMessage(message);
     }
 }

@@ -54,13 +54,13 @@ table ProduceRequest {
       topicRequests:[TopicProduceRequest];
 }
 
-
 table TopicPartitionFetchRequest {
       partitionId:int16;
       noOfMessages:int16;
 }
 
 table TopicFetchRequest {
+      subscriptionId:int16;
       topicId:int16;
       partitionRequests:[TopicPartitionFetchRequest];
 }
@@ -110,6 +110,7 @@ table TopicPartitionFetchResponse {
 }
 
 table TopicFetchResponse {
+      subscriptionId:int16;
       topicId:int16;
       partitionResponses:[TopicPartitionFetchResponse];
 }

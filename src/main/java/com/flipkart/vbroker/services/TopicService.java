@@ -9,11 +9,11 @@ public interface TopicService {
 
     public void createTopic(Topic topic);
 
-    public void createTopicPartition(TopicPartition topicPartition);
+    public void createTopicPartition(Topic topic, TopicPartition topicPartition);
 
-    public TopicPartition getTopicPartition(short topicPartitionId);
+    public TopicPartition getTopicPartition(Topic topic, short topicPartitionId);
 
-    public Topic getTopic(int topicId);
+    public Topic getTopic(short topicId);
 
     public List<TopicPartition> getPartitions(Topic topic);
 }

@@ -1,8 +1,11 @@
 package com.flipkart.vbroker.server;
 
+import com.flipkart.vbroker.core.Topic;
+import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.protocol.Response;
 import com.flipkart.vbroker.services.ProducerService;
+import com.flipkart.vbroker.services.TopicService;
 import com.google.common.base.Charsets;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.buffer.ByteBuf;
@@ -24,6 +27,7 @@ public class ProduceRequestHandler implements RequestHandler {
 
     private final ChannelHandlerContext ctx;
     private final ProduceRequest produceRequest;
+    private final TopicService topicService;
     private final ProducerService producerService;
 
     @Override
@@ -33,11 +37,14 @@ public class ProduceRequestHandler implements RequestHandler {
 
         for (int i = 0; i < produceRequest.topicRequestsLength(); i++) {
             TopicProduceRequest topicProduceRequest = produceRequest.topicRequests(i);
+            Topic topic = topicService.getTopic(topicProduceRequest.topicId());
+
             for (int j = 0; j < topicProduceRequest.partitionRequestsLength(); j++) {
                 TopicPartitionProduceRequest topicPartitionProduceRequest = topicProduceRequest.partitionRequests(j);
                 log.info("Getting messageSet for topic {} and partition {}", topicProduceRequest.topicId(), topicPartitionProduceRequest.partitionId());
-                MessageSet messageSet = topicPartitionProduceRequest.messageSet();
+                TopicPartition topicPartition = topicService.getTopicPartition(topic, topicPartitionProduceRequest.partitionId());
 
+                MessageSet messageSet = topicPartitionProduceRequest.messageSet();
                 for (int m = 0; m < messageSet.messagesLength(); m++) {
                     Message message = messageSet.messages(m);
                     ByteBuffer byteBuffer = message.bodyPayloadAsByteBuffer();
@@ -45,7 +52,7 @@ public class ProduceRequestHandler implements RequestHandler {
                     log.info("Decoded msg with msgId: {} and payload: {}", message.messageId(),
                             Charsets.UTF_8.decode(byteBuffer).toString());
 
-                    producerService.produceMessage(message);
+                    producerService.produceMessage(topicPartition, message);
 
                     int topicPartitionProduceResponse = TopicPartitionProduceResponse.createTopicPartitionProduceResponse(
                             builder,

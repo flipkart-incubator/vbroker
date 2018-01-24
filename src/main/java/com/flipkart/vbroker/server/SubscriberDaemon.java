@@ -1,7 +1,11 @@
 package com.flipkart.vbroker.server;
 
+import com.flipkart.vbroker.core.PartSubscription;
+import com.flipkart.vbroker.core.Subscription;
+import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.protocol.Request;
+import com.flipkart.vbroker.services.SubscriptionService;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -11,6 +15,9 @@ import io.netty.channel.local.LocalAddress;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
@@ -18,18 +25,21 @@ public class SubscriberDaemon implements Runnable {
 
     private final LocalAddress address;
     private final Bootstrap consumerBootstrap;
+    private final SubscriptionService subscriptionService;
     private volatile AtomicBoolean running = new AtomicBoolean(true);
 
     public SubscriberDaemon(LocalAddress address,
-                            Bootstrap consumerBootstrap) {
+                            Bootstrap consumerBootstrap,
+                            SubscriptionService subscriptionService) {
         this.address = address;
         this.consumerBootstrap = consumerBootstrap;
+        this.subscriptionService = subscriptionService;
     }
 
     @Override
     public void run() {
         this.running.set(true);
-        log.info("Subscriber now running");
+        log.info("PartSubscriber now running");
 
         while (running.get()) {
             try {
@@ -37,9 +47,9 @@ public class SubscriberDaemon implements Runnable {
                 log.info("Sleeping for {} milli secs before connecting to server", timeMs);
                 Thread.sleep(timeMs);
 
-                log.info("Subscriber connecting to server at address {}", address);
+                log.info("SubscriberDaemon connecting to server at address {}", address);
                 Channel consumerChannel = consumerBootstrap.connect(address).sync().channel();
-                log.info("Subscriber connected to local server address {}", address);
+                log.info("SubscriberDaemon connected to local server address {}", address);
 
                 long pollTimeMs = 5000;
                 while (running.get()) {
@@ -47,20 +57,33 @@ public class SubscriberDaemon implements Runnable {
 
                     FlatBufferBuilder builder = new FlatBufferBuilder();
 
-                    int[] tpFetchRequests = new int[1];
-                    int topicPartitionFetchRequest = TopicPartitionFetchRequest.createTopicPartitionFetchRequest(
-                            builder,
-                            (short) 1,
-                            (short) 1);
-                    tpFetchRequests[0] = topicPartitionFetchRequest;
+                    Set<Subscription> subscriptionSet = subscriptionService.getAllSubscriptions();
+                    List<Subscription> subscriptions = new ArrayList<>(subscriptionSet);
+                    short reqNoOfMessages = 1;
 
                     int[] topicFetchRequests = new int[1];
-                    int partitionRequestsVector = TopicFetchRequest.createPartitionRequestsVector(builder, tpFetchRequests);
+                    for (int s = 0; s < subscriptions.size(); s++) {
+                        Subscription subscription = subscriptions.get(s);
+                        Topic topic = subscription.getTopic();
+                        List<PartSubscription> partSubscriptions = subscription.getPartSubscriptions();
 
-                    int topicFetchRequest = TopicFetchRequest.createTopicFetchRequest(builder,
-                            (short) 11,
-                            partitionRequestsVector);
-                    topicFetchRequests[0] = topicFetchRequest;
+                        int[] tpFetchRequests = new int[partSubscriptions.size()];
+                        for (int ps = 0; ps < partSubscriptions.size(); ps++) {
+                            int topicPartitionFetchRequest = TopicPartitionFetchRequest.createTopicPartitionFetchRequest(
+                                    builder,
+                                    partSubscriptions.get(ps).getId(),
+                                    reqNoOfMessages);
+                            tpFetchRequests[ps] = topicPartitionFetchRequest;
+                        }
+
+                        int partitionRequestsVector = TopicFetchRequest.createPartitionRequestsVector(builder, tpFetchRequests);
+                        int topicFetchRequest = TopicFetchRequest.createTopicFetchRequest(builder,
+                                subscription.getId(),
+                                topic.getId(),
+                                partitionRequestsVector);
+                        topicFetchRequests[s] = topicFetchRequest;
+                    }
+
                     int topicRequestsVector = FetchRequest.createTopicRequestsVector(builder, topicFetchRequests);
 
                     int fetchRequest = FetchRequest.createFetchRequest(builder, topicRequestsVector);
@@ -88,7 +111,7 @@ public class SubscriberDaemon implements Runnable {
                 }
             }
         }
-        log.info("== Subscriber shutdown ==");
+        log.info("== PartSubscriber shutdown ==");
     }
 
     public void stop() {

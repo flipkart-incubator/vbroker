@@ -1,11 +1,15 @@
 package com.flipkart.vbroker.core;
 
 import com.flipkart.vbroker.entities.Message;
-import com.flipkart.vbroker.exceptions.VBrokerException;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Created by hooda on 19/1/18
@@ -14,19 +18,31 @@ import java.util.List;
 @Setter
 public class TopicPartition {
     private short id;
-    private List<MessageGroup> messageGroups;
 
-    private MessageGroup getMessageGroup(String groupId) {
-        throw new VBrokerException("Not implemented yet");
+    public TopicPartition(short id) {
+        this.id = id;
     }
 
-    public synchronized void addMessage(Message message) {
+    private final ConcurrentMap<String, MessageGroup> groupIdMessageGroupMap = new ConcurrentHashMap<>();
+
+    public void addMessage(Message message) {
         String groupId = message.groupId();
-        MessageGroup messageGroup = getMessageGroup(groupId);
-        messageGroup.getMessages().add(message);
+        groupIdMessageGroupMap.computeIfAbsent(groupId, s -> {
+            MessageGroup newGroup = new MessageGroup(groupId);
+            newGroup.appendMessage(message);
+            return newGroup;
+        });
     }
 
     public List<MessageGroup> getMessageGroups() {
-        return messageGroups;
+        return new ArrayList<>(groupIdMessageGroupMap.values());
+    }
+
+    public Optional<MessageGroup> getMessageGroup(String groupId) {
+        return Optional.ofNullable(groupIdMessageGroupMap.get(groupId));
+    }
+
+    public Set<String> getUniqueGroups() {
+        return groupIdMessageGroupMap.keySet();
     }
 }

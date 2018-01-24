@@ -4,7 +4,8 @@ import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.client.VBrokerClientHandler;
 import com.flipkart.vbroker.ioengine.MessageService;
 import com.flipkart.vbroker.protocol.codecs.VBrokerClientCodec;
-import com.flipkart.vbroker.services.ProducerService;
+import com.flipkart.vbroker.services.*;
+import com.flipkart.vbroker.utils.DummyEntities;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -45,9 +46,16 @@ public class VBrokerServer implements Runnable {
         EventLoopGroup workerGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("server_worker"));
         EventLoopGroup localGroup = new DefaultEventLoopGroup(1, new DefaultThreadFactory("server_local"));
 
+        TopicService topicService = new TopicServiceImpl();
+        SubscriptionService subscriptionService = new SubscriptionServiceImpl();
         MessageService messageService = new MessageService();
+
+        topicService.createTopic(DummyEntities.topic1);
+        subscriptionService.createSubscription(DummyEntities.subscription1);
+
         ProducerService producerService = new ProducerService(messageService);
-        RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactory(producerService, messageService);
+        RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactory(
+                producerService, topicService, subscriptionService, messageService);
 
         CountDownLatch latch = new CountDownLatch(2);
         try {
@@ -71,7 +79,7 @@ public class VBrokerServer implements Runnable {
             });
 
             LocalAddress address = new LocalAddress(new Random().nextInt(60000) + "");
-            setupLocalSubscribers(localGroup, workerGroup, address);
+            setupLocalSubscribers(localGroup, workerGroup, address, subscriptionService);
 
             //below used for local channel by the consumer
             ServerBootstrap serverLocalBootstrap = new ServerBootstrap();
@@ -124,7 +132,8 @@ public class VBrokerServer implements Runnable {
 
     private void setupLocalSubscribers(EventLoopGroup localGroup,
                                        EventLoopGroup workerGroup,
-                                       LocalAddress address) throws InterruptedException {
+                                       LocalAddress address,
+                                       SubscriptionService subscriptionService) throws InterruptedException {
         Bootstrap httpClientBootstrap = new Bootstrap()
                 .group(workerGroup)
                 .channel(NioSocketChannel.class)
@@ -159,7 +168,7 @@ public class VBrokerServer implements Runnable {
                 });
 
         ExecutorService executorService = Executors.newSingleThreadExecutor(new DefaultThreadFactory("subscriber"));
-        SubscriberDaemon subscriber = new SubscriberDaemon(address, consumerBootstrap);
+        SubscriberDaemon subscriber = new SubscriberDaemon(address, consumerBootstrap, subscriptionService);
         log.info("Submitting SubscriberDaemon");
         executorService.submit(subscriber);
     }
