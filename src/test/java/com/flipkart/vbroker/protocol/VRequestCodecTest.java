@@ -1,7 +1,10 @@
 package com.flipkart.vbroker.protocol;
 
 import com.flipkart.vbroker.client.MessageStore;
+import com.flipkart.vbroker.core.Topic;
+import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.*;
+import com.flipkart.vbroker.utils.DummyEntities;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -11,6 +14,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.nio.ByteBuffer;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by kaushal.hooda on 09/01/18.
@@ -22,16 +27,44 @@ public class VRequestCodecTest {
     }
 
     private ByteBuffer getSampleProduceRequestAsFlatbuf(){
+
         FlatBufferBuilder builder = new FlatBufferBuilder();
-        int[] messages = new int[1];
-        messages[0] = MessageStore.getSampleMsg(builder);
-        int messagesVector = MessageSet.createMessagesVector(builder, messages);
-        int messageSet = MessageSet.createMessageSet(builder, messagesVector);
-        int produceRequest = ProduceRequest.createProduceRequest(builder,
-                (short) 11,
-                (short) 1,
-                (short) 1,
-                messageSet);
+
+        List<Topic> topics = new LinkedList<>();
+        topics.add(DummyEntities.topic1);
+
+        int[] topicRequests = new int[topics.size()];
+        for (int tIdx = 0; tIdx < topics.size(); tIdx++) {
+            Topic topic = topics.get(tIdx);
+            List<TopicPartition> partitions = topic.getPartitions();
+            int[] partitionRequests = new int[partitions.size()];
+
+            for (int i = 0; i < partitions.size(); i++) {
+                TopicPartition topicPartition = partitions.get(i);
+                int noOfMessages = 1;
+
+                int[] messages = new int[noOfMessages];
+                for (int m = 0; m < noOfMessages; m++) {
+                    messages[m] = MessageStore.getSampleMsg(builder);
+                }
+
+                int messagesVector = MessageSet.createMessagesVector(builder, messages);
+                int messageSet = MessageSet.createMessageSet(builder, messagesVector);
+                int topicPartitionProduceRequest = TopicPartitionProduceRequest.createTopicPartitionProduceRequest(
+                        builder,
+                        topicPartition.getId(),
+                        (short) 1,
+                        messageSet);
+                partitionRequests[i] = topicPartitionProduceRequest;
+            }
+
+            int partitionRequestsVector = TopicProduceRequest.createPartitionRequestsVector(builder, partitionRequests);
+            int topicProduceRequest = TopicProduceRequest.createTopicProduceRequest(builder, topic.getId(), partitionRequestsVector);
+            topicRequests[tIdx] = topicProduceRequest;
+        }
+
+        int topicRequestsVector = ProduceRequest.createTopicRequestsVector(builder, topicRequests);
+        int produceRequest = ProduceRequest.createProduceRequest(builder, topicRequestsVector);
         int vRequest = VRequest.createVRequest(builder,
                 (byte) 1,
                 1001,
@@ -60,7 +93,8 @@ public class VRequestCodecTest {
 
         //Verify
         ProduceRequest produceRequest = (ProduceRequest) ((VRequest) decoded).requestMessage(new ProduceRequest());
-        Message message = produceRequest.messageSet().messages(0);
+        assert produceRequest != null;
+        Message message = produceRequest.topicRequests(0).partitionRequests(0).messageSet().messages(0);
         Assert.assertEquals(message.messageId(), "msg-1001");
     }
 }
