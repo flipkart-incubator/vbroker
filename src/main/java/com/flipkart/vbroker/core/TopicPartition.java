@@ -26,11 +26,7 @@ public class TopicPartition {
 
     public void addMessage(Message message) {
         String groupId = message.groupId();
-        groupIdMessageGroupMap.computeIfAbsent(groupId, s -> {
-            MessageGroup newGroup = new MessageGroup(groupId);
-            newGroup.appendMessage(message);
-            return newGroup;
-        });
+        groupIdMessageGroupMap.computeIfAbsent(groupId, s -> new MessageGroup(groupId)).appendMessage(message);
     }
 
     public List<MessageGroup> getMessageGroups() {
