@@ -17,13 +17,12 @@ import java.util.concurrent.ConcurrentMap;
 @Getter
 @Setter
 public class TopicPartition {
+    private final ConcurrentMap<String, MessageGroup> groupIdMessageGroupMap = new ConcurrentHashMap<>();
     private short id;
 
     public TopicPartition(short id) {
         this.id = id;
     }
-
-    private final ConcurrentMap<String, MessageGroup> groupIdMessageGroupMap = new ConcurrentHashMap<>();
 
     public void addMessage(Message message) {
         String groupId = message.groupId();

@@ -15,14 +15,9 @@ import java.util.List;
 @Getter
 @EqualsAndHashCode(exclude = {"level", "messages"})
 public class MessageGroup implements Iterable<Message> {
-    public enum Level {
-        L1, L2, L3
-    }
-
     private final String groupId;
-    private Level level;
     private final List<Message> messages = new LinkedList<>();
-
+    private Level level;
     public MessageGroup(String groupId) {
         this.groupId = groupId;
     }
@@ -42,5 +37,9 @@ public class MessageGroup implements Iterable<Message> {
     @Override
     public PeekingIterator<Message> iterator() {
         return Iterators.peekingIterator(messages.iterator());
+    }
+
+    public enum Level {
+        L1, L2, L3
     }
 }

@@ -15,10 +15,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @EqualsAndHashCode(exclude = {"qType", "currSeqNo"})
 public class SubscriberGroup implements Iterable<Message> {
-    public enum QType {
-        MAIN, SIDELINE, RETRY_1, RETRY_2, RETRY_3
-    }
-
     private final MessageGroup messageGroup;
     @Getter
     private final TopicPartition topicPartition;
@@ -28,7 +24,6 @@ public class SubscriberGroup implements Iterable<Message> {
     @Getter
     @Setter
     private AtomicInteger currSeqNo = new AtomicInteger(0);
-
     public SubscriberGroup(MessageGroup messageGroup,
                            TopicPartition topicPartition) {
         this.messageGroup = messageGroup;
@@ -75,5 +70,9 @@ public class SubscriberGroup implements Iterable<Message> {
 
     public String getGroupId() {
         return messageGroup.getGroupId();
+    }
+
+    public enum QType {
+        MAIN, SIDELINE, RETRY_1, RETRY_2, RETRY_3
     }
 }

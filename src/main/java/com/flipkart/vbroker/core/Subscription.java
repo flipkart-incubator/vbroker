@@ -14,9 +14,9 @@ import java.util.List;
 public class Subscription {
     private final short id;
     private final Topic topic;
+    private final List<PartSubscription> partSubscriptions = new LinkedList<>();
     @Setter
     private boolean grouped = true;
-    private final List<PartSubscription> partSubscriptions = new LinkedList<>();
 
     public Subscription(short id,
                         Topic topic,

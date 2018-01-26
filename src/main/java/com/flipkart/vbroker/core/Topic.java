@@ -15,6 +15,7 @@ public class Topic {
     public static final short DEFAULT_REPLICATION_FACTOR = 3;
 
     private final short id;
+    private final List<TopicPartition> partitions = new ArrayList<>();
     @Setter
     private short noOfPartitions = DEFAULT_NO_OF_PARTITIONS;
     @Setter
@@ -23,7 +24,6 @@ public class Topic {
     private boolean grouped = false;
     @Setter
     private TopicCategory topicCategory = TopicCategory.TOPIC;
-    private final List<TopicPartition> partitions = new ArrayList<>();
 
     public Topic(Short id) {
         this.id = id;
