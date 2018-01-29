@@ -10,17 +10,17 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @AllArgsConstructor
-public class VBrokerClientHandler extends SimpleChannelInboundHandler<VResponse> {
+public class VBrokerResponseHandler extends SimpleChannelInboundHandler<VResponse> {
 
     private final ResponseHandlerFactory responseHandlerFactory;
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, VResponse response) {
-        log.info("== Received VResponse from server with correlationId {} and type {} ==", response.correlationId(), response.responseMessageType());
+    protected void channelRead0(ChannelHandlerContext ctx, VResponse vResponse) {
+        log.info("== Received VResponse from server with correlationId {} and type {} ==",
+                vResponse.correlationId(), vResponse.responseMessageType());
 
-        ResponseHandler responseHandler = responseHandlerFactory.getResponseHandler(response, ctx);
-        responseHandler.handle();
-        //ctx.close();
+        ResponseHandler responseHandler = responseHandlerFactory.getResponseHandler(vResponse);
+        responseHandler.handle(vResponse);
     }
 
     @Override

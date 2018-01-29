@@ -19,6 +19,6 @@ public class VBrokerClientInitializer extends ChannelInitializer<SocketChannel> 
         ChannelPipeline pipeline = ch.pipeline();
 
         pipeline.addLast(new VBrokerClientCodec());
-        pipeline.addLast(new VBrokerClientHandler(responseHandlerFactory));
+        pipeline.addLast(new VBrokerResponseHandler(responseHandlerFactory));
     }
 }

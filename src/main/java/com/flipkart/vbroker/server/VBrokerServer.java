@@ -1,7 +1,7 @@
 package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.VBrokerConfig;
-import com.flipkart.vbroker.client.VBrokerClientHandler;
+import com.flipkart.vbroker.client.VBrokerResponseHandler;
 import com.flipkart.vbroker.ioengine.MessageService;
 import com.flipkart.vbroker.protocol.codecs.VBrokerClientCodec;
 import com.flipkart.vbroker.services.*;
@@ -161,7 +161,7 @@ public class VBrokerServer implements Runnable {
                             @Override
                             protected void initChannel(Channel ch) {
                                 pipeline.addLast(new VBrokerClientCodec());
-                                pipeline.addLast(new VBrokerClientHandler(responseHandlerFactory));
+                                pipeline.addLast(new VBrokerResponseHandler(responseHandlerFactory));
                             }
                         });
                     }

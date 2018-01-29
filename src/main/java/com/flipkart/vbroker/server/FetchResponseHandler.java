@@ -22,10 +22,12 @@ import static java.util.Objects.requireNonNull;
 public class FetchResponseHandler implements ResponseHandler {
 
     private final Bootstrap clientBootstrap;
-    private final FetchResponse fetchResponse;
 
     @Override
-    public void handle() {
+    public void handle(VResponse vResponse) {
+        FetchResponse fetchResponse = (FetchResponse) vResponse.responseMessage(new FetchResponse());
+        assert fetchResponse != null;
+
         for (int i = 0; i < fetchResponse.topicResponsesLength(); i++) {
             TopicFetchResponse topicFetchResponse = fetchResponse.topicResponses(i);
             for (int j = 0; j < topicFetchResponse.partitionResponsesLength(); j++) {
@@ -68,10 +70,11 @@ public class FetchResponseHandler implements ResponseHandler {
             Channel channel = future.channel();
             if (!future.isSuccess()) {
                 channel.close();
+            } else {
+                log.info("Handler-> Created outboundChannel to {}", channel.localAddress());
+                channel.writeAndFlush(httpRequest);
+                log.debug("Wrote httpRequest");
             }
-            channel.writeAndFlush(httpRequest);
-            log.info("Wrote httpRequest");
-            log.info("Handler-> Created outboundChannel to {}", channel.localAddress());
         });
     }
 }

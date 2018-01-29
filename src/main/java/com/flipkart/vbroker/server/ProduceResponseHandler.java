@@ -3,6 +3,7 @@ package com.flipkart.vbroker.server;
 import com.flipkart.vbroker.entities.ProduceResponse;
 import com.flipkart.vbroker.entities.TopicPartitionProduceResponse;
 import com.flipkart.vbroker.entities.TopicProduceResponse;
+import com.flipkart.vbroker.entities.VResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -10,10 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class ProduceResponseHandler implements ResponseHandler {
 
-    private final ProduceResponse produceResponse;
-
     @Override
-    public void handle() {
+    public void handle(VResponse vResponse) {
+        ProduceResponse produceResponse = (ProduceResponse) vResponse.responseMessage(new ProduceResponse());
+        assert produceResponse != null;
+
         for (int i = 0; i < produceResponse.topicResponsesLength(); i++) {
             TopicProduceResponse topicProduceResponse = produceResponse.topicResponses(i);
             short topicId = topicProduceResponse.topicId();

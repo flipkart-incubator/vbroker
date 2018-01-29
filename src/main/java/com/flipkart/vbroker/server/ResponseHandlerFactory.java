@@ -1,11 +1,9 @@
 package com.flipkart.vbroker.server;
 
-import com.flipkart.vbroker.entities.FetchResponse;
-import com.flipkart.vbroker.entities.ProduceResponse;
 import com.flipkart.vbroker.entities.ResponseMessage;
 import com.flipkart.vbroker.entities.VResponse;
+import com.flipkart.vbroker.exceptions.VBrokerException;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelHandlerContext;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,20 +13,18 @@ public class ResponseHandlerFactory {
 
     private final Bootstrap clientBootstrap;
 
-    public ResponseHandler getResponseHandler(VResponse msg, ChannelHandlerContext ctx) {
-        ResponseHandler responseHandler = null;
+    public ResponseHandler getResponseHandler(VResponse msg) {
+        ResponseHandler responseHandler;
 
         switch (msg.responseMessageType()) {
             case ResponseMessage.ProduceResponse:
-                ProduceResponse produceResponse = (ProduceResponse) msg.responseMessage(new ProduceResponse());
-                assert produceResponse != null;
-                responseHandler = new ProduceResponseHandler(produceResponse);
+                responseHandler = new ProduceResponseHandler();
                 break;
             case ResponseMessage.FetchResponse:
-                FetchResponse fetchResponse = (FetchResponse) msg.responseMessage(new FetchResponse());
-                assert fetchResponse != null;
-                responseHandler = new FetchResponseHandler(clientBootstrap, fetchResponse);
+                responseHandler = new FetchResponseHandler(clientBootstrap);
                 break;
+            default:
+                throw new VBrokerException("Unsupported ResponseMessageType: " + msg.responseMessageType());
         }
 
         return responseHandler;
