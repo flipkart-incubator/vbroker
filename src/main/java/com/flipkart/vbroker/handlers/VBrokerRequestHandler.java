@@ -1,4 +1,4 @@
-package com.flipkart.vbroker.server;
+package com.flipkart.vbroker.handlers;
 
 import com.flipkart.vbroker.entities.ResponseMessage;
 import com.flipkart.vbroker.entities.VRequest;
@@ -29,7 +29,7 @@ public class VBrokerRequestHandler extends SimpleChannelInboundHandler<VRequest>
         Response response = new Response(responseByteBuf.readableBytes(), responseByteBuf);
 
         ChannelFuture channelFuture = ctx.writeAndFlush(response);
-        if(vResponse.responseMessageType() == ResponseMessage.ProduceResponse) {
+        if (vResponse.responseMessageType() == ResponseMessage.ProduceResponse) {
             //for now, we want to close the channel for produce request when response is written
             channelFuture.addListener(ChannelFutureListener.CLOSE);
         }

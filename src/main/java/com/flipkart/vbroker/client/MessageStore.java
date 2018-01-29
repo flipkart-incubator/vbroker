@@ -8,6 +8,7 @@ import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.ByteBuffer;
+import java.util.UUID;
 
 @Slf4j
 public class MessageStore {
@@ -31,17 +32,15 @@ public class MessageStore {
 
     public static ByteBuffer encodeSampleMsg() {
         FlatBufferBuilder builder = new FlatBufferBuilder();
-
         int sampleMsg = getSampleMsg(builder);
-
         builder.finish(sampleMsg);
-
         return builder.dataBuffer();
     }
 
     public static int getSampleMsg(FlatBufferBuilder builder) {
-        int messageId = builder.createString("msg-1001");
-        int groupId = builder.createString("group-1001");
+        String msgId = UUID.randomUUID().toString();
+        int messageId = builder.createString(msgId);
+        int groupId = builder.createString(msgId);
         byte crc = '1';
         byte version = '1';
         short seqNo = 1;

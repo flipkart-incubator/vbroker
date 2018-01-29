@@ -18,6 +18,7 @@ public class MessageGroup implements Iterable<Message> {
     private final String groupId;
     private final List<Message> messages = new LinkedList<>();
     private Level level;
+
     public MessageGroup(String groupId) {
         this.groupId = groupId;
     }

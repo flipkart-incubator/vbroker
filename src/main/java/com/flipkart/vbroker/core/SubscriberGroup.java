@@ -24,6 +24,7 @@ public class SubscriberGroup implements Iterable<Message> {
     @Getter
     @Setter
     private AtomicInteger currSeqNo = new AtomicInteger(0);
+
     public SubscriberGroup(MessageGroup messageGroup,
                            TopicPartition topicPartition) {
         this.messageGroup = messageGroup;

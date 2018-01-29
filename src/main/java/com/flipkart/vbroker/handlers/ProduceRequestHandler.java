@@ -1,4 +1,4 @@
-package com.flipkart.vbroker.server;
+package com.flipkart.vbroker.handlers;
 
 import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.core.TopicPartition;

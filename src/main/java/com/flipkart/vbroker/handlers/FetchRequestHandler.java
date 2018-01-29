@@ -1,4 +1,4 @@
-package com.flipkart.vbroker.server;
+package com.flipkart.vbroker.handlers;
 
 import com.flipkart.vbroker.core.*;
 import com.flipkart.vbroker.entities.*;
@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
@@ -106,7 +107,7 @@ public class FetchRequestHandler implements RequestHandler {
                                 short noOfMessagesToFetch) {
         PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription);
         PeekingIterator<SubscriberGroup> groupIterator = partSubscriber.iterator();
-        java.util.List<Integer> messages = new ArrayList<>();
+        List<Integer> messages = new ArrayList<>();
 
         int m = 0;
         while (groupIterator.hasNext() && m < noOfMessagesToFetch) {
@@ -116,7 +117,7 @@ public class FetchRequestHandler implements RequestHandler {
             PeekingIterator<Message> messageIterator = group.iterator();
             while (messageIterator.hasNext()) {
                 Message msg = messageIterator.peek();
-                log.info("Peeking Message with msg_id: {} and group_id: {}", msg.messageId(), msg.groupId());
+                log.debug("Peeking Message with msg_id: {} and group_id: {}", msg.messageId(), msg.groupId());
                 messages.add(buildMessage(builder, msg));
                 m++;
                 messageIterator.next();

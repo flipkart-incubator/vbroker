@@ -1,8 +1,10 @@
 package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.VBrokerConfig;
-import com.flipkart.vbroker.client.VBrokerResponseHandler;
-import com.flipkart.vbroker.ioengine.MessageService;
+import com.flipkart.vbroker.handlers.HttpResponseHandler;
+import com.flipkart.vbroker.handlers.RequestHandlerFactory;
+import com.flipkart.vbroker.handlers.ResponseHandlerFactory;
+import com.flipkart.vbroker.handlers.VBrokerResponseHandler;
 import com.flipkart.vbroker.protocol.codecs.VBrokerClientCodec;
 import com.flipkart.vbroker.services.*;
 import com.flipkart.vbroker.utils.DummyEntities;
@@ -48,12 +50,11 @@ public class VBrokerServer implements Runnable {
 
         TopicService topicService = new TopicServiceImpl();
         SubscriptionService subscriptionService = new SubscriptionServiceImpl();
-        MessageService messageService = new MessageService();
 
         topicService.createTopic(DummyEntities.topic1);
         subscriptionService.createSubscription(DummyEntities.subscription1);
 
-        ProducerService producerService = new ProducerService(messageService);
+        ProducerService producerService = new ProducerService();
         RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactory(
                 producerService, topicService, subscriptionService);
 

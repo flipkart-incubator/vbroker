@@ -1,7 +1,8 @@
 package com.flipkart.vbroker.client;
 
+import com.flipkart.vbroker.handlers.ResponseHandlerFactory;
+import com.flipkart.vbroker.handlers.VBrokerResponseHandler;
 import com.flipkart.vbroker.protocol.codecs.VBrokerClientCodec;
-import com.flipkart.vbroker.server.ResponseHandlerFactory;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;

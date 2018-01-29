@@ -1,4 +1,4 @@
-package com.flipkart.vbroker.server;
+package com.flipkart.vbroker.handlers;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
