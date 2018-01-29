@@ -6,12 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.*;
 
 /**
  * Created by hooda on 19/1/18
@@ -21,7 +16,7 @@ import java.util.concurrent.ConcurrentMap;
 @EqualsAndHashCode(exclude = {"groupIdMessageGroupMap"})
 @ToString
 public class TopicPartition {
-    private final ConcurrentMap<String, MessageGroup> groupIdMessageGroupMap = new ConcurrentHashMap<>();
+    private final Map<String, MessageGroup> groupIdMessageGroupMap = MemoryManager.getCapacityManagedMap(new SampleEvictionStrategy(), new SampleL3Provider());
     private final short id;
     private final short topicId;
 
@@ -32,11 +27,7 @@ public class TopicPartition {
 
     public void addMessage(Message message) {
         String groupId = message.groupId();
-        groupIdMessageGroupMap.computeIfAbsent(groupId, s -> {
-            MessageGroup newGroup = new MessageGroup(groupId);
-            newGroup.appendMessage(message);
-            return newGroup;
-        });
+        groupIdMessageGroupMap.computeIfAbsent(groupId, s -> new MessageGroup(groupId, groupIdMessageGroupMap)).appendMessage(message);
     }
 
     public List<MessageGroup> getMessageGroups() {
