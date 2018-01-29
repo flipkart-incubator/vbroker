@@ -9,10 +9,10 @@ import lombok.ToString;
 @EqualsAndHashCode(exclude = {"grouped"})
 @ToString
 public class PartSubscription {
-    private short id;
+    private final short id;
+    private final TopicPartition topicPartition;
     @Setter
     private boolean grouped = false;
-    private TopicPartition topicPartition;
 
     public PartSubscription(short id, TopicPartition topicPartition) {
         this.id = id;

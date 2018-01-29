@@ -32,17 +32,23 @@ public class FetchResponseHandler implements ResponseHandler {
             TopicFetchResponse topicFetchResponse = fetchResponse.topicResponses(i);
             for (int j = 0; j < topicFetchResponse.partitionResponsesLength(); j++) {
                 TopicPartitionFetchResponse topicPartitionFetchResponse = topicFetchResponse.partitionResponses(j);
-                MessageSet messageSet = topicPartitionFetchResponse.messageSet();
-                int noOfMessages = messageSet.messagesLength();
-                log.info("Handling FetchResponse for topic {} and partition {} having {} messages",
-                        topicFetchResponse.topicId(), topicPartitionFetchResponse.partitionId(), noOfMessages);
-                for (int m = 0; m < noOfMessages; m++) {
-                    Message message = messageSet.messages(m);
-                    ByteBuffer byteBuffer = message.bodyPayloadAsByteBuffer();
-                    ByteBuf byteBuf = Unpooled.wrappedBuffer(byteBuffer);
-                    log.info("Decoded msg with msgId: {} and payload: {}", message.messageId(),
-                            Charsets.UTF_8.decode(byteBuffer).toString());
-                    makeHttpRequest(message);
+                VStatus status = topicPartitionFetchResponse.status();
+                log.info("FetchResponse status for topic {} and partition {} is {}",
+                        topicFetchResponse.topicId(), topicPartitionFetchResponse.partitionId(), status.statusCode());
+
+                if (StatusCode.ConsumeSuccess_NoError == status.statusCode()) {
+                    MessageSet messageSet = topicPartitionFetchResponse.messageSet();
+                    int noOfMessages = messageSet.messagesLength();
+                    log.info("Handling FetchResponse for topic {} and partition {} having {} messages",
+                            topicFetchResponse.topicId(), topicPartitionFetchResponse.partitionId(), noOfMessages);
+                    for (int m = 0; m < noOfMessages; m++) {
+                        Message message = messageSet.messages(m);
+                        ByteBuffer byteBuffer = message.bodyPayloadAsByteBuffer();
+                        ByteBuf byteBuf = Unpooled.wrappedBuffer(byteBuffer);
+                        log.info("Decoded msg with msgId: {} and payload: {}", message.messageId(),
+                                Charsets.UTF_8.decode(byteBuffer).toString());
+                        makeHttpRequest(message);
+                    }
                 }
             }
         }

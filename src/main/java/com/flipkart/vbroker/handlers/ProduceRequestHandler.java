@@ -49,10 +49,11 @@ public class ProduceRequestHandler implements RequestHandler {
 
                     producerService.produceMessage(topicPartition, message);
 
+                    int vStatus = VStatus.createVStatus(builder, StatusCode.ProduceSuccess_NoError, builder.createString(""));
                     int topicPartitionProduceResponse = TopicPartitionProduceResponse.createTopicPartitionProduceResponse(
                             builder,
                             topicPartitionProduceRequest.partitionId(),
-                            (short) 200);
+                            vStatus);
                     topicPartitionResponseMap.computeIfAbsent(topicProduceRequest.topicId(),
                             o -> new LinkedList<>())
                             .add(topicPartitionProduceResponse);

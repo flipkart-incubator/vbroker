@@ -94,11 +94,12 @@ public class FetchRequestHandler implements RequestHandler {
                 messages.length, topicPartition.getId(), partitionId);
         int messagesVector = MessageSet.createMessagesVector(builder, messages);
         int messageSet = MessageSet.createMessageSet(builder, messagesVector);
+        int vStatus = VStatus.createVStatus(builder, StatusCode.ConsumeSuccess_NoError, builder.createString(""));
 
         return TopicPartitionFetchResponse.createTopicPartitionFetchResponse(
                 builder,
                 partitionId,
-                (short) 200,
+                vStatus,
                 messageSet);
     }
 

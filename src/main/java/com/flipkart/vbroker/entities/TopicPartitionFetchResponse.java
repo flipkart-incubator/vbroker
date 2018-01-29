@@ -21,11 +21,11 @@ public final class TopicPartitionFetchResponse extends Table {
 
     public static int createTopicPartitionFetchResponse(FlatBufferBuilder builder,
                                                         short partitionId,
-                                                        short statusCode,
+                                                        int statusOffset,
                                                         int messageSetOffset) {
         builder.startObject(3);
         TopicPartitionFetchResponse.addMessageSet(builder, messageSetOffset);
-        TopicPartitionFetchResponse.addStatusCode(builder, statusCode);
+        TopicPartitionFetchResponse.addStatus(builder, statusOffset);
         TopicPartitionFetchResponse.addPartitionId(builder, partitionId);
         return TopicPartitionFetchResponse.endTopicPartitionFetchResponse(builder);
     }
@@ -38,8 +38,8 @@ public final class TopicPartitionFetchResponse extends Table {
         builder.addShort(0, partitionId, 0);
     }
 
-    public static void addStatusCode(FlatBufferBuilder builder, short statusCode) {
-        builder.addShort(1, statusCode, 0);
+    public static void addStatus(FlatBufferBuilder builder, int statusOffset) {
+        builder.addOffset(1, statusOffset, 0);
     }
 
     public static void addMessageSet(FlatBufferBuilder builder, int messageSetOffset) {
@@ -66,9 +66,13 @@ public final class TopicPartitionFetchResponse extends Table {
         return o != 0 ? bb.getShort(o + bb_pos) : 0;
     }
 
-    public short statusCode() {
+    public VStatus status() {
+        return status(new VStatus());
+    }
+
+    public VStatus status(VStatus obj) {
         int o = __offset(6);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+        return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null;
     }
 
     public MessageSet messageSet() {

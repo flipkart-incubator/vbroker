@@ -23,7 +23,8 @@ public class ProduceResponseHandler implements ResponseHandler {
             for (int j = 0; j < topicProduceResponse.partitionResponsesLength(); j++) {
                 TopicPartitionProduceResponse partitionProduceResponse = topicProduceResponse.partitionResponses(j);
                 //log.info("ProduceResponse for topic {} at partition {}", topicId, partitionProduceResponse);
-                log.info("Response code for handling produceRequest for topic {} and partition {} is {}", topicId, partitionProduceResponse.partitionId(), partitionProduceResponse.statusCode());
+                log.info("Response code for handling produceRequest for topic {} and partition {} is {}",
+                        topicId, partitionProduceResponse.partitionId(), partitionProduceResponse.status().statusCode());
             }
         }
     }
