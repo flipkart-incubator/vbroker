@@ -55,7 +55,7 @@ public class VBrokerServer implements Runnable {
 
         ProducerService producerService = new ProducerService(messageService);
         RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactory(
-                producerService, topicService, subscriptionService, messageService);
+                producerService, topicService, subscriptionService);
 
         CountDownLatch latch = new CountDownLatch(2);
         try {

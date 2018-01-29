@@ -18,6 +18,6 @@ public class VBrokerServerInitializer extends ChannelInitializer<Channel> {
         ChannelPipeline pipeline = ch.pipeline();
 
         pipeline.addLast(new VBrokerServerCodec());
-        pipeline.addLast(new VBrokerServerHandler(requestHandlerFactory));
+        pipeline.addLast(new VBrokerRequestHandler(requestHandlerFactory));
     }
 }

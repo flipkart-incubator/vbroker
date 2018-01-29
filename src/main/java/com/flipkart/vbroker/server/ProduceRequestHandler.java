@@ -3,35 +3,30 @@ package com.flipkart.vbroker.server;
 import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.*;
-import com.flipkart.vbroker.protocol.Response;
 import com.flipkart.vbroker.services.ProducerService;
 import com.flipkart.vbroker.services.TopicService;
 import com.google.common.base.Charsets;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @AllArgsConstructor
 public class ProduceRequestHandler implements RequestHandler {
 
-    private final ChannelHandlerContext ctx;
-    private final ProduceRequest produceRequest;
     private final TopicService topicService;
     private final ProducerService producerService;
 
     @Override
-    public void handle() {
+    public VResponse handle(VRequest vRequest) {
+        ProduceRequest produceRequest = (ProduceRequest) vRequest.requestMessage(new ProduceRequest());
+        assert !Objects.isNull(produceRequest);
+
         FlatBufferBuilder builder = new FlatBufferBuilder();
         Map<Short, List<Integer>> topicPartitionResponseMap = new HashMap<>();
 
@@ -91,9 +86,7 @@ public class ProduceRequestHandler implements RequestHandler {
                 ResponseMessage.ProduceResponse,
                 produceResponse);
         builder.finish(vResponse);
-        ByteBuf responseByteBuf = Unpooled.wrappedBuffer(builder.dataBuffer());
 
-        Response response = new Response(responseByteBuf.readableBytes(), responseByteBuf);
-        ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+        return VResponse.getRootAsVResponse(builder.dataBuffer());
     }
 }
