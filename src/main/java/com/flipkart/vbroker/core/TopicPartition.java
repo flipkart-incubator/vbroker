@@ -1,8 +1,10 @@
 package com.flipkart.vbroker.core;
 
 import com.flipkart.vbroker.entities.Message;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +18,11 @@ import java.util.concurrent.ConcurrentMap;
  */
 @Getter
 @Setter
+@EqualsAndHashCode(exclude = {"groupIdMessageGroupMap"})
+@ToString
 public class TopicPartition {
     private final ConcurrentMap<String, MessageGroup> groupIdMessageGroupMap = new ConcurrentHashMap<>();
-    private short id;
+    private final short id;
 
     public TopicPartition(short id) {
         this.id = id;

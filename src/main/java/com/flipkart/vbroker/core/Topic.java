@@ -1,7 +1,9 @@
 package com.flipkart.vbroker.core;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +12,8 @@ import java.util.List;
  * Created by hooda on 19/1/18
  */
 @Getter
+@EqualsAndHashCode(exclude = {"partitions", "noOfPartitions", "replicationFactor", "grouped", "topicCategory"})
+@ToString
 public class Topic {
     public static final short DEFAULT_NO_OF_PARTITIONS = 3;
     public static final short DEFAULT_REPLICATION_FACTOR = 3;
@@ -36,14 +40,6 @@ public class Topic {
 
     public TopicPartition getPartition(short id) {
         return partitions.get(id);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Topic)) return false;
-        final Topic topic = (Topic) o;
-        return id == topic.id;
     }
 
     public enum TopicCategory {

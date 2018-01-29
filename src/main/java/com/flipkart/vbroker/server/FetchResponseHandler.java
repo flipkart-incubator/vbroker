@@ -30,11 +30,11 @@ public class FetchResponseHandler implements ResponseHandler {
             TopicFetchResponse topicFetchResponse = fetchResponse.topicResponses(i);
             for (int j = 0; j < topicFetchResponse.partitionResponsesLength(); j++) {
                 TopicPartitionFetchResponse topicPartitionFetchResponse = topicFetchResponse.partitionResponses(j);
-                log.info("Handling fetchResponse for topic {} and partition {}",
-                        topicFetchResponse.topicId(), topicPartitionFetchResponse.partitionId());
-
                 MessageSet messageSet = topicPartitionFetchResponse.messageSet();
-                for (int m = 0; m < messageSet.messagesLength(); m++) {
+                int noOfMessages = messageSet.messagesLength();
+                log.info("Handling FetchResponse for topic {} and partition {} having {} messages",
+                        topicFetchResponse.topicId(), topicPartitionFetchResponse.partitionId(), noOfMessages);
+                for (int m = 0; m < noOfMessages; m++) {
                     Message message = messageSet.messages(m);
                     ByteBuffer byteBuffer = message.bodyPayloadAsByteBuffer();
                     ByteBuf byteBuf = Unpooled.wrappedBuffer(byteBuffer);

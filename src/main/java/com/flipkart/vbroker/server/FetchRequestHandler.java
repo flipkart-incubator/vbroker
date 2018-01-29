@@ -7,6 +7,7 @@ import com.flipkart.vbroker.protocol.Response;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
 import com.google.common.collect.PeekingIterator;
+import com.google.common.primitives.Ints;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -15,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
 import static java.util.Objects.requireNonNull;
 
@@ -53,12 +55,10 @@ public class FetchRequestHandler implements RequestHandler {
             TopicFetchRequest topicFetchRequest = fetchRequest.topicRequests(i);
             Topic topic = topicService.getTopic(topicFetchRequest.topicId());
             Subscription subscription = subscriptionService.getSubscription(topicFetchRequest.subscriptionId());
-            log.info("Handling FetchRequest for topic {} and subscription {} with {} partition requests",
-                    topic.getId(), subscription.getId(), topicFetchRequest.partitionRequestsLength());
-
             int noOfPartitionsInFetchReq = topicFetchRequest.partitionRequestsLength();
+            log.info("Handling FetchRequest for topic {} and subscription {} with {} partition requests",
+                    topic.getId(), subscription.getId(), noOfPartitionsInFetchReq);
             int[] partitionFetchResponses = new int[noOfPartitionsInFetchReq];
-
             for (int j = 0; j < noOfPartitionsInFetchReq; j++) {
                 TopicPartitionFetchRequest topicPartitionFetchRequest = topicFetchRequest.partitionRequests(j);
                 short partitionId = topicPartitionFetchRequest.partitionId();
@@ -67,6 +67,7 @@ public class FetchRequestHandler implements RequestHandler {
 
                 partitionFetchResponses[j] = buildTopicPartitionFetchResponse(
                         builder,
+                        topic,
                         topicPartition,
                         partSubscription,
                         topicPartitionFetchRequest);
@@ -86,16 +87,18 @@ public class FetchRequestHandler implements RequestHandler {
     }
 
     private int buildTopicPartitionFetchResponse(FlatBufferBuilder builder,
+                                                 Topic topic,
                                                  TopicPartition topicPartition,
                                                  PartSubscription partSubscription,
                                                  TopicPartitionFetchRequest topicPartitionFetchRequest) {
         short noOfMessagesToFetch = topicPartitionFetchRequest.noOfMessages();
         short partitionId = topicPartitionFetchRequest.partitionId();
-        log.info("Handling FetchRequest for {} buildMessages for topic {} and partition {}",
-                noOfMessagesToFetch, topicPartition.getId(), partitionId);
-
+        log.info("Handling FetchRequest for {} messages for topic {} and partition {}",
+                noOfMessagesToFetch, topic.getId(), partitionId);
 
         int[] messages = buildMessages(builder, partSubscription, noOfMessagesToFetch);
+        log.info("Writing {} messages for topic {} and partition {} in FetchResponse",
+                messages.length, topicPartition.getId(), partitionId);
         int messagesVector = MessageSet.createMessagesVector(builder, messages);
         int messageSet = MessageSet.createMessageSet(builder, messagesVector);
 
@@ -110,13 +113,9 @@ public class FetchRequestHandler implements RequestHandler {
                                 PartSubscription partSubscription,
                                 short noOfMessagesToFetch) {
         PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription);
-
-//        int toFetchNoOfMessages = noOfMessagesToFetch;
-//        if (messageService.size() < noOfMessagesToFetch) {
-//            toFetchNoOfMessages = messageService.size();
-//        }
         PeekingIterator<SubscriberGroup> groupIterator = partSubscriber.iterator();
-        int[] messages = new int[noOfMessagesToFetch];
+        java.util.List<Integer> messages = new ArrayList<>();
+
         int m = 0;
         while (groupIterator.hasNext() && m < noOfMessagesToFetch) {
             SubscriberGroup group = groupIterator.peek();
@@ -124,13 +123,16 @@ public class FetchRequestHandler implements RequestHandler {
 
             PeekingIterator<Message> messageIterator = group.iterator();
             while (messageIterator.hasNext()) {
-                messages[m++] = buildMessage(builder, messageIterator.peek());
+                Message msg = messageIterator.peek();
+                log.info("Peeking Message with msg_id: {} and group_id: {}", msg.messageId(), msg.groupId());
+                messages.add(buildMessage(builder, msg));
+                m++;
                 messageIterator.next();
             }
-
             groupIterator.next();
         }
-        return messages;
+
+        return Ints.toArray(messages);
     }
 
     private int buildMessage(FlatBufferBuilder builder, Message message) {

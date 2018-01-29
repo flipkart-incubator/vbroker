@@ -1,7 +1,9 @@
 package com.flipkart.vbroker.core;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +13,8 @@ import java.util.List;
  */
 
 @Getter
+@EqualsAndHashCode(exclude = "partSubscriptions")
+@ToString
 public class Subscription {
     private final short id;
     private final Topic topic;
