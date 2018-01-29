@@ -6,8 +6,8 @@ import com.google.common.collect.PeekingIterator;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by hooda on 19/1/18
@@ -16,15 +16,24 @@ import java.util.List;
 @EqualsAndHashCode(exclude = {"level", "messages"})
 public class MessageGroup implements Iterable<Message> {
     private final String groupId;
-    private final List<Message> messages = new LinkedList<>();
-    private Level level;
+    private final List<Message> messages;
 
-    public MessageGroup(String groupId) {
+    public MessageGroup(String groupId, Map map) {
         this.groupId = groupId;
+        this.messages = MemoryManager.getCapacityManagedList(groupId);
+        ((CapacityManagedList) messages).addObserver((CapacityManagedMap) map);
     }
 
-    public void setLevel(Level level) {
-        this.level = level;
+    public int getUsedCapacity() {
+        return ((CapacityManagedList) this.messages).getListUsedCapacity();
+    }
+
+    public CapacityManagedList.Level getLevel() {
+        return ((CapacityManagedList) this.messages).getLevel();
+    }
+
+    public void setLevel(CapacityManagedList.Level level) {
+        ((CapacityManagedList) this.messages).setLevel(level);
     }
 
     public void appendMessage(Message message) {
@@ -38,9 +47,5 @@ public class MessageGroup implements Iterable<Message> {
     @Override
     public PeekingIterator<Message> iterator() {
         return Iterators.peekingIterator(messages.iterator());
-    }
-
-    public enum Level {
-        L1, L2, L3
     }
 }
