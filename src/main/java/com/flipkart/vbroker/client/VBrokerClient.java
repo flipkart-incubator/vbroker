@@ -40,6 +40,7 @@ public class VBrokerClient {
                     .handler(new VBrokerClientInitializer(responseHandlerFactory));
 
             Channel channel = bootstrap.connect(config.getBrokerHost(), config.getBrokerPort()).sync().channel();
+
             FlatBufferBuilder builder = new FlatBufferBuilder();
 
             List<Topic> topics = new LinkedList<>();

@@ -16,11 +16,10 @@ public class VRequestDecoder extends ReplayingDecoder<Void> {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
-        log.info("Decoding VRequest bytebuf");
+        log.debug("Decoding VRequest bytebuf");
 
         int requestLength = in.readInt();
         ByteBuf byteBuf = in.readBytes(requestLength);
-        log.info("Decoded bytebuf as VRequest");
         VRequest request = VRequest.getRootAsVRequest(byteBuf.nioBuffer());
         out.add(request);
     }

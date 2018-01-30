@@ -4,14 +4,11 @@ import com.flipkart.vbroker.core.*;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
-import com.google.common.collect.PeekingIterator;
-import com.google.common.primitives.Ints;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -90,7 +87,7 @@ public class FetchRequestHandler implements RequestHandler {
                 noOfMessagesToFetch, topic.getId(), partitionId);
 
         int[] messages = buildMessages(builder, partSubscription, noOfMessagesToFetch);
-        log.info("Writing {} messages for topic {} and partition {} in FetchResponse",
+        log.debug("Writing {} messages for topic {} and partition {} in FetchResponse",
                 messages.length, topicPartition.getId(), partitionId);
         int messagesVector = MessageSet.createMessagesVector(builder, messages);
         int messageSet = MessageSet.createMessageSet(builder, messagesVector);
@@ -107,26 +104,14 @@ public class FetchRequestHandler implements RequestHandler {
                                 PartSubscription partSubscription,
                                 short noOfMessagesToFetch) {
         PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription);
-        PeekingIterator<SubscriberGroup> groupIterator = partSubscriber.iterator();
-        List<Integer> messages = new ArrayList<>();
+        List<Message> fetchedMessages = partSubscriber.getMessages(noOfMessagesToFetch);
 
-        int m = 0;
-        while (groupIterator.hasNext() && m < noOfMessagesToFetch) {
-            SubscriberGroup group = groupIterator.peek();
-            log.info("Fetching messages of group {} for topic {}", group.getGroupId(), partSubscription.getTopicPartition().getId());
-
-            PeekingIterator<Message> messageIterator = group.iterator();
-            while (messageIterator.hasNext()) {
-                Message msg = messageIterator.peek();
-                log.debug("Peeking Message with msg_id: {} and group_id: {}", msg.messageId(), msg.groupId());
-                messages.add(buildMessage(builder, msg));
-                m++;
-                messageIterator.next();
-            }
-            groupIterator.next();
+        int[] messages = new int[fetchedMessages.size()];
+        for (int i = 0; i < fetchedMessages.size(); i++) {
+            messages[i] = buildMessage(builder, fetchedMessages.get(i));
         }
 
-        return Ints.toArray(messages);
+        return messages;
     }
 
     private int buildMessage(FlatBufferBuilder builder, Message message) {

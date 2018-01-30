@@ -23,9 +23,11 @@ import java.util.concurrent.ConcurrentMap;
 public class TopicPartition {
     private final ConcurrentMap<String, MessageGroup> groupIdMessageGroupMap = new ConcurrentHashMap<>();
     private final short id;
+    private final short topicId;
 
-    public TopicPartition(short id) {
+    public TopicPartition(short id, short topicId) {
         this.id = id;
+        this.topicId = topicId;
     }
 
     public void addMessage(Message message) {

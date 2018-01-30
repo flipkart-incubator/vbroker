@@ -10,7 +10,7 @@ public class VResponseEncoder extends MessageToByteEncoder<Response> {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Response msg, ByteBuf out) {
-        log.info("Encoding VResponse as bytes");
+        log.debug("Encoding VResponse as bytes");
         out.writeInt(msg.getResponseLength());
         out.writeBytes(msg.getVResponse());
     }

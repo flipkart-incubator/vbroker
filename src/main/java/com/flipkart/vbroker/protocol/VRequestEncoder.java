@@ -10,7 +10,7 @@ public class VRequestEncoder extends MessageToByteEncoder<Request> {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Request msg, ByteBuf out) {
-        log.info("Encoding VRequest as bytes");
+        log.debug("Encoding VRequest as bytes");
         out.writeInt(msg.getRequestLength());
         out.writeBytes(msg.getVRequest());
     }

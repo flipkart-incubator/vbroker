@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by hooda on 19/1/18
  */
 @EqualsAndHashCode(exclude = {"qType", "currSeqNo"})
+//TODO: crude implemenation of seqNo. Handle the concurrency here correctly
 public class SubscriberGroup implements Iterable<Message> {
     private final MessageGroup messageGroup;
     @Getter
@@ -36,8 +37,10 @@ public class SubscriberGroup implements Iterable<Message> {
         return new SubscriberGroup(messageGroup, topicPartition);
     }
 
-    public List<Message> getUnconsumedMessages(int count) {
-        return messageGroup.getMessages().subList(currSeqNo.get(), currSeqNo.get() + count);
+    public synchronized List<Message> getUnconsumedMessages(int count) {
+        List<Message> messages = messageGroup.getMessages().subList(currSeqNo.get(), currSeqNo.get() + count);
+        currSeqNo.set(currSeqNo.get() + count);
+        return messages;
     }
 
     @Override
@@ -51,7 +54,7 @@ public class SubscriberGroup implements Iterable<Message> {
             }
 
             @Override
-            public Message next() {
+            public synchronized Message next() {
                 Message message = groupIterator.next();
                 currSeqNo.incrementAndGet();
                 return message;

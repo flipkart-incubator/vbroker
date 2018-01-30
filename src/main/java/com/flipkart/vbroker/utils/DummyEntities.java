@@ -12,7 +12,7 @@ public class DummyEntities {
 
     static {
         topic1 = new Topic((short) 101);
-        TopicPartition topicPartition1 = new TopicPartition((short) 0);
+        TopicPartition topicPartition1 = new TopicPartition((short) 0, topic1.getId());
         topic1.addPartition(topicPartition1);
         subscription1 = new Subscription((short) 1001, topic1, true);
         PartSubscription partSubscription1 = new PartSubscription((short) 0, topicPartition1);
