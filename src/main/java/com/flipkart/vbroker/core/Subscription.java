@@ -6,9 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.flipkart.vbroker.utils.JsonUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.ToString;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /**

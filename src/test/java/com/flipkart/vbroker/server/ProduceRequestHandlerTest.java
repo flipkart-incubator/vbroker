@@ -1,7 +1,5 @@
 package com.flipkart.vbroker.server;
 
-import com.flipkart.vbroker.entities.ProduceRequest;
-import io.netty.channel.embedded.EmbeddedChannel;
 import org.testng.annotations.Test;
 
 /**
