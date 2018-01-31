@@ -1,8 +1,11 @@
 package com.flipkart.vbroker.core;
 
-import lombok.EqualsAndHashCode;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.flipkart.vbroker.utils.JsonUtils;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 import java.util.ArrayList;
@@ -12,25 +15,44 @@ import java.util.List;
  * Created by hooda on 19/1/18
  */
 @Getter
-@EqualsAndHashCode(exclude = {"partitions", "noOfPartitions", "replicationFactor", "grouped", "topicCategory"})
-@ToString
 public class Topic {
+    private static final ObjectMapper MAPPER = JsonUtils.getObjectMapper();
+
     public static final short DEFAULT_NO_OF_PARTITIONS = 3;
     public static final short DEFAULT_REPLICATION_FACTOR = 3;
+    public static final String DEFAULT_TEAM = "DEFAULT";
 
     private final short id;
-    private final List<TopicPartition> partitions = new ArrayList<>();
-    @Setter
-    private short noOfPartitions = DEFAULT_NO_OF_PARTITIONS;
-    @Setter
-    private short replicationFactor = DEFAULT_REPLICATION_FACTOR;
-    @Setter
-    private boolean grouped = false;
-    @Setter
-    private TopicCategory topicCategory = TopicCategory.TOPIC;
+    private final int noOfPartitions;
+    private final int replicationFactor;
+    private final boolean grouped;
+    private final String name;
+    private final String team;
+    private final TopicCategory topicCategory;
+    @JsonIgnore
+    private final List<TopicPartition> partitions;
 
-    public Topic(Short id) {
+    public Topic(short id, String name) {
         this.id = id;
+        this.name = name;
+        this.noOfPartitions = DEFAULT_NO_OF_PARTITIONS;
+        this.replicationFactor = DEFAULT_REPLICATION_FACTOR;
+        this.grouped = false;
+        this.team = DEFAULT_TEAM;
+        this.topicCategory = TopicCategory.TOPIC;
+        this.partitions = new ArrayList<>();
+
+    }
+
+    public Topic(short id, int noOfPartitions, int replicationFactor, boolean grouped, String name, String team, TopicCategory topicCategory, List<TopicPartition> partitions) {
+        this.id = id;
+        this.noOfPartitions = noOfPartitions;
+        this.replicationFactor = replicationFactor;
+        this.grouped = grouped;
+        this.name = name;
+        this.team = team;
+        this.topicCategory = topicCategory;
+        this.partitions = partitions;
     }
 
     //make it package access
@@ -42,7 +64,87 @@ public class Topic {
         return partitions.get(id);
     }
 
+    public String toJson() throws JsonProcessingException {
+        return MAPPER.writeValueAsString(this);
+    }
+
+    public byte[] toBytes() throws JsonProcessingException {
+        return MAPPER.writeValueAsBytes(this);
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Topic)) return false;
+        final Topic topic = (Topic) o;
+        return id == topic.id && name == topic.name;
+    }
+
     public enum TopicCategory {
         QUEUE, TOPIC
+    }
+
+    @JsonPOJOBuilder
+    public static final class TopicBuilder {
+        private short id;
+        private int noOfPartitions;
+        private int replicationFactor;
+        private boolean grouped;
+        private String name;
+        private String team;
+        private TopicCategory topicCategory;
+        private List<TopicPartition> partitions;
+
+        private TopicBuilder() {
+        }
+
+        public static TopicBuilder aTopic() {
+            return new TopicBuilder();
+        }
+
+        public TopicBuilder withId(short id) {
+            this.id = id;
+            return this;
+        }
+
+        public TopicBuilder withNoOfPartitions(int noOfPartitions) {
+            this.noOfPartitions = noOfPartitions;
+            return this;
+        }
+
+        public TopicBuilder withReplicationFactor(int replicationFactor) {
+            this.replicationFactor = replicationFactor;
+            return this;
+        }
+
+        public TopicBuilder withGrouped(boolean grouped) {
+            this.grouped = grouped;
+            return this;
+        }
+
+        public TopicBuilder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public TopicBuilder withTeam(String team) {
+            this.team = team;
+            return this;
+        }
+
+        public TopicBuilder withTopicCategory(TopicCategory topicCategory) {
+            this.topicCategory = topicCategory;
+            return this;
+        }
+
+        public TopicBuilder withPartitions(List<TopicPartition> partitions) {
+            this.partitions = partitions;
+            return this;
+        }
+
+        public Topic build() {
+            return new Topic(id, noOfPartitions, replicationFactor, grouped, name, team, topicCategory, partitions);
+        }
     }
 }
