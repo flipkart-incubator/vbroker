@@ -6,14 +6,14 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-public class CapacityManagedMap<K, V> implements Map, Observer {
+public class VMap<K, V> implements Map, Observer {
 
     private final ConcurrentHashMap<K, V> kvConcurrentHashMap = new ConcurrentHashMap<>();
     private final EvictionStrategy evictionStrategy;
     private final L3Provider l3Provider;
     private int mapUsedCapacity = 0;
 
-    public CapacityManagedMap(EvictionStrategy evictionStrategy, L3Provider l3Provider) {
+    public VMap(EvictionStrategy evictionStrategy, L3Provider l3Provider) {
         this.evictionStrategy = evictionStrategy;
         this.l3Provider = l3Provider;
     }
@@ -84,7 +84,7 @@ public class CapacityManagedMap<K, V> implements Map, Observer {
         log.info("mapUsedCapacity changed to {}", mapUsedCapacity);
         if (evictionStrategy.shouldEvict(this.mapUsedCapacity)) {
             evictionStrategy.evict(this, o, l3Provider);
-            ((CapacityManagedList) o).setLevel(CapacityManagedList.Level.L3);
+            ((VList) o).setLevel(VList.Level.L3);
         }
     }
 }

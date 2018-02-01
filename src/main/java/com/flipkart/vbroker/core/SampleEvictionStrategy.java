@@ -15,8 +15,8 @@ public class SampleEvictionStrategy implements EvictionStrategy {
 
     @Override
     public void evict(Object parent, Object member, L3Provider l3Provider) {
-        Iterator it = ((CapacityManagedList) member).iterator();
-        log.info("Evicting member with groupId {} from parent with {} no. of groupIds", ((CapacityManagedList) ((CapacityManagedList) member)).getGroupId(), ((CapacityManagedMap) parent).size());
+        Iterator it = ((VList) member).iterator();
+        log.info("Evicting member with groupId {} from parent with {} no. of groupIds", ((VList) ((VList) member)).getGroupId(), ((VMap) parent).size());
         while (it.hasNext()) {
             l3Provider.write("sample-key", it.next());
         }

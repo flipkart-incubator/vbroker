@@ -8,13 +8,13 @@ import java.util.*;
 
 @Slf4j
 @Getter
-public class CapacityManagedList<Item> extends Observable implements List {
+public class VList<Item> extends Observable implements List {
     private final List<Item> itemList = new LinkedList<>();
     private String groupId;
     private int listUsedCapacity = 0;
     private Level level;
 
-    public CapacityManagedList(String groupId) {
+    public VList(String groupId) {
         this.groupId = groupId;
         this.level = Level.L2;
     }
