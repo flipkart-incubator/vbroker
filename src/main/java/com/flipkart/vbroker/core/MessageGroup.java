@@ -20,20 +20,20 @@ public class MessageGroup implements Iterable<Message> {
 
     public MessageGroup(String groupId, Map map) {
         this.groupId = groupId;
-        this.messages = MemoryManager.getCapacityManagedList(groupId);
-        ((CapacityManagedList) messages).addObserver((CapacityManagedMap) map);
+        this.messages = MemoryManager.getVList(groupId);
+        ((VList) messages).addObserver((VMap) map);
     }
 
     public int getUsedCapacity() {
-        return ((CapacityManagedList) this.messages).getListUsedCapacity();
+        return ((VList) this.messages).getListUsedCapacity();
     }
 
-    public CapacityManagedList.Level getLevel() {
-        return ((CapacityManagedList) this.messages).getLevel();
+    public VList.Level getLevel() {
+        return ((VList) this.messages).getLevel();
     }
 
-    public void setLevel(CapacityManagedList.Level level) {
-        ((CapacityManagedList) this.messages).setLevel(level);
+    public void setLevel(VList.Level level) {
+        ((VList) this.messages).setLevel(level);
     }
 
     public void appendMessage(Message message) {

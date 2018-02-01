@@ -21,12 +21,12 @@ public class MemoryManager {
     public void setLevel(MessageGroup messageGroup, MessageGroup.Level level);
     */
 
-    public static Map getCapacityManagedMap(EvictionStrategy evictionStrategy, L3Provider l3Provider) {
-        return new CapacityManagedMap(evictionStrategy, l3Provider);
+    public static Map getVMap(EvictionStrategy evictionStrategy, L3Provider l3Provider) {
+        return new VMap(evictionStrategy, l3Provider);
     }
 
-    public static List getCapacityManagedList(String groupId) {
-        return new CapacityManagedList(groupId);
+    public static List getVList(String groupId) {
+        return new VList(groupId);
     }
 
     public static void setAllocator(Channel ch, ByteBufAllocator allocator) {

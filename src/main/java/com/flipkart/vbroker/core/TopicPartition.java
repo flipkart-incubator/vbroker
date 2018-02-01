@@ -16,7 +16,7 @@ import java.util.*;
 @EqualsAndHashCode(exclude = {"groupIdMessageGroupMap"})
 @ToString
 public class TopicPartition {
-    private final Map<String, MessageGroup> groupIdMessageGroupMap = MemoryManager.getCapacityManagedMap(new SampleEvictionStrategy(), new SampleL3Provider());
+    private final Map<String, MessageGroup> groupIdMessageGroupMap = MemoryManager.getVMap(new SampleEvictionStrategy(), new SampleL3Provider());
     private final short id;
     private final short topicId;
 
