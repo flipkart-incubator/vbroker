@@ -2,6 +2,7 @@ package com.flipkart.vbroker.core;
 
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.exceptions.VBrokerException;
+import com.flipkart.vbroker.iterators.MuxMessageIterator;
 import com.google.common.collect.PeekingIterator;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -15,28 +16,19 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 @Slf4j
-@EqualsAndHashCode(exclude = {"subscriberGroupsMap", "parallelism"})
+@EqualsAndHashCode(exclude = {"subscriberGroupsMap"})
 @ToString
-public class PartSubscriber {
+public class PartSubscriber implements Iterable<Message> {
     public static final Integer DEFAULT_PARALLELISM = 5;
     public static final Integer MAX_GROUPS_IN_ITERATOR = 100;
 
     @Getter
     private final PartSubscription partSubscription;
-    private final ConcurrentMap<String, SubscriberGroup> subscriberGroupsMap = new ConcurrentHashMap<>();
-    @Getter
-    private final int parallelism;
-    private final Queue<PeekingIterator<Message>>[] messageQueues;
+    private final Map<String, SubscriberGroup> subscriberGroupsMap = new LinkedHashMap<>();
 
-    public PartSubscriber(PartSubscription partSubscription, int parallelism) {
+    public PartSubscriber(PartSubscription partSubscription) {
         log.info("Creating new PartSubscriber for part-subscription {}", partSubscription);
         this.partSubscription = partSubscription;
-        this.parallelism = parallelism;
-        this.messageQueues = (Queue<PeekingIterator<Message>>[]) new Queue[parallelism];
-        for (int i = 0; i < parallelism; i++) {
-            messageQueues[i] = new ArrayBlockingQueue<>(MAX_GROUPS_IN_ITERATOR);
-        }
-
         refreshSubscriberGroups();
     }
 
@@ -90,68 +82,14 @@ public class PartSubscriber {
     public void refreshParallelQueues() {
     }
 
-    public class MuxMessageIterator<Message> implements PeekingIterator<Message> {
-
-        private final Queue<PeekingIterator<Message>> iteratorQueue;
-        private PeekingIterator<Message> currIterator;
-
-        public MuxMessageIterator(Queue<PeekingIterator<Message>> iteratorQueue) {
-            this.iteratorQueue = iteratorQueue;
-            currIterator = iteratorQueue.poll();
-        }
-
-        @Override
-        public Message peek() {
-            return currIterator.peek();
-        }
-
-        @Override
-        public boolean hasNext() {
-            updateIterator();
-            return currIterator.hasNext();
-        }
-
-        private void updateIterator() {
-            if (!currIterator.hasNext()) {
-                iteratorQueue.add(currIterator);
-                iteratorQueue.remove();
-                while (!iteratorQueue.isEmpty()) {
-                    PeekingIterator<Message> probableIterator = iteratorQueue.poll();
-                    if (probableIterator.hasNext()) {
-                        currIterator = probableIterator;
-                    } else {
-                        iteratorQueue.add(probableIterator);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public Message next() {
-            return currIterator.next();
-        }
-
-        @Override
-        public void remove() {
-            currIterator.remove();
-        }
-    }
-
-    public List<PeekingIterator<Message>> iterators() {
-        List<PeekingIterator<Message>> reqIterators = new ArrayList<>();
-        int k = 0;
-        for (Map.Entry<String, SubscriberGroup> entry : subscriberGroupsMap.entrySet()) {
-            SubscriberGroup subscriberGroup = entry.getValue();
+    @Override
+    public PeekingIterator<Message> iterator() {
+        Queue<PeekingIterator<Message>> iteratorQueue = new ArrayDeque<>();
+        for (SubscriberGroup subscriberGroup : subscriberGroupsMap.values()) {
             PeekingIterator<Message> groupMsgIterator = subscriberGroup.iterator();
-            messageQueues[k].add(groupMsgIterator);
-            k++;
+            iteratorQueue.add(groupMsgIterator);
         }
 
-        for (Queue<PeekingIterator<Message>> messageQueue : messageQueues) {
-            MuxMessageIterator<Message> muxIterator = new MuxMessageIterator<>(messageQueue);
-            reqIterators.add(muxIterator);
-        }
-
-        return reqIterators;
+        return new MuxMessageIterator<>(iteratorQueue);
     }
 }

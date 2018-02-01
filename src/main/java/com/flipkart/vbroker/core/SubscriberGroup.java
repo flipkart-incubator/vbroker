@@ -25,11 +25,41 @@ public class SubscriberGroup implements Iterable<Message> {
     @Getter
     @Setter
     private AtomicInteger currSeqNo = new AtomicInteger(0);
+    private final PeekingIterator<Message> iterator;
 
-    public SubscriberGroup(MessageGroup messageGroup,
-                           TopicPartition topicPartition) {
+    private SubscriberGroup(MessageGroup messageGroup,
+                            TopicPartition topicPartition) {
         this.messageGroup = messageGroup;
         this.topicPartition = topicPartition;
+        this.iterator = new SubscriberGroupIterator();
+    }
+
+    
+
+    private class SubscriberGroupIterator implements PeekingIterator<Message> {
+        PeekingIterator<Message> groupIterator = messageGroup.iteratorFrom(currSeqNo.get());
+
+        @Override
+        public Message peek() {
+            return groupIterator.peek();
+        }
+
+        @Override
+        public synchronized Message next() {
+            Message message = groupIterator.next();
+            currSeqNo.incrementAndGet();
+            return message;
+        }
+
+        @Override
+        public void remove() {
+            throw new VBrokerException("Unsupported operation");
+        }
+
+        @Override
+        public boolean hasNext() {
+            return groupIterator.hasNext();
+        }
     }
 
     public static SubscriberGroup newGroup(MessageGroup messageGroup,
@@ -45,31 +75,7 @@ public class SubscriberGroup implements Iterable<Message> {
 
     @Override
     public PeekingIterator<Message> iterator() {
-        return new PeekingIterator<Message>() {
-            PeekingIterator<Message> groupIterator = messageGroup.iteratorFrom(currSeqNo.get());
-
-            @Override
-            public Message peek() {
-                return groupIterator.peek();
-            }
-
-            @Override
-            public synchronized Message next() {
-                Message message = groupIterator.next();
-                currSeqNo.incrementAndGet();
-                return message;
-            }
-
-            @Override
-            public void remove() {
-                throw new VBrokerException("Unsupported operation");
-            }
-
-            @Override
-            public boolean hasNext() {
-                return groupIterator.hasNext();
-            }
-        };
+        return iterator;
     }
 
     public String getGroupId() {
