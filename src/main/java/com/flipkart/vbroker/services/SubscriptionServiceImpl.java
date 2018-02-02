@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
 
 @Slf4j
 public class SubscriptionServiceImpl implements SubscriptionService {
@@ -57,7 +58,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         //wanted below to work but its creating a new PartSubscriber each time though key is already present
         //subscriberMap.putIfAbsent(partSubscription, new PartSubscriber(partSubscription));
 
-        subscriberMap.computeIfAbsent(partSubscription, PartSubscriber::new);
+        subscriberMap.computeIfAbsent(partSubscription, new Function<PartSubscription, PartSubscriber>() {
+            @Override
+            public PartSubscriber apply(PartSubscription partSubscription) {
+                return new PartSubscriber(partSubscription);
+            }
+        });
         PartSubscriber partSub = subscriberMap.get(partSubscription);
         partSub.refreshSubscriberGroups(); //can compute twice if its just created - should be okay as new subscriber will be empty in no of groups
 
