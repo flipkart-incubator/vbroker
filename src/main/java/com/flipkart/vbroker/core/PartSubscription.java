@@ -11,11 +11,13 @@ import lombok.ToString;
 public class PartSubscription {
     private final short id;
     private final TopicPartition topicPartition;
+    private final short subscriptionId;
     @Setter
     private boolean grouped = false;
 
-    public PartSubscription(short id, TopicPartition topicPartition) {
+    public PartSubscription(short id, TopicPartition topicPartition, short subscriptionId) {
         this.id = id;
         this.topicPartition = topicPartition;
+        this.subscriptionId = subscriptionId;
     }
 }

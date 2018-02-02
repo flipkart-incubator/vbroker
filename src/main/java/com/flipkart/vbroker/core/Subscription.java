@@ -48,8 +48,6 @@ public class Subscription {
         return MAPPER.writeValueAsBytes(this);
     }
 
-
-
     @JsonPOJOBuilder
     public static final class SubscriptionBuilder {
         private Topic topic;

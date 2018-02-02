@@ -22,6 +22,7 @@ public class PartSubscriber implements Iterable<SubscriberGroup> {
 
     @Getter
     private final PartSubscription partSubscription;
+    @Getter
     private final ConcurrentMap<String, SubscriberGroup> subscriberGroupsMap = new ConcurrentHashMap<>();
 
     public PartSubscriber(PartSubscription partSubscription) {
@@ -38,7 +39,8 @@ public class PartSubscriber implements Iterable<SubscriberGroup> {
     /**
      * Call this method to keep subscriberGroups in sync with messageGroups at any point
      */
-    public void refreshSubscriberGroups() {
+    public void
+    refreshSubscriberGroups() {
         log.info("Refreshing SubscriberGroups for part-subscriber {} for topic-partition {}",
                 partSubscription.getId(), partSubscription.getTopicPartition().getId());
         TopicPartition topicPartition = partSubscription.getTopicPartition();
