@@ -77,7 +77,6 @@ public class VBrokerClient {
             }
 
             int topicRequestsVector = ProduceRequest.createTopicRequestsVector(builder, topicRequests);
-
             int produceRequest = ProduceRequest.createProduceRequest(builder, topicRequestsVector);
             int vRequest = VRequest.createVRequest(builder,
                     (byte) 1,
