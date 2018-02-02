@@ -4,12 +4,16 @@ import com.flipkart.vbroker.core.*;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
+import com.google.common.collect.Lists;
+import com.google.common.collect.PeekingIterator;
+import com.google.common.primitives.Ints;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -105,13 +109,17 @@ public class FetchRequestHandler implements RequestHandler {
                                 PartSubscription partSubscription,
                                 short noOfMessagesToFetch) {
         PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription);
-        List<Message> fetchedMessages = new ArrayList<>(); //partSubscriber.getMessages(noOfMessagesToFetch);
-        int[] messages = new int[fetchedMessages.size()];
-        for (int i = 0; i < fetchedMessages.size(); i++) {
-            messages[i] = buildMessage(builder, fetchedMessages.get(i));
+        List<Integer> messages = new LinkedList<>();
+
+        int i = 0;
+        PeekingIterator<Message> iterator = partSubscriber.iterator();
+        while (iterator.hasNext() && i < noOfMessagesToFetch) {
+            Message message = iterator.peek();
+            messages.add(buildMessage(builder, message));
+            iterator.next();
         }
 
-        return messages;
+        return Ints.toArray(messages);
     }
 
     private int buildMessage(FlatBufferBuilder builder, Message message) {

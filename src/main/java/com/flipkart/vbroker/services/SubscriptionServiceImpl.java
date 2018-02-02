@@ -61,7 +61,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         subscriberMap.computeIfAbsent(partSubscription, new Function<PartSubscription, PartSubscriber>() {
             @Override
             public PartSubscriber apply(PartSubscription partSubscription) {
-                return new PartSubscriber(partSubscription, 1);
+                return new PartSubscriber(partSubscription);
             }
         });
         PartSubscriber partSub = subscriberMap.get(partSubscription);
