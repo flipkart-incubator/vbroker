@@ -24,7 +24,8 @@ public class ResponseHandlerFactory {
                 responseHandler = new FetchResponseHandler(clientBootstrap);
                 break;
             case ResponseMessage.TopicCreateResponse:
-            	responseHandler = new TopicCreateResponseHandler();
+                responseHandler = new TopicCreateResponseHandler();
+                break;
             default:
                 throw new VBrokerException("Unsupported ResponseMessageType: " + msg.responseMessageType());
         }

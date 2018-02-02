@@ -3,6 +3,7 @@ package com.flipkart.vbroker.core;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.flipkart.vbroker.utils.JsonUtils;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import java.util.List;
  * Created by hooda on 19/1/18
  */
 @Getter
+@JsonDeserialize(builder=Topic.TopicBuilder.class)
 public class Topic {
     private static final ObjectMapper MAPPER = JsonUtils.getObjectMapper();
 
