@@ -1,42 +1,51 @@
 package com.flipkart.vbroker.controller;
 
-import com.flipkart.vbroker.VBrokerConfig;
-import com.flipkart.vbroker.exceptions.VBrokerException;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.retry.ExponentialBackoffRetry;
-import org.apache.curator.x.async.AsyncCuratorFramework;
-import org.apache.curator.x.async.api.CreateOption;
-
-import java.io.IOException;
-import java.util.EnumSet;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+import org.apache.curator.x.async.AsyncEventException;
+import org.apache.zookeeper.WatchedEvent;
+
+import com.flipkart.vbroker.services.CuratorService;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class VBrokerController {
+	private String path = "/topics";
+	private CuratorService curatorService;
+	private Executor executor = Executors.newSingleThreadExecutor();
 
-    public static void main() throws IOException {
+	public VBrokerController(CuratorService curatorService) {
+		super();
+		this.curatorService = curatorService;
+	}
 
-        VBrokerConfig config = VBrokerConfig.newConfig("broker.properties");
+	public void watch() {
 
-        CuratorFramework curatorFramework = CuratorFrameworkFactory.newClient(
-                config.getZookeeperUrl(),
-                new ExponentialBackoffRetry(1000, 5));
+		log.info("Setting watch on topics path...");
+		CompletionStage<WatchedEvent> s = curatorService.watchNode(path);
+		handleWatchedStage(s);
+	}
 
-        String path = "/vbroker/test";
-
-        AsyncCuratorFramework asyncZkClient = AsyncCuratorFramework.wrap(curatorFramework);
-        CompletionStage<Object> handle = asyncZkClient.create()
-                .withOptions(EnumSet.of(CreateOption.doProtected))
-                .forPath(path)
-                .handle((actualPath, exception) -> {
-                    if (exception != null) {
-                        log.error("Exception in creating node");
-                        throw new VBrokerException("Exception in creating node");
-                    }
-                    return null;
-                });
-
-    }
+	private void handleWatchedStage(CompletionStage<WatchedEvent> watchedStage) {
+		watchedStage.handleAsync((data, exception) -> {
+			if (exception != null) {
+				log.error("Exception occured..");
+				AsyncEventException asyncEx = (AsyncEventException) exception;
+				asyncEx.printStackTrace(); // handle the error as needed
+				handleWatchedStage(asyncEx.reset());
+			} else {
+				log.info(data.getState() + " " + data.getPath() + " " + data.getType());
+				try {
+					this.watch();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			return null;
+		}, executor);
+	}
 }

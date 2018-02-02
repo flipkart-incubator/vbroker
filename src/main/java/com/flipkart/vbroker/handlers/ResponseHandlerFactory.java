@@ -23,6 +23,8 @@ public class ResponseHandlerFactory {
             case ResponseMessage.FetchResponse:
                 responseHandler = new FetchResponseHandler(clientBootstrap);
                 break;
+            case ResponseMessage.TopicCreateResponse:
+            	responseHandler = new TopicCreateResponseHandler();
             default:
                 throw new VBrokerException("Unsupported ResponseMessageType: " + msg.responseMessageType());
         }

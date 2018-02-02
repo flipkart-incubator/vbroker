@@ -9,9 +9,14 @@ table VStatus {
       message:string;
 }
 
-union RequestMessage { ProduceRequest, FetchRequest }
+union RequestMessage { ProduceRequest, FetchRequest, TopicCreateRequest }
 
 enum HttpMethod:byte {POST=0, PUT=1, DELETE=2, PATCH=3}
+
+
+enum TopicType:byte {MAIN=0, SIDELINE=1, RETRY=2}
+
+enum TopicCategory:byte {QUEUE=0, TOPIC=1}
 
 table VRequest {
       version:int8;
@@ -77,7 +82,14 @@ table FetchRequest {
 }
 
 table TopicCreateRequest {
-      topicId:int8;
+	  topicId:int16;
+      topicName:string;
+      team:string;
+      grouped:bool;
+      partitions:int16;
+      replicationFactor:int16;
+      topicType:TopicType;
+      topicCategory:TopicCategory;
 }
 
 root_type VRequest;
@@ -85,7 +97,7 @@ root_type VRequest;
 
 // responses
 
-union ResponseMessage { ProduceResponse, FetchResponse }
+union ResponseMessage { ProduceResponse, FetchResponse, TopicCreateResponse }
 
 table VResponse {
       correlationId:int32;
@@ -124,6 +136,11 @@ table TopicFetchResponse {
 
 table FetchResponse {
       topicResponses:[TopicFetchResponse];
+}
+
+table TopicCreateResponse {
+      topicId:int16;
+      statusCode:int16;
 }
 
 root_type VResponse;

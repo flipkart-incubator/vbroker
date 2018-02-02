@@ -37,8 +37,11 @@ public class VBrokerServer implements Runnable {
     private Channel serverChannel;
     private Channel serverLocalChannel;
 
-    public VBrokerServer(VBrokerConfig config) {
+    private final TopicService topicService;
+    
+    public VBrokerServer(VBrokerConfig config, TopicService topicService) {
         this.config = config;
+        this.topicService = topicService;
     }
 
     private void start() {
@@ -48,7 +51,6 @@ public class VBrokerServer implements Runnable {
         EventLoopGroup workerGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("server_worker"));
         EventLoopGroup localGroup = new DefaultEventLoopGroup(1, new DefaultThreadFactory("server_local"));
 
-        TopicService topicService = new TopicServiceImpl();
         SubscriptionService subscriptionService = new SubscriptionServiceImpl();
 
         topicService.createTopic(DummyEntities.topic1);
