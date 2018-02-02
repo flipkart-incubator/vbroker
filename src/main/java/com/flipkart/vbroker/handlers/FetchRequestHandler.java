@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -104,8 +105,7 @@ public class FetchRequestHandler implements RequestHandler {
                                 PartSubscription partSubscription,
                                 short noOfMessagesToFetch) {
         PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription);
-        List<Message> fetchedMessages = partSubscriber.getMessages(noOfMessagesToFetch);
-
+        List<Message> fetchedMessages = new ArrayList<>(); //partSubscriber.getMessages(noOfMessagesToFetch);
         int[] messages = new int[fetchedMessages.size()];
         for (int i = 0; i < fetchedMessages.size(); i++) {
             messages[i] = buildMessage(builder, fetchedMessages.get(i));

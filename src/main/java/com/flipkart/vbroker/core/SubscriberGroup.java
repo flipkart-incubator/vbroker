@@ -8,13 +8,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by hooda on 19/1/18
  */
 @EqualsAndHashCode(exclude = {"qType", "currSeqNo"})
-//TODO: crude implemenation of seqNo. Handle the concurrency here correctly
+//TODO: crude implementation of seqNo. Handle the concurrency here correctly
 public class SubscriberGroup implements Iterable<Message> {
     private final MessageGroup messageGroup;
     @Getter
@@ -25,16 +26,37 @@ public class SubscriberGroup implements Iterable<Message> {
     @Getter
     @Setter
     private AtomicInteger currSeqNo = new AtomicInteger(0);
-    private final PeekingIterator<Message> iterator;
+    @Getter
+    private volatile AtomicBoolean locked = new AtomicBoolean(false);
 
     private SubscriberGroup(MessageGroup messageGroup,
                             TopicPartition topicPartition) {
         this.messageGroup = messageGroup;
         this.topicPartition = topicPartition;
-        this.iterator = new SubscriberGroupIterator();
     }
 
-    
+    /**
+     * @return true if locking for the first time
+     * false if already locked
+     */
+    public boolean lock() {
+        return locked.compareAndSet(false, true);
+    }
+
+    /**
+     * @return true if successfully unlocked
+     * false if already unlocked
+     */
+    public boolean unlock() {
+        return locked.compareAndSet(true, false);
+    }
+
+    /**
+     * @return locked status
+     */
+    public boolean isLocked() {
+        return locked.get();
+    }
 
     private class SubscriberGroupIterator implements PeekingIterator<Message> {
         PeekingIterator<Message> groupIterator = messageGroup.iteratorFrom(currSeqNo.get());
@@ -75,7 +97,7 @@ public class SubscriberGroup implements Iterable<Message> {
 
     @Override
     public PeekingIterator<Message> iterator() {
-        return iterator;
+        return new SubscriberGroupIterator();
     }
 
     public String getGroupId() {

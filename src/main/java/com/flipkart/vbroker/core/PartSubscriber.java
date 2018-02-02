@@ -2,18 +2,14 @@ package com.flipkart.vbroker.core;
 
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.exceptions.VBrokerException;
-import com.flipkart.vbroker.iterators.MuxMessageIterator;
 import com.google.common.collect.PeekingIterator;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.Nullable;
 import java.util.*;
-import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 @Slf4j
 @EqualsAndHashCode(exclude = {"subscriberGroupsMap"})
@@ -25,6 +21,7 @@ public class PartSubscriber implements Iterable<Message> {
     @Getter
     private final PartSubscription partSubscription;
     private final Map<String, SubscriberGroup> subscriberGroupsMap = new LinkedHashMap<>();
+    private final Map<SubscriberGroup, PeekingIterator<Message>> subscriberGroupIteratorMap = new LinkedHashMap<>();
 
     public PartSubscriber(PartSubscription partSubscription) {
         log.info("Creating new PartSubscriber for part-subscription {}", partSubscription);
@@ -32,8 +29,20 @@ public class PartSubscriber implements Iterable<Message> {
         refreshSubscriberGroups();
     }
 
-    public Set<SubscriberGroup> getSubscriberGroups() {
-        return new HashSet<>(subscriberGroupsMap.values());
+    public boolean lockSubscriberGroup(String groupId) {
+        Optional<SubscriberGroup> subscriberGroup = Optional.ofNullable(subscriberGroupsMap.get(groupId));
+        if (subscriberGroup.isPresent()) {
+            return subscriberGroup.get().lock();
+        }
+        throw new VBrokerException("SubscriberGroup with groupId: " + groupId + " not present");
+    }
+
+    public boolean unlockSubscriberGroup(String groupId) {
+        Optional<SubscriberGroup> subscriberGroup = Optional.ofNullable(subscriberGroupsMap.get(groupId));
+        if (!subscriberGroup.isPresent()) {
+            throw new VBrokerException("SubscriberGroup with groupId: " + groupId + " not present");
+        }
+        return subscriberGroup.get().unlock();
     }
 
     /**
@@ -52,44 +61,54 @@ public class PartSubscriber implements Iterable<Message> {
             if (messageGroup.isPresent()) {
                 SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup.get(), topicPartition);
                 subscriberGroupsMap.put(group, subscriberGroup);
+                subscriberGroupIteratorMap.put(subscriberGroup, subscriberGroup.iterator());
             }
         });
     }
 
-    public List<Message> getMessages(int noOfMessagesToFetch) {
-        throw new VBrokerException("Unimplemented");
-//        List<Message> fetchedMessages = new LinkedList<>();
-//        PeekingIterator<SubscriberGroup> groupIterator = Iterators.peekingIterator(getSubscriberGroups().iterator());
-//
-//        int m = 0;
-//        while (groupIterator.hasNext() && m < noOfMessagesToFetch) {
-//            SubscriberGroup group = groupIterator.peek();
-//            log.debug("Fetching messageQueues of group {} for topic {}", group.getGroupId(), partSubscription.getTopicPartition().getId());
-//
-//            PeekingIterator<Message> messageIterator = group.iterator();
-//            while (messageIterator.hasNext()) {
-//                Message msg = messageIterator.peek();
-//                log.debug("Peeking Message with msg_id: {} and group_id: {}", msg.messageId(), msg.groupId());
-//                fetchedMessages.add(msg);
-//                m++;
-//                messageIterator.next();
-//            }
-//            groupIterator.next();
-//        }
-//        return fetchedMessages;
-    }
-
-    public void refreshParallelQueues() {
-    }
-
     @Override
     public PeekingIterator<Message> iterator() {
-        Queue<PeekingIterator<Message>> iteratorQueue = new ArrayDeque<>();
-        for (SubscriberGroup subscriberGroup : subscriberGroupsMap.values()) {
-            PeekingIterator<Message> groupMsgIterator = subscriberGroup.iterator();
-            iteratorQueue.add(groupMsgIterator);
-        }
+        return new PeekingIterator<Message>() {
+            PeekingIterator<Message> currIterator;
 
-        return new MuxMessageIterator<>(iteratorQueue);
+            boolean refresh() {
+                boolean refreshed = false;
+                if (currIterator != null && currIterator.hasNext()) {
+                    return true;
+                }
+
+                for (SubscriberGroup subscriberGroup : subscriberGroupsMap.values()) {
+                    if (!subscriberGroup.isLocked()) {
+                        PeekingIterator<Message> groupIterator = subscriberGroupIteratorMap.get(subscriberGroup);
+                        if (groupIterator.hasNext()) {
+                            currIterator = groupIterator;
+                            refreshed = true;
+                            break;
+                        }
+                    }
+                }
+                return refreshed;
+            }
+
+            @Override
+            public Message peek() {
+                return currIterator.peek();
+            }
+
+            @Override
+            public Message next() {
+                return currIterator.next();
+            }
+
+            @Override
+            public void remove() {
+                currIterator.remove();
+            }
+
+            @Override
+            public boolean hasNext() {
+                return refresh() && currIterator.hasNext();
+            }
+        };
     }
 }
