@@ -34,11 +34,15 @@ public class BrokerSubscriber implements Runnable {
                 Thread.sleep(timeMs);
 
                 List<PartSubscriber> partSubscribers = getPartSubscribersForCurrentBroker();
+                SubscriberGroupSyncer syncer = new SubscriberGroupSyncer(partSubscribers);
+                new Thread(syncer).start();
+
+                log.info("No of partSubscribers are {}", partSubscribers.size());
                 PeekingIterator<Message> subscriberIterator = new SubscriberIterator(partSubscribers);
 
                 long pollTimeMs = 2 * 1000;
                 while (running.get()) {
-                    log.info("Polling for new messages");
+                    log.debug("Polling for new messages");
                     while (subscriberIterator.hasNext()) {
                         Message message = subscriberIterator.peek();
                         process(message);

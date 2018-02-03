@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
-@EqualsAndHashCode(exclude = {"subscriberGroupsMap"})
+@EqualsAndHashCode(exclude = {"subscriberGroupsMap", "subscriberGroupIteratorMap"})
 @ToString
 public class PartSubscriber implements Iterable<Message> {
     public static final Integer DEFAULT_PARALLELISM = 5;
@@ -51,7 +51,7 @@ public class PartSubscriber implements Iterable<Message> {
      * Call this method to keep subscriberGroups in sync with messageGroups at any point
      */
     public void refreshSubscriberGroups() {
-        log.info("Refreshing SubscriberGroups for part-subscriber {} for topic-partition {}",
+        log.debug("Refreshing SubscriberGroups for part-subscriber {} for topic-partition {}",
                 partSubscription.getId(), partSubscription.getTopicPartition().getId());
         TopicPartition topicPartition = partSubscription.getTopicPartition();
 

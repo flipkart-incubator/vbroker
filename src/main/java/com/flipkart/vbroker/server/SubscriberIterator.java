@@ -4,11 +4,13 @@ import com.flipkart.vbroker.core.PartSubscriber;
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.google.common.collect.PeekingIterator;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Queue;
 
+@Slf4j
 public class SubscriberIterator implements PeekingIterator<Message> {
 
     private final Queue<PeekingIterator<Message>> iteratorQueue = new ArrayDeque<>();
@@ -20,11 +22,10 @@ public class SubscriberIterator implements PeekingIterator<Message> {
             iteratorQueue.add(iterator);
         }
 
-        if (partSubscribers.size() > 0) {
-            currIterator = iteratorQueue.poll();
-        } else {
+        if (iteratorQueue.size() == 0) {
             throw new VBrokerException("Cannot create a iterator as queue is empty");
         }
+        currIterator = iteratorQueue.poll();
     }
 
     @Override
@@ -34,20 +35,26 @@ public class SubscriberIterator implements PeekingIterator<Message> {
 
     @Override
     public boolean hasNext() {
-        if (!currIterator.hasNext()) {
-            iteratorQueue.add(currIterator);
-            for (int i = 0; i < iteratorQueue.size(); i++) {
-                currIterator = iteratorQueue.poll();
-                if (currIterator.hasNext()) {
-                    break;
-                }
-                iteratorQueue.add(currIterator);
-            }
+        if (currIterator.hasNext()) {
+            return true;
         }
+
+        for (int i = 0; i < iteratorQueue.size(); i++) {
+            PeekingIterator<Message> iterator = iteratorQueue.peek();
+            if (iterator.hasNext()) {
+                iteratorQueue.add(currIterator);
+                currIterator = iterator;
+                break;
+            }
+            iteratorQueue.add(iteratorQueue.poll());
+        }
+
         return currIterator.hasNext();
     }
 
+
     @Override
+
     public Message next() {
         return currIterator.next();
     }
