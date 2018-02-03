@@ -1,33 +1,27 @@
 package com.flipkart.vbroker.core;
 
-import com.flipkart.vbroker.entities.Message;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class Subscriber {
 
+    @Getter
     private final String subscriberId;
-    private final List<PartSubscriber> partSubscribers = new ArrayList<>();
+    private final Map<PartSubscription, PartSubscriber> map = new LinkedHashMap<>();
 
     public Subscriber(String subscriberId, List<PartSubscriber> partSubscribers) {
         this.subscriberId = subscriberId;
-        this.partSubscribers.addAll(partSubscribers);
+        for (PartSubscriber partSubscriber : partSubscribers) {
+            this.map.put(partSubscriber.getPartSubscription(), partSubscriber);
+        }
     }
 
-    /**
-     * set the seqNo of the given group
-     *
-     * @param group to set seqNo for
-     * @param seqNo to set the group position to
-     */
-    public void setSeqNo(TopicPartition topicPartition, String group, int seqNo) {
-
-    }
-
-    private void process(Message message) {
-
+    public PartSubscriber getPartSubscriber(PartSubscription partSubscription) {
+        return this.map.get(partSubscription);
     }
 }

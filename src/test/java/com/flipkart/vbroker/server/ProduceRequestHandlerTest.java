@@ -8,7 +8,7 @@ import org.testng.annotations.Test;
 public class ProduceRequestHandlerTest {
 
     @Test
-    public void shouldHandleProduceRequest(){
+    public void shouldHandleProduceRequest() {
     }
 
 

@@ -22,7 +22,7 @@ public class Subscription {
     private final String name;
     private final Topic topic;
     private final List<PartSubscription> partSubscriptions;
-    private final boolean grouped ;
+    private final boolean grouped;
 
     public Subscription(short id, String name, Topic topic, List<PartSubscription> partSubscriptions, boolean grouped) {
         this.id = id;
@@ -49,14 +49,13 @@ public class Subscription {
     }
 
 
-
     @JsonPOJOBuilder
     public static final class SubscriptionBuilder {
         private Topic topic;
         private short id;
         private String name;
         private List<PartSubscription> partSubscriptions;
-        private boolean grouped ;
+        private boolean grouped;
 
         private SubscriptionBuilder() {
         }

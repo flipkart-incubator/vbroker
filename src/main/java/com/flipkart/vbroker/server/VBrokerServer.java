@@ -169,9 +169,9 @@ public class VBrokerServer implements Runnable {
                 });
 
         ExecutorService executorService = Executors.newSingleThreadExecutor(new DefaultThreadFactory("subscriber"));
-        SubscriberDaemon subscriber = new SubscriberDaemon(address, consumerBootstrap, subscriptionService);
-        log.info("Submitting SubscriberDaemon");
-        executorService.submit(subscriber);
+        //SubscriberDaemon subscriber = new SubscriberDaemon(address, consumerBootstrap, subscriptionService);
+        BrokerSubscriber brokerSubscriber = new BrokerSubscriber(subscriptionService);
+        executorService.submit(brokerSubscriber);
     }
 
     @Override

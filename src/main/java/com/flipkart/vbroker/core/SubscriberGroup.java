@@ -35,6 +35,11 @@ public class SubscriberGroup implements Iterable<Message> {
         this.topicPartition = topicPartition;
     }
 
+    public static SubscriberGroup newGroup(MessageGroup messageGroup,
+                                           TopicPartition topicPartition) {
+        return new SubscriberGroup(messageGroup, topicPartition);
+    }
+
     /**
      * @return true if locking for the first time
      * false if already locked
@@ -56,6 +61,25 @@ public class SubscriberGroup implements Iterable<Message> {
      */
     public boolean isLocked() {
         return locked.get();
+    }
+
+    public synchronized List<Message> getUnconsumedMessages(int count) {
+        List<Message> messages = messageGroup.getMessages().subList(currSeqNo.get(), currSeqNo.get() + count);
+        currSeqNo.set(currSeqNo.get() + count);
+        return messages;
+    }
+
+    @Override
+    public PeekingIterator<Message> iterator() {
+        return new SubscriberGroupIterator();
+    }
+
+    public String getGroupId() {
+        return messageGroup.getGroupId();
+    }
+
+    public enum QType {
+        MAIN, SIDELINE, RETRY_1, RETRY_2, RETRY_3
     }
 
     private class SubscriberGroupIterator implements PeekingIterator<Message> {
@@ -82,29 +106,5 @@ public class SubscriberGroup implements Iterable<Message> {
         public boolean hasNext() {
             return groupIterator.hasNext();
         }
-    }
-
-    public static SubscriberGroup newGroup(MessageGroup messageGroup,
-                                           TopicPartition topicPartition) {
-        return new SubscriberGroup(messageGroup, topicPartition);
-    }
-
-    public synchronized List<Message> getUnconsumedMessages(int count) {
-        List<Message> messages = messageGroup.getMessages().subList(currSeqNo.get(), currSeqNo.get() + count);
-        currSeqNo.set(currSeqNo.get() + count);
-        return messages;
-    }
-
-    @Override
-    public PeekingIterator<Message> iterator() {
-        return new SubscriberGroupIterator();
-    }
-
-    public String getGroupId() {
-        return messageGroup.getGroupId();
-    }
-
-    public enum QType {
-        MAIN, SIDELINE, RETRY_1, RETRY_2, RETRY_3
     }
 }
