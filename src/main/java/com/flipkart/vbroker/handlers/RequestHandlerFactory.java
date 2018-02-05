@@ -14,6 +14,7 @@ public class RequestHandlerFactory {
     private final RequestHandler produceRequestHandler;
     private final RequestHandler fetchRequestHandler;
     private final RequestHandler topicCreateRequestHandler;
+    private final RequestHandler susbcriptionCreateRequestHandler;
 
     public RequestHandlerFactory(ProducerService producerService,
                                  TopicService topicService,
@@ -21,6 +22,7 @@ public class RequestHandlerFactory {
         this.produceRequestHandler = new ProduceRequestHandler(topicService, producerService);
         this.fetchRequestHandler = new FetchRequestHandler(topicService, subscriptionService);
         this.topicCreateRequestHandler = new TopicCreateRequestHandler(topicService);
+        this.susbcriptionCreateRequestHandler = new SubscriptionCreateRequestHandler(subscriptionService);
     }
 
     public RequestHandler getRequestHandler(VRequest request) {
@@ -38,6 +40,9 @@ public class RequestHandlerFactory {
                 log.info("Request is of type TopicCreateRequest");
                 requestHandler = topicCreateRequestHandler;
                 break;
+            case RequestMessage.SubscriptionCreateRequest:
+            	requestHandler = susbcriptionCreateRequestHandler;
+            	break;
             default:
                 throw new VBrokerException("Unknown RequestMessageType: " + request.requestMessageType());
         }

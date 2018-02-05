@@ -26,6 +26,9 @@ public class ResponseHandlerFactory {
             case ResponseMessage.TopicCreateResponse:
                 responseHandler = new TopicCreateResponseHandler();
                 break;
+            case ResponseMessage.SubscriptionCreateResponse:
+            	responseHandler = new SubscriptionCreateResponseHandler();
+            	break;
             default:
                 throw new VBrokerException("Unsupported ResponseMessageType: " + msg.responseMessageType());
         }

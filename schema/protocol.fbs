@@ -9,7 +9,7 @@ table VStatus {
       message:string;
 }
 
-union RequestMessage { ProduceRequest, FetchRequest, TopicCreateRequest }
+union RequestMessage { ProduceRequest, FetchRequest, TopicCreateRequest, SubscriptionCreateRequest }
 
 enum HttpMethod:byte {POST=0, PUT=1, DELETE=2, PATCH=3}
 
@@ -92,12 +92,20 @@ table TopicCreateRequest {
       topicCategory:TopicCategory;
 }
 
+table SubscriptionCreateRequest {
+	  subscriptionId:int16;
+	  topicId:int16;      
+      team:string;
+      name:string;
+      grouped:bool;                       
+}
+
 root_type VRequest;
 
 
 // responses
 
-union ResponseMessage { ProduceResponse, FetchResponse, TopicCreateResponse }
+union ResponseMessage { ProduceResponse, FetchResponse, TopicCreateResponse, SubscriptionCreateResponse }
 
 table VResponse {
       correlationId:int32;
@@ -140,6 +148,11 @@ table FetchResponse {
 
 table TopicCreateResponse {
       topicId:int16;
+      statusCode:int16;
+}
+
+table SubscriptionCreateResponse {
+      subscriptionId:int16;
       statusCode:int16;
 }
 
