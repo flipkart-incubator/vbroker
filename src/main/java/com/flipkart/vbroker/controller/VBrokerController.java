@@ -13,8 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class VBrokerController {
-	private String path = "/topics";
-	private CuratorService curatorService;
+	private final String path = "/topics";
+	private final CuratorService curatorService;
 	private Executor executor = Executors.newSingleThreadExecutor();
 
 	public VBrokerController(CuratorService curatorService) {
@@ -41,7 +41,7 @@ public class VBrokerController {
 				try {
 					this.watch();
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					log.error("Exception occured..");
 					e.printStackTrace();
 				}
 			}

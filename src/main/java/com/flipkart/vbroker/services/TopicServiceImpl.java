@@ -71,11 +71,13 @@ public class TopicServiceImpl implements TopicService {
                 try {
                     return MAPPER.readValue(data, Topic.class);
                 } catch (IOException e) {
+                	log.error("Error while de-serializing data to Topic.");
                     e.printStackTrace();
                 }
                 return null;
             }).toCompletableFuture().get();
         } catch (InterruptedException | ExecutionException e) {
+        	log.error("Error while fetching topic from co-ordinator.");
             e.printStackTrace();
             return null;
         }

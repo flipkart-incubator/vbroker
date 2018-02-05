@@ -29,6 +29,7 @@ public class TopicCreateRequestHandler implements RequestHandler {
 				.withTopicCategory(com.flipkart.vbroker.core.Topic.TopicCategory
 						.valueOf(TopicCategory.name(topicCreateRequest.topicCategory())))
 				.build();
+		log.info("Creating topic with id {}, name {}", topic.getId(), topic.getName());
 		topicService.createTopic(topic);
 
 		FlatBufferBuilder topicResponseBuilder = new FlatBufferBuilder();
