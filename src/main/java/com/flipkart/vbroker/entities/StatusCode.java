@@ -3,6 +3,7 @@
 package com.flipkart.vbroker.entities;
 
 public final class StatusCode {
+    public static final short None = 0;
     public static final short ProduceSuccess_NoError = 101;
     public static final short ProduceFailed_NoLeader = 151;
     public static final short ProduceFailed_NotEnoughReplicas = 152;

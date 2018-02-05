@@ -3,24 +3,31 @@ package com.flipkart.vbroker.server;
 import com.flipkart.vbroker.core.PartSubscriber;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.core.Subscription;
-import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.services.SubscriptionService;
-import com.google.common.collect.PeekingIterator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * This is the main subscriber which runs on the broker machine and consumes the messages
+ * this can be across many topic-partitions spanning across different topics
+ */
 @Slf4j
 public class BrokerSubscriber implements Runnable {
 
     private final SubscriptionService subscriptionService;
+    private final MessageProcessor messageProcessor;
+    private SubscriberGroupSyncer syncer;
     private volatile AtomicBoolean running = new AtomicBoolean(true);
 
-    public BrokerSubscriber(SubscriptionService subscriptionService) {
+    public BrokerSubscriber(SubscriptionService subscriptionService,
+                            MessageProcessor messageProcessor) {
         this.subscriptionService = subscriptionService;
+        this.messageProcessor = messageProcessor;
     }
 
     public void run() {
@@ -34,31 +41,32 @@ public class BrokerSubscriber implements Runnable {
                 Thread.sleep(timeMs);
 
                 List<PartSubscriber> partSubscribers = getPartSubscribersForCurrentBroker();
-                SubscriberGroupSyncer syncer = new SubscriberGroupSyncer(partSubscribers);
+                syncer = new SubscriberGroupSyncer(partSubscribers);
                 new Thread(syncer).start();
 
                 log.info("No of partSubscribers are {}", partSubscribers.size());
-                PeekingIterator<Message> subscriberIterator = new SubscriberIterator(partSubscribers);
+                SubscriberIterator subscriberIterator = new SubscriberIterator(partSubscribers);
+                MessageConsumer messageConsumer = MessageConsumer.newInstance(subscriberIterator, messageProcessor);
 
                 long pollTimeMs = 2 * 1000;
                 while (running.get()) {
-                    log.debug("Polling for new messages");
-                    while (subscriberIterator.hasNext()) {
-                        Message message = subscriberIterator.peek();
-                        process(message);
-                        subscriberIterator.next();
+                    log.info("Polling for new messages");
+                    while (running.get() && subscriberIterator.hasNext()) {
+                        log.trace("Consuming..");
+                        messageConsumer.consume();
                     }
-
                     Thread.sleep(pollTimeMs);
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (InterruptedException ignored) {
             }
         }
     }
 
-    private void process(Message message) {
-        log.info("Processing message with msg_id: {} and group_id: {}", message.messageId(), message.groupId());
+    public void stop() {
+        if (Objects.nonNull(syncer)) {
+            syncer.stop();
+        }
+        this.running.set(false);
     }
 
     private List<PartSubscriber> getPartSubscribersForCurrentBroker() {
