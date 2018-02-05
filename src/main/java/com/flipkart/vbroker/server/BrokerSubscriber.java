@@ -4,6 +4,7 @@ import com.flipkart.vbroker.core.PartSubscriber;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.core.Subscription;
 import com.flipkart.vbroker.entities.Message;
+import com.flipkart.vbroker.services.SubscriberMetadataService;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.google.common.collect.PeekingIterator;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +19,11 @@ public class BrokerSubscriber implements Runnable {
 
     private final SubscriptionService subscriptionService;
     private volatile AtomicBoolean running = new AtomicBoolean(true);
+    private final SubscriberMetadataService subscriberMetadataService;
 
-    public BrokerSubscriber(SubscriptionService subscriptionService) {
+    public BrokerSubscriber(SubscriptionService subscriptionService, SubscriberMetadataService subscriberMetadataService) {
         this.subscriptionService = subscriptionService;
+        this.subscriberMetadataService = subscriberMetadataService;
     }
 
     public void run() {
@@ -34,7 +37,7 @@ public class BrokerSubscriber implements Runnable {
                 Thread.sleep(timeMs);
 
                 List<PartSubscriber> partSubscribers = getPartSubscribersForCurrentBroker();
-                SubscriberGroupSyncer syncer = new SubscriberGroupSyncer(partSubscribers);
+                SubscriberGroupSyncer syncer = new SubscriberGroupSyncer(partSubscribers, subscriberMetadataService);
                 new Thread(syncer).start();
 
                 log.info("No of partSubscribers are {}", partSubscribers.size());

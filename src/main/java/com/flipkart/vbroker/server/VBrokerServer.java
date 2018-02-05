@@ -24,6 +24,7 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -41,7 +42,7 @@ public class VBrokerServer implements Runnable {
         this.config = config;
     }
 
-    private void start() {
+    private void start() throws IOException {
         Thread.currentThread().setName("vbroker_server");
 
         EventLoopGroup bossGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("server_boss"));
@@ -50,6 +51,7 @@ public class VBrokerServer implements Runnable {
 
         TopicService topicService = new TopicServiceImpl();
         SubscriptionService subscriptionService = new SubscriptionServiceImpl();
+        SubscriberMetadataService subscriberMetadataService = new SubscriberMetadataService(subscriptionService, topicService);
 
         topicService.createTopic(DummyEntities.topic1);
         subscriptionService.createSubscription(DummyEntities.subscription1);
@@ -80,7 +82,7 @@ public class VBrokerServer implements Runnable {
             });
 
             LocalAddress address = new LocalAddress(new Random().nextInt(60000) + "");
-            setupLocalSubscribers(localGroup, workerGroup, address, subscriptionService);
+            setupLocalSubscribers(localGroup, workerGroup, address, subscriptionService, subscriberMetadataService);
 
             //below used for local channel by the consumer
             ServerBootstrap serverLocalBootstrap = new ServerBootstrap();
@@ -134,7 +136,7 @@ public class VBrokerServer implements Runnable {
     private void setupLocalSubscribers(EventLoopGroup localGroup,
                                        EventLoopGroup workerGroup,
                                        LocalAddress address,
-                                       SubscriptionService subscriptionService) throws InterruptedException {
+                                       SubscriptionService subscriptionService, SubscriberMetadataService subscriberMetadataService) throws InterruptedException {
         Bootstrap httpClientBootstrap = new Bootstrap()
                 .group(workerGroup)
                 .channel(NioSocketChannel.class)
@@ -170,12 +172,16 @@ public class VBrokerServer implements Runnable {
 
         ExecutorService executorService = Executors.newSingleThreadExecutor(new DefaultThreadFactory("subscriber"));
         //SubscriberDaemon subscriber = new SubscriberDaemon(address, consumerBootstrap, subscriptionService);
-        BrokerSubscriber brokerSubscriber = new BrokerSubscriber(subscriptionService);
+        BrokerSubscriber brokerSubscriber = new BrokerSubscriber(subscriptionService, subscriberMetadataService);
         executorService.submit(brokerSubscriber);
     }
 
     @Override
     public void run() {
-        start();
+        try {
+            start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
