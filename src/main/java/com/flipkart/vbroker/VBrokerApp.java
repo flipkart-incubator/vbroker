@@ -3,6 +3,8 @@ package com.flipkart.vbroker;
 import com.flipkart.vbroker.controller.VBrokerController;
 import com.flipkart.vbroker.server.VBrokerServer;
 import com.flipkart.vbroker.services.CuratorService;
+import com.flipkart.vbroker.services.SubscriptionService;
+import com.flipkart.vbroker.services.SubscriptionServiceImpl;
 import com.flipkart.vbroker.services.TopicService;
 import com.flipkart.vbroker.services.TopicServiceImpl;
 
@@ -22,11 +24,12 @@ public class VBrokerApp {
         VBrokerConfig config = VBrokerConfig.newConfig("broker.properties");
         log.info("Configs: {}", config);
 
-        CuratorService curatorService = new CuratorService();
+        CuratorService curatorService = new CuratorService(config);
         VBrokerController controller = new VBrokerController(curatorService);
         controller.watch();
-        TopicService topicService = new TopicServiceImpl(curatorService);
-        VBrokerServer server = new VBrokerServer(config, topicService);
+        TopicService topicService = new TopicServiceImpl(config, curatorService);
+        SubscriptionService subscriptionService = new SubscriptionServiceImpl(config,curatorService);
+        VBrokerServer server = new VBrokerServer(config, topicService, subscriptionService);
 
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {

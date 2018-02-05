@@ -19,10 +19,11 @@ import com.flipkart.vbroker.VBrokerConfig;
 
 public class CuratorService {
 
+	private final VBrokerConfig config;
 	private AsyncCuratorFramework asyncZkClient;
 
-	public CuratorService() throws IOException {
-		super();
+	public CuratorService(VBrokerConfig config) throws IOException {
+		this.config = config;
 		init();
 	}
 
@@ -33,7 +34,6 @@ public class CuratorService {
 	 */
 	public void init() throws IOException {
 
-		VBrokerConfig config = VBrokerConfig.newConfig("broker.properties");
 		CuratorFramework client = CuratorFrameworkFactory.newClient(config.getZookeeperUrl(),
 				new ExponentialBackoffRetry(1000, 5));
 		client.start();

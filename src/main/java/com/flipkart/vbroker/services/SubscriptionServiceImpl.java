@@ -1,10 +1,14 @@
 package com.flipkart.vbroker.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.PartSubscriber;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.core.Subscription;
 import com.flipkart.vbroker.exceptions.VBrokerException;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.zookeeper.CreateMode;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,7 +17,11 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 
 @Slf4j
+@AllArgsConstructor
 public class SubscriptionServiceImpl implements SubscriptionService {
+
+    private final VBrokerConfig config;
+    private final CuratorService curatorService;
 
     private final ConcurrentMap<Short, Subscription> subscriptionsMap = new ConcurrentHashMap<>();
     private final ConcurrentMap<PartSubscription, PartSubscriber> subscriberMap = new ConcurrentHashMap<>();
@@ -30,6 +38,13 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     @Override
     public void createSubscription(Subscription subscription) {
         subscriptionsMap.putIfAbsent(subscription.getId(), subscription);
+        String path = config.getTopicsPath() + "/" + subscription.getTopic().getId() + "/subscriptions/" + subscription.getId();
+        try {
+            curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT, subscription.toJson().getBytes());
+        } catch (JsonProcessingException e) {
+            log.error("Error while parsing json to save subscription.");
+            e.printStackTrace();
+        }
     }
 
     @Override

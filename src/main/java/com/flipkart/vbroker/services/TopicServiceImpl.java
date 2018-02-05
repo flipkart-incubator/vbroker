@@ -2,11 +2,13 @@ package com.flipkart.vbroker.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.utils.JsonUtils;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.zookeeper.CreateMode;
@@ -18,24 +20,20 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j
+@AllArgsConstructor
 public class TopicServiceImpl implements TopicService {
 
     private static final ObjectMapper MAPPER = JsonUtils.getObjectMapper();
-    private static final String topicsPath = "/topics";
+    private final VBrokerConfig config;
     private final CuratorService curatorService;
 
     private final ConcurrentMap<Short, Topic> topicsMap = new ConcurrentHashMap<>();
-
-    public TopicServiceImpl(CuratorService curatorService) {
-        super();
-        this.curatorService = curatorService;
-    }
 
     @Override
     public synchronized void createTopic(Topic topic) {
         topicsMap.putIfAbsent(topic.getId(), topic);
         try {
-            curatorService.createNodeAndSetData(topicsPath + "/" + topic.getId(), CreateMode.PERSISTENT,
+            curatorService.createNodeAndSetData(config.getTopicsPath() + "/" + topic.getId(), CreateMode.PERSISTENT,
                     topic.toJson().getBytes()).handle((data, exception) -> {
                 if (exception != null) {
                    log.error("Failure in creating topic!");
@@ -66,7 +64,7 @@ public class TopicServiceImpl implements TopicService {
     public Topic getTopic(short topicId) {
         // return topicsMap.get(topicId);
         try {
-            return curatorService.getData(topicsPath + "/" + topicId).handle((data, exception) -> {
+            return curatorService.getData(config.getTopicsPath() + "/" + topicId).handle((data, exception) -> {
 
                 try {
                     return MAPPER.readValue(data, Topic.class);
