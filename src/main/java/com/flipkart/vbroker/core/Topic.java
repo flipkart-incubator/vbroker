@@ -17,12 +17,10 @@ import java.util.List;
 @Getter
 @JsonDeserialize(builder=Topic.TopicBuilder.class)
 public class Topic {
-    private static final ObjectMapper MAPPER = JsonUtils.getObjectMapper();
-
     public static final short DEFAULT_NO_OF_PARTITIONS = 3;
     public static final short DEFAULT_REPLICATION_FACTOR = 3;
     public static final String DEFAULT_TEAM = "DEFAULT";
-
+    private static final ObjectMapper MAPPER = JsonUtils.getObjectMapper();
     private final short id;
     private final int noOfPartitions;
     private final int replicationFactor;
