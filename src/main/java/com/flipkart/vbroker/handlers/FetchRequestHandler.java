@@ -110,9 +110,9 @@ public class FetchRequestHandler implements RequestHandler {
         List<Integer> messages = new LinkedList<>();
 
         int i = 0;
-        PeekingIterator<Message> iterator = partSubscriber.iterator();
+        PeekingIterator<MessageWithGroup> iterator = partSubscriber.iterator();
         while (iterator.hasNext() && i < noOfMessagesToFetch) {
-            Message message = iterator.peek();
+            Message message = iterator.peek().getMessage();
             messages.add(buildMessage(builder, message));
             iterator.next();
         }
@@ -135,6 +135,7 @@ public class FetchRequestHandler implements RequestHandler {
                 message.version(),
                 message.seqNo(),
                 message.topicId(),
+                message.partitionId(),
                 201,
                 builder.createString(requireNonNull(message.httpUri())),
                 message.httpMethod(),

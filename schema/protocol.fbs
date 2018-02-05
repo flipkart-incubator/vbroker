@@ -2,7 +2,7 @@ namespace com.flipkart.vbroker.entities;
 
 enum ApiKey:byte {ProduceRequest=0, ProduceResponse=1, TopicCreateRequest=2, TopicCreateResponse=3}
 
-enum StatusCode:int16 {ProduceSuccess_NoError=101, ProduceFailed_NoLeader=151, ProduceFailed_NotEnoughReplicas=152, ConsumeSuccess_NoError=201, ConsumeError_DestinationDown=251}
+enum StatusCode:int16 {None=0, ProduceSuccess_NoError=101, ProduceFailed_NoLeader=151, ProduceFailed_NotEnoughReplicas=152, ConsumeSuccess_NoError=201, ConsumeError_DestinationDown=251}
 
 table VStatus {
       statusCode:StatusCode;
@@ -36,6 +36,7 @@ table Message {
       version:int8;
       seqNo:int32;
       topicId:int16;
+      partitionId:int16;
       attributes:int32;
       httpUri:string;
       httpMethod:HttpMethod;

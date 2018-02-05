@@ -45,6 +45,7 @@ public class MessageStore {
         byte version = '1';
         short seqNo = 1;
         short topicId = 101;
+        short partitionId = 0;
 
         int httpUri = builder.createString("http://localhost:12000/messages");
         byte httpMethod = HttpMethod.POST;
@@ -69,6 +70,7 @@ public class MessageStore {
                 version,
                 seqNo,
                 topicId,
+                partitionId,
                 201,
                 httpUri,
                 httpMethod,
