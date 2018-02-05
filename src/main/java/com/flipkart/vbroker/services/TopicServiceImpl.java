@@ -6,6 +6,9 @@ import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.utils.JsonUtils;
+
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.zookeeper.CreateMode;
 
 import java.io.IOException;
@@ -14,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 
+@Slf4j
 public class TopicServiceImpl implements TopicService {
 
     private static final ObjectMapper MAPPER = JsonUtils.getObjectMapper();
@@ -34,7 +38,7 @@ public class TopicServiceImpl implements TopicService {
             curatorService.createNodeAndSetData(topicsPath + "/" + topic.getId(), CreateMode.PERSISTENT,
                     topic.toJson().getBytes()).handle((data, exception) -> {
                 if (exception != null) {
-                    System.out.println("Failure in creating topic!");
+                   log.error("Failure in creating topic!");
                 }
                 return null;
             });
