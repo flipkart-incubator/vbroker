@@ -20,6 +20,7 @@ public class PartSubscriber implements Iterable<Message> {
 
     @Getter
     private final PartSubscription partSubscription;
+    @Getter
     private final Map<String, SubscriberGroup> subscriberGroupsMap = new LinkedHashMap<>();
     private final Map<SubscriberGroup, PeekingIterator<Message>> subscriberGroupIteratorMap = new LinkedHashMap<>();
 
