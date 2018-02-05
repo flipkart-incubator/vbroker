@@ -22,11 +22,11 @@ import java.util.List;
  */
 public class VRequestCodecTest {
     @BeforeMethod
-    public void setUp(){
+    public void setUp() {
 
     }
 
-    private ByteBuffer getSampleProduceRequestAsFlatbuf(){
+    private ByteBuffer getSampleProduceRequestAsFlatbuf() {
 
         FlatBufferBuilder builder = new FlatBufferBuilder();
 

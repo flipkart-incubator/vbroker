@@ -16,7 +16,7 @@ public class DummyEntities {
         topic1 = new Topic((short) 101, "topic1");
         TopicPartition topicPartition1 = new TopicPartition((short) 0, topic1.getId());
         topic1.addPartition(topicPartition1);
-        subscription1 = new Subscription((short) 1001, "subscription1", topic1, new LinkedList<>(),true);
+        subscription1 = new Subscription((short) 1001, "subscription1", topic1, new LinkedList<>(), true);
         PartSubscription partSubscription1 = new PartSubscription((short) 0, topicPartition1, subscription1.getId());
         subscription1.addPartSubscription(partSubscription1);
     }
