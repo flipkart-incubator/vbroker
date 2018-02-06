@@ -207,6 +207,10 @@ public class VBrokerServer implements Runnable {
 
     @Override
     public void run() {
-        start();
+        try {
+            start();
+        } catch (IOException e) {
+            log.error("Exception in starting app", e);
+        }
     }
 }
