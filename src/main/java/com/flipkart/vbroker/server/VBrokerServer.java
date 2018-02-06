@@ -1,13 +1,14 @@
 package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.VBrokerConfig;
+import com.flipkart.vbroker.core.Subscription;
+import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.handlers.HttpResponseHandler;
 import com.flipkart.vbroker.handlers.RequestHandlerFactory;
 import com.flipkart.vbroker.handlers.ResponseHandlerFactory;
 import com.flipkart.vbroker.handlers.VBrokerResponseHandler;
 import com.flipkart.vbroker.protocol.codecs.VBrokerClientCodec;
 import com.flipkart.vbroker.services.*;
-import com.flipkart.vbroker.utils.DummyEntities;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -26,6 +27,9 @@ import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -46,7 +50,7 @@ public class VBrokerServer implements Runnable {
         this.subscriptionService = subscriptionService;
     }
 
-    private void start() {
+    private void start() throws IOException {
         Thread.currentThread().setName("vbroker_server");
 
         EventLoopGroup bossGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("server_boss"));
@@ -56,13 +60,30 @@ public class VBrokerServer implements Runnable {
         TopicMetadataService topicMetadataService = new TopicMetadataService(topicService);
         SubscriberMetadataService subscriberMetadataService = new SubscriberMetadataService(subscriptionService, topicService);
 
-        topicService.createTopic(DummyEntities.topic1);
-        subscriptionService.createSubscription(DummyEntities.subscription1);
+        log.debug("Loading topicMetadata");
+        List<Topic> allTopics = topicService.getAllTopics();
+        for (Topic topic : allTopics) {
+            topicMetadataService.fetchTopicMetadata(topic);
+        }
+
+        log.debug("Loading subscriptionMetadata");
+        Set<Subscription> allSubscriptions = subscriptionService.getAllSubscriptions();
+        for (Subscription subscription : allSubscriptions) {
+            subscriberMetadataService.loadSubscriptionMetadata(subscription);
+        }
+
+        //TODO: now that metadata is created, we need to add actual data to the metadata entries
+        //=> populate message groups in topic partitions
+
+//        topicService.createTopic(DummyEntities.topic1);
+//        subscriptionService.createSubscription(DummyEntities.subscription1);
 
         ProducerService producerService = new ProducerService();
         RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactory(
                 producerService, topicService, subscriptionService);
 
+        //TODO: declare broker as healthy by registering in /brokers/ids for example now that everything is validated
+        //the broker can now start accepting new requests
         CountDownLatch latch = new CountDownLatch(1);
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
