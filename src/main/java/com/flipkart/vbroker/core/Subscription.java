@@ -1,5 +1,6 @@
 package com.flipkart.vbroker.core;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
@@ -21,6 +22,7 @@ public class Subscription {
     private final short id;
     private final String name;
     private final Topic topic;
+    @JsonIgnore
     private final List<PartSubscription> partSubscriptions;
     private final boolean grouped;
 

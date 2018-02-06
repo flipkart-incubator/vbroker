@@ -1,5 +1,6 @@
 package com.flipkart.vbroker.core;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.flipkart.vbroker.entities.Message;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,6 +17,7 @@ import java.util.*;
 @EqualsAndHashCode(exclude = {"groupIdMessageGroupMap", "memoryManager"})
 @ToString(exclude = {"groupIdMessageGroupMap", "memoryManager"})
 public class TopicPartition {
+	@JsonIgnore
     private final Map<String, MessageGroup> groupIdMessageGroupMap;
     private final short id;
     private final short topicId;
