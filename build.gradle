@@ -16,7 +16,21 @@ dependencies {
     compile 'com.google.flatbuffers:flatbuffers-java:1.8.0'
 
     //networking
-    compile 'io.netty:netty-all:4.1.19.Final'
+    compile 'io.netty:netty-all:4.1.21.Final'
+
+    //http
+    //temporary
+    compile('org.asynchttpclient:async-http-client:2.3.0') {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'io.netty', module: 'netty-buffer'
+        exclude group: 'io.netty', module: 'netty-codec-http'
+        exclude group: 'io.netty', module: 'netty-handler'
+        exclude group: 'io.netty', module: 'netty-codec-socks'
+        exclude group: 'io.netty', module: 'netty-handler-proxy'
+        exclude group: 'io.netty', module: 'netty-transport-native-epoll'
+        exclude group: 'io.netty', module: 'netty-resolver-dns'
+        exclude group: 'io.netty', module: 'netty-codec-http'
+    }
 
     //coordination
     compile('org.apache.curator:curator-x-async:4.0.0') {
@@ -32,9 +46,9 @@ dependencies {
     //utils
     compile 'com.google.guava:guava:23.6-jre'
     compile 'org.projectlombok:lombok:1.16.18'
-    compile 'com.fasterxml.jackson.core:jackson-core:2.9.0'
-    compile 'com.fasterxml.jackson.core:jackson-annotations:2.9.0'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.9.0'
+    compile 'com.fasterxml.jackson.core:jackson-core:2.9.4'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.9.4'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.9.4'
 
     //testing
     testCompile 'org.testng:testng:6.13.1'
