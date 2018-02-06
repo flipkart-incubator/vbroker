@@ -3,11 +3,9 @@ package com.flipkart.vbroker.server;
 import com.flipkart.vbroker.core.PartSubscriber;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.core.Subscription;
-import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.services.SubscriberMetadataService;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicMetadataService;
-import com.google.common.collect.PeekingIterator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -30,8 +28,9 @@ public class BrokerSubscriber implements Runnable {
     private final SubscriberMetadataService subscriberMetadataService;
     private final TopicMetadataService topicMetadataService;
 
-    public BrokerSubscriber(SubscriptionService subscriptionService, SubscriberMetadataService subscriberMetadataService, TopicMetadataService topicMetadataService) {
+    public BrokerSubscriber(SubscriptionService subscriptionService, MessageProcessor messageProcessor, SubscriberMetadataService subscriberMetadataService, TopicMetadataService topicMetadataService) {
         this.subscriptionService = subscriptionService;
+        this.messageProcessor = messageProcessor;
         this.subscriberMetadataService = subscriberMetadataService;
         this.topicMetadataService = topicMetadataService;
     }
