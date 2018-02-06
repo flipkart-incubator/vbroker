@@ -6,37 +6,30 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.*;
 
 /**
  * Created by hooda on 19/1/18
  */
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = {"groupIdMessageGroupMap"})
-@ToString
+@EqualsAndHashCode(exclude = {"groupIdMessageGroupMap", "memoryManager"})
+@ToString(exclude = {"groupIdMessageGroupMap", "memoryManager"})
 public class TopicPartition {
-    private final ConcurrentMap<String, MessageGroup> groupIdMessageGroupMap = new ConcurrentHashMap<>();
+    private final Map<String, MessageGroup> groupIdMessageGroupMap;
     private final short id;
     private final short topicId;
+    private final MemoryManager memoryManager = new LocalMemoryManager();
 
     public TopicPartition(short id, short topicId) {
         this.id = id;
         this.topicId = topicId;
+        this.groupIdMessageGroupMap = memoryManager.getMessageGroupMap(id, topicId);
     }
 
     public void addMessage(Message message) {
         String groupId = message.groupId();
-        groupIdMessageGroupMap.computeIfAbsent(groupId, s -> {
-            MessageGroup newGroup = new MessageGroup(groupId);
-            newGroup.appendMessage(message);
-            return newGroup;
-        });
+        groupIdMessageGroupMap.computeIfAbsent(groupId, s -> new MessageGroup(id, topicId, groupId)).appendMessage(message);
     }
 
     public void addMessageGroup(MessageGroup messageGroup){

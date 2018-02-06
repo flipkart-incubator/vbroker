@@ -1,17 +1,18 @@
 package com.flipkart.vbroker.core;
 
-import com.flipkart.vbroker.entities.Message;
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.channel.Channel;
 
-public interface MemoryManager {
+import java.util.List;
+import java.util.Map;
 
-    public Message allocateMessage(byte[] bytes);
+public interface MemoryManager  {
 
-    public void freeMessage(Message message);
+    public Map getMessageGroupMap(short partitionId, short topicId);
 
-    public MessageGroup createNewMessageGroup();
+    public List getMessageList(String groupId, short partitionId, short topicId);
 
-    public void addMessage(Message message, MessageGroup messageGroup);
-
-    //used for upgrade/downgrade
-    public void setLevel(MessageGroup messageGroup, MessageGroup.Level level);
+    public static void setAllocator(Channel ch, ByteBufAllocator allocator) {
+        ch.config().setAllocator(allocator);
+    }
 }
