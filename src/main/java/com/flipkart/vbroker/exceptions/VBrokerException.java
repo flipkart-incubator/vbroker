@@ -11,7 +11,7 @@ public class VBrokerException extends RuntimeException {
 
     public VBrokerException(String message) {
         super(message);
-        //log.error("Exception at VBroker: {}", message);
+        log.error("Exception at VBroker: {}", message);
     }
 
     public VBrokerException(String message, Throwable cause) {

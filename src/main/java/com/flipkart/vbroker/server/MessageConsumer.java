@@ -1,8 +1,8 @@
 package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.core.MessageWithGroup;
-import com.flipkart.vbroker.core.SubscriberGroup;
 import com.flipkart.vbroker.entities.Message;
+import com.flipkart.vbroker.exceptions.LockFailedException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,14 +22,15 @@ public class MessageConsumer {
         //peek the message first
         MessageWithGroup messageWithGroup = subscriberIterator.peek();
         Message message = messageWithGroup.getMessage();
-        SubscriberGroup subscriberGroup = messageWithGroup.getSubscriberGroup();
 
         //lock the subscriberGroup and process the message
-        if (subscriberGroup.lock()) {
+        if (messageWithGroup.lockGroup()) {
             log.info("Consuming message with msg_id: {} and group_id: {}", message.messageId(), message.groupId());
             messageProcessor.process(messageWithGroup);
             //move over to the next message
             subscriberIterator.next();
+        } else {
+            throw new LockFailedException("Failed to acquire an already acquired lock for group: " + message.groupId());
         }
     }
 }
