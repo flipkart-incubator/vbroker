@@ -18,17 +18,16 @@ public class MessageConsumer {
         return new MessageConsumer(subscriberIterator, messageProcessor);
     }
 
-    public void consume() {
+    public void consume() throws Exception {
         //peek the message first
         MessageWithGroup messageWithGroup = subscriberIterator.peek();
         Message message = messageWithGroup.getMessage();
         SubscriberGroup subscriberGroup = messageWithGroup.getSubscriberGroup();
 
-        log.info("Consuming message with msg_id: {} and group_id: {}", message.messageId(), message.groupId());
-
         //lock the subscriberGroup and process the message
         if (subscriberGroup.lock()) {
-            messageProcessor.process(message);
+            log.info("Consuming message with msg_id: {} and group_id: {}", message.messageId(), message.groupId());
+            messageProcessor.process(messageWithGroup);
             //move over to the next message
             subscriberIterator.next();
         }

@@ -53,7 +53,12 @@ public class BrokerSubscriber implements Runnable {
                     log.info("Polling for new messages");
                     while (running.get() && subscriberIterator.hasNext()) {
                         log.trace("Consuming..");
-                        messageConsumer.consume();
+                        try {
+                            messageConsumer.consume();
+                        } catch (Exception e) {
+                            log.error("Exception in consuming the message", e);
+                            Thread.sleep(pollTimeMs);
+                        }
                     }
                     Thread.sleep(pollTimeMs);
                 }
