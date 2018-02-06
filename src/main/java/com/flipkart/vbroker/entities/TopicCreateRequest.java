@@ -20,7 +20,7 @@ public final class TopicCreateRequest extends Table {
     }
 
     public static int createTopicCreateRequest(FlatBufferBuilder builder,
-                                               byte topicId) {
+                                               short topicId) {
         builder.startObject(1);
         TopicCreateRequest.addTopicId(builder, topicId);
         return TopicCreateRequest.endTopicCreateRequest(builder);
@@ -30,8 +30,8 @@ public final class TopicCreateRequest extends Table {
         builder.startObject(1);
     }
 
-    public static void addTopicId(FlatBufferBuilder builder, byte topicId) {
-        builder.addByte(0, topicId, 0);
+    public static void addTopicId(FlatBufferBuilder builder, short topicId) {
+        builder.addShort(0, topicId, 0);
     }
 
     public static int endTopicCreateRequest(FlatBufferBuilder builder) {
@@ -49,9 +49,9 @@ public final class TopicCreateRequest extends Table {
         return this;
     }
 
-    public byte topicId() {
+    public short topicId() {
         int o = __offset(4);
-        return o != 0 ? bb.get(o + bb_pos) : 0;
+        return o != 0 ? bb.getShort(o + bb_pos) : 0;
     }
 }
 

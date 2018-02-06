@@ -1,7 +1,7 @@
 package com.flipkart.vbroker.server;
 
+import com.flipkart.vbroker.core.MessageWithGroup;
 import com.flipkart.vbroker.core.PartSubscriber;
-import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.google.common.collect.PeekingIterator;
 import lombok.extern.slf4j.Slf4j;
@@ -11,14 +11,14 @@ import java.util.List;
 import java.util.Queue;
 
 @Slf4j
-public class SubscriberIterator implements PeekingIterator<Message> {
+public class SubscriberIterator implements PeekingIterator<MessageWithGroup> {
 
-    private final Queue<PeekingIterator<Message>> iteratorQueue = new ArrayDeque<>();
-    private PeekingIterator<Message> currIterator;
+    private final Queue<PeekingIterator<MessageWithGroup>> iteratorQueue = new ArrayDeque<>();
+    private PeekingIterator<MessageWithGroup> currIterator;
 
     public SubscriberIterator(List<PartSubscriber> partSubscribers) {
         for (PartSubscriber partSubscriber : partSubscribers) {
-            PeekingIterator<Message> iterator = partSubscriber.iterator();
+            PeekingIterator<MessageWithGroup> iterator = partSubscriber.iterator();
             iteratorQueue.add(iterator);
         }
 
@@ -29,7 +29,7 @@ public class SubscriberIterator implements PeekingIterator<Message> {
     }
 
     @Override
-    public Message peek() {
+    public MessageWithGroup peek() {
         return currIterator.peek();
     }
 
@@ -39,8 +39,9 @@ public class SubscriberIterator implements PeekingIterator<Message> {
             return true;
         }
 
+        log.trace("IteratorQ size: {}", iteratorQueue.size());
         for (int i = 0; i < iteratorQueue.size(); i++) {
-            PeekingIterator<Message> iterator = iteratorQueue.peek();
+            PeekingIterator<MessageWithGroup> iterator = iteratorQueue.peek();
             if (iterator.hasNext()) {
                 iteratorQueue.add(currIterator);
                 currIterator = iterator;
@@ -55,7 +56,7 @@ public class SubscriberIterator implements PeekingIterator<Message> {
 
     @Override
 
-    public Message next() {
+    public MessageWithGroup next() {
         return currIterator.next();
     }
 

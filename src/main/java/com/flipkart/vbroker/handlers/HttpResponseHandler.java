@@ -1,5 +1,6 @@
 package com.flipkart.vbroker.handlers;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -12,7 +13,8 @@ public class HttpResponseHandler extends SimpleChannelInboundHandler<FullHttpRes
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpResponse httpResponse) {
-        log.info("== Got HttpResponse with status {} and content {} ==", httpResponse.status(), httpResponse.content());
+        ByteBuf content = httpResponse.content();
+        log.info("== Got HttpResponse with status {} and content {} ==", httpResponse.status(), content);
 
         int statusCode = httpResponse.status().code();
         if (statusCode >= 200 && statusCode < 300) {

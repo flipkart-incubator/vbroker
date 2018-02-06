@@ -26,6 +26,7 @@ public final class Message extends Table {
                                     byte version,
                                     int seqNo,
                                     short topicId,
+                                    short partitionId,
                                     int attributes,
                                     int httpUriOffset,
                                     byte httpMethod,
@@ -35,7 +36,7 @@ public final class Message extends Table {
                                     int headersOffset,
                                     int bodyLength,
                                     int bodyPayloadOffset) {
-        builder.startObject(15);
+        builder.startObject(16);
         Message.addBodyPayload(builder, bodyPayloadOffset);
         Message.addBodyLength(builder, bodyLength);
         Message.addHeaders(builder, headersOffset);
@@ -46,6 +47,7 @@ public final class Message extends Table {
         Message.addGroupId(builder, groupIdOffset);
         Message.addMessageId(builder, messageIdOffset);
         Message.addCallbackTopicId(builder, callbackTopicId);
+        Message.addPartitionId(builder, partitionId);
         Message.addTopicId(builder, topicId);
         Message.addCallbackHttpMethod(builder, callbackHttpMethod);
         Message.addHttpMethod(builder, httpMethod);
@@ -55,7 +57,7 @@ public final class Message extends Table {
     }
 
     public static void startMessage(FlatBufferBuilder builder) {
-        builder.startObject(15);
+        builder.startObject(16);
     }
 
     public static void addMessageId(FlatBufferBuilder builder, int messageIdOffset) {
@@ -82,32 +84,36 @@ public final class Message extends Table {
         builder.addShort(5, topicId, 0);
     }
 
+    public static void addPartitionId(FlatBufferBuilder builder, short partitionId) {
+        builder.addShort(6, partitionId, 0);
+    }
+
     public static void addAttributes(FlatBufferBuilder builder, int attributes) {
-        builder.addInt(6, attributes, 0);
+        builder.addInt(7, attributes, 0);
     }
 
     public static void addHttpUri(FlatBufferBuilder builder, int httpUriOffset) {
-        builder.addOffset(7, httpUriOffset, 0);
+        builder.addOffset(8, httpUriOffset, 0);
     }
 
     public static void addHttpMethod(FlatBufferBuilder builder, byte httpMethod) {
-        builder.addByte(8, httpMethod, 0);
+        builder.addByte(9, httpMethod, 0);
     }
 
     public static void addCallbackTopicId(FlatBufferBuilder builder, short callbackTopicId) {
-        builder.addShort(9, callbackTopicId, 0);
+        builder.addShort(10, callbackTopicId, 0);
     }
 
     public static void addCallbackHttpUri(FlatBufferBuilder builder, int callbackHttpUriOffset) {
-        builder.addOffset(10, callbackHttpUriOffset, 0);
+        builder.addOffset(11, callbackHttpUriOffset, 0);
     }
 
     public static void addCallbackHttpMethod(FlatBufferBuilder builder, byte callbackHttpMethod) {
-        builder.addByte(11, callbackHttpMethod, 0);
+        builder.addByte(12, callbackHttpMethod, 0);
     }
 
     public static void addHeaders(FlatBufferBuilder builder, int headersOffset) {
-        builder.addOffset(12, headersOffset, 0);
+        builder.addOffset(13, headersOffset, 0);
     }
 
     public static int createHeadersVector(FlatBufferBuilder builder, int[] data) {
@@ -121,11 +127,11 @@ public final class Message extends Table {
     }
 
     public static void addBodyLength(FlatBufferBuilder builder, int bodyLength) {
-        builder.addInt(13, bodyLength, 0);
+        builder.addInt(14, bodyLength, 0);
     }
 
     public static void addBodyPayload(FlatBufferBuilder builder, int bodyPayloadOffset) {
-        builder.addOffset(14, bodyPayloadOffset, 0);
+        builder.addOffset(15, bodyPayloadOffset, 0);
     }
 
     public static int createBodyPayloadVector(FlatBufferBuilder builder, byte[] data) {
@@ -191,41 +197,46 @@ public final class Message extends Table {
         return o != 0 ? bb.getShort(o + bb_pos) : 0;
     }
 
-    public int attributes() {
+    public short partitionId() {
         int o = __offset(16);
+        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+    }
+
+    public int attributes() {
+        int o = __offset(18);
         return o != 0 ? bb.getInt(o + bb_pos) : 0;
     }
 
     public String httpUri() {
-        int o = __offset(18);
+        int o = __offset(20);
         return o != 0 ? __string(o + bb_pos) : null;
     }
 
     public ByteBuffer httpUriAsByteBuffer() {
-        return __vector_as_bytebuffer(18, 1);
+        return __vector_as_bytebuffer(20, 1);
     }
 
     public byte httpMethod() {
-        int o = __offset(20);
+        int o = __offset(22);
         return o != 0 ? bb.get(o + bb_pos) : 0;
     }
 
     public short callbackTopicId() {
-        int o = __offset(22);
+        int o = __offset(24);
         return o != 0 ? bb.getShort(o + bb_pos) : 0;
     }
 
     public String callbackHttpUri() {
-        int o = __offset(24);
+        int o = __offset(26);
         return o != 0 ? __string(o + bb_pos) : null;
     }
 
     public ByteBuffer callbackHttpUriAsByteBuffer() {
-        return __vector_as_bytebuffer(24, 1);
+        return __vector_as_bytebuffer(26, 1);
     }
 
     public byte callbackHttpMethod() {
-        int o = __offset(26);
+        int o = __offset(28);
         return o != 0 ? bb.get(o + bb_pos) : 0;
     }
 
@@ -234,32 +245,32 @@ public final class Message extends Table {
     }
 
     public HttpHeader headers(HttpHeader obj, int j) {
-        int o = __offset(28);
+        int o = __offset(30);
         return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null;
     }
 
     public int headersLength() {
-        int o = __offset(28);
+        int o = __offset(30);
         return o != 0 ? __vector_len(o) : 0;
     }
 
     public int bodyLength() {
-        int o = __offset(30);
+        int o = __offset(32);
         return o != 0 ? bb.getInt(o + bb_pos) : 0;
     }
 
     public byte bodyPayload(int j) {
-        int o = __offset(32);
+        int o = __offset(34);
         return o != 0 ? bb.get(__vector(o) + j * 1) : 0;
     }
 
     public int bodyPayloadLength() {
-        int o = __offset(32);
+        int o = __offset(34);
         return o != 0 ? __vector_len(o) : 0;
     }
 
     public ByteBuffer bodyPayloadAsByteBuffer() {
-        return __vector_as_bytebuffer(32, 1);
+        return __vector_as_bytebuffer(34, 1);
     }
 }
 

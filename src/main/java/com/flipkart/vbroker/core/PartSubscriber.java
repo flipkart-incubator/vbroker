@@ -1,7 +1,7 @@
 package com.flipkart.vbroker.core;
 
-import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.exceptions.VBrokerException;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.PeekingIterator;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,7 +16,7 @@ import java.util.Set;
 @Slf4j
 @EqualsAndHashCode(exclude = {"subscriberGroupsMap", "subscriberGroupIteratorMap"})
 @ToString
-public class PartSubscriber implements Iterable<Message> {
+public class PartSubscriber implements Iterable<MessageWithGroup> {
     public static final Integer DEFAULT_PARALLELISM = 5;
     public static final Integer MAX_GROUPS_IN_ITERATOR = 100;
 
@@ -24,10 +24,10 @@ public class PartSubscriber implements Iterable<Message> {
     private final PartSubscription partSubscription;
     @Getter
     private final Map<String, SubscriberGroup> subscriberGroupsMap = new LinkedHashMap<>();
-    private final Map<SubscriberGroup, PeekingIterator<Message>> subscriberGroupIteratorMap = new LinkedHashMap<>();
+    private final Map<SubscriberGroup, PeekingIterator<MessageWithGroup>> subscriberGroupIteratorMap = new LinkedHashMap<>();
 
     public PartSubscriber(PartSubscription partSubscription) {
-        log.info("Creating new PartSubscriber for part-subscription {}", partSubscription);
+        log.trace("Creating new PartSubscriber for part-subscription {}", partSubscription);
         this.partSubscription = partSubscription;
         refreshSubscriberGroups();
     }
@@ -69,10 +69,14 @@ public class PartSubscriber implements Iterable<Message> {
         });
     }
 
+    public PeekingIterator<SubscriberGroup> groupIterator() {
+        return Iterators.peekingIterator(subscriberGroupsMap.values().iterator());
+    }
+
     @Override
-    public PeekingIterator<Message> iterator() {
-        return new PeekingIterator<Message>() {
-            PeekingIterator<Message> currIterator;
+    public PeekingIterator<MessageWithGroup> iterator() {
+        return new PeekingIterator<MessageWithGroup>() {
+            PeekingIterator<MessageWithGroup> currIterator;
 
             boolean refresh() {
                 boolean refreshed = false;
@@ -82,7 +86,7 @@ public class PartSubscriber implements Iterable<Message> {
 
                 for (SubscriberGroup subscriberGroup : subscriberGroupsMap.values()) {
                     if (!subscriberGroup.isLocked()) {
-                        PeekingIterator<Message> groupIterator = subscriberGroupIteratorMap.get(subscriberGroup);
+                        PeekingIterator<MessageWithGroup> groupIterator = subscriberGroupIteratorMap.get(subscriberGroup);
                         if (groupIterator.hasNext()) {
                             currIterator = groupIterator;
                             refreshed = true;
@@ -94,12 +98,12 @@ public class PartSubscriber implements Iterable<Message> {
             }
 
             @Override
-            public Message peek() {
+            public MessageWithGroup peek() {
                 return currIterator.peek();
             }
 
             @Override
-            public Message next() {
+            public MessageWithGroup next() {
                 return currIterator.next();
             }
 

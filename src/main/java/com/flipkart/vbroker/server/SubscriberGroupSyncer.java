@@ -24,6 +24,9 @@ public class SubscriberGroupSyncer implements Runnable {
     public void run() {
         while (active) {
             for (PartSubscriber partSubscriber : partSubscribers) {
+                if (!active) {
+                    break;
+                }
                 partSubscriber.refreshSubscriberGroups();
             }
             try {

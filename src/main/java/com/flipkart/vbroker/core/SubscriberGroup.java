@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @EqualsAndHashCode(exclude = {"qType", "currSeqNo"})
 //TODO: crude implementation of seqNo. Handle the concurrency here correctly
-public class SubscriberGroup implements Iterable<Message> {
+public class SubscriberGroup implements Iterable<MessageWithGroup> {
     private final MessageGroup messageGroup;
     @Getter
     private final TopicPartition topicPartition;
@@ -70,8 +70,8 @@ public class SubscriberGroup implements Iterable<Message> {
     }
 
     @Override
-    public PeekingIterator<Message> iterator() {
-        return new SubscriberGroupIterator();
+    public PeekingIterator<MessageWithGroup> iterator() {
+        return new SubscriberGroupIterator(this);
     }
 
     public String getGroupId() {
@@ -82,19 +82,25 @@ public class SubscriberGroup implements Iterable<Message> {
         MAIN, SIDELINE, RETRY_1, RETRY_2, RETRY_3
     }
 
-    private class SubscriberGroupIterator implements PeekingIterator<Message> {
+    private class SubscriberGroupIterator implements PeekingIterator<MessageWithGroup> {
+
+        SubscriberGroup subscriberGroup;
         PeekingIterator<Message> groupIterator = messageGroup.iteratorFrom(currSeqNo.get());
 
-        @Override
-        public Message peek() {
-            return groupIterator.peek();
+        public SubscriberGroupIterator(SubscriberGroup subscriberGroup) {
+            this.subscriberGroup = subscriberGroup;
         }
 
         @Override
-        public synchronized Message next() {
-            Message message = groupIterator.next();
+        public MessageWithGroup peek() {
+            return MessageWithGroup.newInstance(groupIterator.peek(), subscriberGroup);
+        }
+
+        @Override
+        public synchronized MessageWithGroup next() {
+            MessageWithGroup messageWithGroup = MessageWithGroup.newInstance(groupIterator.next(), subscriberGroup);
             currSeqNo.incrementAndGet();
-            return message;
+            return messageWithGroup;
         }
 
         @Override

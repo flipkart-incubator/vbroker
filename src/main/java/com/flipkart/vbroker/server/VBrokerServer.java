@@ -13,7 +13,6 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.local.LocalAddress;
 import io.netty.channel.local.LocalChannel;
-import io.netty.channel.local.LocalServerChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -23,9 +22,10 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 
-import java.io.IOException;
-import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,7 +42,7 @@ public class VBrokerServer implements Runnable {
         this.config = config;
     }
 
-    private void start() throws IOException {
+    private void start() {
         Thread.currentThread().setName("vbroker_server");
 
         EventLoopGroup bossGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("server_boss"));
@@ -51,8 +51,6 @@ public class VBrokerServer implements Runnable {
 
         TopicService topicService = new TopicServiceImpl();
         SubscriptionService subscriptionService = new SubscriptionServiceImpl();
-        SubscriberMetadataService subscriberMetadataService = new SubscriberMetadataService(subscriptionService, topicService);
-        TopicMetadataService topicMetadataService = new TopicMetadataService(topicService);
 
         topicService.createTopic(DummyEntities.topic1);
         subscriptionService.createSubscription(DummyEntities.subscription1);
@@ -61,7 +59,7 @@ public class VBrokerServer implements Runnable {
         RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactory(
                 producerService, topicService, subscriptionService);
 
-        CountDownLatch latch = new CountDownLatch(2);
+        CountDownLatch latch = new CountDownLatch(1);
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
             serverBootstrap.group(bossGroup, workerGroup)
@@ -82,29 +80,39 @@ public class VBrokerServer implements Runnable {
                 }
             });
 
-            LocalAddress address = new LocalAddress(new Random().nextInt(60000) + "");
-            setupLocalSubscribers(localGroup, workerGroup, address, subscriptionService, subscriberMetadataService, topicMetadataService);
+            DefaultAsyncHttpClientConfig httpClientConfig = new DefaultAsyncHttpClientConfig
+                    .Builder()
+                    .setThreadFactory(new DefaultThreadFactory("async_http_client"))
+                    .build();
+            AsyncHttpClient httpClient = new DefaultAsyncHttpClient(httpClientConfig);
+            MessageProcessor messageProcessor = new HttpMessageProcessor(httpClient);
 
-            //below used for local channel by the consumer
-            ServerBootstrap serverLocalBootstrap = new ServerBootstrap();
-            serverLocalBootstrap.group(localGroup, localGroup)
-                    .channel(LocalServerChannel.class)
-                    .handler(new LoggingHandler())
-                    .childHandler(new VBrokerServerInitializer(requestHandlerFactory));
+            BrokerSubscriber brokerSubscriber = new BrokerSubscriber(subscriptionService, messageProcessor);
+            ExecutorService subscriberExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("subscriber"));
+            subscriberExecutor.submit(brokerSubscriber);
 
-            ExecutorService localServerExecutor = Executors.newSingleThreadExecutor();
-            localServerExecutor.submit(() -> {
-                try {
-                    serverLocalChannel = serverLocalBootstrap.bind(address).sync().channel();
-                    log.info("Consumer now listening on address {}", address);
-
-                    serverLocalChannel.closeFuture().sync();
-                    log.info("Consumer serverLocalChannel closed");
-                    latch.countDown();
-                } catch (InterruptedException e) {
-                    log.error("Exception in channel sync", e);
-                }
-            });
+//            LocalAddress address = new LocalAddress(new Random().nextInt(60000) + "");
+//            setupLocalSubscribers(localGroup, workerGroup, address, subscriptionService);
+//            //below used for local channel by the consumer
+//            ServerBootstrap serverLocalBootstrap = new ServerBootstrap();
+//            serverLocalBootstrap.group(localGroup, localGroup)
+//                    .channel(LocalServerChannel.class)
+//                    .handler(new LoggingHandler())
+//                    .childHandler(new VBrokerServerInitializer(requestHandlerFactory));
+//
+//            ExecutorService localServerExecutor = Executors.newSingleThreadExecutor();
+//            localServerExecutor.submit(() -> {
+//                try {
+//                    serverLocalChannel = serverLocalBootstrap.bind(address).sync().channel();
+//                    log.info("Consumer now listening on address {}", address);
+//
+//                    serverLocalChannel.closeFuture().sync();
+//                    log.info("Consumer serverLocalChannel closed");
+//                    latch.countDown();
+//                } catch (InterruptedException e) {
+//                    log.error("Exception in channel sync", e);
+//                }
+//            });
             log.debug("Awaiting on latch");
             latch.await();
 
@@ -137,7 +145,7 @@ public class VBrokerServer implements Runnable {
     private void setupLocalSubscribers(EventLoopGroup localGroup,
                                        EventLoopGroup workerGroup,
                                        LocalAddress address,
-                                       SubscriptionService subscriptionService, SubscriberMetadataService subscriberMetadataService, TopicMetadataService topicMetadataService) throws InterruptedException {
+                                       SubscriptionService subscriptionService) {
         Bootstrap httpClientBootstrap = new Bootstrap()
                 .group(workerGroup)
                 .channel(NioSocketChannel.class)
@@ -147,13 +155,10 @@ public class VBrokerServer implements Runnable {
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast(new HttpClientCodec());
                         pipeline.addLast(new HttpObjectAggregator(1024 * 1024)); //1MB max
-                        //pipeline.addLast(new VResponseEncoder());
                         pipeline.addLast(new HttpResponseHandler());
                     }
                 });
-
         ResponseHandlerFactory responseHandlerFactory = new ResponseHandlerFactory(httpClientBootstrap);
-
         Bootstrap consumerBootstrap = new Bootstrap()
                 .group(localGroup)
                 .channel(LocalChannel.class)
@@ -170,19 +175,13 @@ public class VBrokerServer implements Runnable {
                         });
                     }
                 });
-
-        ExecutorService executorService = Executors.newSingleThreadExecutor(new DefaultThreadFactory("subscriber"));
-        //SubscriberDaemon subscriber = new SubscriberDaemon(address, consumerBootstrap, subscriptionService);
-        BrokerSubscriber brokerSubscriber = new BrokerSubscriber(subscriptionService, subscriberMetadataService, topicMetadataService);
-        executorService.submit(brokerSubscriber);
+        SubscriberDaemon subscriber = new SubscriberDaemon(address, consumerBootstrap, subscriptionService);
+        ExecutorService subscriberExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("subscriber"));
+        subscriberExecutor.submit(subscriber);
     }
 
     @Override
     public void run() {
-        try {
-            start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        start();
     }
 }
