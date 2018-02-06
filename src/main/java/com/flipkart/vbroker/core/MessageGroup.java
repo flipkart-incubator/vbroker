@@ -7,33 +7,28 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by hooda on 19/1/18
  */
 @Getter
-@EqualsAndHashCode(exclude = {"level", "messages"})
+@EqualsAndHashCode(exclude = {"memoryManager", "messages"})
 public class MessageGroup implements Iterable<Message> {
     private final String groupId;
     private final List<Message> messages;
+    private final MemoryManager memoryManager = new LocalMemoryManager();
 
-    public MessageGroup(String groupId, Map map) {
+    public MessageGroup(short id, short partitionId, String groupId) {
         this.groupId = groupId;
-        this.messages = MemoryManager.getVList(groupId);
-        ((VList) messages).addObserver((VMap) map);
+        this.messages = memoryManager.getMessageList(groupId, id, partitionId);
     }
 
-    public int getUsedCapacity() {
-        return ((VList) this.messages).getListUsedCapacity();
+    public MessageList.Level getLevel() {
+        return ((MessageList) this.messages).getLevel();
     }
 
-    public VList.Level getLevel() {
-        return ((VList) this.messages).getLevel();
-    }
-
-    public void setLevel(VList.Level level) {
-        ((VList) this.messages).setLevel(level);
+    public void setLevel(MessageList.Level level) {
+        ((MessageList) this.messages).setLevel(level);
     }
 
     public void appendMessage(Message message) {
