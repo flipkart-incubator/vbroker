@@ -3,6 +3,7 @@ package com.flipkart.vbroker.core;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.PeekingIterator;
+import com.google.common.collect.Sets;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -29,7 +30,7 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
     public PartSubscriber(PartSubscription partSubscription) {
         log.trace("Creating new PartSubscriber for part-subscription {}", partSubscription);
         this.partSubscription = partSubscription;
-        refreshSubscriberGroups();
+        //refreshSubscriberGroups();
     }
 
     public boolean lockSubscriberGroup(String groupId) {
@@ -58,15 +59,16 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
 
         Set<String> uniqueMsgGroups = topicPartition.getUniqueGroups();
         Set<String> uniqueSubscriberGroups = subscriberGroupsMap.keySet();
-        uniqueMsgGroups.removeAll(uniqueSubscriberGroups);
-        uniqueMsgGroups.forEach(group -> {
+
+        Sets.SetView<String> difference = Sets.difference(uniqueMsgGroups, uniqueSubscriberGroups);
+        for (String group : difference) {
             Optional<MessageGroup> messageGroup = topicPartition.getMessageGroup(group);
             if (messageGroup.isPresent()) {
                 SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup.get(), topicPartition);
                 subscriberGroupsMap.put(group, subscriberGroup);
                 subscriberGroupIteratorMap.put(subscriberGroup, subscriberGroup.iterator());
             }
-        });
+        }
     }
 
     public PeekingIterator<SubscriberGroup> groupIterator() {
