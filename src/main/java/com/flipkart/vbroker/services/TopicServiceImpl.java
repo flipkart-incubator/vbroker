@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.CreateMode;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -84,5 +85,12 @@ public class TopicServiceImpl implements TopicService {
     @Override
     public List<TopicPartition> getPartitions(Topic topic) {
         return topic.getPartitions();
+    }
+
+    @Override
+    public List<Topic> getAllTopics(){
+        List<Topic> topics = new ArrayList<>();
+        topics.addAll(topicsMap.values());
+        return topics;
     }
 }

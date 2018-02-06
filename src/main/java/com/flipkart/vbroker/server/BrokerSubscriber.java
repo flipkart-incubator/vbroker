@@ -3,7 +3,9 @@ package com.flipkart.vbroker.server;
 import com.flipkart.vbroker.core.PartSubscriber;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.core.Subscription;
+import com.flipkart.vbroker.services.SubscriberMetadataService;
 import com.flipkart.vbroker.services.SubscriptionService;
+import com.flipkart.vbroker.services.TopicMetadataService;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -23,11 +25,14 @@ public class BrokerSubscriber implements Runnable {
     private final MessageProcessor messageProcessor;
     private SubscriberGroupSyncer syncer;
     private volatile AtomicBoolean running = new AtomicBoolean(true);
+    private final SubscriberMetadataService subscriberMetadataService;
+    private final TopicMetadataService topicMetadataService;
 
-    public BrokerSubscriber(SubscriptionService subscriptionService,
-                            MessageProcessor messageProcessor) {
+    public BrokerSubscriber(SubscriptionService subscriptionService, MessageProcessor messageProcessor, SubscriberMetadataService subscriberMetadataService, TopicMetadataService topicMetadataService) {
         this.subscriptionService = subscriptionService;
         this.messageProcessor = messageProcessor;
+        this.subscriberMetadataService = subscriberMetadataService;
+        this.topicMetadataService = topicMetadataService;
     }
 
     public void run() {
@@ -41,7 +46,7 @@ public class BrokerSubscriber implements Runnable {
                 Thread.sleep(timeMs);
 
                 List<PartSubscriber> partSubscribers = getPartSubscribersForCurrentBroker();
-                syncer = new SubscriberGroupSyncer(partSubscribers);
+                syncer = new SubscriberGroupSyncer(partSubscribers, subscriberMetadataService, topicMetadataService);
                 new Thread(syncer).start();
 
                 log.info("No of partSubscribers are {}", partSubscribers.size());

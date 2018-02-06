@@ -39,6 +39,10 @@ public class TopicPartition {
         });
     }
 
+    public void addMessageGroup(MessageGroup messageGroup){
+        groupIdMessageGroupMap.putIfAbsent(messageGroup.getGroupId(), messageGroup);
+    }
+
     public List<MessageGroup> getMessageGroups() {
         return new ArrayList<>(groupIdMessageGroupMap.values());
     }

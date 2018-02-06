@@ -54,6 +54,9 @@ public class VBrokerServer implements Runnable {
         EventLoopGroup workerGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("server_worker"));
         EventLoopGroup localGroup = new DefaultEventLoopGroup(1, new DefaultThreadFactory("server_local"));
 
+        TopicMetadataService topicMetadataService = new TopicMetadataService(topicService);
+        SubscriberMetadataService subscriberMetadataService = new SubscriberMetadataService(subscriptionService, topicService);
+
         topicService.createTopic(DummyEntities.topic1);
         subscriptionService.createSubscription(DummyEntities.subscription1);
 
@@ -89,7 +92,7 @@ public class VBrokerServer implements Runnable {
             AsyncHttpClient httpClient = new DefaultAsyncHttpClient(httpClientConfig);
             MessageProcessor messageProcessor = new HttpMessageProcessor(httpClient);
 
-            BrokerSubscriber brokerSubscriber = new BrokerSubscriber(subscriptionService, messageProcessor);
+            BrokerSubscriber brokerSubscriber = new BrokerSubscriber(subscriptionService, messageProcessor, subscriberMetadataService, topicMetadataService);
             ExecutorService subscriberExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("subscriber"));
             subscriberExecutor.submit(brokerSubscriber);
 

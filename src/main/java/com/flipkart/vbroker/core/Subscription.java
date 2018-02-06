@@ -48,14 +48,13 @@ public class Subscription {
         return MAPPER.writeValueAsBytes(this);
     }
 
-
     @JsonPOJOBuilder
     public static final class SubscriptionBuilder {
         private Topic topic;
         private short id;
         private String name;
         private List<PartSubscription> partSubscriptions;
-        private boolean grouped;
+        private boolean grouped ;
 
         private SubscriptionBuilder() {
         }
