@@ -1,15 +1,10 @@
 package com.flipkart.vbroker.services;
 
-import com.flipkart.vbroker.core.PartSubscriber;
-import com.flipkart.vbroker.core.PartSubscription;
-import com.flipkart.vbroker.core.SubscriberGroup;
-import com.flipkart.vbroker.core.Subscription;
+import com.flipkart.vbroker.core.*;
 import lombok.AllArgsConstructor;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by hooda on 2/2/18
@@ -35,6 +30,30 @@ public class SubscriberMetadataService {
                 bufferedWriter.write(subscriberGroup.getCurrSeqNo().toString());
                 bufferedWriter.close();
             }
+        }
+    }
+
+    public void loadSubscriptionMetadata(Subscription subscription){
+        for(PartSubscription partSubscription : subscription.getPartSubscriptions()){
+            PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription);
+            TopicPartition partition = partSubscription.getTopicPartition();
+            File dir = new File(getPartSubscriberPath(partSubscriber));
+            for(String groupId : partition.getUniqueGroups()){
+                MessageGroup messageGroup = partition.getMessageGroup(groupId).get();
+                File subscriberGroupFile = new File(dir, groupId.concat(".txt"));
+                SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, partition);
+                try {
+                    BufferedReader reader = new BufferedReader(new FileReader(subscriberGroupFile));
+                    SubscriberGroup.QType qType = SubscriberGroup.QType.valueOf(reader.readLine());
+                    AtomicInteger seqNo = new AtomicInteger(Integer.parseInt(reader.readLine()));
+                    subscriberGroup.setCurrSeqNo(seqNo);
+                    subscriberGroup.setQType(qType);
+                } catch (IOException ignored) {
+                } finally {
+                    partSubscriber.getSubscriberGroupsMap().put(groupId, subscriberGroup);
+                }
+            }
+
         }
     }
 

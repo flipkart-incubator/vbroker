@@ -1,5 +1,6 @@
 package com.flipkart.vbroker.services;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.vbroker.core.MessageGroup;
 import com.flipkart.vbroker.core.Topic;
@@ -21,7 +22,7 @@ import java.util.Map;
 
 public class TopicMetadataService {
     private final TopicService topicService;
-
+    private final ObjectMapper MAPPER = JsonUtils.getObjectMapper();
     public void saveTopicMetadata(Topic topic) throws IOException {
         Map<String, List<String>> partitionToGroupIdsMap = new HashMap<>();
         for (TopicPartition partition : topic.getPartitions()) {
@@ -31,7 +32,7 @@ public class TopicMetadataService {
             }
             partitionToGroupIdsMap.put(String.valueOf(partition.getId()), groups);
         }
-        ObjectMapper MAPPER = JsonUtils.getObjectMapper();
+
         File dir = new File("metadata");
         dir.mkdirs();
         File tmp = new File(dir, String.valueOf(topic.getId()).concat(".json"));
@@ -49,10 +50,20 @@ public class TopicMetadataService {
         }
     }
 
-    public void fetchTopicMetadata(Topic topic){
+    public void fetchTopicMetadata(Topic topic) throws IOException {
         File dir = new File("metadata");
         File tmp = new File(dir, String.valueOf(topic.getId()).concat(".json"));
+        TypeReference<HashMap<String,List<String>>> typeRef
+                = new TypeReference<HashMap<String,List<String>>>() {};
 
+        Map<String, List<String>> partitionToGroupIdsMap = MAPPER.readValue(tmp, typeRef);
+        for(TopicPartition partition : topic.getPartitions()){
+            List<String> groupIds = partitionToGroupIdsMap.get(String.valueOf(partition.getId()));
+            for(String groupId : groupIds){
+                MessageGroup messageGroup = new MessageGroup(groupId);
+                partition.addMessageGroup(messageGroup);
+            }
+        }
     }
 
 
