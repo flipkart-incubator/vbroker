@@ -35,12 +35,11 @@ public class VBrokerServer implements Runnable {
 
     private final VBrokerConfig config;
     private final CountDownLatch mainLatch = new CountDownLatch(1);
+    private final TopicService topicService;
+    private final SubscriptionService subscriptionService;
     private Channel serverChannel;
     private Channel serverLocalChannel;
 
-    private final TopicService topicService;
-    private final SubscriptionService subscriptionService;
-    
     public VBrokerServer(VBrokerConfig config, TopicService topicService, SubscriptionService subscriptionService) {
         this.config = config;
         this.topicService = topicService;

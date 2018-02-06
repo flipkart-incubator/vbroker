@@ -23,10 +23,10 @@ public class BrokerSubscriber implements Runnable {
 
     private final SubscriptionService subscriptionService;
     private final MessageProcessor messageProcessor;
-    private SubscriberGroupSyncer syncer;
-    private volatile AtomicBoolean running = new AtomicBoolean(true);
     private final SubscriberMetadataService subscriberMetadataService;
     private final TopicMetadataService topicMetadataService;
+    private SubscriberGroupSyncer syncer;
+    private volatile AtomicBoolean running = new AtomicBoolean(true);
 
     public BrokerSubscriber(SubscriptionService subscriptionService, MessageProcessor messageProcessor, SubscriberMetadataService subscriberMetadataService, TopicMetadataService topicMetadataService) {
         this.subscriptionService = subscriptionService;

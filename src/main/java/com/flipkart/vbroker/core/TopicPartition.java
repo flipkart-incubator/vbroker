@@ -17,7 +17,7 @@ import java.util.*;
 @EqualsAndHashCode(exclude = {"groupIdMessageGroupMap", "memoryManager"})
 @ToString(exclude = {"groupIdMessageGroupMap", "memoryManager"})
 public class TopicPartition {
-	@JsonIgnore
+    @JsonIgnore
     private final Map<String, MessageGroup> groupIdMessageGroupMap;
     private final short id;
     private final short topicId;
@@ -34,7 +34,7 @@ public class TopicPartition {
         groupIdMessageGroupMap.computeIfAbsent(groupId, s -> new MessageGroup(id, topicId, groupId)).appendMessage(message);
     }
 
-    public void addMessageGroup(MessageGroup messageGroup){
+    public void addMessageGroup(MessageGroup messageGroup) {
         groupIdMessageGroupMap.putIfAbsent(messageGroup.getGroupId(), messageGroup);
     }
 

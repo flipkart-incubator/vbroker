@@ -8,13 +8,13 @@ import java.util.*;
 
 @Getter
 public class MessageList<Item> extends ForwardingList {
+    private final static Map<TopicPartitionGroupId, MessageList> multitonMap = new HashMap<TopicPartitionGroupId, MessageList>();
     private List<Item> itemList;
     private String groupId;
     private short partitionId;
     private short topicId;
     private Level level;
     private ObservableVList observableVList;
-    private final static Map<TopicPartitionGroupId, MessageList> multitonMap = new HashMap<TopicPartitionGroupId, MessageList>();
 
     private MessageList() {
 
@@ -60,12 +60,12 @@ public class MessageList<Item> extends ForwardingList {
         this.level = level;
     }
 
-    protected enum Level {
-        L1, L2, L3
-    }
-
     public void addObserver(LocalMemoryManager localMemoryManager) {
         observableVList.addObserver(localMemoryManager);
+    }
+
+    protected enum Level {
+        L1, L2, L3
     }
 
     public class ObservableVList extends Observable {

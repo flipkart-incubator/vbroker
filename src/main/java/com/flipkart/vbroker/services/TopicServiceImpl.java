@@ -7,10 +7,8 @@ import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.utils.JsonUtils;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.apache.zookeeper.CreateMode;
 
 import java.io.IOException;
@@ -37,7 +35,7 @@ public class TopicServiceImpl implements TopicService {
             curatorService.createNodeAndSetData(config.getTopicsPath() + "/" + topic.getId(), CreateMode.PERSISTENT,
                     topic.toJson().getBytes()).handle((data, exception) -> {
                 if (exception != null) {
-                   log.error("Failure in creating topic!");
+                    log.error("Failure in creating topic!");
                 }
                 return null;
             });
@@ -70,13 +68,13 @@ public class TopicServiceImpl implements TopicService {
                 try {
                     return MAPPER.readValue(data, Topic.class);
                 } catch (IOException e) {
-                	log.error("Error while de-serializing data to Topic.");
+                    log.error("Error while de-serializing data to Topic.");
                     e.printStackTrace();
                 }
                 return null;
             }).toCompletableFuture().get();
         } catch (InterruptedException | ExecutionException e) {
-        	log.error("Error while fetching topic from co-ordinator.");
+            log.error("Error while fetching topic from co-ordinator.");
             e.printStackTrace();
             return null;
         }
@@ -88,7 +86,7 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public List<Topic> getAllTopics(){
+    public List<Topic> getAllTopics() {
         List<Topic> topics = new ArrayList<>();
         topics.addAll(topicsMap.values());
         return topics;

@@ -2,12 +2,7 @@ package com.flipkart.vbroker;
 
 import com.flipkart.vbroker.controller.VBrokerController;
 import com.flipkart.vbroker.server.VBrokerServer;
-import com.flipkart.vbroker.services.CuratorService;
-import com.flipkart.vbroker.services.SubscriptionService;
-import com.flipkart.vbroker.services.SubscriptionServiceImpl;
-import com.flipkart.vbroker.services.TopicService;
-import com.flipkart.vbroker.services.TopicServiceImpl;
-
+import com.flipkart.vbroker.services.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -28,7 +23,7 @@ public class VBrokerApp {
         VBrokerController controller = new VBrokerController(curatorService);
         controller.watch();
         TopicService topicService = new TopicServiceImpl(config, curatorService);
-        SubscriptionService subscriptionService = new SubscriptionServiceImpl(config,curatorService);
+        SubscriptionService subscriptionService = new SubscriptionServiceImpl(config, curatorService);
         VBrokerServer server = new VBrokerServer(config, topicService, subscriptionService);
 
 

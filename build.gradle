@@ -41,7 +41,11 @@ dependencies {
         exclude group: 'org.apache.zookeeper', module: 'zookeeper'
     }
 
-	compile 'org.apache.zookeeper:zookeeper:3.4.10'
+    compile('org.apache.zookeeper:zookeeper:3.4.10') {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+        exclude group: 'log4j', module: 'log4j'
+    }
 
     //utils
     compile 'com.google.guava:guava:23.6-jre'

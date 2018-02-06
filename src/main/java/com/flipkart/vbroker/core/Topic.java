@@ -15,7 +15,7 @@ import java.util.List;
  * Created by hooda on 19/1/18
  */
 @Getter
-@JsonDeserialize(builder=Topic.TopicBuilder.class)
+@JsonDeserialize(builder = Topic.TopicBuilder.class)
 public class Topic {
     public static final short DEFAULT_NO_OF_PARTITIONS = 3;
     public static final short DEFAULT_REPLICATION_FACTOR = 3;

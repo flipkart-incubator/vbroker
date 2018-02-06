@@ -17,11 +17,11 @@ public class SubscriberMetadataService {
 
     public void saveSubscriptionMetadata(Subscription subscription) throws IOException {
         //Save each group's file as : metadata/{topicID}/subs/{subID}/{partitionID}/{groupID}.txt
-        for(PartSubscription partSubscription : subscription.getPartSubscriptions()) {
+        for (PartSubscription partSubscription : subscription.getPartSubscriptions()) {
             PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription);
             File dir = new File(getPartSubscriberPath(partSubscriber));
             dir.mkdirs();
-            for(SubscriberGroup subscriberGroup : partSubscriber.getSubscriberGroupsMap().values()){
+            for (SubscriberGroup subscriberGroup : partSubscriber.getSubscriberGroupsMap().values()) {
                 File tmp = new File(dir, subscriberGroup.getGroupId().concat(".txt"));
                 tmp.createNewFile();
                 BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(tmp));
@@ -33,12 +33,12 @@ public class SubscriberMetadataService {
         }
     }
 
-    public void loadSubscriptionMetadata(Subscription subscription){
-        for(PartSubscription partSubscription : subscription.getPartSubscriptions()){
+    public void loadSubscriptionMetadata(Subscription subscription) {
+        for (PartSubscription partSubscription : subscription.getPartSubscriptions()) {
             PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription);
             TopicPartition partition = partSubscription.getTopicPartition();
             File dir = new File(getPartSubscriberPath(partSubscriber));
-            for(String groupId : partition.getUniqueGroups()){
+            for (String groupId : partition.getUniqueGroups()) {
                 MessageGroup messageGroup = partition.getMessageGroup(groupId).get();
                 File subscriberGroupFile = new File(dir, groupId.concat(".txt"));
                 SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, partition);
@@ -58,13 +58,13 @@ public class SubscriberMetadataService {
     }
 
     public void saveAllSubscribers() throws IOException {
-        for(Subscription subscription : subscriptionService.getAllSubscriptions()){
+        for (Subscription subscription : subscriptionService.getAllSubscriptions()) {
             saveSubscriptionMetadata(subscription);
         }
 
     }
 
-    private String getPartSubscriberPath(PartSubscriber partSubscriber){
+    private String getPartSubscriberPath(PartSubscriber partSubscriber) {
         short topicId = partSubscriber.getPartSubscription().getTopicPartition().getTopicId();
         short partitionId = partSubscriber.getPartSubscription().getTopicPartition().getId();
         short subscriptionId = partSubscriber.getPartSubscription().getSubscriptionId();

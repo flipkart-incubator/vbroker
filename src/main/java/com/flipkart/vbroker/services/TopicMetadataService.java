@@ -23,6 +23,11 @@ import java.util.Map;
 public class TopicMetadataService {
     private final TopicService topicService;
     private final ObjectMapper MAPPER = JsonUtils.getObjectMapper();
+
+    public TopicMetadataService(TopicService topicService) {
+        this.topicService = topicService;
+    }
+
     public void saveTopicMetadata(Topic topic) throws IOException {
         Map<String, List<String>> partitionToGroupIdsMap = new HashMap<>();
         for (TopicPartition partition : topic.getPartitions()) {
@@ -42,32 +47,29 @@ public class TopicMetadataService {
         bufferedWriter.close();
     }
 
-    public void saveAllTopicMetadata(){
-        for(Topic topic: topicService.getAllTopics()){
+    public void saveAllTopicMetadata() {
+        for (Topic topic : topicService.getAllTopics()) {
             try {
                 saveTopicMetadata(topic);
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+            }
         }
     }
 
     public void fetchTopicMetadata(Topic topic) throws IOException {
         File dir = new File("metadata");
         File tmp = new File(dir, String.valueOf(topic.getId()).concat(".json"));
-        TypeReference<HashMap<String,List<String>>> typeRef
-                = new TypeReference<HashMap<String,List<String>>>() {};
+        TypeReference<HashMap<String, List<String>>> typeRef
+                = new TypeReference<HashMap<String, List<String>>>() {
+        };
 
         Map<String, List<String>> partitionToGroupIdsMap = MAPPER.readValue(tmp, typeRef);
-        for(TopicPartition partition : topic.getPartitions()){
+        for (TopicPartition partition : topic.getPartitions()) {
             List<String> groupIds = partitionToGroupIdsMap.get(String.valueOf(partition.getId()));
-            for(String groupId : groupIds){
+            for (String groupId : groupIds) {
                 MessageGroup messageGroup = new MessageGroup(topic.getId(), partition.getId(), groupId);
                 partition.addMessageGroup(messageGroup);
             }
         }
-    }
-
-
-    public TopicMetadataService(TopicService topicService) {
-        this.topicService = topicService;
     }
 }

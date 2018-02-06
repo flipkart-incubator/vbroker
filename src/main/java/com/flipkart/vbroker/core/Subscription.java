@@ -56,7 +56,7 @@ public class Subscription {
         private short id;
         private String name;
         private List<PartSubscription> partSubscriptions;
-        private boolean grouped ;
+        private boolean grouped;
 
         private SubscriptionBuilder() {
         }

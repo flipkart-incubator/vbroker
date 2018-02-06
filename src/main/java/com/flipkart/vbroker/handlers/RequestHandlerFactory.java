@@ -41,8 +41,8 @@ public class RequestHandlerFactory {
                 requestHandler = topicCreateRequestHandler;
                 break;
             case RequestMessage.SubscriptionCreateRequest:
-            	requestHandler = susbcriptionCreateRequestHandler;
-            	break;
+                requestHandler = susbcriptionCreateRequestHandler;
+                break;
             default:
                 throw new VBrokerException("Unknown RequestMessageType: " + request.requestMessageType());
         }
