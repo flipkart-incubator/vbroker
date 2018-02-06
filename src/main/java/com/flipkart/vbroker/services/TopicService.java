@@ -16,4 +16,6 @@ public interface TopicService {
     public Topic getTopic(short topicId);
 
     public List<TopicPartition> getPartitions(Topic topic);
+
+    public List<Topic> getAllTopics();
 }

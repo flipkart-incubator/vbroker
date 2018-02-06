@@ -52,6 +52,7 @@ public class VBrokerServer implements Runnable {
         TopicService topicService = new TopicServiceImpl();
         SubscriptionService subscriptionService = new SubscriptionServiceImpl();
         SubscriberMetadataService subscriberMetadataService = new SubscriberMetadataService(subscriptionService, topicService);
+        TopicMetadataService topicMetadataService = new TopicMetadataService(topicService);
 
         topicService.createTopic(DummyEntities.topic1);
         subscriptionService.createSubscription(DummyEntities.subscription1);
@@ -82,7 +83,7 @@ public class VBrokerServer implements Runnable {
             });
 
             LocalAddress address = new LocalAddress(new Random().nextInt(60000) + "");
-            setupLocalSubscribers(localGroup, workerGroup, address, subscriptionService, subscriberMetadataService);
+            setupLocalSubscribers(localGroup, workerGroup, address, subscriptionService, subscriberMetadataService, topicMetadataService);
 
             //below used for local channel by the consumer
             ServerBootstrap serverLocalBootstrap = new ServerBootstrap();
@@ -136,7 +137,7 @@ public class VBrokerServer implements Runnable {
     private void setupLocalSubscribers(EventLoopGroup localGroup,
                                        EventLoopGroup workerGroup,
                                        LocalAddress address,
-                                       SubscriptionService subscriptionService, SubscriberMetadataService subscriberMetadataService) throws InterruptedException {
+                                       SubscriptionService subscriptionService, SubscriberMetadataService subscriberMetadataService, TopicMetadataService topicMetadataService) throws InterruptedException {
         Bootstrap httpClientBootstrap = new Bootstrap()
                 .group(workerGroup)
                 .channel(NioSocketChannel.class)
@@ -172,7 +173,7 @@ public class VBrokerServer implements Runnable {
 
         ExecutorService executorService = Executors.newSingleThreadExecutor(new DefaultThreadFactory("subscriber"));
         //SubscriberDaemon subscriber = new SubscriberDaemon(address, consumerBootstrap, subscriptionService);
-        BrokerSubscriber brokerSubscriber = new BrokerSubscriber(subscriptionService, subscriberMetadataService);
+        BrokerSubscriber brokerSubscriber = new BrokerSubscriber(subscriptionService, subscriberMetadataService, topicMetadataService);
         executorService.submit(brokerSubscriber);
     }
 

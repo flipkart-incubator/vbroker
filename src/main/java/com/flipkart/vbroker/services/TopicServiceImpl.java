@@ -4,6 +4,7 @@ import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -40,5 +41,12 @@ public class TopicServiceImpl implements TopicService {
     @Override
     public List<TopicPartition> getPartitions(Topic topic) {
         return topic.getPartitions();
+    }
+
+    @Override
+    public List<Topic> getAllTopics(){
+        List<Topic> topics = new ArrayList<>();
+        topics.addAll(topicsMap.values());
+        return topics;
     }
 }
