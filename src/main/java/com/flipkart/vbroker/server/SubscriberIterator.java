@@ -35,14 +35,14 @@ public class SubscriberIterator implements PeekingIterator<MessageWithGroup> {
 
     @Override
     public boolean hasNext() {
-        if (currIterator.hasNext()) {
+        if (currIterator.hasNext() && !currIterator.peek().isGroupLocked()) {
             return true;
         }
 
         log.trace("IteratorQ size: {}", iteratorQueue.size());
         for (int i = 0; i < iteratorQueue.size(); i++) {
             PeekingIterator<MessageWithGroup> iterator = iteratorQueue.peek();
-            if (iterator.hasNext()) {
+            if (iterator.hasNext() && !iterator.peek().isGroupLocked()) {
                 iteratorQueue.add(currIterator);
                 currIterator = iterator;
                 break;

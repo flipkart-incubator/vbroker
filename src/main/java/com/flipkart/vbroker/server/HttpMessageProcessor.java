@@ -1,7 +1,6 @@
 package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.core.MessageWithGroup;
-import com.flipkart.vbroker.core.SubscriberGroup;
 import com.flipkart.vbroker.entities.HttpHeader;
 import com.flipkart.vbroker.entities.HttpMethod;
 import com.flipkart.vbroker.entities.Message;
@@ -10,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.asynchttpclient.*;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutionException;
 
@@ -28,12 +26,7 @@ public class HttpMessageProcessor implements MessageProcessor {
     @Override
     public void process(MessageWithGroup messageWithGroup) throws Exception {
         Message message = messageWithGroup.getMessage();
-        log.info("Processing message with msg_id: {} and group_id: {}", message.messageId(), message.groupId());
-        makeHttpRequest(message, messageWithGroup.getSubscriberGroup());
-    }
 
-    private void makeHttpRequest(Message message,
-                                 SubscriberGroup subscriberGroup) throws URISyntaxException {
         String httpUri = requireNonNull(message.httpUri());
         URI uri = new URI(httpUri);
 
@@ -66,8 +59,7 @@ public class HttpMessageProcessor implements MessageProcessor {
             } catch (InterruptedException | ExecutionException e) {
                 log.error("Exception in executing request", e);
             } finally {
-                log.info("Unlocking the subscriberGroup {}", subscriberGroup.getGroupId());
-                subscriberGroup.unlock();
+                messageWithGroup.forceUnlockGroup();
             }
         }, null);
     }

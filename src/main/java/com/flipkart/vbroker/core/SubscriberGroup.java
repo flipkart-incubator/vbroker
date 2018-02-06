@@ -6,6 +6,7 @@ import com.google.common.collect.PeekingIterator;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -14,6 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by hooda on 19/1/18
  */
+@Slf4j
 @EqualsAndHashCode(exclude = {"qType", "currSeqNo"})
 //TODO: crude implementation of seqNo. Handle the concurrency here correctly
 public class SubscriberGroup implements Iterable<MessageWithGroup> {
@@ -45,6 +47,7 @@ public class SubscriberGroup implements Iterable<MessageWithGroup> {
      * false if already locked
      */
     public boolean lock() {
+        log.debug("Locking the subscriberGroup {} for topic-partition {}", getGroupId(), topicPartition);
         return locked.compareAndSet(false, true);
     }
 
@@ -54,6 +57,14 @@ public class SubscriberGroup implements Iterable<MessageWithGroup> {
      */
     public boolean unlock() {
         return locked.compareAndSet(true, false);
+    }
+
+    /**
+     * forcefully set the state as unlocked
+     */
+    public void forceUnlock() {
+        log.debug("Forcefully unlocking the subscriberGroup {} for topic-partition {}", getGroupId(), topicPartition);
+        locked.set(false);
     }
 
     /**

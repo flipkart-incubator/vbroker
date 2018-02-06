@@ -80,7 +80,9 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
 
             boolean refresh() {
                 boolean refreshed = false;
-                if (currIterator != null && currIterator.hasNext()) {
+                if (currIterator != null
+                        && currIterator.hasNext()
+                        && currIterator.peek().isGroupLocked()) {
                     return true;
                 }
 
