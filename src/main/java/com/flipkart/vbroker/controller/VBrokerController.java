@@ -13,12 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class VBrokerController {
+
 	private final String path = "/topics";
 	private final CuratorService curatorService;
 	private Executor executor = Executors.newSingleThreadExecutor();
 
 	public VBrokerController(CuratorService curatorService) {
-		super();
 		this.curatorService = curatorService;
 	}
 
