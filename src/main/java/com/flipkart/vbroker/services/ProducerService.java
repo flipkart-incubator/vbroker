@@ -1,7 +1,7 @@
 package com.flipkart.vbroker.services;
 
 import com.flipkart.vbroker.core.TopicPartition;
-import com.flipkart.vbroker.core.TopicPartitionDataManager;
+import com.flipkart.vbroker.data.TopicPartitionDataManager;
 import com.flipkart.vbroker.entities.Message;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

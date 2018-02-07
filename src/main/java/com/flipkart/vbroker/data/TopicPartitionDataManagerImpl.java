@@ -1,12 +1,14 @@
-package com.flipkart.vbroker.core;
+package com.flipkart.vbroker.data;
 
+import com.flipkart.vbroker.core.MessageGroup;
+import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.Message;
 import com.google.common.collect.PeekingIterator;
 
-import java.util.Optional;
 import java.util.Set;
 
 public class TopicPartitionDataManagerImpl implements TopicPartitionDataManager {
+
     @Override
     public void addMessage(TopicPartition topicPartition, Message message) {
 
@@ -23,11 +25,6 @@ public class TopicPartitionDataManagerImpl implements TopicPartitionDataManager 
     }
 
     @Override
-    public PeekingIterator<MessageGroup> getMessageGroupIterator(TopicPartition topicPartition) {
-        return null;
-    }
-
-    @Override
     public PeekingIterator<Message> getIterator(TopicPartition topicPartition, String group) {
         return null;
     }
@@ -35,10 +32,5 @@ public class TopicPartitionDataManagerImpl implements TopicPartitionDataManager 
     @Override
     public PeekingIterator<Message> getIterator(TopicPartition topicPartition, String group, int seqNoFrom) {
         return null;
-    }
-
-    @Override
-    public Optional<MessageGroup> getMessageGroup(TopicPartition topicPartition, String group) {
-        return Optional.empty();
     }
 }

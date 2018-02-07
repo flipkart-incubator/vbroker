@@ -1,5 +1,6 @@
 package com.flipkart.vbroker.core;
 
+import com.flipkart.vbroker.data.TopicPartitionDataManager;
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.google.common.collect.PeekingIterator;

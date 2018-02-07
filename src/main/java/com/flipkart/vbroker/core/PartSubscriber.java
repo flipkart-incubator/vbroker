@@ -1,5 +1,6 @@
 package com.flipkart.vbroker.core;
 
+import com.flipkart.vbroker.data.TopicPartitionDataManager;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.google.common.collect.PeekingIterator;
 import com.google.common.collect.Sets;
@@ -64,12 +65,10 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
 
         Sets.SetView<String> difference = Sets.difference(uniqueMsgGroups, uniqueSubscriberGroups);
         for (String group : difference) {
-            Optional<MessageGroup> messageGroup = topicPartitionDataManager.getMessageGroup(topicPartition, group);
-            if (messageGroup.isPresent()) {
-                SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup.get(), topicPartitionDataManager);
-                subscriberGroupsMap.put(group, subscriberGroup);
-                subscriberGroupIteratorMap.put(subscriberGroup, subscriberGroup.iterator());
-            }
+            MessageGroup messageGroup = new MessageGroup(group, topicPartition);
+            SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, topicPartitionDataManager);
+            subscriberGroupsMap.put(group, subscriberGroup);
+            subscriberGroupIteratorMap.put(subscriberGroup, subscriberGroup.iterator());
         }
     }
 

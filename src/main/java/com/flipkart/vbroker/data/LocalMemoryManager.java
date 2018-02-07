@@ -1,5 +1,7 @@
-package com.flipkart.vbroker.core;
+package com.flipkart.vbroker.data;
 
+import com.flipkart.vbroker.core.MessageGroupMap;
+import com.flipkart.vbroker.core.MessageList;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;

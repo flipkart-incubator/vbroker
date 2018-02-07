@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.vbroker.core.MessageGroup;
 import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.core.TopicPartition;
-import com.flipkart.vbroker.core.TopicPartitionDataManager;
+import com.flipkart.vbroker.data.TopicPartitionDataManager;
 import com.flipkart.vbroker.utils.JsonUtils;
 
 import java.io.BufferedWriter;

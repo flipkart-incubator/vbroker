@@ -1,6 +1,6 @@
 package com.flipkart.vbroker.server;
 
-import com.flipkart.vbroker.core.MemoryManager;
+import com.flipkart.vbroker.data.MemoryManager;
 import com.flipkart.vbroker.handlers.RequestHandlerFactory;
 import com.flipkart.vbroker.handlers.VBrokerRequestHandler;
 import com.flipkart.vbroker.protocol.codecs.VBrokerServerCodec;

@@ -1,5 +1,6 @@
 package com.flipkart.vbroker.core;
 
+import com.flipkart.vbroker.data.LocalMemoryManager;
 import com.flipkart.vbroker.entities.Message;
 import com.google.common.collect.ForwardingList;
 import lombok.Getter;

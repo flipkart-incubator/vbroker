@@ -5,7 +5,7 @@ import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.PartSubscriber;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.core.Subscription;
-import com.flipkart.vbroker.core.TopicPartitionDataManager;
+import com.flipkart.vbroker.data.TopicPartitionDataManager;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

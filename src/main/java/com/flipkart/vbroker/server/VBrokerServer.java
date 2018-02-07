@@ -3,8 +3,8 @@ package com.flipkart.vbroker.server;
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.Subscription;
 import com.flipkart.vbroker.core.Topic;
-import com.flipkart.vbroker.core.TopicPartitionDataManager;
-import com.flipkart.vbroker.core.TopicPartitionDataManagerImpl;
+import com.flipkart.vbroker.data.InMemoryTopicPartitionDataManager;
+import com.flipkart.vbroker.data.TopicPartitionDataManager;
 import com.flipkart.vbroker.handlers.HttpResponseHandler;
 import com.flipkart.vbroker.handlers.RequestHandlerFactory;
 import com.flipkart.vbroker.handlers.ResponseHandlerFactory;
@@ -60,7 +60,10 @@ public class VBrokerServer implements Runnable {
 
         //TopicService topicService = new TopicServiceImpl(config, curatorService);
         TopicService topicService = new InMemoryTopicService();
-        TopicPartitionDataManager topicPartitionDataManager = new TopicPartitionDataManagerImpl();
+
+        //TopicPartitionDataManager topicPartitionDataManager = new TopicPartitionDataManagerImpl();
+        TopicPartitionDataManager topicPartitionDataManager = new InMemoryTopicPartitionDataManager();
+
         //SubscriptionService subscriptionService = new SubscriptionServiceImpl(config, curatorService, topicPartitionDataManager);
         SubscriptionService subscriptionService = new InMemorySubscriptionService(topicPartitionDataManager);
 

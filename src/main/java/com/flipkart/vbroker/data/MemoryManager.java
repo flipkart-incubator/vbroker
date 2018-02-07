@@ -1,4 +1,4 @@
-package com.flipkart.vbroker.core;
+package com.flipkart.vbroker.data;
 
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.Channel;

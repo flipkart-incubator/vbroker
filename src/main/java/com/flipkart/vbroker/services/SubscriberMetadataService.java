@@ -1,6 +1,7 @@
 package com.flipkart.vbroker.services;
 
 import com.flipkart.vbroker.core.*;
+import com.flipkart.vbroker.data.TopicPartitionDataManager;
 import lombok.AllArgsConstructor;
 
 import java.io.*;
@@ -40,7 +41,7 @@ public class SubscriberMetadataService {
             TopicPartition partition = partSubscription.getTopicPartition();
             File dir = new File(getPartSubscriberPath(partSubscriber));
             for (String groupId : topicPartitionDataManager.getUniqueGroups(partition)) {
-                MessageGroup messageGroup = topicPartitionDataManager.getMessageGroup(partition, groupId).get();
+                MessageGroup messageGroup = new MessageGroup(groupId, partition);
                 File subscriberGroupFile = new File(dir, groupId.concat(".txt"));
                 SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, topicPartitionDataManager);
                 try {

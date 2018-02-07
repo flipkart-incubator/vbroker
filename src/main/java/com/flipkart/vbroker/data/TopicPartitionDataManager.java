@@ -1,9 +1,10 @@
-package com.flipkart.vbroker.core;
+package com.flipkart.vbroker.data;
 
+import com.flipkart.vbroker.core.MessageGroup;
+import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.Message;
 import com.google.common.collect.PeekingIterator;
 
-import java.util.Optional;
 import java.util.Set;
 
 public interface TopicPartitionDataManager {
@@ -14,11 +15,7 @@ public interface TopicPartitionDataManager {
 
     public Set<String> getUniqueGroups(TopicPartition topicPartition);
 
-    public PeekingIterator<MessageGroup> getMessageGroupIterator(TopicPartition topicPartition);
-
     public PeekingIterator<Message> getIterator(TopicPartition topicPartition, String group);
 
     public PeekingIterator<Message> getIterator(TopicPartition topicPartition, String group, int seqNoFrom);
-
-    public Optional<MessageGroup> getMessageGroup(TopicPartition topicPartition, String group);
 }
