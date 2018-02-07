@@ -9,6 +9,8 @@ import java.util.Set;
 
 public interface TopicPartitionDataManager {
 
+    public TopicPartData getTopicPartData(TopicPartition topicPartition);
+
     public void addMessage(TopicPartition topicPartition, Message message);
 
     public void addMessageGroup(TopicPartition topicPartition, MessageGroup messageGroup);

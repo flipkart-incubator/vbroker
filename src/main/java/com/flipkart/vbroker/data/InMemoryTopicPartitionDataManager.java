@@ -16,6 +16,12 @@ public class InMemoryTopicPartitionDataManager implements TopicPartitionDataMana
     private final Map<TopicPartition, TopicPartData> allPartitionsDataMap = new LinkedHashMap<>();
 
     @Override
+    public TopicPartData getTopicPartData(TopicPartition topicPartition) {
+        allPartitionsDataMap.putIfAbsent(topicPartition, new InMemoryTopicPartData());
+        return allPartitionsDataMap.get(topicPartition);
+    }
+
+    @Override
     public void addMessage(TopicPartition topicPartition, Message message) {
         TopicPartData topicPartData = getTopicPartData(topicPartition);
         topicPartData.addMessage(message);
@@ -41,10 +47,5 @@ public class InMemoryTopicPartitionDataManager implements TopicPartitionDataMana
     public PeekingIterator<Message> getIterator(TopicPartition topicPartition, String group, int seqNoFrom) {
         TopicPartData topicPartData = getTopicPartData(topicPartition);
         return topicPartData.iteratorFrom(group, seqNoFrom);
-    }
-
-    private TopicPartData getTopicPartData(TopicPartition topicPartition) {
-        allPartitionsDataMap.putIfAbsent(topicPartition, new TopicPartData());
-        return allPartitionsDataMap.get(topicPartition);
     }
 }
