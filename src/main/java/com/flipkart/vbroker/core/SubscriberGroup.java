@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -16,12 +15,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by hooda on 19/1/18
  */
 @Slf4j
-@EqualsAndHashCode(exclude = {"qType", "currSeqNo"})
+@EqualsAndHashCode(exclude = {"qType", "currSeqNo", "topicPartitionDataManager"})
 //TODO: crude implementation of seqNo. Handle the concurrency here correctly
 public class SubscriberGroup implements Iterable<MessageWithGroup> {
     private final MessageGroup messageGroup;
     @Getter
     private final TopicPartition topicPartition;
+    private final TopicPartitionDataManager topicPartitionDataManager;
     @Getter
     @Setter
     private QType qType = QType.MAIN;
@@ -32,14 +32,15 @@ public class SubscriberGroup implements Iterable<MessageWithGroup> {
     private volatile AtomicBoolean locked = new AtomicBoolean(false);
 
     private SubscriberGroup(MessageGroup messageGroup,
-                            TopicPartition topicPartition) {
+                            TopicPartitionDataManager topicPartitionDataManager) {
         this.messageGroup = messageGroup;
-        this.topicPartition = topicPartition;
+        this.topicPartition = messageGroup.getTopicPartition();
+        this.topicPartitionDataManager = topicPartitionDataManager;
     }
 
     public static SubscriberGroup newGroup(MessageGroup messageGroup,
-                                           TopicPartition topicPartition) {
-        return new SubscriberGroup(messageGroup, topicPartition);
+                                           TopicPartitionDataManager topicPartitionDataManager) {
+        return new SubscriberGroup(messageGroup, topicPartitionDataManager);
     }
 
     /**
@@ -74,12 +75,6 @@ public class SubscriberGroup implements Iterable<MessageWithGroup> {
         return locked.get();
     }
 
-    public synchronized List<Message> getUnconsumedMessages(int count) {
-        List<Message> messages = messageGroup.getMessages().subList(currSeqNo.get(), currSeqNo.get() + count);
-        currSeqNo.set(currSeqNo.get() + count);
-        return messages;
-    }
-
     @Override
     public PeekingIterator<MessageWithGroup> iterator() {
         return new SubscriberGroupIterator(this);
@@ -96,7 +91,7 @@ public class SubscriberGroup implements Iterable<MessageWithGroup> {
     private class SubscriberGroupIterator implements PeekingIterator<MessageWithGroup> {
 
         SubscriberGroup subscriberGroup;
-        PeekingIterator<Message> groupIterator = messageGroup.iteratorFrom(currSeqNo.get());
+        PeekingIterator<Message> groupIterator = topicPartitionDataManager.getIterator(topicPartition, getGroupId(), currSeqNo.get());
 
         public SubscriberGroupIterator(SubscriberGroup subscriberGroup) {
             this.subscriberGroup = subscriberGroup;

@@ -1,4 +1,4 @@
-package com.flipkart.vbroker.server;
+package com.flipkart.vbroker.iterators;
 
 import com.flipkart.vbroker.core.MessageWithGroup;
 import com.flipkart.vbroker.core.PartSubscriber;

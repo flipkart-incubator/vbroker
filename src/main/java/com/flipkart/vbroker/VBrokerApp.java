@@ -2,7 +2,7 @@ package com.flipkart.vbroker;
 
 import com.flipkart.vbroker.controller.VBrokerController;
 import com.flipkart.vbroker.server.VBrokerServer;
-import com.flipkart.vbroker.services.*;
+import com.flipkart.vbroker.services.CuratorService;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;

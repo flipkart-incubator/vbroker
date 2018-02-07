@@ -1,7 +1,6 @@
 package com.flipkart.vbroker.core;
 
 import com.flipkart.vbroker.exceptions.VBrokerException;
-import com.google.common.collect.Iterators;
 import com.google.common.collect.PeekingIterator;
 import com.google.common.collect.Sets;
 import lombok.EqualsAndHashCode;
@@ -67,15 +66,11 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
         for (String group : difference) {
             Optional<MessageGroup> messageGroup = topicPartitionDataManager.getMessageGroup(topicPartition, group);
             if (messageGroup.isPresent()) {
-                SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup.get(), topicPartition);
+                SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup.get(), topicPartitionDataManager);
                 subscriberGroupsMap.put(group, subscriberGroup);
                 subscriberGroupIteratorMap.put(subscriberGroup, subscriberGroup.iterator());
             }
         }
-    }
-
-    public PeekingIterator<SubscriberGroup> groupIterator() {
-        return Iterators.peekingIterator(subscriberGroupsMap.values().iterator());
     }
 
     @Override

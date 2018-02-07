@@ -68,7 +68,7 @@ public class TopicMetadataService {
         for (TopicPartition partition : topic.getPartitions()) {
             List<String> groupIds = partitionToGroupIdsMap.get(String.valueOf(partition.getId()));
             for (String groupId : groupIds) {
-                MessageGroup messageGroup = new MessageGroup(topic.getId(), partition.getId(), groupId);
+                MessageGroup messageGroup = new MessageGroup(groupId, partition);
                 topicPartitionDataManager.addMessageGroup(partition, messageGroup);
             }
         }

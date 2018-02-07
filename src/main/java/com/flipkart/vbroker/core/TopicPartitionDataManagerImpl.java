@@ -28,6 +28,16 @@ public class TopicPartitionDataManagerImpl implements TopicPartitionDataManager 
     }
 
     @Override
+    public PeekingIterator<Message> getIterator(TopicPartition topicPartition, String group) {
+        return null;
+    }
+
+    @Override
+    public PeekingIterator<Message> getIterator(TopicPartition topicPartition, String group, int seqNoFrom) {
+        return null;
+    }
+
+    @Override
     public Optional<MessageGroup> getMessageGroup(TopicPartition topicPartition, String group) {
         return Optional.empty();
     }
