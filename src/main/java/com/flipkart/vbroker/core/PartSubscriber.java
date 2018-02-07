@@ -26,8 +26,11 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
     @Getter
     private final Map<String, SubscriberGroup> subscriberGroupsMap = new LinkedHashMap<>();
     private final Map<SubscriberGroup, PeekingIterator<MessageWithGroup>> subscriberGroupIteratorMap = new LinkedHashMap<>();
+    private final TopicPartitionDataManager topicPartitionDataManager;
 
-    public PartSubscriber(PartSubscription partSubscription) {
+    public PartSubscriber(TopicPartitionDataManager topicPartitionDataManager,
+                          PartSubscription partSubscription) {
+        this.topicPartitionDataManager = topicPartitionDataManager;
         log.trace("Creating new PartSubscriber for part-subscription {}", partSubscription);
         this.partSubscription = partSubscription;
         //refreshSubscriberGroups();
@@ -57,12 +60,12 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
                 partSubscription.getId(), partSubscription.getTopicPartition().getId());
         TopicPartition topicPartition = partSubscription.getTopicPartition();
 
-        Set<String> uniqueMsgGroups = topicPartition.getUniqueGroups();
+        Set<String> uniqueMsgGroups = topicPartitionDataManager.getUniqueGroups(topicPartition);
         Set<String> uniqueSubscriberGroups = subscriberGroupsMap.keySet();
 
         Sets.SetView<String> difference = Sets.difference(uniqueMsgGroups, uniqueSubscriberGroups);
         for (String group : difference) {
-            Optional<MessageGroup> messageGroup = topicPartition.getMessageGroup(group);
+            Optional<MessageGroup> messageGroup = topicPartitionDataManager.getMessageGroup(topicPartition, group);
             if (messageGroup.isPresent()) {
                 SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup.get(), topicPartition);
                 subscriberGroupsMap.put(group, subscriberGroup);

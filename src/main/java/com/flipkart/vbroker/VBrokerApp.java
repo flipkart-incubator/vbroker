@@ -24,9 +24,7 @@ public class VBrokerApp {
         CuratorService curatorService = new CuratorService(config);
         VBrokerController controller = new VBrokerController(curatorService);
         controller.watch();
-        TopicService topicService = new TopicServiceImpl(config, curatorService);
-        SubscriptionService subscriptionService = new SubscriptionServiceImpl(config, curatorService);
-        VBrokerServer server = new VBrokerServer(config, topicService, subscriptionService);
+        VBrokerServer server = new VBrokerServer(config, curatorService);
 
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {

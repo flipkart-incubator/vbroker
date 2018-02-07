@@ -5,6 +5,7 @@ import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.PartSubscriber;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.core.Subscription;
+import com.flipkart.vbroker.core.TopicPartitionDataManager;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.function.Function;
 
 @Slf4j
 @AllArgsConstructor
@@ -22,6 +22,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     private final VBrokerConfig config;
     private final CuratorService curatorService;
+    private final TopicPartitionDataManager topicPartitionDataManager;
 
     private final ConcurrentMap<Short, Subscription> subscriptionsMap = new ConcurrentHashMap<>();
     private final ConcurrentMap<PartSubscription, PartSubscriber> subscriberMap = new ConcurrentHashMap<>();
@@ -73,15 +74,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         //wanted below to work but its creating a new PartSubscriber each time though key is already present
         //subscriberMap.putIfAbsent(partSubscription, new PartSubscriber(partSubscription));
 
-        subscriberMap.computeIfAbsent(partSubscription, new Function<PartSubscription, PartSubscriber>() {
-            @Override
-            public PartSubscriber apply(PartSubscription partSubscription) {
-                return new PartSubscriber(partSubscription);
-            }
+        subscriberMap.computeIfAbsent(partSubscription, partSubscription1 -> {
+            return new PartSubscriber(topicPartitionDataManager, partSubscription1);
         });
-        PartSubscriber partSub = subscriberMap.get(partSubscription);
-        partSub.refreshSubscriberGroups(); //can compute twice if its just created - should be okay as new subscriber will be empty in no of groups
-
-        return partSub;
+        return subscriberMap.get(partSubscription);
     }
 }

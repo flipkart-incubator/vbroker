@@ -3,6 +3,8 @@ package com.flipkart.vbroker.server;
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.Subscription;
 import com.flipkart.vbroker.core.Topic;
+import com.flipkart.vbroker.core.TopicPartitionDataManager;
+import com.flipkart.vbroker.core.TopicPartitionDataManagerImpl;
 import com.flipkart.vbroker.handlers.HttpResponseHandler;
 import com.flipkart.vbroker.handlers.RequestHandlerFactory;
 import com.flipkart.vbroker.handlers.ResponseHandlerFactory;
@@ -38,16 +40,14 @@ import java.util.concurrent.Executors;
 public class VBrokerServer implements Runnable {
 
     private final VBrokerConfig config;
+    private final CuratorService curatorService;
     private final CountDownLatch mainLatch = new CountDownLatch(1);
-    private final TopicService topicService;
-    private final SubscriptionService subscriptionService;
     private Channel serverChannel;
     private Channel serverLocalChannel;
 
-    public VBrokerServer(VBrokerConfig config, TopicService topicService, SubscriptionService subscriptionService) {
+    public VBrokerServer(VBrokerConfig config, CuratorService curatorService) {
         this.config = config;
-        this.topicService = topicService;
-        this.subscriptionService = subscriptionService;
+        this.curatorService = curatorService;
     }
 
     private void start() throws IOException {
@@ -57,8 +57,12 @@ public class VBrokerServer implements Runnable {
         EventLoopGroup workerGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("server_worker"));
         EventLoopGroup localGroup = new DefaultEventLoopGroup(1, new DefaultThreadFactory("server_local"));
 
-        TopicMetadataService topicMetadataService = new TopicMetadataService(topicService);
-        SubscriberMetadataService subscriberMetadataService = new SubscriberMetadataService(subscriptionService, topicService);
+        TopicService topicService = new TopicServiceImpl(config, curatorService);
+        TopicPartitionDataManager topicPartitionDataManager = new TopicPartitionDataManagerImpl();
+        SubscriptionService subscriptionService = new SubscriptionServiceImpl(config, curatorService, topicPartitionDataManager);
+
+        TopicMetadataService topicMetadataService = new TopicMetadataService(topicService, topicPartitionDataManager);
+        SubscriberMetadataService subscriberMetadataService = new SubscriberMetadataService(subscriptionService, topicService, topicPartitionDataManager);
 
         log.debug("Loading topicMetadata");
         List<Topic> allTopics = topicService.getAllTopics();
@@ -78,7 +82,7 @@ public class VBrokerServer implements Runnable {
 //        topicService.createTopic(DummyEntities.topic1);
 //        subscriptionService.createSubscription(DummyEntities.subscription1);
 
-        ProducerService producerService = new ProducerService();
+        ProducerService producerService = new ProducerService(topicPartitionDataManager);
         RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactory(
                 producerService, topicService, subscriptionService);
 

@@ -3,7 +3,7 @@ package com.flipkart.integration;
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.client.VBrokerClient;
 import com.flipkart.vbroker.server.VBrokerServer;
-import com.flipkart.vbroker.services.*;
+import com.flipkart.vbroker.services.CuratorService;
 import com.xebialabs.restito.semantics.Condition;
 import com.xebialabs.restito.server.StubServer;
 import org.glassfish.grizzly.http.Method;
@@ -37,9 +37,7 @@ public class ProduceMessageTest {
                 CuratorService curatorService;
                 try {
                     curatorService = new CuratorService(config);
-                    TopicService topicService = new TopicServiceImpl(config, curatorService);
-                    SubscriptionService subscriptionService = new SubscriptionServiceImpl(config, curatorService);
-                    server = new VBrokerServer(config, topicService, subscriptionService);
+                    server = new VBrokerServer(config, curatorService);
                     server.run();
                 } catch (IOException e) {
                     // TODO Auto-generated catch block

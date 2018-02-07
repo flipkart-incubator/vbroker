@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SubscriberMetadataService {
     private final SubscriptionService subscriptionService;
     private final TopicService topicService;
+    private final TopicPartitionDataManager topicPartitionDataManager;
 
     public void saveSubscriptionMetadata(Subscription subscription) throws IOException {
         //Save each group's file as : metadata/{topicID}/subs/{subID}/{partitionID}/{groupID}.txt
@@ -38,8 +39,8 @@ public class SubscriberMetadataService {
             PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription);
             TopicPartition partition = partSubscription.getTopicPartition();
             File dir = new File(getPartSubscriberPath(partSubscriber));
-            for (String groupId : partition.getUniqueGroups()) {
-                MessageGroup messageGroup = partition.getMessageGroup(groupId).get();
+            for (String groupId : topicPartitionDataManager.getUniqueGroups(partition)) {
+                MessageGroup messageGroup = topicPartitionDataManager.getMessageGroup(partition, groupId).get();
                 File subscriberGroupFile = new File(dir, groupId.concat(".txt"));
                 SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, partition);
                 try {
