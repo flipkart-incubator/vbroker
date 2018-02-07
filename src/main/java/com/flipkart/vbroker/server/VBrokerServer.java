@@ -11,6 +11,7 @@ import com.flipkart.vbroker.handlers.ResponseHandlerFactory;
 import com.flipkart.vbroker.handlers.VBrokerResponseHandler;
 import com.flipkart.vbroker.protocol.codecs.VBrokerClientCodec;
 import com.flipkart.vbroker.services.*;
+import com.flipkart.vbroker.utils.DummyEntities;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -57,9 +58,11 @@ public class VBrokerServer implements Runnable {
         EventLoopGroup workerGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("server_worker"));
         EventLoopGroup localGroup = new DefaultEventLoopGroup(1, new DefaultThreadFactory("server_local"));
 
-        TopicService topicService = new TopicServiceImpl(config, curatorService);
+        //TopicService topicService = new TopicServiceImpl(config, curatorService);
+        TopicService topicService = new InMemoryTopicService();
         TopicPartitionDataManager topicPartitionDataManager = new TopicPartitionDataManagerImpl();
-        SubscriptionService subscriptionService = new SubscriptionServiceImpl(config, curatorService, topicPartitionDataManager);
+        //SubscriptionService subscriptionService = new SubscriptionServiceImpl(config, curatorService, topicPartitionDataManager);
+        SubscriptionService subscriptionService = new InMemorySubscriptionService(topicPartitionDataManager);
 
         TopicMetadataService topicMetadataService = new TopicMetadataService(topicService, topicPartitionDataManager);
         SubscriberMetadataService subscriberMetadataService = new SubscriberMetadataService(subscriptionService, topicService, topicPartitionDataManager);
@@ -79,8 +82,8 @@ public class VBrokerServer implements Runnable {
         //TODO: now that metadata is created, we need to add actual data to the metadata entries
         //=> populate message groups in topic partitions
 
-//        topicService.createTopic(DummyEntities.topic1);
-//        subscriptionService.createSubscription(DummyEntities.subscription1);
+        topicService.createTopic(DummyEntities.topic1);
+        subscriptionService.createSubscription(DummyEntities.subscription1);
 
         ProducerService producerService = new ProducerService(topicPartitionDataManager);
         RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactory(

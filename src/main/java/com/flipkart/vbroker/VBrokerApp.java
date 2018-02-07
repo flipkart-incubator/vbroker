@@ -19,13 +19,10 @@ public class VBrokerApp {
         VBrokerConfig config = VBrokerConfig.newConfig("broker.properties");
         log.info("Configs: {}", config);
 
-        //MemoryManager memoryManager = new LocalMemoryManager();
-
         CuratorService curatorService = new CuratorService(config);
         VBrokerController controller = new VBrokerController(curatorService);
         controller.watch();
         VBrokerServer server = new VBrokerServer(config, curatorService);
-
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
