@@ -1,6 +1,6 @@
 package com.flipkart.vbroker.core;
 
-import com.flipkart.vbroker.data.TopicPartitionDataManager;
+import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.google.common.collect.PeekingIterator;
@@ -16,13 +16,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by hooda on 19/1/18
  */
 @Slf4j
-@EqualsAndHashCode(exclude = {"qType", "currSeqNo", "topicPartitionDataManager"})
+@EqualsAndHashCode(exclude = {"qType", "currSeqNo", "topicPartDataManager"})
 //TODO: crude implementation of seqNo. Handle the concurrency here correctly
 public class SubscriberGroup implements Iterable<MessageWithGroup> {
     private final MessageGroup messageGroup;
     @Getter
     private final TopicPartition topicPartition;
-    private final TopicPartitionDataManager topicPartitionDataManager;
+    private final TopicPartDataManager topicPartDataManager;
     @Getter
     @Setter
     private QType qType = QType.MAIN;
@@ -33,15 +33,15 @@ public class SubscriberGroup implements Iterable<MessageWithGroup> {
     private volatile AtomicBoolean locked = new AtomicBoolean(false);
 
     private SubscriberGroup(MessageGroup messageGroup,
-                            TopicPartitionDataManager topicPartitionDataManager) {
+                            TopicPartDataManager topicPartDataManager) {
         this.messageGroup = messageGroup;
         this.topicPartition = messageGroup.getTopicPartition();
-        this.topicPartitionDataManager = topicPartitionDataManager;
+        this.topicPartDataManager = topicPartDataManager;
     }
 
     public static SubscriberGroup newGroup(MessageGroup messageGroup,
-                                           TopicPartitionDataManager topicPartitionDataManager) {
-        return new SubscriberGroup(messageGroup, topicPartitionDataManager);
+                                           TopicPartDataManager topicPartDataManager) {
+        return new SubscriberGroup(messageGroup, topicPartDataManager);
     }
 
     /**
@@ -92,7 +92,7 @@ public class SubscriberGroup implements Iterable<MessageWithGroup> {
     private class SubscriberGroupIterator implements PeekingIterator<MessageWithGroup> {
 
         SubscriberGroup subscriberGroup;
-        PeekingIterator<Message> groupIterator = topicPartitionDataManager.getIterator(topicPartition, getGroupId(), currSeqNo.get());
+        PeekingIterator<Message> groupIterator = topicPartDataManager.getIterator(topicPartition, getGroupId(), currSeqNo.get());
 
         public SubscriberGroupIterator(SubscriberGroup subscriberGroup) {
             this.subscriberGroup = subscriberGroup;

@@ -1,7 +1,7 @@
 package com.flipkart.vbroker.services;
 
 import com.flipkart.vbroker.core.*;
-import com.flipkart.vbroker.data.TopicPartitionDataManager;
+import com.flipkart.vbroker.data.TopicPartDataManager;
 import lombok.AllArgsConstructor;
 
 import java.io.*;
@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SubscriberMetadataService {
     private final SubscriptionService subscriptionService;
     private final TopicService topicService;
-    private final TopicPartitionDataManager topicPartitionDataManager;
+    private final TopicPartDataManager topicPartDataManager;
 
     public void saveSubscriptionMetadata(Subscription subscription) throws IOException {
         //Save each group's file as : metadata/{topicID}/subs/{subID}/{partitionID}/{groupID}.txt
@@ -40,10 +40,10 @@ public class SubscriberMetadataService {
             PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription);
             TopicPartition partition = partSubscription.getTopicPartition();
             File dir = new File(getPartSubscriberPath(partSubscriber));
-            for (String groupId : topicPartitionDataManager.getUniqueGroups(partition)) {
+            for (String groupId : topicPartDataManager.getUniqueGroups(partition)) {
                 MessageGroup messageGroup = new MessageGroup(groupId, partition);
                 File subscriberGroupFile = new File(dir, groupId.concat(".txt"));
-                SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, topicPartitionDataManager);
+                SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, topicPartDataManager);
                 try {
                     BufferedReader reader = new BufferedReader(new FileReader(subscriberGroupFile));
                     SubscriberGroup.QType qType = SubscriberGroup.QType.valueOf(reader.readLine());

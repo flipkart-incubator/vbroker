@@ -7,7 +7,7 @@ import com.google.common.collect.PeekingIterator;
 
 import java.util.Set;
 
-public interface TopicPartitionDataManager {
+public interface TopicPartDataManager {
 
     public TopicPartData getTopicPartData(TopicPartition topicPartition);
 

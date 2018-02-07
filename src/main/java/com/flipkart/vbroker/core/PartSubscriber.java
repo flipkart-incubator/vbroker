@@ -1,6 +1,6 @@
 package com.flipkart.vbroker.core;
 
-import com.flipkart.vbroker.data.TopicPartitionDataManager;
+import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.google.common.collect.PeekingIterator;
 import com.google.common.collect.Sets;
@@ -26,11 +26,11 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
     @Getter
     private final Map<String, SubscriberGroup> subscriberGroupsMap = new LinkedHashMap<>();
     private final Map<SubscriberGroup, PeekingIterator<MessageWithGroup>> subscriberGroupIteratorMap = new LinkedHashMap<>();
-    private final TopicPartitionDataManager topicPartitionDataManager;
+    private final TopicPartDataManager topicPartDataManager;
 
-    public PartSubscriber(TopicPartitionDataManager topicPartitionDataManager,
+    public PartSubscriber(TopicPartDataManager topicPartDataManager,
                           PartSubscription partSubscription) {
-        this.topicPartitionDataManager = topicPartitionDataManager;
+        this.topicPartDataManager = topicPartDataManager;
         log.trace("Creating new PartSubscriber for part-subscription {}", partSubscription);
         this.partSubscription = partSubscription;
         //refreshSubscriberGroups();
@@ -60,13 +60,13 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
                 partSubscription.getId(), partSubscription.getTopicPartition().getId());
         TopicPartition topicPartition = partSubscription.getTopicPartition();
 
-        Set<String> uniqueMsgGroups = topicPartitionDataManager.getUniqueGroups(topicPartition);
+        Set<String> uniqueMsgGroups = topicPartDataManager.getUniqueGroups(topicPartition);
         Set<String> uniqueSubscriberGroups = subscriberGroupsMap.keySet();
 
         Sets.SetView<String> difference = Sets.difference(uniqueMsgGroups, uniqueSubscriberGroups);
         for (String group : difference) {
             MessageGroup messageGroup = new MessageGroup(group, topicPartition);
-            SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, topicPartitionDataManager);
+            SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, topicPartDataManager);
             subscriberGroupsMap.put(group, subscriberGroup);
             subscriberGroupIteratorMap.put(subscriberGroup, subscriberGroup.iterator());
         }

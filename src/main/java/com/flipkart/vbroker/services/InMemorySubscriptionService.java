@@ -3,7 +3,7 @@ package com.flipkart.vbroker.services;
 import com.flipkart.vbroker.core.PartSubscriber;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.core.Subscription;
-import com.flipkart.vbroker.data.TopicPartitionDataManager;
+import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,11 +15,11 @@ import java.util.concurrent.ConcurrentMap;
 @Slf4j
 public class InMemorySubscriptionService implements SubscriptionService {
 
-    private final TopicPartitionDataManager topicPartitionDataManager;
+    private final TopicPartDataManager topicPartDataManager;
     private final ConcurrentMap<Short, Subscription> subscriptionsMap = new ConcurrentHashMap<>();
     private final ConcurrentMap<PartSubscription, PartSubscriber> subscriberMap = new ConcurrentHashMap<>();
-    public InMemorySubscriptionService(TopicPartitionDataManager topicPartitionDataManager) {
-        this.topicPartitionDataManager = topicPartitionDataManager;
+    public InMemorySubscriptionService(TopicPartDataManager topicPartDataManager) {
+        this.topicPartDataManager = topicPartDataManager;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class InMemorySubscriptionService implements SubscriptionService {
         //subscriberMap.putIfAbsent(partSubscription, new PartSubscriber(partSubscription));
 
         subscriberMap.computeIfAbsent(partSubscription, partSubscription1 -> {
-            return new PartSubscriber(topicPartitionDataManager, partSubscription1);
+            return new PartSubscriber(topicPartDataManager, partSubscription1);
         });
         return subscriberMap.get(partSubscription);
     }

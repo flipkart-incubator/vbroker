@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Slf4j
-public class InMemoryTopicPartitionDataManager implements TopicPartitionDataManager {
+public class InMemoryTopicPartDataManager implements TopicPartDataManager {
 
     private final Map<TopicPartition, TopicPartData> allPartitionsDataMap = new LinkedHashMap<>();
 
