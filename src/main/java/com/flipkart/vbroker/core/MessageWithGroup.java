@@ -1,6 +1,7 @@
 package com.flipkart.vbroker.core;
 
 import com.flipkart.vbroker.entities.Message;
+import com.flipkart.vbroker.exceptions.VBrokerException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -12,6 +13,35 @@ public class MessageWithGroup {
 
     public static MessageWithGroup newInstance(Message message, SubscriberGroup subscriberGroup) {
         return new MessageWithGroup(message, subscriberGroup);
+    }
+
+    public void setQType(SubscriberGroup.QType qType) {
+        this.subscriberGroup.setQType(qType);
+    }
+
+    public void sidelineGroup() {
+        this.subscriberGroup.setQType(SubscriberGroup.QType.SIDELINE);
+    }
+
+    public void retry() {
+        SubscriberGroup.QType destinationQType;
+        switch (subscriberGroup.getQType()) {
+            case MAIN:
+                destinationQType = SubscriberGroup.QType.RETRY_1;
+                break;
+            case RETRY_1:
+                destinationQType = SubscriberGroup.QType.RETRY_2;
+                break;
+            case RETRY_2:
+                destinationQType = SubscriberGroup.QType.RETRY_3;
+                break;
+            case RETRY_3:
+                destinationQType = SubscriberGroup.QType.SIDELINE;
+                break;
+            default:
+                throw new VBrokerException("Unknown QType: " + subscriberGroup.getQType());
+        }
+        this.subscriberGroup.setQType(destinationQType);
     }
 
     public boolean isGroupLocked() {
