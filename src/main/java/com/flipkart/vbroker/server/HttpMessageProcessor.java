@@ -1,10 +1,16 @@
 package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.core.MessageWithGroup;
+import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.entities.HttpHeader;
 import com.flipkart.vbroker.entities.HttpMethod;
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.entities.MessageConstants;
+import com.flipkart.vbroker.exceptions.TopicNotFoundException;
+import com.flipkart.vbroker.services.ProducerService;
+import com.flipkart.vbroker.services.TopicService;
+import com.google.common.base.Strings;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.asynchttpclient.*;
 
@@ -15,13 +21,12 @@ import java.util.concurrent.ExecutionException;
 import static java.util.Objects.requireNonNull;
 
 @Slf4j
+@AllArgsConstructor
 public class HttpMessageProcessor implements MessageProcessor {
 
     private final AsyncHttpClient httpClient;
-
-    public HttpMessageProcessor(AsyncHttpClient httpClient) {
-        this.httpClient = httpClient;
-    }
+    private final TopicService topicService;
+    private final ProducerService producerService;
 
     @Override
     public void process(MessageWithGroup messageWithGroup) throws Exception {
@@ -55,7 +60,7 @@ public class HttpMessageProcessor implements MessageProcessor {
         reqFuture.addListener(() -> {
             try {
                 Response response = reqFuture.get();
-                handleResponse(response);
+                handleResponse(response, messageWithGroup);
             } catch (InterruptedException | ExecutionException e) {
                 log.error("Exception in executing request", e);
             } finally {
@@ -64,14 +69,32 @@ public class HttpMessageProcessor implements MessageProcessor {
         }, null);
     }
 
-    private void handleResponse(Response response) {
+    private void handleResponse(Response response, MessageWithGroup messageWithGroup) {
         int statusCode = response.getStatusCode();
         if (statusCode >= 200 && statusCode < 300) {
             log.info("Response code is {}. Success in making httpRequest. Message processing now complete", statusCode);
+            makeCallback(messageWithGroup.getMessage(), response);
         } else if (statusCode >= 400 && statusCode < 500) {
             log.info("Response is 4xx. Sidelining the message");
+            messageWithGroup.sidelineGroup();
         } else if (statusCode >= 500 && statusCode < 600) {
             log.info("Response is 5xx. Retrying the message");
+            messageWithGroup.retry();
+        }
+    }
+
+    private void makeCallback(Message message, Response response) {
+        if (message.callbackTopicId() > 0
+                && message.callbackHttpMethod() > 0
+                && !Strings.isNullOrEmpty(message.callbackHttpUri())) {
+            Message callbackMsg = MessageUtils.getCallbackMsg(message, response);
+            try {
+                Topic topic = topicService.getTopic(callbackMsg.topicId());
+                log.info("Producing callback for message to {} queue", topic.getName());
+                producerService.produceMessage(topic, callbackMsg);
+            } catch (TopicNotFoundException ex) {
+                log.error("Topic with id {} not found to produce callback message. Dropping it");
+            }
         }
     }
 }

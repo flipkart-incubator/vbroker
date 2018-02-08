@@ -1,7 +1,6 @@
 package com.flipkart.vbroker.core;
 
 import com.flipkart.vbroker.data.TopicPartDataManager;
-import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.google.common.collect.PeekingIterator;
 import com.google.common.collect.Sets;
 import lombok.EqualsAndHashCode;
@@ -11,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -33,23 +31,6 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
         this.topicPartDataManager = topicPartDataManager;
         log.trace("Creating new PartSubscriber for part-subscription {}", partSubscription);
         this.partSubscription = partSubscription;
-        //refreshSubscriberGroups();
-    }
-
-    public boolean lockSubscriberGroup(String groupId) {
-        Optional<SubscriberGroup> subscriberGroup = Optional.ofNullable(subscriberGroupsMap.get(groupId));
-        if (subscriberGroup.isPresent()) {
-            return subscriberGroup.get().lock();
-        }
-        throw new VBrokerException("SubscriberGroup with groupId: " + groupId + " not present");
-    }
-
-    public boolean unlockSubscriberGroup(String groupId) {
-        Optional<SubscriberGroup> subscriberGroup = Optional.ofNullable(subscriberGroupsMap.get(groupId));
-        if (!subscriberGroup.isPresent()) {
-            throw new VBrokerException("SubscriberGroup with groupId: " + groupId + " not present");
-        }
-        return subscriberGroup.get().unlock();
     }
 
     /**

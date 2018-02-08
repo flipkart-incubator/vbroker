@@ -18,6 +18,7 @@ public class InMemorySubscriptionService implements SubscriptionService {
     private final TopicPartDataManager topicPartDataManager;
     private final ConcurrentMap<Short, Subscription> subscriptionsMap = new ConcurrentHashMap<>();
     private final ConcurrentMap<PartSubscription, PartSubscriber> subscriberMap = new ConcurrentHashMap<>();
+
     public InMemorySubscriptionService(TopicPartDataManager topicPartDataManager) {
         this.topicPartDataManager = topicPartDataManager;
     }
