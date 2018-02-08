@@ -55,7 +55,7 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-databind:2.9.4'
 
     //redis
-    //compile 'org.redisson:redisson:3.6.0'
+    compile 'org.redisson:redisson:3.6.0'
     //compile 'biz.paluch.redis:lettuce:4.4.0.Final'
 
     //testing

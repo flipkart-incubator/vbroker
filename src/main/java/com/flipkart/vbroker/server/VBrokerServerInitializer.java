@@ -1,6 +1,5 @@
 package com.flipkart.vbroker.server;
 
-import com.flipkart.vbroker.data.MemoryManager;
 import com.flipkart.vbroker.handlers.RequestHandlerFactory;
 import com.flipkart.vbroker.handlers.VBrokerRequestHandler;
 import com.flipkart.vbroker.protocol.codecs.VBrokerServerCodec;
@@ -19,7 +18,6 @@ public class VBrokerServerInitializer extends ChannelInitializer<Channel> {
 
     @Override
     protected void initChannel(Channel ch) {
-        MemoryManager.setAllocator(ch, new PooledByteBufAllocator(false));
         ChannelPipeline pipeline = ch.pipeline();
         pipeline.addLast(new VBrokerServerCodec());
         pipeline.addLast(new VBrokerRequestHandler(requestHandlerFactory));
