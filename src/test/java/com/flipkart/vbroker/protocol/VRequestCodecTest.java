@@ -95,6 +95,6 @@ public class VRequestCodecTest {
         ProduceRequest produceRequest = (ProduceRequest) ((VRequest) decoded).requestMessage(new ProduceRequest());
         assert produceRequest != null;
         Message message = produceRequest.topicRequests(0).partitionRequests(0).messageSet().messages(0);
-        Assert.assertEquals(message.topicId(),101);
+        Assert.assertEquals(message.topicId(), 101);
     }
 }

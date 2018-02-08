@@ -14,9 +14,9 @@ import java.util.Set;
 
 public class RedisTopicPartDataManager implements TopicPartDataManager {
 
+    private final Map<TopicPartition, TopicPartData> allPartitionsDataMap = new LinkedHashMap<>();
     private Config config = new Config();
     private RedissonClient client;
-    private final Map<TopicPartition, TopicPartData> allPartitionsDataMap = new LinkedHashMap<>();
 
 
     public RedisTopicPartDataManager() {
@@ -56,4 +56,5 @@ public class RedisTopicPartDataManager implements TopicPartDataManager {
     public PeekingIterator<Message> getIterator(TopicPartition topicPartition, String group, int seqNoFrom) {
         TopicPartData topicPartData = getTopicPartData(topicPartition);
         return topicPartData.iteratorFrom(group, seqNoFrom);
-    }}
+    }
+}

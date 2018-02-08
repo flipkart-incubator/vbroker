@@ -4,7 +4,6 @@ import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.Subscription;
 import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.data.InMemoryTopicPartDataManager;
-import com.flipkart.vbroker.data.RedisTopicPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.handlers.HttpResponseHandler;
 import com.flipkart.vbroker.handlers.RequestHandlerFactory;

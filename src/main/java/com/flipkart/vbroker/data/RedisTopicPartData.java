@@ -15,7 +15,8 @@ import org.redisson.client.codec.Codec;
 import org.redisson.config.Config;
 
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Slf4j
 public class RedisTopicPartData implements TopicPartData {
@@ -24,8 +25,7 @@ public class RedisTopicPartData implements TopicPartData {
     private static Config defaultCodecConfig = new Config();
     private static RedissonClient messageCodecClient;
     private static RedissonClient defaultCodecClient;
-    private TopicPartition topicPartition;
-    private static Codec redisCodec=new RedisMessageCodec();
+    private static Codec redisCodec = new RedisMessageCodec();
 
     static {
         messageCodecConfig.useSingleServer().setAddress("redis://127.0.0.1:6379");
@@ -34,6 +34,8 @@ public class RedisTopicPartData implements TopicPartData {
         messageCodecClient = Redisson.create(messageCodecConfig);
         defaultCodecClient = Redisson.create(defaultCodecConfig);
     }
+
+    private TopicPartition topicPartition;
 
     public RedisTopicPartData(TopicPartition topicPartition) {
         this();
@@ -47,7 +49,7 @@ public class RedisTopicPartData implements TopicPartData {
     @Override
     public void addMessage(Message message) {
         Message messageBuffer = Message.getRootAsMessage(buildMessage(message));
-        MessageGroup messageGroup = new MessageGroup(messageBuffer.groupId(),topicPartition);
+        MessageGroup messageGroup = new MessageGroup(messageBuffer.groupId(), topicPartition);
         RList<Message> rList = messageCodecClient.getList(messageGroup.toString());
         RList<String> stringRList = defaultCodecClient.getList(topicPartition.toString());
         stringRList.add(messageBuffer.groupId());
@@ -59,14 +61,13 @@ public class RedisTopicPartData implements TopicPartData {
         RList<String> stringRList = defaultCodecClient.getList(topicPartition.toString());
         if (stringRList.size() != 0) {
             return new HashSet<String>(stringRList.subList(0, stringRList.size()));
-        }
-        else return new HashSet<>();
+        } else return new HashSet<>();
     }
 
     @Override
     public PeekingIterator<Message> iteratorFrom(String groupId, int seqNoFrom) {
         log.info("getting peeking iterator");
-        MessageGroup messageGroup = new MessageGroup(groupId,topicPartition);
+        MessageGroup messageGroup = new MessageGroup(groupId, topicPartition);
         RList<Message> rList = messageCodecClient.getList(messageGroup.toString());
         return Iterators.peekingIterator(rList.listIterator(seqNoFrom));
     }

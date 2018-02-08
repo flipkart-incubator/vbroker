@@ -3,13 +3,13 @@ package com.flipkart.vbroker.data;
 import com.flipkart.vbroker.entities.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.handler.codec.base64.Base64;
 import org.redisson.client.codec.Codec;
 import org.redisson.client.handler.State;
 import org.redisson.client.protocol.Decoder;
 import org.redisson.client.protocol.Encoder;
 
 import java.io.IOException;
-import io.netty.handler.codec.base64.Base64;
 
 public class RedisMessageCodec implements Codec {
 
@@ -25,7 +25,7 @@ public class RedisMessageCodec implements Codec {
         @Override
         public ByteBuf encode(Object in) throws IOException {
             ByteBuf buf = PooledByteBufAllocator.DEFAULT.buffer();
-            buf.writeBytes(((Message)in).getByteBuffer());
+            buf.writeBytes(((Message) in).getByteBuffer());
             return Base64.encode(buf);
         }
     };

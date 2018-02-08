@@ -6,7 +6,7 @@ import org.redisson.Redisson;
 import org.redisson.api.RList;
 import org.redisson.api.RedissonClient;
 import org.redisson.client.codec.Codec;
-import org.redisson.codec.*;
+import org.redisson.codec.JsonJacksonCodec;
 import org.redisson.config.Config;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -23,10 +23,9 @@ public class MessageCodecTest {
 
     private static RedissonClient redisCodecClient;
     private static RedissonClient stringClient;
-
-    private short topicPartition;
-    private static Codec redisCodec=new RedisMessageCodec();
+    private static Codec redisCodec = new RedisMessageCodec();
     private static Codec fstCodec = new JsonJacksonCodec();
+
     static {
         redisCodecConfig.useSingleServer().setAddress("redis://127.0.0.1:6379");
         stringConfig.useSingleServer().setAddress("redis://127.0.0.1:6379");
@@ -35,19 +34,21 @@ public class MessageCodecTest {
         stringClient = Redisson.create(stringConfig);
     }
 
+    private short topicPartition;
+
     @BeforeMethod
     public void setUp() {
 
     }
 
     @Test
-    private void shouldEncodeDecodeMessageTest(){
+    private void shouldEncodeDecodeMessageTest() {
         ByteBuffer byteBuffer = encodeSampleMsg();
         Message decodedMsg = Message.getRootAsMessage(byteBuffer);
         RList<Message> rList = redisCodecClient.getList("test");
         rList.add(decodedMsg);
-        int s =((Message)(redisCodecClient.getList("test").get(0))).topicId();
-        Assert.assertEquals(s,101);
+        int s = ((Message) (redisCodecClient.getList("test").get(0))).topicId();
+        Assert.assertEquals(s, 101);
 
     }
 }

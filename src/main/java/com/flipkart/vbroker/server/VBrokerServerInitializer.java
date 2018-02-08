@@ -3,7 +3,6 @@ package com.flipkart.vbroker.server;
 import com.flipkart.vbroker.handlers.RequestHandlerFactory;
 import com.flipkart.vbroker.handlers.VBrokerRequestHandler;
 import com.flipkart.vbroker.protocol.codecs.VBrokerServerCodec;
-import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
