@@ -47,7 +47,7 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
         Sets.SetView<String> difference = Sets.difference(uniqueMsgGroups, uniqueSubscriberGroups);
         for (String group : difference) {
             MessageGroup messageGroup = new MessageGroup(group, topicPartition);
-            SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, topicPartDataManager);
+            SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, partSubscription, topicPartDataManager);
             subscriberGroupsMap.put(group, subscriberGroup);
             subscriberGroupIteratorMap.put(subscriberGroup, subscriberGroup.iterator());
         }

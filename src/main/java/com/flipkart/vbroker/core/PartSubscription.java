@@ -15,7 +15,9 @@ public class PartSubscription {
     @Setter
     private boolean grouped = false;
 
-    public PartSubscription(short id, TopicPartition topicPartition, short subscriptionId) {
+    public PartSubscription(short id,
+                            TopicPartition topicPartition,
+                            short subscriptionId) {
         this.id = id;
         this.topicPartition = topicPartition;
         this.subscriptionId = subscriptionId;

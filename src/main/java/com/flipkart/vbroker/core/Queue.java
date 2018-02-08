@@ -11,14 +11,23 @@ import lombok.Getter;
  */
 @Getter
 public class Queue {
+    public static final CallbackConfig DEFAULT_CALLBACK_CONFIG = new CallbackConfig();
     private static final ObjectMapper MAPPER = JsonUtils.getObjectMapper();
+
+    static {
+        DEFAULT_CALLBACK_CONFIG.addRange(new CallbackConfig.CodeRange(200, 299));
+    }
 
     private final Topic topic;
     private final Subscription subscription;
+    private final CallbackConfig callbackConfig;
 
-    public Queue(Topic topic, Subscription subscription) {
+    public Queue(Topic topic,
+                 Subscription subscription,
+                 CallbackConfig callbackConfig) {
         this.topic = topic;
         this.subscription = subscription;
+        this.callbackConfig = callbackConfig;
     }
 
     public String toJson() throws JsonProcessingException {
@@ -34,6 +43,7 @@ public class Queue {
     public static final class QueueBuilder {
         private Topic topic;
         private Subscription subscription;
+        private CallbackConfig callbackConfig;
 
         private QueueBuilder() {
         }
@@ -52,9 +62,13 @@ public class Queue {
             return this;
         }
 
+        public QueueBuilder withCallbackConfig(CallbackConfig callbackConfig) {
+            this.callbackConfig = callbackConfig;
+            return this;
+        }
+
         public Queue build() {
-            Queue queue = new Queue(topic, subscription);
-            return queue;
+            return new Queue(topic, subscription, callbackConfig);
         }
     }
 }

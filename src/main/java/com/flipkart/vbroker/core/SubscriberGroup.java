@@ -22,6 +22,7 @@ public class SubscriberGroup implements Iterable<MessageWithGroup> {
     private final MessageGroup messageGroup;
     @Getter
     private final TopicPartition topicPartition;
+    private final PartSubscription partSubscription;
     private final TopicPartDataManager topicPartDataManager;
     @Getter
     @Setter
@@ -33,15 +34,18 @@ public class SubscriberGroup implements Iterable<MessageWithGroup> {
     private volatile AtomicBoolean locked = new AtomicBoolean(false);
 
     private SubscriberGroup(MessageGroup messageGroup,
+                            PartSubscription partSubscription,
                             TopicPartDataManager topicPartDataManager) {
         this.messageGroup = messageGroup;
         this.topicPartition = messageGroup.getTopicPartition();
+        this.partSubscription = partSubscription;
         this.topicPartDataManager = topicPartDataManager;
     }
 
     public static SubscriberGroup newGroup(MessageGroup messageGroup,
+                                           PartSubscription partSubscription,
                                            TopicPartDataManager topicPartDataManager) {
-        return new SubscriberGroup(messageGroup, topicPartDataManager);
+        return new SubscriberGroup(messageGroup, partSubscription, topicPartDataManager);
     }
 
     /**
@@ -83,6 +87,10 @@ public class SubscriberGroup implements Iterable<MessageWithGroup> {
 
     public String getGroupId() {
         return messageGroup.getGroupId();
+    }
+
+    public PartSubscription getPartSubscription() {
+        return this.partSubscription;
     }
 
     public enum QType {

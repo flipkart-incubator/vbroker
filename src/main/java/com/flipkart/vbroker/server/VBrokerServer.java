@@ -122,7 +122,7 @@ public class VBrokerServer implements Runnable {
                     .setThreadFactory(new DefaultThreadFactory("async_http_client"))
                     .build();
             AsyncHttpClient httpClient = new DefaultAsyncHttpClient(httpClientConfig);
-            MessageProcessor messageProcessor = new HttpMessageProcessor(httpClient, topicService, producerService);
+            MessageProcessor messageProcessor = new HttpMessageProcessor(httpClient, topicService, subscriptionService, producerService);
 
             BrokerSubscriber brokerSubscriber = new BrokerSubscriber(subscriptionService, messageProcessor, subscriberMetadataService, topicMetadataService);
             ExecutorService subscriberExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("subscriber"));

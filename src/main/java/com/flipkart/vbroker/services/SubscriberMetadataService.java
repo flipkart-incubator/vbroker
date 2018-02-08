@@ -43,7 +43,7 @@ public class SubscriberMetadataService {
             for (String groupId : topicPartDataManager.getUniqueGroups(partition)) {
                 MessageGroup messageGroup = new MessageGroup(groupId, partition);
                 File subscriberGroupFile = new File(dir, groupId.concat(".txt"));
-                SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, topicPartDataManager);
+                SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, partSubscription, topicPartDataManager);
                 try {
                     BufferedReader reader = new BufferedReader(new FileReader(subscriberGroupFile));
                     SubscriberGroup.QType qType = SubscriberGroup.QType.valueOf(reader.readLine());

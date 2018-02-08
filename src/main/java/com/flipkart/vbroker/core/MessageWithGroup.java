@@ -55,4 +55,8 @@ public class MessageWithGroup {
     public void forceUnlockGroup() {
         subscriberGroup.forceUnlock();
     }
+
+    public short subscriptionId() {
+        return subscriberGroup.getPartSubscription().getSubscriptionId();
+    }
 }

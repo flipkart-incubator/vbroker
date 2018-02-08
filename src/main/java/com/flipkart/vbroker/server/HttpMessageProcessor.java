@@ -1,13 +1,17 @@
 package com.flipkart.vbroker.server;
 
+import com.flipkart.vbroker.core.CallbackConfig;
 import com.flipkart.vbroker.core.MessageWithGroup;
+import com.flipkart.vbroker.core.Subscription;
 import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.entities.HttpHeader;
 import com.flipkart.vbroker.entities.HttpMethod;
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.entities.MessageConstants;
+import com.flipkart.vbroker.exceptions.SubscriptionNotFoundException;
 import com.flipkart.vbroker.exceptions.TopicNotFoundException;
 import com.flipkart.vbroker.services.ProducerService;
+import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
 import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
@@ -16,8 +20,11 @@ import org.asynchttpclient.*;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
+import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 
 @Slf4j
@@ -26,6 +33,7 @@ public class HttpMessageProcessor implements MessageProcessor {
 
     private final AsyncHttpClient httpClient;
     private final TopicService topicService;
+    private final SubscriptionService subscriptionService;
     private final ProducerService producerService;
 
     @Override
@@ -43,6 +51,7 @@ public class HttpMessageProcessor implements MessageProcessor {
 
         requestBuilder.addHeader(MessageConstants.MESSAGE_ID_HEADER, message.messageId());
         requestBuilder.addHeader(MessageConstants.GROUP_ID_HEADER, message.groupId());
+        requestBuilder.addHeader(MessageConstants.REQUEST_ID, UUID.randomUUID().toString());
         for (int i = 0; i < message.headersLength(); i++) {
             HttpHeader header = message.headers(i);
             requestBuilder.addHeader(header.key(), header.value());
@@ -73,7 +82,9 @@ public class HttpMessageProcessor implements MessageProcessor {
         int statusCode = response.getStatusCode();
         if (statusCode >= 200 && statusCode < 300) {
             log.info("Response code is {}. Success in making httpRequest. Message processing now complete", statusCode);
-            makeCallback(messageWithGroup.getMessage(), response);
+            if (isCallbackRequired(statusCode, messageWithGroup.getMessage(), messageWithGroup.subscriptionId())) {
+                makeCallback(messageWithGroup.getMessage(), response);
+            }
         } else if (statusCode >= 400 && statusCode < 500) {
             log.info("Response is 4xx. Sidelining the message");
             messageWithGroup.sidelineGroup();
@@ -81,6 +92,49 @@ public class HttpMessageProcessor implements MessageProcessor {
             log.info("Response is 5xx. Retrying the message");
             messageWithGroup.retry();
         }
+    }
+
+    /**
+     * cases:
+     * 1. Callback should be enabled in the config
+     * 2. message shouldn't be a bridged message
+     *
+     * @param statusCode     after forward http call
+     * @param message        being processed
+     * @param subscriptionId to check callback for
+     * @return if callback is required for the message
+     */
+    private boolean isCallbackRequired(int statusCode, Message message, short subscriptionId) {
+        String callbackCodes = null;
+        Optional<String> isBridged = Optional.empty();
+        for (int i = 0; i < message.headersLength(); i++) {
+            HttpHeader header = message.headers(i);
+            if (MessageConstants.BRIDGED.equalsIgnoreCase(header.key())) {
+                isBridged = Optional.ofNullable(header.value());
+            } else if (MessageConstants.CALLBACK_CODES.equalsIgnoreCase(header.key())) {
+                callbackCodes = header.value();
+            }
+        }
+
+        CallbackConfig callbackConfig = null;
+        if (nonNull(callbackCodes)) {
+            Optional<CallbackConfig> callbackConfigOpt = CallbackConfig.fromJson(callbackCodes);
+            if (callbackConfigOpt.isPresent()) {
+                callbackConfig = callbackConfigOpt.get();
+            }
+        } else {
+            try {
+                Subscription subscription = subscriptionService.getSubscription(subscriptionId);
+                callbackConfig = subscription.getCallbackConfig();
+            } catch (SubscriptionNotFoundException e) {
+                log.debug("Unable to find subscription with id {}. Assuming that this message is from a topic. Ignoring callback", subscriptionId);
+            } catch (Exception ex) {
+                log.error("Unable to get queue configuration for callback for subscription id {}. Ignoring.", subscriptionId, ex);
+            }
+        }
+
+        return nonNull(callbackConfig) && callbackConfig.shouldCallback(statusCode)
+                && !(isBridged.isPresent() && "Y".equalsIgnoreCase(isBridged.get()));
     }
 
     private void makeCallback(Message message, Response response) {

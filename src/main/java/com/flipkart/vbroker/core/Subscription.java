@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.flipkart.vbroker.utils.JsonUtils;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Getter
 @EqualsAndHashCode(exclude = "partSubscriptions")
+@AllArgsConstructor
 public class Subscription {
     private static final ObjectMapper MAPPER = JsonUtils.getObjectMapper();
 
@@ -25,14 +27,15 @@ public class Subscription {
     @JsonIgnore
     private final List<PartSubscription> partSubscriptions;
     private final boolean grouped;
+    private final CallbackConfig callbackConfig;
 
-    public Subscription(short id, String name, Topic topic, List<PartSubscription> partSubscriptions, boolean grouped) {
-        this.id = id;
-        this.name = name;
-        this.topic = topic;
-        this.partSubscriptions = partSubscriptions;
-        this.grouped = grouped;
-    }
+//    public Subscription(short id, String name, Topic topic, List<PartSubscription> partSubscriptions, boolean grouped) {
+//        this.id = id;
+//        this.name = name;
+//        this.topic = topic;
+//        this.partSubscriptions = partSubscriptions;
+//        this.grouped = grouped;
+//    }
 
     public void addPartSubscription(PartSubscription partSubscription) {
         this.partSubscriptions.add(partSubscription);
@@ -57,6 +60,7 @@ public class Subscription {
         private String name;
         private List<PartSubscription> partSubscriptions;
         private boolean grouped;
+        private CallbackConfig callbackConfig;
 
         private SubscriptionBuilder() {
         }
@@ -90,8 +94,13 @@ public class Subscription {
             return this;
         }
 
+        public SubscriptionBuilder withCallbackConfig(CallbackConfig callbackConfig) {
+            this.callbackConfig = callbackConfig;
+            return this;
+        }
+
         public Subscription build() {
-            return new Subscription(id, name, topic, partSubscriptions, grouped);
+            return new Subscription(id, name, topic, partSubscriptions, grouped, callbackConfig);
         }
     }
 }
