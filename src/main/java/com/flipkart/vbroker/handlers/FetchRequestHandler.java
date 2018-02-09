@@ -1,6 +1,5 @@
 package com.flipkart.vbroker.handlers;
 
-import com.flipkart.vbroker.subscribers.*;
 import com.flipkart.vbroker.core.MessageWithGroup;
 import com.flipkart.vbroker.core.Subscription;
 import com.flipkart.vbroker.core.Topic;
@@ -8,8 +7,12 @@ import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
+import com.flipkart.vbroker.subscribers.PartSubscriber;
+import com.flipkart.vbroker.subscribers.PartSubscription;
 import com.google.common.collect.PeekingIterator;
 import com.google.common.primitives.Ints;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
+import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 
 @Slf4j
@@ -27,21 +30,24 @@ public class FetchRequestHandler implements RequestHandler {
 
     private final TopicService topicService;
     private final SubscriptionService subscriptionService;
+    private final ListeningExecutorService listeningExecutorService;
 
     @Override
-    public VResponse handle(VRequest vRequest) {
+    public ListenableFuture<VResponse> handle(VRequest vRequest) {
         FetchRequest fetchRequest = (FetchRequest) vRequest.requestMessage(new FetchRequest());
-        assert !Objects.isNull(fetchRequest);
+        assert nonNull(fetchRequest);
 
-        FlatBufferBuilder builder = new FlatBufferBuilder();
-        int fetchResponse = buildFetchResponse(fetchRequest, builder);
-        int vResponse = VResponse.createVResponse(builder,
-                1001,
-                ResponseMessage.FetchResponse,
-                fetchResponse);
-        builder.finish(vResponse);
+        return listeningExecutorService.submit(() -> {
+            FlatBufferBuilder builder = new FlatBufferBuilder();
+            int fetchResponse = buildFetchResponse(fetchRequest, builder);
+            int vResponse = VResponse.createVResponse(builder,
+                    1001,
+                    ResponseMessage.FetchResponse,
+                    fetchResponse);
+            builder.finish(vResponse);
 
-        return VResponse.getRootAsVResponse(builder.dataBuffer());
+            return VResponse.getRootAsVResponse(builder.dataBuffer());
+        });
     }
 
     private int buildFetchResponse(FetchRequest fetchRequest, FlatBufferBuilder builder) {

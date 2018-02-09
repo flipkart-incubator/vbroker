@@ -6,7 +6,11 @@ import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.services.ProducerService;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.concurrent.Executors;
 
 @Slf4j
 public class RequestHandlerFactory {
@@ -14,15 +18,25 @@ public class RequestHandlerFactory {
     private final RequestHandler produceRequestHandler;
     private final RequestHandler fetchRequestHandler;
     private final RequestHandler topicCreateRequestHandler;
-    private final RequestHandler susbcriptionCreateRequestHandler;
+    private final RequestHandler subscriptionCreateRequestHandler;
 
     public RequestHandlerFactory(ProducerService producerService,
                                  TopicService topicService,
                                  SubscriptionService subscriptionService) {
-        this.produceRequestHandler = new ProduceRequestHandler(topicService, producerService);
-        this.fetchRequestHandler = new FetchRequestHandler(topicService, subscriptionService);
-        this.topicCreateRequestHandler = new TopicCreateRequestHandler(topicService);
-        this.susbcriptionCreateRequestHandler = new SubscriptionCreateRequestHandler(subscriptionService);
+        ListeningExecutorService produceReqExecutorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1));
+        ListeningExecutorService adminReqExecutorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1));
+        ListeningExecutorService directExecutorService = MoreExecutors.listeningDecorator(MoreExecutors.newDirectExecutorService());
+
+        this.produceRequestHandler = new ProduceRequestHandler(
+                topicService,
+                producerService,
+                produceReqExecutorService);
+        this.fetchRequestHandler = new FetchRequestHandler(
+                topicService,
+                subscriptionService,
+                directExecutorService);
+        this.topicCreateRequestHandler = new TopicCreateRequestHandler(topicService, adminReqExecutorService);
+        this.subscriptionCreateRequestHandler = new SubscriptionCreateRequestHandler(subscriptionService, adminReqExecutorService);
     }
 
     public RequestHandler getRequestHandler(VRequest request) {
@@ -41,7 +55,7 @@ public class RequestHandlerFactory {
                 requestHandler = topicCreateRequestHandler;
                 break;
             case RequestMessage.SubscriptionCreateRequest:
-                requestHandler = susbcriptionCreateRequestHandler;
+                requestHandler = subscriptionCreateRequestHandler;
                 break;
             default:
                 throw new VBrokerException("Unknown RequestMessageType: " + request.requestMessageType());
