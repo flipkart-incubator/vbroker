@@ -23,6 +23,7 @@ public class VBrokerRequestHandler extends SimpleChannelInboundHandler<VRequest>
     public void channelRead0(ChannelHandlerContext ctx, VRequest vRequest) {
         log.info("== Received VRequest with correlationId {} and type {} ==", vRequest.correlationId(), vRequest.requestMessageType());
         RequestHandler requestHandler = requestHandlerFactory.getRequestHandler(vRequest);
+
         VResponse vResponse = requestHandler.handle(vRequest);
 
         ByteBuf responseByteBuf = Unpooled.wrappedBuffer(vResponse.getByteBuffer());

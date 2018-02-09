@@ -138,9 +138,10 @@ public class HttpMessageProcessor implements MessageProcessor {
     }
 
     private void makeCallback(Message message, Response response) {
-        if (message.callbackTopicId() > 0
-                && message.callbackHttpMethod() > 0
+        if (message.callbackTopicId() > -1
+                && message.callbackHttpMethod() > -1
                 && !Strings.isNullOrEmpty(message.callbackHttpUri())) {
+            log.info("Callback is enabled for this message {}", message.messageId());
             Message callbackMsg = MessageUtils.getCallbackMsg(message, response);
             try {
                 Topic topic = topicService.getTopic(callbackMsg.topicId());

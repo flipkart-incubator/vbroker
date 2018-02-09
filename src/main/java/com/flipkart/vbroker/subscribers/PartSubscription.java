@@ -1,5 +1,6 @@
-package com.flipkart.vbroker.core;
+package com.flipkart.vbroker.subscribers;
 
+import com.flipkart.vbroker.core.TopicPartition;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

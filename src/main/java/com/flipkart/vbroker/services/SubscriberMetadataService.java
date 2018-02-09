@@ -1,7 +1,10 @@
 package com.flipkart.vbroker.services;
 
-import com.flipkart.vbroker.core.*;
+import com.flipkart.vbroker.subscribers.*;
 import com.flipkart.vbroker.data.TopicPartDataManager;
+import com.flipkart.vbroker.core.MessageGroup;
+import com.flipkart.vbroker.core.Subscription;
+import com.flipkart.vbroker.core.TopicPartition;
 import lombok.AllArgsConstructor;
 
 import java.io.*;

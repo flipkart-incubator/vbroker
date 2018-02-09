@@ -2,8 +2,8 @@ package com.flipkart.vbroker.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.flipkart.vbroker.VBrokerConfig;
-import com.flipkart.vbroker.core.PartSubscriber;
-import com.flipkart.vbroker.core.PartSubscription;
+import com.flipkart.vbroker.subscribers.PartSubscriber;
+import com.flipkart.vbroker.subscribers.PartSubscription;
 import com.flipkart.vbroker.core.Subscription;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.exceptions.VBrokerException;

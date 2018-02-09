@@ -1,6 +1,6 @@
 package com.flipkart.vbroker.server;
 
-import com.flipkart.vbroker.core.PartSubscriber;
+import com.flipkart.vbroker.subscribers.PartSubscriber;
 import com.flipkart.vbroker.services.SubscriberMetadataService;
 import com.flipkart.vbroker.services.TopicMetadataService;
 

@@ -1,6 +1,9 @@
-package com.flipkart.vbroker.core;
+package com.flipkart.vbroker.subscribers;
 
 import com.flipkart.vbroker.data.TopicPartDataManager;
+import com.flipkart.vbroker.core.MessageGroup;
+import com.flipkart.vbroker.core.MessageWithGroup;
+import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.google.common.collect.PeekingIterator;

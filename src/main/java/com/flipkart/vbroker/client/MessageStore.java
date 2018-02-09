@@ -49,8 +49,8 @@ public class MessageStore {
 
         int httpUri = builder.createString("http://localhost:12000/messages");
         byte httpMethod = HttpMethod.POST;
-        short callbackTopicId = 101;
-        int callbackHttpUri = builder.createString("http://localhost:12000/messages");
+        short callbackTopicId = topicId;
+        int callbackHttpUri = httpUri; //builder.createString("http://localhost:12000/messages");
         byte callbackHttpMethod = HttpMethod.POST;
 
         int httpHeader = HttpHeader.createHttpHeader(builder,

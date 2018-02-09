@@ -1,6 +1,6 @@
 package com.flipkart.vbroker.server;
 
-import com.flipkart.vbroker.core.PartSubscription;
+import com.flipkart.vbroker.subscribers.PartSubscription;
 import com.flipkart.vbroker.core.Subscription;
 import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.entities.*;

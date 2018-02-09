@@ -1,4 +1,4 @@
-package com.flipkart.vbroker.core;
+package com.flipkart.vbroker.subscribers;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;

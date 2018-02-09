@@ -9,12 +9,9 @@ import java.util.*;
 public class InMemoryTopicPartData implements TopicPartData {
     private final Map<String, List<Message>> topicPartitionData = new LinkedHashMap<>();
 
-    public void addMessage(Message message) {
-        this.topicPartitionData.computeIfAbsent(message.groupId(), key -> {
-            List<Message> messages = new ArrayList<>();
-            messages.add(message);
-            return messages;
-        });
+    public synchronized void addMessage(Message message) {
+        this.topicPartitionData.computeIfAbsent(message.groupId(), key -> new LinkedList<>());
+        this.topicPartitionData.get(message.groupId()).add(message);
     }
 
     public Set<String> getUniqueGroups() {

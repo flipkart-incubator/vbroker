@@ -1,6 +1,9 @@
-package com.flipkart.vbroker.core;
+package com.flipkart.vbroker.subscribers;
 
 import com.flipkart.vbroker.data.TopicPartDataManager;
+import com.flipkart.vbroker.core.MessageGroup;
+import com.flipkart.vbroker.core.MessageWithGroup;
+import com.flipkart.vbroker.core.TopicPartition;
 import com.google.common.collect.PeekingIterator;
 import com.google.common.collect.Sets;
 import lombok.EqualsAndHashCode;
@@ -62,7 +65,7 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
                 boolean refreshed = false;
                 if (currIterator != null
                         && currIterator.hasNext()
-                        && currIterator.peek().isGroupLocked()) {
+                        && !currIterator.peek().isGroupLocked()) {
                     return true;
                 }
 

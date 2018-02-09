@@ -3,6 +3,7 @@ package com.flipkart.vbroker.handlers;
 import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.services.TopicService;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,10 +21,11 @@ public class TopicCreateRequestHandler implements RequestHandler {
                 .withId(topicCreateRequest.topicId()).withName(topicCreateRequest.topicName())
                 .withNoOfPartitions(topicCreateRequest.partitions())
                 .withReplicationFactor(topicCreateRequest.replicationFactor()).withTeam(topicCreateRequest.team())
-                .withTopicCategory(com.flipkart.vbroker.core.Topic.TopicCategory
+                .withTopicCategory(Topic.TopicCategory
                         .valueOf(TopicCategory.name(topicCreateRequest.topicCategory())))
                 .build();
         log.info("Creating topic with id {}, name {}", topic.getId(), topic.getName());
+
         topicService.createTopic(topic);
 
         FlatBufferBuilder topicResponseBuilder = new FlatBufferBuilder();
@@ -33,7 +35,5 @@ public class TopicCreateRequestHandler implements RequestHandler {
                 topicCreateResponse);
         topicResponseBuilder.finish(topicVResponse);
         return VResponse.getRootAsVResponse(topicResponseBuilder.dataBuffer());
-
     }
-
 }
