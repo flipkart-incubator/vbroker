@@ -1,20 +1,17 @@
 package com.flipkart.vbroker.handlers;
 
 import com.flipkart.vbroker.core.Topic;
+import com.flipkart.vbroker.core.TopicPartMessage;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.services.ProducerService;
 import com.flipkart.vbroker.services.TopicService;
-import com.google.common.base.Charsets;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.flatbuffers.FlatBufferBuilder;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,39 +32,41 @@ public class ProduceRequestHandler implements RequestHandler {
         ProduceRequest produceRequest = (ProduceRequest) vRequest.requestMessage(new ProduceRequest());
         assert nonNull(produceRequest);
 
-        return listeningExecutorService.submit(() -> {
-            FlatBufferBuilder builder = new FlatBufferBuilder();
-            Map<Short, List<Integer>> topicPartitionResponseMap = new HashMap<>();
 
-            for (int i = 0; i < produceRequest.topicRequestsLength(); i++) {
-                TopicProduceRequest topicProduceRequest = produceRequest.topicRequests(i);
-                Topic topic = topicService.getTopic(topicProduceRequest.topicId());
+        FlatBufferBuilder builder = new FlatBufferBuilder();
+        Map<Short, List<Integer>> topicPartitionResponseMap = new HashMap<>();
+        List<TopicPartMessage> messagesToProduce = new LinkedList<>();
 
-                for (int j = 0; j < topicProduceRequest.partitionRequestsLength(); j++) {
-                    TopicPartitionProduceRequest topicPartitionProduceRequest = topicProduceRequest.partitionRequests(j);
-                    log.info("Getting messageSet for topic {} and partition {}", topicProduceRequest.topicId(), topicPartitionProduceRequest.partitionId());
-                    TopicPartition topicPartition = topicService.getTopicPartition(topic, topicPartitionProduceRequest.partitionId());
+        for (int i = 0; i < produceRequest.topicRequestsLength(); i++) {
+            TopicProduceRequest topicProduceRequest = produceRequest.topicRequests(i);
+            Topic topic = topicService.getTopic(topicProduceRequest.topicId());
 
-                    MessageSet messageSet = topicPartitionProduceRequest.messageSet();
-                    for (int m = 0; m < messageSet.messagesLength(); m++) {
-                        Message message = messageSet.messages(m);
-                        ByteBuffer byteBuffer = message.bodyPayloadAsByteBuffer();
-                        ByteBuf byteBuf = Unpooled.wrappedBuffer(byteBuffer);
-                        log.info("Decoded msg with msgId: {} and payload: {}", message.messageId(),
-                                Charsets.UTF_8.decode(byteBuffer).toString());
+            for (int j = 0; j < topicProduceRequest.partitionRequestsLength(); j++) {
+                TopicPartitionProduceRequest topicPartitionProduceRequest = topicProduceRequest.partitionRequests(j);
+                log.info("Getting messageSet for topic {} and partition {}", topicProduceRequest.topicId(), topicPartitionProduceRequest.partitionId());
+                TopicPartition topicPartition = topicService.getTopicPartition(topic, topicPartitionProduceRequest.partitionId());
 
-                        producerService.produceMessage(topicPartition, message);
-
-                        int vStatus = VStatus.createVStatus(builder, StatusCode.ProduceSuccess_NoError, builder.createString(""));
-                        int topicPartitionProduceResponse = TopicPartitionProduceResponse.createTopicPartitionProduceResponse(
-                                builder,
-                                topicPartition.getId(),
-                                vStatus);
-                        topicPartitionResponseMap.computeIfAbsent(topicPartition.getId(),
-                                o -> new LinkedList<>())
-                                .add(topicPartitionProduceResponse);
-                    }
+                MessageSet messageSet = topicPartitionProduceRequest.messageSet();
+                for (int m = 0; m < messageSet.messagesLength(); m++) {
+                    Message message = messageSet.messages(m);
+                    messagesToProduce.add(TopicPartMessage.newInstance(topicPartition, message));
                 }
+            }
+        }
+
+        return listeningExecutorService.submit(() -> {
+            //below call can block
+            producerService.produceMessages(messagesToProduce);
+
+            for (TopicPartMessage topicPartMessage : messagesToProduce) {
+                int vStatus = VStatus.createVStatus(builder, StatusCode.ProduceSuccess_NoError, builder.createString(""));
+                int topicPartitionProduceResponse = TopicPartitionProduceResponse.createTopicPartitionProduceResponse(
+                        builder,
+                        topicPartMessage.getTopicPartition().getId(),
+                        vStatus);
+                topicPartitionResponseMap.computeIfAbsent(topicPartMessage.getTopicPartition().getId(),
+                        o -> new LinkedList<>())
+                        .add(topicPartitionProduceResponse);
             }
 
             int noOfTopics = topicPartitionResponseMap.keySet().size();
