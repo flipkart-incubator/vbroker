@@ -1,8 +1,8 @@
 package com.flipkart.vbroker.iterators;
 
 import com.flipkart.vbroker.core.MessageWithGroup;
-import com.flipkart.vbroker.subscribers.PartSubscriber;
 import com.flipkart.vbroker.exceptions.VBrokerException;
+import com.flipkart.vbroker.subscribers.PartSubscriber;
 import com.google.common.collect.PeekingIterator;
 import lombok.extern.slf4j.Slf4j;
 

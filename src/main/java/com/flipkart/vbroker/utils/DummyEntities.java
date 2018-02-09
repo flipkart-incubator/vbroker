@@ -1,10 +1,10 @@
 package com.flipkart.vbroker.utils;
 
-import com.flipkart.vbroker.subscribers.*;
 import com.flipkart.vbroker.core.Queue;
 import com.flipkart.vbroker.core.Subscription;
 import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.core.TopicPartition;
+import com.flipkart.vbroker.subscribers.PartSubscription;
 
 import java.util.LinkedList;
 

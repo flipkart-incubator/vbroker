@@ -4,22 +4,27 @@ import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.services.TopicService;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import static java.util.Objects.nonNull;
 
 @Slf4j
 @AllArgsConstructor
 public class TopicCreateRequestHandler implements RequestHandler {
 
     private final TopicService topicService;
+    private final ListeningExecutorService listeningExecutorService;
 
     @Override
-    public VResponse handle(VRequest vRequest) {
+    public ListenableFuture<VResponse> handle(VRequest vRequest) {
         TopicCreateRequest topicCreateRequest = (TopicCreateRequest) vRequest.requestMessage(new TopicCreateRequest());
+        assert nonNull(topicCreateRequest);
         List<TopicPartition> partitions = new ArrayList<>();
         for (int i = 0; i < topicCreateRequest.topic().partitions(); i++) {
             partitions.add(new TopicPartition((short) i, topicCreateRequest.topic().topicId()));
@@ -28,12 +33,11 @@ public class TopicCreateRequestHandler implements RequestHandler {
                 .withId(topicCreateRequest.topic().topicId()).withName(topicCreateRequest.topic().topicName())
                 .withNoOfPartitions(topicCreateRequest.topic().partitions())
                 .withReplicationFactor(topicCreateRequest.topic().replicationFactor()).withPartitions(partitions)
-                .withTopicCategory(Topic.TopicCategory
-                        .valueOf(TopicCategory.name(topicCreateRequest.topic().topicCategory())))
                 .build();
-        log.info("Creating topic with id {}, name {}", topic.getId(), topic.getName());
 
-        topicService.createTopic(topic);
+        return listeningExecutorService.submit(() -> {
+            log.info("Creating topic with id {}, name {}", topic.getId(), topic.getName());
+            topicService.createTopic(topic);
 
         FlatBufferBuilder topicResponseBuilder = new FlatBufferBuilder();
         int status = VStatus.createVStatus(topicResponseBuilder, StatusCode.Success, topicResponseBuilder.createString(""));
@@ -43,5 +47,6 @@ public class TopicCreateRequestHandler implements RequestHandler {
                 topicCreateResponse);
         topicResponseBuilder.finish(topicVResponse);
         return VResponse.getRootAsVResponse(topicResponseBuilder.dataBuffer());
+        });
     }
 }
