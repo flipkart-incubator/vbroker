@@ -8,7 +8,9 @@ public final class RequestMessage {
     public static final byte FetchRequest = 2;
     public static final byte TopicCreateRequest = 3;
     public static final byte SubscriptionCreateRequest = 4;
-    public static final String[] names = {"NONE", "ProduceRequest", "FetchRequest", "TopicCreateRequest", "SubscriptionCreateRequest",};
+    public static final byte GetTopicsRequest = 5;
+    public static final byte GetQueuesRequest = 6;
+    public static final String[] names = {"NONE", "ProduceRequest", "FetchRequest", "TopicCreateRequest", "SubscriptionCreateRequest", "GetTopicsRequest", "GetQueuesRequest",};
 
     private RequestMessage() {
     }

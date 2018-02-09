@@ -1,22 +1,27 @@
 namespace com.flipkart.vbroker.entities;
 
-enum ApiKey:byte {ProduceRequest=0, ProduceResponse=1, TopicCreateRequest=2, TopicCreateResponse=3}
+enum ApiKey:byte {ProduceRequest=0, ProduceResponse=1}
 
-enum StatusCode:int16 {None=0, ProduceSuccess_NoError=101, ProduceFailed_NoLeader=151, ProduceFailed_NotEnoughReplicas=152, ConsumeSuccess_NoError=201, ConsumeError_DestinationDown=251}
+enum StatusCode:int16 {None=0, ProduceSuccess_NoError=101, ProduceFailed_NoLeader=151, ProduceFailed_NotEnoughReplicas=152, ConsumeSuccess_NoError=201, 
+ConsumeError_DestinationDown=251, Success = 301, TopicCreateFailed_AlreadyExists=351, TopicCreateFailed_Validation=352, SubscriptionCreateFailed_NoTopic=451, SubscriptionCreateFailed_AlreadyExists=452,
+SubscriptionCreateFailed_Validation=453}
 
 table VStatus {
       statusCode:StatusCode;
       message:string;
 }
 
-union RequestMessage { ProduceRequest, FetchRequest, TopicCreateRequest, SubscriptionCreateRequest }
+union RequestMessage { ProduceRequest, FetchRequest, TopicCreateRequest, SubscriptionCreateRequest, GetTopicsRequest, GetQueuesRequest }
 
 enum HttpMethod:byte {POST=0, PUT=1, DELETE=2, PATCH=3}
-
 
 enum TopicType:byte {MAIN=0, SIDELINE=1, RETRY=2}
 
 enum TopicCategory:byte {QUEUE=0, TOPIC=1}
+
+enum SubscriptionType:byte {STATIC=0, DYNAMIC=1}
+
+enum SubscriptionMechanism:byte {PUSH=0, PULL=1}
 
 table VRequest {
       version:int8;
@@ -82,10 +87,15 @@ table FetchRequest {
       topicRequests:[TopicFetchRequest];
 }
 
-table TopicCreateRequest {
+table GetTopicsRequest{
+}
+
+table GetQueuesRequest{
+}
+
+table Topic {
 	  topicId:int16;
       topicName:string;
-      team:string;
       grouped:bool;
       partitions:int16;
       replicationFactor:int16;
@@ -93,12 +103,48 @@ table TopicCreateRequest {
       topicCategory:TopicCategory;
 }
 
-table SubscriptionCreateRequest {
+table FilterKeyValues {
+	  key:string;
+	  values:string;
+}
+
+table CodeRange {
+	  from:string;
+	  to:string;
+}
+
+table CallbackConfig {
+	  codeRanges:[CodeRange];
+}
+
+table Subscription {
 	  subscriptionId:int16;
-	  topicId:int16;      
-      team:string;
+	  topicId:int16;
       name:string;
-      grouped:bool;                       
+      grouped:bool;
+      parallelism:int16;
+      requestTimeout:int16;
+      subscriptionType:SubscriptionType;
+      subscriptionMechanism:SubscriptionMechanism;
+      endpoint:string;
+      httpMethod:string;
+      elastic:bool;
+      filterOperator:string;
+      filterKeyValuesList:[FilterKeyValues];
+      callbackConfig:CallbackConfig;
+}
+
+table Queue {
+	  topic:Topic;
+	  subscription:Subscription;
+}
+
+table TopicCreateRequest {
+	  topic:Topic;
+}
+
+table SubscriptionCreateRequest {
+	  subscription:Subscription;
 }
 
 root_type VRequest;
@@ -106,7 +152,7 @@ root_type VRequest;
 
 // responses
 
-union ResponseMessage { ProduceResponse, FetchResponse, TopicCreateResponse, SubscriptionCreateResponse }
+union ResponseMessage { ProduceResponse, FetchResponse, TopicCreateResponse, SubscriptionCreateResponse, GetTopicsResponse, GetQueuesResponse }
 
 table VResponse {
       correlationId:int32;
@@ -149,12 +195,22 @@ table FetchResponse {
 
 table TopicCreateResponse {
       topicId:int16;
-      statusCode:int16;
+      status:VStatus;
 }
 
 table SubscriptionCreateResponse {
       subscriptionId:int16;
-      statusCode:int16;
+      status:VStatus;
+}
+
+table GetTopicsResponse {
+	  topics:[Topic];
+	  status:VStatus;
+}
+
+table GetQueuesResponse {
+	  queues:[Queue];
+	  status:VStatus;
 }
 
 root_type VResponse;

@@ -5,9 +5,7 @@ package com.flipkart.vbroker.entities;
 public final class ApiKey {
     public static final byte ProduceRequest = 0;
     public static final byte ProduceResponse = 1;
-    public static final byte TopicCreateRequest = 2;
-    public static final byte TopicCreateResponse = 3;
-    public static final String[] names = {"ProduceRequest", "ProduceResponse", "TopicCreateRequest", "TopicCreateResponse",};
+    public static final String[] names = {"ProduceRequest", "ProduceResponse",};
 
     private ApiKey() {
     }

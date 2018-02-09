@@ -30,6 +30,7 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public synchronized void createTopic(Topic topic) {
+    	
         topicsMap.putIfAbsent(topic.getId(), topic);
         try {
             curatorService.createNodeAndSetData(config.getTopicsPath() + "/" + topic.getId(), CreateMode.PERSISTENT,

@@ -19,16 +19,13 @@ import java.util.List;
 public class Topic {
     public static final short DEFAULT_NO_OF_PARTITIONS = 3;
     public static final short DEFAULT_REPLICATION_FACTOR = 3;
-    public static final String DEFAULT_TEAM = "DEFAULT";
     private static final ObjectMapper MAPPER = JsonUtils.getObjectMapper();
     private final short id;
     private final int noOfPartitions;
     private final int replicationFactor;
     private final boolean grouped;
     private final String name;
-    private final String team;
     private final TopicCategory topicCategory;
-    @JsonIgnore
     private final List<TopicPartition> partitions;
 
     public Topic(short id, String name) {
@@ -37,19 +34,17 @@ public class Topic {
         this.noOfPartitions = DEFAULT_NO_OF_PARTITIONS;
         this.replicationFactor = DEFAULT_REPLICATION_FACTOR;
         this.grouped = false;
-        this.team = DEFAULT_TEAM;
         this.topicCategory = TopicCategory.TOPIC;
         this.partitions = new ArrayList<>();
 
     }
 
-    public Topic(short id, int noOfPartitions, int replicationFactor, boolean grouped, String name, String team, TopicCategory topicCategory, List<TopicPartition> partitions) {
+    public Topic(short id, int noOfPartitions, int replicationFactor, boolean grouped, String name, TopicCategory topicCategory, List<TopicPartition> partitions) {
         this.id = id;
         this.noOfPartitions = noOfPartitions;
         this.replicationFactor = replicationFactor;
         this.grouped = grouped;
         this.name = name;
-        this.team = team;
         this.topicCategory = topicCategory;
         this.partitions = partitions;
     }
@@ -91,7 +86,6 @@ public class Topic {
         private int replicationFactor;
         private boolean grouped;
         private String name;
-        private String team;
         private TopicCategory topicCategory;
         private List<TopicPartition> partitions;
 
@@ -127,10 +121,6 @@ public class Topic {
             return this;
         }
 
-        public TopicBuilder withTeam(String team) {
-            this.team = team;
-            return this;
-        }
 
         public TopicBuilder withTopicCategory(TopicCategory topicCategory) {
             this.topicCategory = topicCategory;
@@ -143,7 +133,7 @@ public class Topic {
         }
 
         public Topic build() {
-            return new Topic(id, noOfPartitions, replicationFactor, grouped, name, team, topicCategory, partitions);
+            return new Topic(id, noOfPartitions, replicationFactor, grouped, name, topicCategory, partitions);
         }
     }
 }

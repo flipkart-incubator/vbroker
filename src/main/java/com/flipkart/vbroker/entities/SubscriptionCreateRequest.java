@@ -20,42 +20,18 @@ public final class SubscriptionCreateRequest extends Table {
     }
 
     public static int createSubscriptionCreateRequest(FlatBufferBuilder builder,
-                                                      short subscriptionId,
-                                                      short topicId,
-                                                      int teamOffset,
-                                                      int nameOffset,
-                                                      boolean grouped) {
-        builder.startObject(5);
-        SubscriptionCreateRequest.addName(builder, nameOffset);
-        SubscriptionCreateRequest.addTeam(builder, teamOffset);
-        SubscriptionCreateRequest.addTopicId(builder, topicId);
-        SubscriptionCreateRequest.addSubscriptionId(builder, subscriptionId);
-        SubscriptionCreateRequest.addGrouped(builder, grouped);
+                                                      int subscriptionOffset) {
+        builder.startObject(1);
+        SubscriptionCreateRequest.addSubscription(builder, subscriptionOffset);
         return SubscriptionCreateRequest.endSubscriptionCreateRequest(builder);
     }
 
     public static void startSubscriptionCreateRequest(FlatBufferBuilder builder) {
-        builder.startObject(5);
+        builder.startObject(1);
     }
 
-    public static void addSubscriptionId(FlatBufferBuilder builder, short subscriptionId) {
-        builder.addShort(0, subscriptionId, 0);
-    }
-
-    public static void addTopicId(FlatBufferBuilder builder, short topicId) {
-        builder.addShort(1, topicId, 0);
-    }
-
-    public static void addTeam(FlatBufferBuilder builder, int teamOffset) {
-        builder.addOffset(2, teamOffset, 0);
-    }
-
-    public static void addName(FlatBufferBuilder builder, int nameOffset) {
-        builder.addOffset(3, nameOffset, 0);
-    }
-
-    public static void addGrouped(FlatBufferBuilder builder, boolean grouped) {
-        builder.addBoolean(4, grouped, false);
+    public static void addSubscription(FlatBufferBuilder builder, int subscriptionOffset) {
+        builder.addOffset(0, subscriptionOffset, 0);
     }
 
     public static int endSubscriptionCreateRequest(FlatBufferBuilder builder) {
@@ -73,37 +49,13 @@ public final class SubscriptionCreateRequest extends Table {
         return this;
     }
 
-    public short subscriptionId() {
+    public Subscription subscription() {
+        return subscription(new Subscription());
+    }
+
+    public Subscription subscription(Subscription obj) {
         int o = __offset(4);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
-    }
-
-    public short topicId() {
-        int o = __offset(6);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
-    }
-
-    public String team() {
-        int o = __offset(8);
-        return o != 0 ? __string(o + bb_pos) : null;
-    }
-
-    public ByteBuffer teamAsByteBuffer() {
-        return __vector_as_bytebuffer(8, 1);
-    }
-
-    public String name() {
-        int o = __offset(10);
-        return o != 0 ? __string(o + bb_pos) : null;
-    }
-
-    public ByteBuffer nameAsByteBuffer() {
-        return __vector_as_bytebuffer(10, 1);
-    }
-
-    public boolean grouped() {
-        int o = __offset(12);
-        return o != 0 ? 0 != bb.get(o + bb_pos) : false;
+        return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null;
     }
 }
 

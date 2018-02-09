@@ -19,6 +19,7 @@ public class VBrokerConfig {
     private int brokerPort;
     private String zookeeperUrl;
     private String topicsPath;
+    private String queuesPath;
 
     private int consumerPort;
 
@@ -42,5 +43,6 @@ public class VBrokerConfig {
         this.zookeeperUrl = properties.getProperty("zookeeper.url");
         this.consumerPort = Ints.tryParse(properties.getProperty("consumer.port"));
         this.topicsPath = properties.getProperty("topics.path");
+        this.queuesPath = properties.getProperty("queues.path");
     }
 }

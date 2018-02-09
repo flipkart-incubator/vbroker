@@ -1,6 +1,5 @@
 package com.flipkart.vbroker.handlers;
 
-import com.flipkart.vbroker.subscribers.*;
 import com.flipkart.vbroker.core.MessageWithGroup;
 import com.flipkart.vbroker.core.Subscription;
 import com.flipkart.vbroker.core.Topic;
@@ -8,6 +7,8 @@ import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
+import com.flipkart.vbroker.subscribers.PartSubscriber;
+import com.flipkart.vbroker.subscribers.PartSubscription;
 import com.google.common.collect.PeekingIterator;
 import com.google.common.primitives.Ints;
 import com.google.flatbuffers.FlatBufferBuilder;

@@ -8,7 +8,9 @@ public final class ResponseMessage {
     public static final byte FetchResponse = 2;
     public static final byte TopicCreateResponse = 3;
     public static final byte SubscriptionCreateResponse = 4;
-    public static final String[] names = {"NONE", "ProduceResponse", "FetchResponse", "TopicCreateResponse", "SubscriptionCreateResponse",};
+    public static final byte GetTopicsResponse = 5;
+    public static final byte GetQueuesResponse = 6;
+    public static final String[] names = {"NONE", "ProduceResponse", "FetchResponse", "TopicCreateResponse", "SubscriptionCreateResponse", "GetTopicsResponse", "GetQueuesResponse",};
 
     private ResponseMessage() {
     }

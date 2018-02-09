@@ -19,10 +19,10 @@ public class SubscriptionCreateRequestHandler implements RequestHandler {
 
         SubscriptionCreateRequest subscriptionCreateRequest = (SubscriptionCreateRequest) vRequest
                 .requestMessage(new SubscriptionCreateRequest());
-        Topic topic = Topic.TopicBuilder.aTopic().withId(subscriptionCreateRequest.topicId()).build();
+        Topic topic = Topic.TopicBuilder.aTopic().withId(subscriptionCreateRequest.subscription().topicId()).build();
         Subscription subscription = Subscription.SubscriptionBuilder.aSubscription()
-                .withId(subscriptionCreateRequest.subscriptionId()).withName(subscriptionCreateRequest.name())
-                .withGrouped(subscriptionCreateRequest.grouped()).withTopic(topic).build();
+                .withId(subscriptionCreateRequest.subscription().subscriptionId()).withName(subscriptionCreateRequest.subscription().name())
+                .withGrouped(subscriptionCreateRequest.subscription().grouped()).withTopic(topic).build();
         log.info("Creating subscription with id {}, name {}", subscription.getId(), subscription.getName());
         subscriptionService.createSubscription(subscription);
 

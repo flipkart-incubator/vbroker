@@ -21,9 +21,9 @@ public final class SubscriptionCreateResponse extends Table {
 
     public static int createSubscriptionCreateResponse(FlatBufferBuilder builder,
                                                        short subscriptionId,
-                                                       short statusCode) {
+                                                       int statusOffset) {
         builder.startObject(2);
-        SubscriptionCreateResponse.addStatusCode(builder, statusCode);
+        SubscriptionCreateResponse.addStatus(builder, statusOffset);
         SubscriptionCreateResponse.addSubscriptionId(builder, subscriptionId);
         return SubscriptionCreateResponse.endSubscriptionCreateResponse(builder);
     }
@@ -36,8 +36,8 @@ public final class SubscriptionCreateResponse extends Table {
         builder.addShort(0, subscriptionId, 0);
     }
 
-    public static void addStatusCode(FlatBufferBuilder builder, short statusCode) {
-        builder.addShort(1, statusCode, 0);
+    public static void addStatus(FlatBufferBuilder builder, int statusOffset) {
+        builder.addOffset(1, statusOffset, 0);
     }
 
     public static int endSubscriptionCreateResponse(FlatBufferBuilder builder) {
@@ -60,9 +60,13 @@ public final class SubscriptionCreateResponse extends Table {
         return o != 0 ? bb.getShort(o + bb_pos) : 0;
     }
 
-    public short statusCode() {
+    public VStatus status() {
+        return status(new VStatus());
+    }
+
+    public VStatus status(VStatus obj) {
         int o = __offset(6);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+        return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null;
     }
 }
 

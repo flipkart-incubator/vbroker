@@ -11,7 +11,7 @@ public class TopicCreateResponseHandler implements ResponseHandler {
     public void handle(VResponse vResponse) {
         TopicCreateResponse topicCreateResponse = (TopicCreateResponse) vResponse
                 .responseMessage(new TopicCreateResponse());
-        log.info("Response code for handling topic create is {}", topicCreateResponse.statusCode());
+        log.info("Response code for handling topic create is {}", topicCreateResponse.status().statusCode());
 
     }
 }

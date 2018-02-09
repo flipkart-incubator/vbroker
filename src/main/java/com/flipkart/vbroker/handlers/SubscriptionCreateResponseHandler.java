@@ -11,7 +11,7 @@ public class SubscriptionCreateResponseHandler implements ResponseHandler {
     public void handle(VResponse vResponse) {
         SubscriptionCreateResponse subscriptionCreateResponse = (SubscriptionCreateResponse) vResponse
                 .responseMessage(new SubscriptionCreateResponse());
-        log.info("Response code for handling subscription create is {}", subscriptionCreateResponse.statusCode());
+        log.info("Response code for handling subscription create is {}", subscriptionCreateResponse.status().statusCode());
 
     }
 
