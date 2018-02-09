@@ -11,7 +11,8 @@ table VStatus {
       message:string;
 }
 
-union RequestMessage { ProduceRequest, FetchRequest, TopicCreateRequest, SubscriptionCreateRequest, GetTopicsRequest, GetQueuesRequest }
+union RequestMessage { ProduceRequest, FetchRequest, TopicCreateRequest, SubscriptionCreateRequest, GetTopicsRequest,
+GetQueuesRequest, GetQueueRequest, GetTopicRequest }
 
 enum HttpMethod:byte {POST=0, PUT=1, DELETE=2, PATCH=3}
 
@@ -147,12 +148,21 @@ table SubscriptionCreateRequest {
 	  subscription:Subscription;
 }
 
+table GetQueueRequest {
+	  queueId:int16;
+}
+
+table GetTopicRequest {
+	  topicId:int16;
+}
+
 root_type VRequest;
 
 
 // responses
 
-union ResponseMessage { ProduceResponse, FetchResponse, TopicCreateResponse, SubscriptionCreateResponse, GetTopicsResponse, GetQueuesResponse }
+union ResponseMessage { ProduceResponse, FetchResponse, TopicCreateResponse, SubscriptionCreateResponse, GetTopicsResponse,
+GetQueuesResponse, GetQueueResponse, GetTopicResponse }
 
 table VResponse {
       correlationId:int32;
@@ -211,6 +221,16 @@ table GetTopicsResponse {
 table GetQueuesResponse {
 	  queues:[Queue];
 	  status:VStatus;
+}
+
+table GetQueueResponse {
+	  status:VStatus;
+	  queue:Queue;
+}
+
+table GetTopicResponse {
+	  status:VStatus;
+	  topic:Topic;
 }
 
 root_type VResponse;
