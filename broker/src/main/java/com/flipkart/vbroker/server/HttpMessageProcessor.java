@@ -72,6 +72,7 @@ public class HttpMessageProcessor implements MessageProcessor {
                 handleResponse(response, messageWithGroup);
             } catch (InterruptedException | ExecutionException e) {
                 log.error("Exception in executing request", e);
+                messageWithGroup.sidelineGroup();
             } finally {
                 messageWithGroup.forceUnlockGroup();
             }
