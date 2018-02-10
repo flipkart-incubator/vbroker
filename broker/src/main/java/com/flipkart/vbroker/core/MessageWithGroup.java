@@ -5,8 +5,10 @@ import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.subscribers.SubscriberGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 @AllArgsConstructor
+@Slf4j
 public class MessageWithGroup {
     @Getter
     private final Message message;
@@ -21,6 +23,7 @@ public class MessageWithGroup {
     }
 
     public void sidelineGroup() {
+        log.info("Sidelining the group {}", subscriberGroup.getGroupId());
         this.subscriberGroup.setQType(SubscriberGroup.QType.SIDELINE);
     }
 
