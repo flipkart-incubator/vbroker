@@ -63,8 +63,8 @@ public class VBrokerServer implements Runnable {
         TopicService topicService = new InMemoryTopicService();
 
         //TopicPartDataManager topicPartDataManager = new TopicPartitionDataManagerImpl();
-        //TopicPartDataManager topicPartDataManager = new InMemoryTopicPartDataManager();
-        TopicPartDataManager topicPartDataManager = new RedisTopicPartDataManager(config);
+        TopicPartDataManager topicPartDataManager = new InMemoryTopicPartDataManager();
+        //TopicPartDataManager topicPartDataManager = new RedisTopicPartDataManager(config);
 
         //SubscriptionService subscriptionService = new SubscriptionServiceImpl(config, curatorService, topicPartDataManager);
         SubscriptionService subscriptionService = new InMemorySubscriptionService(topicPartDataManager);
