@@ -12,8 +12,6 @@ public class VBrokerRESTApp extends AbstractVerticle {
 
   @Override
   public void start() {
-
-
     Router router = Router.router(vertx);
 
     router.route().handler(BodyHandler.create());
@@ -28,6 +26,6 @@ public class VBrokerRESTApp extends AbstractVerticle {
     short topicId = Short.parseShort(routingContext.request().getParam("topicId"));
     HttpServerResponse response = routingContext.response();
     response.putHeader("Content-Type", "application/json")
-      .end(new JsonObject().put("topicName", "test_topic_1").encodePrettily());
+      .end(new JsonObject().put("topicName", "test_topic_" + topicId).encodePrettily());
   }
 }

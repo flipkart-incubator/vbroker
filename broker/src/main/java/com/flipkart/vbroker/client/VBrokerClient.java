@@ -6,7 +6,7 @@ import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.handlers.ResponseHandlerFactory;
 import com.flipkart.vbroker.protocol.Request;
-import com.flipkart.vbroker.utils.DummyEntities;
+import com.flipkart.vbroker.subscribers.DummyEntities;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;

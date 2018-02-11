@@ -1,8 +1,7 @@
-package com.flipkart.vbroker.core;
+package com.flipkart.vbroker.subscribers;
 
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.exceptions.VBrokerException;
-import com.flipkart.vbroker.subscribers.SubscriberGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
