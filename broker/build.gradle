@@ -1,15 +1,27 @@
 apply plugin: 'application'
 apply plugin: 'java'
 
+version = '1.0-SNAPSHOT'
+sourceCompatibility = '1.8'
 mainClassName = "com.flipkart.vbroker.VBrokerApp"
+
+//src dependencies
+def nettyVersion = "4.1.21.Final"
+def asyncHttpClientVersion = "2.3.0"
+def curatorXAsyncVersion = "4.0.0"
+def zookeeperVersion = "3.4.10"
+def redissonVersion = "3.6.0"
+
+//test dependencies
+def restitoVersion = "0.9.3"
 
 dependencies {
     //networking
-    compile 'io.netty:netty-all:4.1.21.Final'
+    compile "io.netty:netty-all:${nettyVersion}"
 
     //http
     //temporary
-    compile('org.asynchttpclient:async-http-client:2.3.0') {
+    compile("org.asynchttpclient:async-http-client:${asyncHttpClientVersion}") {
         exclude group: 'org.slf4j', module: 'slf4j-api'
         exclude group: 'io.netty', module: 'netty-buffer'
         exclude group: 'io.netty', module: 'netty-codec-http'
@@ -22,7 +34,7 @@ dependencies {
     }
 
     //coordination
-    compile('org.apache.curator:curator-x-async:4.0.0') {
+    compile("org.apache.curator:curator-x-async:${curatorXAsyncVersion}") {
         exclude group: 'org.slf4j', module: 'slf4j-api'
         exclude group: 'log4j', module: 'log4j'
         exclude group: 'io.netty', module: 'netty'
@@ -30,14 +42,14 @@ dependencies {
         exclude group: 'org.apache.zookeeper', module: 'zookeeper'
     }
 
-    compile('org.apache.zookeeper:zookeeper:3.4.10') {
+    compile("org.apache.zookeeper:zookeeper:${zookeeperVersion}") {
         exclude group: 'org.slf4j', module: 'slf4j-api'
         exclude group: 'org.slf4j', module: 'slf4j-log4j12'
         exclude group: 'log4j', module: 'log4j'
     }
 
     //redis
-    compile('org.redisson:redisson:3.6.0') {
+    compile("org.redisson:redisson:${redissonVersion}") {
         exclude group: 'org.slf4j', module: 'slf4j-api'
         exclude group: 'io.netty', module: 'netty-common'
         exclude group: 'io.netty', module: 'netty-codec'
@@ -50,6 +62,5 @@ dependencies {
     compile project(':core')
 
     //testing
-    testCompile 'org.testng:testng:6.13.1'
-    testCompile 'com.xebialabs.restito:restito:0.9.3'
+    testCompile "com.xebialabs.restito:restito:${restitoVersion}"
 }
