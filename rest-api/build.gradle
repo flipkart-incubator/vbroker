@@ -3,10 +3,6 @@ plugins {
   id 'com.github.johnrengelman.shadow' version '2.0.1'
 }
 
-repositories {
-  jcenter()
-}
-
 version = '1.0-SNAPSHOT'
 sourceCompatibility = '1.8'
 mainClassName = 'io.vertx.core.Launcher'
@@ -19,6 +15,9 @@ def doOnChange = './gradlew classes'
 dependencies {
   compile "io.vertx:vertx-core:$vertxVersion"
   compile "io.vertx:vertx-web:$vertxVersion"
+
+  compile project(':core')
+
   testCompile "junit:junit:4.12"
   testCompile "io.vertx:vertx-unit:$vertxVersion"
 }

@@ -1,4 +1,4 @@
-package com.flipkart.vbroker.subscribers;
+package com.flipkart.vbroker.core;
 
 import com.flipkart.vbroker.core.TopicPartition;
 import lombok.EqualsAndHashCode;

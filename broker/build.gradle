@@ -1,20 +1,9 @@
+apply plugin: 'application'
 apply plugin: 'java'
 
-repositories {
-    mavenCentral()
-}
+mainClassName = "com.flipkart.vbroker.VBrokerApp"
 
 dependencies {
-    //logging
-    compile 'org.slf4j:slf4j-api:1.7.13'
-    compile('ch.qos.logback:logback-classic:1.2.3') {
-        exclude group: 'org.slf4j', module: 'slf4j-api'
-    }
-
-    //idls + encode/decode
-    //compile 'com.google.flatbuffers:flatbuffers-parent:1.8.0'
-    compile 'com.google.flatbuffers:flatbuffers-java:1.8.0'
-
     //networking
     compile 'io.netty:netty-all:4.1.21.Final'
 
@@ -47,13 +36,6 @@ dependencies {
         exclude group: 'log4j', module: 'log4j'
     }
 
-    //utils
-    compile 'com.google.guava:guava:23.6-jre'
-    compile 'org.projectlombok:lombok:1.16.18'
-    compile 'com.fasterxml.jackson.core:jackson-core:2.9.4'
-    compile 'com.fasterxml.jackson.core:jackson-annotations:2.9.4'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.9.4'
-
     //redis
     compile('org.redisson:redisson:3.6.0') {
         exclude group: 'org.slf4j', module: 'slf4j-api'
@@ -65,8 +47,9 @@ dependencies {
         exclude group: 'io.netty', module: 'netty-handler'
     }
 
+    compile project(':core')
+
     //testing
     testCompile 'org.testng:testng:6.13.1'
     testCompile 'com.xebialabs.restito:restito:0.9.3'
 }
-

@@ -1,0 +1,3 @@
+include ':broker'
+include ':rest-api'
+include ':core'

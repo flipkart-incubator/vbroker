@@ -6,7 +6,7 @@ import com.flipkart.vbroker.services.SubscriberMetadataService;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicMetadataService;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
-import com.flipkart.vbroker.subscribers.PartSubscription;
+import com.flipkart.vbroker.core.PartSubscription;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
