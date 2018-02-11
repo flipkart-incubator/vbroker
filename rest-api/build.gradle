@@ -1,41 +1,47 @@
 plugins {
   id 'application'
-  id 'com.github.johnrengelman.shadow' version '2.0.1'
 }
 
 version = '1.0-SNAPSHOT'
 sourceCompatibility = '1.8'
 mainClassName = 'io.vertx.core.Launcher'
 
-def vertxVersion = '3.5.0'
+def nettyVersion = "4.1.21.Final"
+def vertxVersion = "3.5.0"
+def restitoVersion = "0.9.3"
+
 def mainVerticleName = 'com.flipkart.vbroker.rest.VBrokerRESTApp'
 def watchForChange = 'src/**/*'
 def doOnChange = './gradlew classes'
 
 dependencies {
-  compile "io.vertx:vertx-core:$vertxVersion"
-  compile "io.vertx:vertx-web:$vertxVersion"
+  compile "io.netty:netty-all:${nettyVersion}"
+
+  compile("io.vertx:vertx-core:${vertxVersion}") {
+    exclude group: 'com.fasterxml.jackson.core', module: 'jackson-core'
+    exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+
+    exclude group: 'io.netty', module: 'netty-buffer'
+    exclude group: 'io.netty', module: 'netty-codec-http2'
+    exclude group: 'io.netty', module: 'netty-codec-http'
+    exclude group: 'io.netty', module: 'netty-common'
+    exclude group: 'io.netty', module: 'netty-handler-proxy'
+    exclude group: 'io.netty', module: 'netty-handler'
+    exclude group: 'io.netty', module: 'netty-resolver-dns'
+    exclude group: 'io.netty', module: 'netty-resolver'
+    exclude group: 'io.netty', module: 'netty-transport'
+  }
+
+  compile("io.vertx:vertx-web:${vertxVersion}") {
+    exclude group: 'io.vertx', module: 'vertx-core'
+  }
 
   compile project(':core')
 
-  testCompile "junit:junit:4.12"
-  testCompile "io.vertx:vertx-unit:$vertxVersion"
-}
-
-shadowJar {
-  classifier = 'fat'
-  manifest {
-    attributes "Main-Verticle": mainVerticleName
-  }
-  mergeServiceFiles {
-    include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
-  }
+  testCompile "io.vertx:vertx-unit:${vertxVersion}"
+  testCompile "com.xebialabs.restito:restito:${restitoVersion}"
 }
 
 run {
   args = ['run', mainVerticleName, "--redeploy=$watchForChange", "--launcher-class=$mainClassName", "--on-redeploy=$doOnChange"]
-}
-
-task wrapper(type: Wrapper) {
-  gradleVersion = '4.5'
 }
