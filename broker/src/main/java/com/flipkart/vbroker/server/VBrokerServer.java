@@ -11,7 +11,7 @@ import com.flipkart.vbroker.handlers.ResponseHandlerFactory;
 import com.flipkart.vbroker.handlers.VBrokerResponseHandler;
 import com.flipkart.vbroker.protocol.codecs.VBrokerClientCodec;
 import com.flipkart.vbroker.services.*;
-import com.flipkart.vbroker.utils.DummyEntities;
+import com.flipkart.vbroker.subscribers.DummyEntities;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;

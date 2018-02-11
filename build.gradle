@@ -1,0 +1,31 @@
+subprojects {
+    apply plugin: 'java'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        //logging
+        compile 'org.slf4j:slf4j-api:1.7.13'
+        compile('ch.qos.logback:logback-classic:1.2.3') {
+            exclude group: 'org.slf4j', module: 'slf4j-api'
+        }
+
+        //idls + encode/decode
+        //compile 'com.google.flatbuffers:flatbuffers-parent:1.8.0'
+        compile 'com.google.flatbuffers:flatbuffers-java:1.8.0'
+
+        //utils
+        compile 'com.google.guava:guava:23.6-jre'
+        compile 'org.projectlombok:lombok:1.16.18'
+        compile 'com.fasterxml.jackson.core:jackson-core:2.9.4'
+        compile 'com.fasterxml.jackson.core:jackson-annotations:2.9.4'
+        compile 'com.fasterxml.jackson.core:jackson-databind:2.9.4'
+    }
+}
+
+allprojects {
+    task hello << { task -> println "Current project is $task.project.name" }
+}
+

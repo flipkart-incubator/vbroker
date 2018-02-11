@@ -1,7 +1,7 @@
 package com.flipkart.vbroker.subscribers;
 
 import com.flipkart.vbroker.core.MessageGroup;
-import com.flipkart.vbroker.core.MessageWithGroup;
+import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.google.common.collect.PeekingIterator;

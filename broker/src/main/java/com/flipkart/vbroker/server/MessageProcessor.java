@@ -1,6 +1,6 @@
 package com.flipkart.vbroker.server;
 
-import com.flipkart.vbroker.core.MessageWithGroup;
+import com.flipkart.vbroker.subscribers.MessageWithGroup;
 
 public interface MessageProcessor {
 
