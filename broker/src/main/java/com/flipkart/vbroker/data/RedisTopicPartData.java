@@ -8,11 +8,8 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.PeekingIterator;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.Redisson;
 import org.redisson.api.RList;
 import org.redisson.api.RedissonClient;
-import org.redisson.client.codec.Codec;
-import org.redisson.config.Config;
 
 import java.nio.ByteBuffer;
 import java.util.HashSet;
@@ -21,29 +18,16 @@ import java.util.Set;
 @Slf4j
 public class RedisTopicPartData implements TopicPartData {
 
-    private static Config messageCodecConfig = new Config();
-    private static Config defaultCodecConfig = new Config();
     private static RedissonClient messageCodecClient;
     private static RedissonClient defaultCodecClient;
-    private static Codec redisCodec = new RedisMessageCodec();
-
-    static {
-        messageCodecConfig.useSingleServer().setAddress("redis://127.0.0.1:6379");
-        defaultCodecConfig.useSingleServer().setAddress("redis://127.0.0.1:6379");
-        messageCodecConfig.setCodec(redisCodec);
-        messageCodecClient = Redisson.create(messageCodecConfig);
-        defaultCodecClient = Redisson.create(defaultCodecConfig);
-    }
-
     private TopicPartition topicPartition;
 
-    public RedisTopicPartData(TopicPartition topicPartition) {
-        this();
+    public RedisTopicPartData(RedissonClient messageCodecClient,
+                              RedissonClient defaultCodecClient,
+                              TopicPartition topicPartition) {
+        this.messageCodecClient = messageCodecClient;
+        this.defaultCodecClient = defaultCodecClient;
         this.topicPartition = topicPartition;
-    }
-
-    public RedisTopicPartData() {
-
     }
 
     @Override
