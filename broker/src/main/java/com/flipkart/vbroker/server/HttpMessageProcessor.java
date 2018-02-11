@@ -1,7 +1,7 @@
 package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.core.CallbackConfig;
-import com.flipkart.vbroker.core.MessageWithGroup;
+import com.flipkart.vbroker.subscribers.MessageWithGroup;
 import com.flipkart.vbroker.core.Subscription;
 import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.entities.HttpHeader;

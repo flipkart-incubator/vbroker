@@ -1,0 +1,47 @@
+subprojects {
+    apply plugin: 'java'
+
+    repositories {
+        mavenCentral()
+    }
+
+    //src dependencies
+    def flatBuffersVersion = "1.8.0"
+    def slf4jVersion = "1.7.13"
+    def logbackVersion = "1.2.3"
+    def guavaVersion = "23.6-jre"
+    def lombokVersion = "1.16.18"
+    def jacksonVersion = "2.9.4"
+
+    //test dependencies
+    def jUnitVersion = "4.12"
+    def testngVersion = "6.13.1"
+
+    dependencies {
+        //logging
+        compile "org.slf4j:slf4j-api:${slf4jVersion}"
+        compile("ch.qos.logback:logback-classic:${logbackVersion}") {
+            exclude group: 'org.slf4j', module: 'slf4j-api'
+        }
+
+        //idls + encode/decode
+        compile "com.google.flatbuffers:flatbuffers-java:${flatBuffersVersion}"
+        //json
+        compile "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
+        compile "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
+        compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+
+        //utils
+        compile "com.google.guava:guava:${guavaVersion}"
+        compile "org.projectlombok:lombok:${lombokVersion}"
+
+        //testing
+        testCompile "junit:junit:${jUnitVersion}"
+        testCompile "org.testng:testng:${testngVersion}"
+    }
+}
+
+allprojects {
+    task hello << { task -> println "Current project is $task.project.name" }
+}
+
