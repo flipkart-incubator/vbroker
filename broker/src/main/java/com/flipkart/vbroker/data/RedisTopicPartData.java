@@ -59,8 +59,8 @@ public class RedisTopicPartData implements TopicPartData {
     private ByteBuffer buildMessage(Message message) {
         FlatBufferBuilder builder = new FlatBufferBuilder();
         int httpHeader = HttpHeader.createHttpHeader(builder,
-                builder.createString(message.headers(0).key()),
-                builder.createString(message.headers(0).value()));
+            builder.createString(message.headers(0).key()),
+            builder.createString(message.headers(0).value()));
 
         int[] headers = new int[1];
         headers[0] = httpHeader;
@@ -68,22 +68,22 @@ public class RedisTopicPartData implements TopicPartData {
         byte[] arr = new byte[message.bodyPayloadAsByteBuffer().remaining()];
         message.bodyPayloadAsByteBuffer().get(arr);
         int i = Message.createMessage(builder,
-                builder.createString(message.messageId()),
-                builder.createString(message.groupId()),
-                message.crc(),
-                message.version(),
-                message.seqNo(),
-                message.topicId(),
-                message.partitionId(),
-                message.attributes(),
-                builder.createString(message.httpUri()),
-                message.httpMethod(),
-                message.callbackTopicId(),
-                builder.createString(message.callbackHttpUri()),
-                message.callbackHttpMethod(),
-                headersVector,
-                arr.length,
-                builder.createByteVector(arr)
+            builder.createString(message.messageId()),
+            builder.createString(message.groupId()),
+            message.crc(),
+            message.version(),
+            message.seqNo(),
+            message.topicId(),
+            message.partitionId(),
+            message.attributes(),
+            builder.createString(message.httpUri()),
+            message.httpMethod(),
+            message.callbackTopicId(),
+            builder.createString(message.callbackHttpUri()),
+            message.callbackHttpMethod(),
+            headersVector,
+            arr.length,
+            builder.createByteVector(arr)
         );
         builder.finish(i);
         return builder.dataBuffer();

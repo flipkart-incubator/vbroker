@@ -34,19 +34,19 @@ public class FetchResponseHandler implements ResponseHandler {
                 TopicPartitionFetchResponse topicPartitionFetchResponse = topicFetchResponse.partitionResponses(j);
                 VStatus status = topicPartitionFetchResponse.status();
                 log.info("FetchResponse status for topic {} and partition {} is {}",
-                        topicFetchResponse.topicId(), topicPartitionFetchResponse.partitionId(), status.statusCode());
+                    topicFetchResponse.topicId(), topicPartitionFetchResponse.partitionId(), status.statusCode());
 
                 if (StatusCode.ConsumeSuccess_NoError == status.statusCode()) {
                     MessageSet messageSet = topicPartitionFetchResponse.messageSet();
                     int noOfMessages = messageSet.messagesLength();
                     log.info("Handling FetchResponse for topic {} and partition {} having {} messages",
-                            topicFetchResponse.topicId(), topicPartitionFetchResponse.partitionId(), noOfMessages);
+                        topicFetchResponse.topicId(), topicPartitionFetchResponse.partitionId(), noOfMessages);
                     for (int m = 0; m < noOfMessages; m++) {
                         Message message = messageSet.messages(m);
                         ByteBuffer byteBuffer = message.bodyPayloadAsByteBuffer();
                         ByteBuf byteBuf = Unpooled.wrappedBuffer(byteBuffer);
                         log.info("Decoded msg with msgId: {} and payload: {}", message.messageId(),
-                                Charsets.UTF_8.decode(byteBuffer).toString());
+                            Charsets.UTF_8.decode(byteBuffer).toString());
                         makeHttpRequest(message);
                     }
                 }
@@ -56,10 +56,10 @@ public class FetchResponseHandler implements ResponseHandler {
 
     public void makeHttpRequest(Message message) {
         FullHttpRequest httpRequest = new DefaultFullHttpRequest(
-                HttpVersion.HTTP_1_1,
-                io.netty.handler.codec.http.HttpMethod.POST,
-                requireNonNull(message.httpUri()),
-                Unpooled.wrappedBuffer(message.bodyPayloadAsByteBuffer()));
+            HttpVersion.HTTP_1_1,
+            io.netty.handler.codec.http.HttpMethod.POST,
+            requireNonNull(message.httpUri()),
+            Unpooled.wrappedBuffer(message.bodyPayloadAsByteBuffer()));
         httpRequest.headers().set(HttpHeaderNames.HOST, "localhost");
         httpRequest.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
         httpRequest.headers().set("Content-Type", "application/json");
@@ -67,8 +67,8 @@ public class FetchResponseHandler implements ResponseHandler {
         httpRequest.headers().set(MessageConstants.GROUP_ID_HEADER, message.groupId());
 
         log.info("Making httpRequest to httpUri: {} and httpMethod: {}",
-                message.httpUri(),
-                HttpMethod.name(message.httpMethod()));
+            message.httpUri(),
+            HttpMethod.name(message.httpMethod()));
 
         ChannelFuture channelFuture = clientBootstrap.connect("localhost", 12000);
         channelFuture.addListener((ChannelFutureListener) future -> {

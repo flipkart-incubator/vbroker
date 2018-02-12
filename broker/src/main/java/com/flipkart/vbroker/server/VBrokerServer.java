@@ -4,7 +4,6 @@ import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.Subscription;
 import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.data.InMemoryTopicPartDataManager;
-import com.flipkart.vbroker.data.RedisTopicPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.handlers.HttpResponseHandler;
 import com.flipkart.vbroker.handlers.RequestHandlerFactory;
@@ -92,7 +91,7 @@ public class VBrokerServer implements Runnable {
 
         ProducerService producerService = new ProducerService(topicPartDataManager);
         RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactory(
-                producerService, topicService, subscriptionService);
+            producerService, topicService, subscriptionService);
 
         //TODO: declare broker as healthy by registering in /brokers/ids for example now that everything is validated
         //the broker can now start accepting new requests
@@ -100,9 +99,9 @@ public class VBrokerServer implements Runnable {
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
             serverBootstrap.group(bossGroup, workerGroup)
-                    .channel(NioServerSocketChannel.class)
-                    .handler(new LoggingHandler(LogLevel.INFO))
-                    .childHandler(new VBrokerServerInitializer(requestHandlerFactory));
+                .channel(NioServerSocketChannel.class)
+                .handler(new LoggingHandler(LogLevel.INFO))
+                .childHandler(new VBrokerServerInitializer(requestHandlerFactory));
 
             ExecutorService remoteServerExecutor = Executors.newSingleThreadExecutor();
             remoteServerExecutor.submit(() -> {
@@ -118,9 +117,9 @@ public class VBrokerServer implements Runnable {
             });
 
             DefaultAsyncHttpClientConfig httpClientConfig = new DefaultAsyncHttpClientConfig
-                    .Builder()
-                    .setThreadFactory(new DefaultThreadFactory("async_http_client"))
-                    .build();
+                .Builder()
+                .setThreadFactory(new DefaultThreadFactory("async_http_client"))
+                .build();
             AsyncHttpClient httpClient = new DefaultAsyncHttpClient(httpClientConfig);
             MessageProcessor messageProcessor = new HttpMessageProcessor(httpClient, topicService, subscriptionService, producerService);
 
@@ -184,34 +183,34 @@ public class VBrokerServer implements Runnable {
                                        LocalAddress address,
                                        SubscriptionService subscriptionService) {
         Bootstrap httpClientBootstrap = new Bootstrap()
-                .group(workerGroup)
-                .channel(NioSocketChannel.class)
-                .handler(new ChannelInitializer<Channel>() {
-                    @Override
-                    protected void initChannel(Channel ch) {
-                        ChannelPipeline pipeline = ch.pipeline();
-                        pipeline.addLast(new HttpClientCodec());
-                        pipeline.addLast(new HttpObjectAggregator(1024 * 1024)); //1MB max
-                        pipeline.addLast(new HttpResponseHandler());
-                    }
-                });
+            .group(workerGroup)
+            .channel(NioSocketChannel.class)
+            .handler(new ChannelInitializer<Channel>() {
+                @Override
+                protected void initChannel(Channel ch) {
+                    ChannelPipeline pipeline = ch.pipeline();
+                    pipeline.addLast(new HttpClientCodec());
+                    pipeline.addLast(new HttpObjectAggregator(1024 * 1024)); //1MB max
+                    pipeline.addLast(new HttpResponseHandler());
+                }
+            });
         ResponseHandlerFactory responseHandlerFactory = new ResponseHandlerFactory(httpClientBootstrap);
         Bootstrap consumerBootstrap = new Bootstrap()
-                .group(localGroup)
-                .channel(LocalChannel.class)
-                .handler(new ChannelInitializer<Channel>() {
-                    @Override
-                    protected void initChannel(Channel ch) {
-                        ChannelPipeline pipeline = ch.pipeline();
-                        pipeline.addLast(new ChannelInitializer<Channel>() {
-                            @Override
-                            protected void initChannel(Channel ch) {
-                                pipeline.addLast(new VBrokerClientCodec());
-                                pipeline.addLast(new VBrokerResponseHandler(responseHandlerFactory));
-                            }
-                        });
-                    }
-                });
+            .group(localGroup)
+            .channel(LocalChannel.class)
+            .handler(new ChannelInitializer<Channel>() {
+                @Override
+                protected void initChannel(Channel ch) {
+                    ChannelPipeline pipeline = ch.pipeline();
+                    pipeline.addLast(new ChannelInitializer<Channel>() {
+                        @Override
+                        protected void initChannel(Channel ch) {
+                            pipeline.addLast(new VBrokerClientCodec());
+                            pipeline.addLast(new VBrokerResponseHandler(responseHandlerFactory));
+                        }
+                    });
+                }
+            });
         SubscriberDaemon subscriber = new SubscriberDaemon(address, consumerBootstrap, subscriptionService);
         ExecutorService subscriberExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("subscriber"));
         subscriberExecutor.submit(subscriber);

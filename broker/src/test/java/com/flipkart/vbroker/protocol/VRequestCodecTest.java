@@ -51,10 +51,10 @@ public class VRequestCodecTest {
                 int messagesVector = MessageSet.createMessagesVector(builder, messages);
                 int messageSet = MessageSet.createMessageSet(builder, messagesVector);
                 int topicPartitionProduceRequest = TopicPartitionProduceRequest.createTopicPartitionProduceRequest(
-                        builder,
-                        topicPartition.getId(),
-                        (short) 1,
-                        messageSet);
+                    builder,
+                    topicPartition.getId(),
+                    (short) 1,
+                    messageSet);
                 partitionRequests[i] = topicPartitionProduceRequest;
             }
 
@@ -66,10 +66,10 @@ public class VRequestCodecTest {
         int topicRequestsVector = ProduceRequest.createTopicRequestsVector(builder, topicRequests);
         int produceRequest = ProduceRequest.createProduceRequest(builder, topicRequestsVector);
         int vRequest = VRequest.createVRequest(builder,
-                (byte) 1,
-                1001,
-                RequestMessage.ProduceRequest,
-                produceRequest);
+            (byte) 1,
+            1001,
+            RequestMessage.ProduceRequest,
+            produceRequest);
         builder.finish(vRequest);
         return builder.dataBuffer();
     }

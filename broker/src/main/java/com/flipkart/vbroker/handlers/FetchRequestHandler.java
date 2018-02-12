@@ -1,14 +1,14 @@
 package com.flipkart.vbroker.handlers;
 
-import com.flipkart.vbroker.subscribers.MessageWithGroup;
+import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.core.Subscription;
 import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
+import com.flipkart.vbroker.subscribers.MessageWithGroup;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
-import com.flipkart.vbroker.core.PartSubscription;
 import com.google.common.collect.PeekingIterator;
 import com.google.common.primitives.Ints;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -41,9 +41,9 @@ public class FetchRequestHandler implements RequestHandler {
             FlatBufferBuilder builder = new FlatBufferBuilder();
             int fetchResponse = buildFetchResponse(fetchRequest, builder);
             int vResponse = VResponse.createVResponse(builder,
-                    1001,
-                    ResponseMessage.FetchResponse,
-                    fetchResponse);
+                1001,
+                ResponseMessage.FetchResponse,
+                fetchResponse);
             builder.finish(vResponse);
 
             return VResponse.getRootAsVResponse(builder.dataBuffer());
@@ -60,7 +60,7 @@ public class FetchRequestHandler implements RequestHandler {
             Subscription subscription = subscriptionService.getSubscription(topicFetchRequest.subscriptionId());
             int noOfPartitionsInFetchReq = topicFetchRequest.partitionRequestsLength();
             log.info("Handling FetchRequest for topic {} and subscription {} with {} partition requests",
-                    topic.getId(), subscription.getId(), noOfPartitionsInFetchReq);
+                topic.getId(), subscription.getId(), noOfPartitionsInFetchReq);
             int[] partitionFetchResponses = new int[noOfPartitionsInFetchReq];
             for (int j = 0; j < noOfPartitionsInFetchReq; j++) {
                 TopicPartitionFetchRequest topicPartitionFetchRequest = topicFetchRequest.partitionRequests(j);
@@ -69,19 +69,19 @@ public class FetchRequestHandler implements RequestHandler {
                 PartSubscription partSubscription = subscription.getPartSubscription(topicPartition.getId());
 
                 partitionFetchResponses[j] = buildTopicPartitionFetchResponse(
-                        builder,
-                        topic,
-                        topicPartition,
-                        partSubscription,
-                        topicPartitionFetchRequest);
+                    builder,
+                    topic,
+                    topicPartition,
+                    partSubscription,
+                    topicPartitionFetchRequest);
             }
 
             int partitionResponsesVector = TopicFetchResponse.createPartitionResponsesVector(builder, partitionFetchResponses);
             int topicFetchResponse = TopicFetchResponse.createTopicFetchResponse(
-                    builder,
-                    subscription.getId(),
-                    topicFetchRequest.topicId(),
-                    partitionResponsesVector);
+                builder,
+                subscription.getId(),
+                topicFetchRequest.topicId(),
+                partitionResponsesVector);
             topicFetchResponses[i] = topicFetchResponse;
         }
 
@@ -97,20 +97,20 @@ public class FetchRequestHandler implements RequestHandler {
         short noOfMessagesToFetch = topicPartitionFetchRequest.noOfMessages();
         short partitionId = topicPartitionFetchRequest.partitionId();
         log.info("Handling FetchRequest for {} messages for topic {} and partition {}",
-                noOfMessagesToFetch, topic.getId(), partitionId);
+            noOfMessagesToFetch, topic.getId(), partitionId);
 
         int[] messages = buildMessages(builder, partSubscription, noOfMessagesToFetch);
         log.debug("Writing {} messages for topic {} and partition {} in FetchResponse",
-                messages.length, topicPartition.getId(), partitionId);
+            messages.length, topicPartition.getId(), partitionId);
         int messagesVector = MessageSet.createMessagesVector(builder, messages);
         int messageSet = MessageSet.createMessageSet(builder, messagesVector);
         int vStatus = VStatus.createVStatus(builder, StatusCode.ConsumeSuccess_NoError, builder.createString(""));
 
         return TopicPartitionFetchResponse.createTopicPartitionFetchResponse(
-                builder,
-                partitionId,
-                vStatus,
-                messageSet);
+            builder,
+            partitionId,
+            vStatus,
+            messageSet);
     }
 
     private int[] buildMessages(FlatBufferBuilder builder,
@@ -138,22 +138,22 @@ public class FetchRequestHandler implements RequestHandler {
         payloadByteBuffer.get(messageBytes);
 
         return Message.createMessage(
-                builder,
-                builder.createString(requireNonNull(message.messageId())),
-                builder.createString(requireNonNull(message.groupId())),
-                message.crc(),
-                message.version(),
-                message.seqNo(),
-                message.topicId(),
-                message.partitionId(),
-                201,
-                builder.createString(requireNonNull(message.httpUri())),
-                message.httpMethod(),
-                message.callbackTopicId(),
-                builder.createString(requireNonNull(message.callbackHttpUri())),
-                message.callbackHttpMethod(),
-                headersVector,
-                messageBytes.length,
-                builder.createByteVector(messageBytes));
+            builder,
+            builder.createString(requireNonNull(message.messageId())),
+            builder.createString(requireNonNull(message.groupId())),
+            message.crc(),
+            message.version(),
+            message.seqNo(),
+            message.topicId(),
+            message.partitionId(),
+            201,
+            builder.createString(requireNonNull(message.httpUri())),
+            message.httpMethod(),
+            message.callbackTopicId(),
+            builder.createString(requireNonNull(message.callbackHttpUri())),
+            message.callbackHttpMethod(),
+            headersVector,
+            messageBytes.length,
+            builder.createByteVector(messageBytes));
     }
 }

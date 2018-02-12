@@ -41,7 +41,7 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
      */
     public void refreshSubscriberGroups() {
         log.debug("Refreshing SubscriberGroups for part-subscriber {} for topic-partition {}",
-                partSubscription.getId(), partSubscription.getTopicPartition().getId());
+            partSubscription.getId(), partSubscription.getTopicPartition().getId());
         TopicPartition topicPartition = partSubscription.getTopicPartition();
 
         Set<String> uniqueMsgGroups = topicPartDataManager.getUniqueGroups(topicPartition);
@@ -64,8 +64,8 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
             boolean refresh() {
                 boolean refreshed = false;
                 if (currIterator != null
-                        && currIterator.hasNext()
-                        && !currIterator.peek().isGroupLocked()) {
+                    && currIterator.hasNext()
+                    && !currIterator.peek().isGroupLocked()) {
                     return true;
                 }
 

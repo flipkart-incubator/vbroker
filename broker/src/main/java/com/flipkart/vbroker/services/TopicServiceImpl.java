@@ -30,11 +30,11 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public synchronized void createTopic(Topic topic) {
-    	
+
         topicsMap.putIfAbsent(topic.getId(), topic);
         try {
             curatorService.createNodeAndSetData(config.getTopicsPath() + "/" + topic.getId(), CreateMode.PERSISTENT,
-                    topic.toJson().getBytes()).handle((data, exception) -> {
+                topic.toJson().getBytes()).handle((data, exception) -> {
                 if (exception != null) {
                     log.error("Failure in creating topic!");
                 }

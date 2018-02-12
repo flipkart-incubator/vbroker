@@ -24,7 +24,7 @@ public class ProduceResponseHandler implements ResponseHandler {
                 TopicPartitionProduceResponse partitionProduceResponse = topicProduceResponse.partitionResponses(j);
                 //log.info("ProduceResponse for topic {} at partition {}", topicId, partitionProduceResponse);
                 log.info("Response code for handling produceRequest for topic {} and partition {} is {}",
-                        topicId, partitionProduceResponse.partitionId(), partitionProduceResponse.status().statusCode());
+                    topicId, partitionProduceResponse.partitionId(), partitionProduceResponse.status().statusCode());
             }
         }
     }
