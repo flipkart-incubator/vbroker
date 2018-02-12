@@ -62,10 +62,8 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public Topic getTopic(short topicId) {
-        // return topicsMap.get(topicId);
         try {
             return curatorService.getData(config.getTopicsPath() + "/" + topicId).handle((data, exception) -> {
-
                 try {
                     return MAPPER.readValue(data, Topic.class);
                 } catch (IOException e) {
@@ -87,9 +85,21 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public List<Topic> getAllTopics() {
-        List<Topic> topics = new ArrayList<>();
-        topics.addAll(topicsMap.values());
-        return topics;
-    }
+	public List<Topic> getAllTopics() {
+		List<Topic> topics = new ArrayList<>();
+		List<String> topicIds;
+		try {
+			topicIds = curatorService.getChildren(config.getTopicsPath()).handle((data, exception) -> {
+				return data;
+			}).toCompletableFuture().get();
+			for (String id : topicIds) {
+				topics.add(this.getTopic(Short.valueOf(id)));
+			}
+
+		} catch (InterruptedException | ExecutionException e) {
+			log.error("Error while fetching all topics");
+			e.printStackTrace();
+		}
+		return topics;
+	}
 }

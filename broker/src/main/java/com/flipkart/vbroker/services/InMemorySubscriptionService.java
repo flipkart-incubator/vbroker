@@ -7,7 +7,9 @@ import com.flipkart.vbroker.subscribers.PartSubscriber;
 import com.flipkart.vbroker.core.PartSubscription;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -38,11 +40,6 @@ public class InMemorySubscriptionService implements SubscriptionService {
     }
 
     @Override
-    public Subscription getSubscription(short subscriptionId) {
-        return subscriptionsMap.get(subscriptionId);
-    }
-
-    @Override
     public Set<Subscription> getAllSubscriptions() {
         return new HashSet<>(subscriptionsMap.values());
     }
@@ -68,4 +65,19 @@ public class InMemorySubscriptionService implements SubscriptionService {
         });
         return subscriberMap.get(partSubscription);
     }
+
+	@Override
+	public Subscription getSubscription(short topicId, short subscriptionId) {
+		return subscriptionsMap.get(subscriptionId);
+	}
+
+	@Override
+	public List<Subscription> getSubscriptionsForTopic(short topicId) {
+		 return new ArrayList<>(subscriptionsMap.values());
+	}
+
+	@Override
+	public List<Subscription> getAllSubscriptionsForBroker(String brokerId) {
+		 return new ArrayList<>(subscriptionsMap.values());
+	}
 }

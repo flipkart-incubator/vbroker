@@ -83,7 +83,7 @@ public class HttpMessageProcessor implements MessageProcessor {
         int statusCode = response.getStatusCode();
         if (statusCode >= 200 && statusCode < 300) {
             log.info("Response code is {}. Success in making httpRequest. Message processing now complete", statusCode);
-            if (isCallbackRequired(statusCode, messageWithGroup.getMessage(), messageWithGroup.subscriptionId())) {
+            if (isCallbackRequired(statusCode, messageWithGroup.getMessage(), messageWithGroup.getTopicId(), messageWithGroup.subscriptionId())) {
                 makeCallback(messageWithGroup.getMessage(), response);
             }
         } else if (statusCode >= 400 && statusCode < 500) {
@@ -105,7 +105,7 @@ public class HttpMessageProcessor implements MessageProcessor {
      * @param subscriptionId to check callback for
      * @return if callback is required for the message
      */
-    private boolean isCallbackRequired(int statusCode, Message message, short subscriptionId) {
+    private boolean isCallbackRequired(int statusCode, Message message, short topicId, short subscriptionId) {
         String callbackCodes = null;
         Optional<String> isBridged = Optional.empty();
         for (int i = 0; i < message.headersLength(); i++) {
@@ -125,7 +125,7 @@ public class HttpMessageProcessor implements MessageProcessor {
             }
         } else {
             try {
-                Subscription subscription = subscriptionService.getSubscription(subscriptionId);
+                Subscription subscription = subscriptionService.getSubscription(topicId, subscriptionId);
                 callbackConfig = subscription.getCallbackConfig();
             } catch (SubscriptionNotFoundException e) {
                 log.debug("Unable to find subscription with id {}. Assuming that this message is from a topic. Ignoring callback", subscriptionId);
