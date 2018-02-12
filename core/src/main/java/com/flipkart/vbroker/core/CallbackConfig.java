@@ -36,8 +36,8 @@ public class CallbackConfig {
         if (requestJson.isPresent()) {
             try {
                 final Set<CodeRange> codeRanges = JsonUtils.getObjectMapper().readValue(requestJson.get(),
-                        new TypeReference<Set<CodeRange>>() {
-                        });
+                    new TypeReference<Set<CodeRange>>() {
+                    });
                 return Optional.of(new CallbackConfig(codeRanges));
             } catch (IOException | RuntimeException ex) {
                 log.error("Unable to deserialize to json the request callback codes " + requestJson + " " + ex.getMessage());

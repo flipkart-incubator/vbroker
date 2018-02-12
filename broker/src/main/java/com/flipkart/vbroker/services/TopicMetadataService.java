@@ -61,7 +61,7 @@ public class TopicMetadataService {
         File dir = new File("metadata");
         File tmp = new File(dir, String.valueOf(topic.getId()).concat(".json"));
         TypeReference<HashMap<String, List<String>>> typeRef
-                = new TypeReference<HashMap<String, List<String>>>() {
+            = new TypeReference<HashMap<String, List<String>>>() {
         };
 
         Map<String, List<String>> partitionToGroupIdsMap = MAPPER.readValue(tmp, typeRef);

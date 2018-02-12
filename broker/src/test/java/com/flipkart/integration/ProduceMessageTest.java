@@ -60,7 +60,7 @@ public class ProduceMessageTest {
 
         //Verify the message is consumed
         verifyHttp(consumer).once(method(Method.POST),
-                uri("/messages"));
+            uri("/messages"));
     }
 
     @AfterSuite

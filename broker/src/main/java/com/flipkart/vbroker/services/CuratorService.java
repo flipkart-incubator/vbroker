@@ -36,7 +36,7 @@ public class CuratorService {
     public void init() throws IOException {
 
         CuratorFramework client = CuratorFrameworkFactory.newClient(config.getZookeeperUrl(),
-                new ExponentialBackoffRetry(1000, 5));
+            new ExponentialBackoffRetry(1000, 5));
         client.start();
         asyncZkClient = AsyncCuratorFramework.wrap(client);
     }
@@ -51,8 +51,8 @@ public class CuratorService {
      */
     public AsyncStage<String> createNode(String path, CreateMode createMode) {
         return asyncZkClient.create()
-                .withOptions(of(CreateOption.setDataIfExists, CreateOption.createParentsIfNeeded), createMode)
-                .forPath(path);
+            .withOptions(of(CreateOption.setDataIfExists, CreateOption.createParentsIfNeeded), createMode)
+            .forPath(path);
     }
 
     /**
@@ -66,8 +66,8 @@ public class CuratorService {
      */
     public AsyncStage<String> createNodeAndSetData(String path, CreateMode createMode, byte[] data) {
         return asyncZkClient.create()
-                .withOptions(of(CreateOption.setDataIfExists, CreateOption.createParentsIfNeeded), createMode)
-                .forPath(path, data);
+            .withOptions(of(CreateOption.setDataIfExists, CreateOption.createParentsIfNeeded), createMode)
+            .forPath(path, data);
     }
 
     /**
