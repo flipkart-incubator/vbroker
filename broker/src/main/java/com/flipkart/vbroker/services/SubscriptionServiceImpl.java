@@ -86,7 +86,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     
     @Override
 	public Subscription getSubscription(short topicId, short subscriptionId) {
-		String subscriptionPath = config.getTopicsPath() + "/" + topicId + "subscriptions" + subscriptionId;
+		String subscriptionPath = config.getTopicsPath() + "/" + topicId + "/subscriptions/" + subscriptionId;
 		try {
 			curatorService.getData(subscriptionPath).handle((data, exception) -> {
 				try {
@@ -129,14 +129,16 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
 	@Override
 	public List<Subscription> getSubscriptionsForTopic(short topicId) {
-		String path = config.getTopicsPath() + "/" + topicId;
+		String path = config.getTopicsPath() + "/" + topicId + "/subscriptions";
 		List<Subscription> subscriptions = new ArrayList<>();
 		try {
 			List<String> subscriptionIds = curatorService.getChildren(path).handle((data, exception) -> {
 				return data;
 			}).toCompletableFuture().get();
-			for (String id : subscriptionIds) {
-				subscriptions.add(this.getSubscription(topicId, Short.valueOf(id)));
+			if(subscriptionIds != null){
+				for (String id : subscriptionIds) {
+					subscriptions.add(this.getSubscription(topicId, Short.valueOf(id)));
+				}
 			}
 		} catch (InterruptedException | ExecutionException e) {
 			log.error("Error while fetching all subscriptions");
