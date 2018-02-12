@@ -35,10 +35,10 @@ public class MessageUtils {
         byte callbackHttpMethod = message.callbackHttpMethod();
 
         Set<String> toRemoveHeaders = Sets.newHashSet(
-                MessageConstants.BRIDGED_COUNT,
-                MessageConstants.REPLY_TO_HEADER,
-                MessageConstants.REPLY_TO_HTTP_URI_HEADER,
-                MessageConstants.REPLY_TO_HTTP_METHOD_HEADER);
+            MessageConstants.BRIDGED_COUNT,
+            MessageConstants.REPLY_TO_HEADER,
+            MessageConstants.REPLY_TO_HTTP_URI_HEADER,
+            MessageConstants.REPLY_TO_HTTP_METHOD_HEADER);
 
         List<Integer> headersList = new ArrayList<>();
         //int[] headers = new int[message.headersLength()];
@@ -51,8 +51,8 @@ public class MessageUtils {
         }
         headersList.add(getHeader(builder, MessageConstants.ACK, "Y"));
         headersList.add(getHeader(builder,
-                MessageConstants.DESTINATION_RESPONSE_STATUS,
-                String.valueOf(response.getStatusCode())));
+            MessageConstants.DESTINATION_RESPONSE_STATUS,
+            String.valueOf(response.getStatusCode())));
         headersList.add(getHeader(builder, MessageConstants.CORRELATION_ID_HEADER, message.messageId()));
 
         //TODO: pending things
@@ -70,23 +70,23 @@ public class MessageUtils {
 
         byte[] payload = response.getResponseBodyAsBytes();
         int messageOffset = Message.createMessage(
-                builder,
-                messageId,
-                groupId,
-                crc,
-                version,
-                seqNo,
-                topicId,
-                partitionId,
-                message.attributes(),
-                httpUri,
-                httpMethod,
-                callbackTopicId,
-                callbackHttpUri,
-                callbackHttpMethod,
-                headersVector,
-                payload.length,
-                builder.createByteVector(payload)
+            builder,
+            messageId,
+            groupId,
+            crc,
+            version,
+            seqNo,
+            topicId,
+            partitionId,
+            message.attributes(),
+            httpUri,
+            httpMethod,
+            callbackTopicId,
+            callbackHttpUri,
+            callbackHttpMethod,
+            headersVector,
+            payload.length,
+            builder.createByteVector(payload)
         );
 
         builder.finish(messageOffset);
@@ -95,7 +95,7 @@ public class MessageUtils {
 
     private static int getHeader(FlatBufferBuilder builder, String key, String value) {
         return HttpHeader.createHttpHeader(builder,
-                builder.createString(key),
-                builder.createString(value));
+            builder.createString(key),
+            builder.createString(value));
     }
 }

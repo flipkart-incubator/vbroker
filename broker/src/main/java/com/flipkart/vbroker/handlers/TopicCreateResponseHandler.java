@@ -10,7 +10,7 @@ public class TopicCreateResponseHandler implements ResponseHandler {
     @Override
     public void handle(VResponse vResponse) {
         TopicCreateResponse topicCreateResponse = (TopicCreateResponse) vResponse
-                .responseMessage(new TopicCreateResponse());
+            .responseMessage(new TopicCreateResponse());
         log.info("Response code for handling topic create is {}", topicCreateResponse.status().statusCode());
 
     }

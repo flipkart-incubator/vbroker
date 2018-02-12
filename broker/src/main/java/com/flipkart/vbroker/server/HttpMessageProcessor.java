@@ -1,7 +1,6 @@
 package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.core.CallbackConfig;
-import com.flipkart.vbroker.subscribers.MessageWithGroup;
 import com.flipkart.vbroker.core.Subscription;
 import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.entities.HttpHeader;
@@ -13,6 +12,7 @@ import com.flipkart.vbroker.exceptions.TopicNotFoundException;
 import com.flipkart.vbroker.services.ProducerService;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
+import com.flipkart.vbroker.subscribers.MessageWithGroup;
 import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,10 +44,10 @@ public class HttpMessageProcessor implements MessageProcessor {
         URI uri = new URI(httpUri);
 
         RequestBuilder requestBuilder = new RequestBuilder()
-                .setUrl(requireNonNull(message.httpUri()))
-                .setMethod(HttpMethod.name(message.httpMethod()))
-                .setBody(message.bodyPayloadAsByteBuffer())
-                .setCharset(StandardCharsets.UTF_8);
+            .setUrl(requireNonNull(message.httpUri()))
+            .setMethod(HttpMethod.name(message.httpMethod()))
+            .setBody(message.bodyPayloadAsByteBuffer())
+            .setCharset(StandardCharsets.UTF_8);
 
         requestBuilder.addHeader(MessageConstants.MESSAGE_ID_HEADER, message.messageId());
         requestBuilder.addHeader(MessageConstants.GROUP_ID_HEADER, message.groupId());
@@ -59,8 +59,8 @@ public class HttpMessageProcessor implements MessageProcessor {
 
         Request request = requestBuilder.build();
         log.info("Making httpRequest to httpUri: {} and httpMethod: {}",
-                httpUri,
-                HttpMethod.name(message.httpMethod()));
+            httpUri,
+            HttpMethod.name(message.httpMethod()));
         ListenableFuture<Response> reqFuture = httpClient.executeRequest(request);
         /*
          * not passing a thread pool to the reqFuture here
@@ -135,13 +135,13 @@ public class HttpMessageProcessor implements MessageProcessor {
         }
 
         return nonNull(callbackConfig) && callbackConfig.shouldCallback(statusCode)
-                && !(isBridged.isPresent() && "Y".equalsIgnoreCase(isBridged.get()));
+            && !(isBridged.isPresent() && "Y".equalsIgnoreCase(isBridged.get()));
     }
 
     private void makeCallback(Message message, Response response) {
         if (message.callbackTopicId() > -1
-                && message.callbackHttpMethod() > -1
-                && !Strings.isNullOrEmpty(message.callbackHttpUri())) {
+            && message.callbackHttpMethod() > -1
+            && !Strings.isNullOrEmpty(message.callbackHttpUri())) {
             log.info("Callback is enabled for this message {}", message.messageId());
             Message callbackMsg = MessageUtils.getCallbackMsg(message, response);
             try {

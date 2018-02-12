@@ -61,12 +61,12 @@ public class ProduceRequestHandler implements RequestHandler {
             for (TopicPartMessage topicPartMessage : messagesToProduce) {
                 int vStatus = VStatus.createVStatus(builder, StatusCode.ProduceSuccess_NoError, builder.createString(""));
                 int topicPartitionProduceResponse = TopicPartitionProduceResponse.createTopicPartitionProduceResponse(
-                        builder,
-                        topicPartMessage.getTopicPartition().getId(),
-                        vStatus);
+                    builder,
+                    topicPartMessage.getTopicPartition().getId(),
+                    vStatus);
                 topicPartitionResponseMap.computeIfAbsent(topicPartMessage.getTopicPartition().getId(),
-                        o -> new LinkedList<>())
-                        .add(topicPartitionProduceResponse);
+                    o -> new LinkedList<>())
+                    .add(topicPartitionProduceResponse);
             }
 
             int noOfTopics = topicPartitionResponseMap.keySet().size();
@@ -82,18 +82,18 @@ public class ProduceRequestHandler implements RequestHandler {
 
                 int partitionResponsesVector = TopicProduceResponse.createPartitionResponsesVector(builder, partitionResponses);
                 int topicProduceResponse = TopicProduceResponse.createTopicProduceResponse(
-                        builder,
-                        topicId,
-                        partitionResponsesVector);
+                    builder,
+                    topicId,
+                    partitionResponsesVector);
                 topicProduceResponses[i++] = topicProduceResponse;
             }
 
             int topicResponsesVector = ProduceResponse.createTopicResponsesVector(builder, topicProduceResponses);
             int produceResponse = ProduceResponse.createProduceResponse(builder, topicResponsesVector);
             int vResponse = VResponse.createVResponse(builder,
-                    1001,
-                    ResponseMessage.ProduceResponse,
-                    produceResponse);
+                1001,
+                ResponseMessage.ProduceResponse,
+                produceResponse);
             builder.finish(vResponse);
 
             return VResponse.getRootAsVResponse(builder.dataBuffer());

@@ -41,7 +41,7 @@ public class TopicCreateTest {
         int topic = Topic.createTopic(builder, (short) 1, topicName, true, (short) 1, (short) 3, TopicType.MAIN, TopicCategory.TOPIC);
         int topicCreateRequest = TopicCreateRequest.createTopicCreateRequest(builder, topic);
         int vRequest = VRequest.createVRequest(builder, (byte) 1, 1002, RequestMessage.TopicCreateRequest,
-                topicCreateRequest);
+            topicCreateRequest);
         builder.finish(vRequest);
 
         ByteBuffer byteBuffer = builder.dataBuffer();

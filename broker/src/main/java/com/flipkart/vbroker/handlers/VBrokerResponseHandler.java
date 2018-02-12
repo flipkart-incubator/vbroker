@@ -15,7 +15,7 @@ public class VBrokerResponseHandler extends SimpleChannelInboundHandler<VRespons
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, VResponse vResponse) {
         log.info("== Received VResponse from server with correlationId {} and type {} ==",
-                vResponse.correlationId(), vResponse.responseMessageType());
+            vResponse.correlationId(), vResponse.responseMessageType());
 
         ResponseHandler responseHandler = responseHandlerFactory.getResponseHandler(vResponse);
         responseHandler.handle(vResponse);

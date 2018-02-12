@@ -28,13 +28,13 @@ public class RequestHandlerFactory {
         ListeningExecutorService directExecutorService = MoreExecutors.listeningDecorator(MoreExecutors.newDirectExecutorService());
 
         this.produceRequestHandler = new ProduceRequestHandler(
-                topicService,
-                producerService,
-                produceReqExecutorService);
+            topicService,
+            producerService,
+            produceReqExecutorService);
         this.fetchRequestHandler = new FetchRequestHandler(
-                topicService,
-                subscriptionService,
-                directExecutorService);
+            topicService,
+            subscriptionService,
+            directExecutorService);
         this.topicCreateRequestHandler = new TopicCreateRequestHandler(topicService, adminReqExecutorService);
         this.subscriptionCreateRequestHandler = new SubscriptionCreateRequestHandler(subscriptionService, adminReqExecutorService);
     }

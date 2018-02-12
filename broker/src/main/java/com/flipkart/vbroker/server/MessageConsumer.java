@@ -1,9 +1,9 @@
 package com.flipkart.vbroker.server;
 
-import com.flipkart.vbroker.subscribers.MessageWithGroup;
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.exceptions.LockFailedException;
 import com.flipkart.vbroker.iterators.SubscriberIterator;
+import com.flipkart.vbroker.subscribers.MessageWithGroup;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
