@@ -36,8 +36,8 @@ public class VBrokerClient {
 
             Bootstrap bootstrap = new Bootstrap();
             bootstrap.group(group)
-                    .channel(NioSocketChannel.class)
-                    .handler(new VBrokerClientInitializer(responseHandlerFactory));
+                .channel(NioSocketChannel.class)
+                .handler(new VBrokerClientInitializer(responseHandlerFactory));
 
             Channel channel = bootstrap.connect(config.getBrokerHost(), config.getBrokerPort()).sync().channel();
 
@@ -64,10 +64,10 @@ public class VBrokerClient {
                     int messagesVector = MessageSet.createMessagesVector(builder, messages);
                     int messageSet = MessageSet.createMessageSet(builder, messagesVector);
                     int topicPartitionProduceRequest = TopicPartitionProduceRequest.createTopicPartitionProduceRequest(
-                            builder,
-                            topicPartition.getId(),
-                            (short) 1,
-                            messageSet);
+                        builder,
+                        topicPartition.getId(),
+                        (short) 1,
+                        messageSet);
                     partitionRequests[i] = topicPartitionProduceRequest;
                 }
 
@@ -79,10 +79,10 @@ public class VBrokerClient {
             int topicRequestsVector = ProduceRequest.createTopicRequestsVector(builder, topicRequests);
             int produceRequest = ProduceRequest.createProduceRequest(builder, topicRequestsVector);
             int vRequest = VRequest.createVRequest(builder,
-                    (byte) 1,
-                    1001,
-                    RequestMessage.ProduceRequest,
-                    produceRequest);
+                (byte) 1,
+                1001,
+                RequestMessage.ProduceRequest,
+                produceRequest);
             builder.finish(vRequest);
             ByteBuffer byteBuffer = builder.dataBuffer();
             ByteBuf byteBuf = Unpooled.wrappedBuffer(byteBuffer);

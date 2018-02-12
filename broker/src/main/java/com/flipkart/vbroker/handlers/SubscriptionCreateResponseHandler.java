@@ -10,7 +10,7 @@ public class SubscriptionCreateResponseHandler implements ResponseHandler {
     @Override
     public void handle(VResponse vResponse) {
         SubscriptionCreateResponse subscriptionCreateResponse = (SubscriptionCreateResponse) vResponse
-                .responseMessage(new SubscriptionCreateResponse());
+            .responseMessage(new SubscriptionCreateResponse());
         log.info("Response code for handling subscription create is {}", subscriptionCreateResponse.status().statusCode());
 
     }

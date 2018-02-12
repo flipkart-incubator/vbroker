@@ -22,23 +22,23 @@ public class SubscriptionCreateRequestHandler implements RequestHandler {
     @Override
     public ListenableFuture<VResponse> handle(VRequest vRequest) {
         SubscriptionCreateRequest subscriptionCreateRequest = (SubscriptionCreateRequest) vRequest
-                .requestMessage(new SubscriptionCreateRequest());
+            .requestMessage(new SubscriptionCreateRequest());
         assert nonNull(subscriptionCreateRequest);
         Topic topic = Topic.TopicBuilder.aTopic().withId(subscriptionCreateRequest.subscription().topicId()).build();
         Subscription subscription = Subscription.SubscriptionBuilder.aSubscription()
-                .withId(subscriptionCreateRequest.subscription().subscriptionId()).withName(subscriptionCreateRequest.subscription().name())
-                .withGrouped(subscriptionCreateRequest.subscription().grouped()).withTopic(topic).build();
-        
+            .withId(subscriptionCreateRequest.subscription().subscriptionId()).withName(subscriptionCreateRequest.subscription().name())
+            .withGrouped(subscriptionCreateRequest.subscription().grouped()).withTopic(topic).build();
+
         return listeningExecutorService.submit(() -> {
-        	log.info("Creating subscription with id {}, name {}", subscription.getId(), subscription.getName());
+            log.info("Creating subscription with id {}, name {}", subscription.getId(), subscription.getName());
             subscriptionService.createSubscription(subscription);
 
             FlatBufferBuilder subscriptionResponseBuilder = new FlatBufferBuilder();
             int status = VStatus.createVStatus(subscriptionResponseBuilder, StatusCode.Success, subscriptionResponseBuilder.createString(""));
             int subscriptionCreateResponse = SubscriptionCreateResponse
-                    .createSubscriptionCreateResponse(subscriptionResponseBuilder, subscription.getId(), status);
+                .createSubscriptionCreateResponse(subscriptionResponseBuilder, subscription.getId(), status);
             int vresponse = VResponse.createVResponse(subscriptionResponseBuilder, 1003,
-                    ResponseMessage.SubscriptionCreateResponse, subscriptionCreateResponse);
+                ResponseMessage.SubscriptionCreateResponse, subscriptionCreateResponse);
             subscriptionResponseBuilder.finish(vresponse);
             return VResponse.getRootAsVResponse(subscriptionResponseBuilder.dataBuffer());
         });

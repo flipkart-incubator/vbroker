@@ -54,8 +54,8 @@ public class MessageStore {
         byte callbackHttpMethod = HttpMethod.POST;
 
         int httpHeader = HttpHeader.createHttpHeader(builder,
-                builder.createString(MessageConstants.APP_ID_HEADER),
-                builder.createString("pass-vbroker"));
+            builder.createString(MessageConstants.APP_ID_HEADER),
+            builder.createString("pass-vbroker"));
 
         int[] headers = new int[1];
         headers[0] = httpHeader;
@@ -63,23 +63,23 @@ public class MessageStore {
         byte[] payload = "{\"text\": \"hello\", \"id\": 131}".getBytes();
 
         return Message.createMessage(
-                builder,
-                messageId,
-                groupId,
-                crc,
-                version,
-                seqNo,
-                topicId,
-                partitionId,
-                201,
-                httpUri,
-                httpMethod,
-                callbackTopicId,
-                callbackHttpUri,
-                callbackHttpMethod,
-                headersVector,
-                payload.length,
-                builder.createByteVector(payload)
+            builder,
+            messageId,
+            groupId,
+            crc,
+            version,
+            seqNo,
+            topicId,
+            partitionId,
+            201,
+            httpUri,
+            httpMethod,
+            callbackTopicId,
+            callbackHttpUri,
+            callbackHttpMethod,
+            headersVector,
+            payload.length,
+            builder.createByteVector(payload)
         );
     }
 }

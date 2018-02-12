@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import static java.util.Objects.nonNull;
 
 @Slf4j
@@ -30,23 +31,23 @@ public class TopicCreateRequestHandler implements RequestHandler {
             partitions.add(new TopicPartition((short) i, topicCreateRequest.topic().topicId()));
         }
         Topic topic = Topic.TopicBuilder.aTopic().withGrouped(topicCreateRequest.topic().grouped())
-                .withId(topicCreateRequest.topic().topicId()).withName(topicCreateRequest.topic().topicName())
-                .withNoOfPartitions(topicCreateRequest.topic().partitions())
-                .withReplicationFactor(topicCreateRequest.topic().replicationFactor()).withPartitions(partitions)
-                .build();
+            .withId(topicCreateRequest.topic().topicId()).withName(topicCreateRequest.topic().topicName())
+            .withNoOfPartitions(topicCreateRequest.topic().partitions())
+            .withReplicationFactor(topicCreateRequest.topic().replicationFactor()).withPartitions(partitions)
+            .build();
 
         return listeningExecutorService.submit(() -> {
             log.info("Creating topic with id {}, name {}", topic.getId(), topic.getName());
             topicService.createTopic(topic);
 
-        FlatBufferBuilder topicResponseBuilder = new FlatBufferBuilder();
-        int status = VStatus.createVStatus(topicResponseBuilder, StatusCode.Success, topicResponseBuilder.createString(""));
-        int topicCreateResponse = TopicCreateResponse.createTopicCreateResponse(topicResponseBuilder, topic.getId(),
+            FlatBufferBuilder topicResponseBuilder = new FlatBufferBuilder();
+            int status = VStatus.createVStatus(topicResponseBuilder, StatusCode.Success, topicResponseBuilder.createString(""));
+            int topicCreateResponse = TopicCreateResponse.createTopicCreateResponse(topicResponseBuilder, topic.getId(),
                 status);
-        int topicVResponse = VResponse.createVResponse(topicResponseBuilder, 1002, RequestMessage.TopicCreateRequest,
+            int topicVResponse = VResponse.createVResponse(topicResponseBuilder, 1002, RequestMessage.TopicCreateRequest,
                 topicCreateResponse);
-        topicResponseBuilder.finish(topicVResponse);
-        return VResponse.getRootAsVResponse(topicResponseBuilder.dataBuffer());
+            topicResponseBuilder.finish(topicVResponse);
+            return VResponse.getRootAsVResponse(topicResponseBuilder.dataBuffer());
         });
     }
 }

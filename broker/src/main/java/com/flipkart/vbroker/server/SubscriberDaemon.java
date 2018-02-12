@@ -1,11 +1,11 @@
 package com.flipkart.vbroker.server;
 
+import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.core.Subscription;
 import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.protocol.Request;
 import com.flipkart.vbroker.services.SubscriptionService;
-import com.flipkart.vbroker.core.PartSubscription;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -70,17 +70,17 @@ public class SubscriberDaemon implements Runnable {
                         int[] tpFetchRequests = new int[partSubscriptions.size()];
                         for (int ps = 0; ps < partSubscriptions.size(); ps++) {
                             int topicPartitionFetchRequest = TopicPartitionFetchRequest.createTopicPartitionFetchRequest(
-                                    builder,
-                                    partSubscriptions.get(ps).getId(),
-                                    reqNoOfMessages);
+                                builder,
+                                partSubscriptions.get(ps).getId(),
+                                reqNoOfMessages);
                             tpFetchRequests[ps] = topicPartitionFetchRequest;
                         }
 
                         int partitionRequestsVector = TopicFetchRequest.createPartitionRequestsVector(builder, tpFetchRequests);
                         int topicFetchRequest = TopicFetchRequest.createTopicFetchRequest(builder,
-                                subscription.getId(),
-                                topic.getId(),
-                                partitionRequestsVector);
+                            subscription.getId(),
+                            topic.getId(),
+                            partitionRequestsVector);
                         topicFetchRequests[s] = topicFetchRequest;
                     }
 
@@ -88,10 +88,10 @@ public class SubscriberDaemon implements Runnable {
 
                     int fetchRequest = FetchRequest.createFetchRequest(builder, topicRequestsVector);
                     int vRequest = VRequest.createVRequest(builder,
-                            (byte) 1,
-                            1001,
-                            RequestMessage.FetchRequest,
-                            fetchRequest);
+                        (byte) 1,
+                        1001,
+                        RequestMessage.FetchRequest,
+                        fetchRequest);
                     builder.finish(vRequest);
                     ByteBuffer byteBuffer = builder.dataBuffer();
                     ByteBuf byteBuf = Unpooled.wrappedBuffer(byteBuffer);
