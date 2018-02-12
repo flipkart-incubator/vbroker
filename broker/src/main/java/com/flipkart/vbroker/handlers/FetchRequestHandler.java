@@ -57,7 +57,7 @@ public class FetchRequestHandler implements RequestHandler {
         for (int i = 0; i < noOfTopics; i++) {
             TopicFetchRequest topicFetchRequest = fetchRequest.topicRequests(i);
             Topic topic = topicService.getTopic(topicFetchRequest.topicId());
-            Subscription subscription = subscriptionService.getSubscription(topicFetchRequest.subscriptionId());
+            Subscription subscription = subscriptionService.getSubscription(topicFetchRequest.topicId(), topicFetchRequest.subscriptionId());
             int noOfPartitionsInFetchReq = topicFetchRequest.partitionRequestsLength();
             log.info("Handling FetchRequest for topic {} and subscription {} with {} partition requests",
                     topic.getId(), subscription.getId(), noOfPartitionsInFetchReq);
