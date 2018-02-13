@@ -4,11 +4,13 @@ import com.flipkart.vbroker.core.Subscription;
 import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.services.SubscriptionService;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 
 import static java.util.Objects.nonNull;
 
@@ -20,7 +22,7 @@ public class SubscriptionCreateRequestHandler implements RequestHandler {
     private final ListeningExecutorService listeningExecutorService;
 
     @Override
-    public ListenableFuture<VResponse> handle(VRequest vRequest) {
+    public CompletionStage<VResponse> handle(VRequest vRequest) {
         SubscriptionCreateRequest subscriptionCreateRequest = (SubscriptionCreateRequest) vRequest
             .requestMessage(new SubscriptionCreateRequest());
         assert nonNull(subscriptionCreateRequest);
@@ -29,7 +31,7 @@ public class SubscriptionCreateRequestHandler implements RequestHandler {
             .withId(subscriptionCreateRequest.subscription().subscriptionId()).withName(subscriptionCreateRequest.subscription().name())
             .withGrouped(subscriptionCreateRequest.subscription().grouped()).withTopic(topic).build();
 
-        return listeningExecutorService.submit(() -> {
+        return CompletableFuture.supplyAsync(() -> {
             log.info("Creating subscription with id {}, name {}", subscription.getId(), subscription.getName());
             subscriptionService.createSubscription(subscription);
 
