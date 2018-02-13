@@ -1,6 +1,8 @@
 package com.flipkart.vbroker.subscribers;
 
 import com.flipkart.vbroker.core.*;
+import com.flipkart.vbroker.entities.Subscription;
+import com.flipkart.vbroker.entities.Topic;
 
 import java.util.LinkedList;
 

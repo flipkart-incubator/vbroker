@@ -1,10 +1,10 @@
 package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.VBrokerConfig;
-import com.flipkart.vbroker.core.Subscription;
-import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.data.InMemoryTopicPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
+import com.flipkart.vbroker.entities.Subscription;
+import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.handlers.HttpResponseHandler;
 import com.flipkart.vbroker.handlers.RequestHandlerFactory;
 import com.flipkart.vbroker.handlers.ResponseHandlerFactory;

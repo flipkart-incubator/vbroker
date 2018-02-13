@@ -1,8 +1,6 @@
 package com.flipkart.vbroker.handlers;
 
 import com.flipkart.vbroker.core.PartSubscription;
-import com.flipkart.vbroker.core.Subscription;
-import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.services.SubscriptionService;
@@ -60,13 +58,13 @@ public class FetchRequestHandler implements RequestHandler {
             Subscription subscription = subscriptionService.getSubscription(topicFetchRequest.topicId(), topicFetchRequest.subscriptionId());
             int noOfPartitionsInFetchReq = topicFetchRequest.partitionRequestsLength();
             log.info("Handling FetchRequest for topic {} and subscription {} with {} partition requests",
-                topic.getId(), subscription.getId(), noOfPartitionsInFetchReq);
+                topic.topicId(), subscription.subscriptionId(), noOfPartitionsInFetchReq);
             int[] partitionFetchResponses = new int[noOfPartitionsInFetchReq];
             for (int j = 0; j < noOfPartitionsInFetchReq; j++) {
                 TopicPartitionFetchRequest topicPartitionFetchRequest = topicFetchRequest.partitionRequests(j);
                 short partitionId = topicPartitionFetchRequest.partitionId();
                 TopicPartition topicPartition = topicService.getTopicPartition(topic, partitionId);
-                PartSubscription partSubscription = subscription.getPartSubscription(topicPartition.getId());
+                PartSubscription partSubscription = subscriptionService.getPartSubscription(subscription, topicPartition.getId());
 
                 partitionFetchResponses[j] = buildTopicPartitionFetchResponse(
                     builder,
@@ -79,7 +77,7 @@ public class FetchRequestHandler implements RequestHandler {
             int partitionResponsesVector = TopicFetchResponse.createPartitionResponsesVector(builder, partitionFetchResponses);
             int topicFetchResponse = TopicFetchResponse.createTopicFetchResponse(
                 builder,
-                subscription.getId(),
+                subscription.subscriptionId(),
                 topicFetchRequest.topicId(),
                 partitionResponsesVector);
             topicFetchResponses[i] = topicFetchResponse;
@@ -97,7 +95,7 @@ public class FetchRequestHandler implements RequestHandler {
         short noOfMessagesToFetch = topicPartitionFetchRequest.noOfMessages();
         short partitionId = topicPartitionFetchRequest.partitionId();
         log.info("Handling FetchRequest for {} messages for topic {} and partition {}",
-            noOfMessagesToFetch, topic.getId(), partitionId);
+            noOfMessagesToFetch, topic.topicId(), partitionId);
 
         int[] messages = buildMessages(builder, partSubscription, noOfMessagesToFetch);
         log.debug("Writing {} messages for topic {} and partition {} in FetchResponse",

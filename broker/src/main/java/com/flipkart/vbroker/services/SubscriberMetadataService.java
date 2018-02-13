@@ -2,11 +2,14 @@ package com.flipkart.vbroker.services;
 
 import com.flipkart.vbroker.core.MessageGroup;
 import com.flipkart.vbroker.core.PartSubscription;
-import com.flipkart.vbroker.core.Subscription;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.TopicPartDataManager;
+import com.flipkart.vbroker.entities.Subscription;
+import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
 import com.flipkart.vbroker.subscribers.SubscriberGroup;
+import com.flipkart.vbroker.utils.SubscriptionUtils;
+
 import lombok.AllArgsConstructor;
 
 import java.io.*;
@@ -23,8 +26,9 @@ public class SubscriberMetadataService {
     private final TopicPartDataManager topicPartDataManager;
 
     public void saveSubscriptionMetadata(Subscription subscription) throws IOException {
+    	Topic topic = topicService.getTopic(subscription.topicId());
         //Save each group's file as : metadata/{topicID}/subs/{subID}/{partitionID}/{groupID}.txt
-        for (PartSubscription partSubscription : subscription.getPartSubscriptions()) {
+        for (PartSubscription partSubscription : SubscriptionUtils.getPartSubscriptions(subscription, topic.partitions())) {
             PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription);
             File dir = new File(getPartSubscriberPath(partSubscriber));
             dir.mkdirs();
@@ -41,7 +45,8 @@ public class SubscriberMetadataService {
     }
 
     public void loadSubscriptionMetadata(Subscription subscription) {
-        for (PartSubscription partSubscription : subscription.getPartSubscriptions()) {
+    	Topic topic = topicService.getTopic(subscription.topicId());
+        for (PartSubscription partSubscription : SubscriptionUtils.getPartSubscriptions(subscription, topic.partitions())) {
             PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription);
             TopicPartition partition = partSubscription.getTopicPartition();
             File dir = new File(getPartSubscriberPath(partSubscriber));

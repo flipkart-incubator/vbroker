@@ -1,10 +1,12 @@
 package com.flipkart.vbroker.services;
 
-import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.core.TopicPartMessage;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.entities.Message;
+import com.flipkart.vbroker.entities.Topic;
+import com.flipkart.vbroker.utils.TopicUtils;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,6 +32,6 @@ public class ProducerService {
 
     public void produceMessage(Topic topic, Message message) {
         //TODO: do this correctly
-        produceMessage(topic.getPartition((short) 0), message);
+        produceMessage(TopicUtils.getTopicPartitions(topic.topicId(), (short) 1).get(0), message);
     }
 }

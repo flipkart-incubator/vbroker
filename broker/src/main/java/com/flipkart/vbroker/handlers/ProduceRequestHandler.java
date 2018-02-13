@@ -1,6 +1,5 @@
 package com.flipkart.vbroker.handlers;
 
-import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.core.TopicPartMessage;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.*;

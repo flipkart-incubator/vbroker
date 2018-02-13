@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.apache.zookeeper.CreateMode;
 
-import com.flipkart.vbroker.core.Subscription;
-import com.flipkart.vbroker.core.Topic;
+import com.flipkart.vbroker.entities.Subscription;
+import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.services.CuratorService;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
@@ -32,9 +32,9 @@ public class DummyAllocationStrategy implements AllocationStrategy {
     	String path = "/brokers/" + BROKER_ID + "/subscriptions/";
 		List<Topic> topics = topicService.getAllTopics();
 		for (Topic topic : topics) {
-			List<Subscription> subscriptions = subscriptionService.getSubscriptionsForTopic(topic.getId());
+			List<Subscription> subscriptions = subscriptionService.getSubscriptionsForTopic(topic.topicId());
 			for (Subscription sub : subscriptions) {
-				String nodePath = path + topic.getId() + "-" + sub.getId();
+				String nodePath = path + topic.topicId() + "-" + sub.subscriptionId();
 				curatorService.createNodeAndSetData(nodePath, CreateMode.PERSISTENT, "".getBytes());
 			}
 		}

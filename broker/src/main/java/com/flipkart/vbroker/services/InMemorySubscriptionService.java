@@ -1,10 +1,12 @@
 package com.flipkart.vbroker.services;
 
 import com.flipkart.vbroker.core.PartSubscription;
-import com.flipkart.vbroker.core.Subscription;
 import com.flipkart.vbroker.data.TopicPartDataManager;
+import com.flipkart.vbroker.entities.Subscription;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
+import com.flipkart.vbroker.utils.SubscriptionUtils;
+
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -25,18 +27,18 @@ public class InMemorySubscriptionService implements SubscriptionService {
         this.topicPartDataManager = topicPartDataManager;
     }
 
-    @Override
-    public void createPartSubscription(Subscription subscription, PartSubscription partSubscription) {
-        if (subscriptionsMap.containsKey(subscription.getId())) {
-            subscriptionsMap.get(subscription.getId()).addPartSubscription(partSubscription);
-        } else {
-            throw new VBrokerException("Subscription " + subscription + " not present to add partSubscription: " + subscription);
-        }
-    }
+//    @Override
+//    public void createPartSubscription(Subscription subscription, PartSubscription partSubscription) {
+//        if (subscriptionsMap.containsKey(subscription.subscriptionId())) {
+//            subscriptionsMap.get(subscription.subscriptionId()).addPartSubscription(partSubscription);
+//        } else {
+//            throw new VBrokerException("Subscription " + subscription + " not present to add partSubscription: " + subscription);
+//        }
+//    }
 
     @Override
     public void createSubscription(Subscription subscription) {
-        subscriptionsMap.putIfAbsent(subscription.getId(), subscription);
+        subscriptionsMap.putIfAbsent(subscription.subscriptionId(), subscription);
     }
 
     @Override
@@ -46,9 +48,10 @@ public class InMemorySubscriptionService implements SubscriptionService {
 
     @Override
     public PartSubscription getPartSubscription(Subscription subscription, short partSubscriptionId) {
-        if (subscriptionsMap.containsKey(subscription.getId())) {
-            Subscription existingSub = subscriptionsMap.get(subscription.getId());
-            return existingSub.getPartSubscription(partSubscriptionId);
+        if (subscriptionsMap.containsKey(subscription.subscriptionId())) {
+            Subscription existingSub = subscriptionsMap.get(subscription.subscriptionId());
+            //return existingSub.getPartSubscription(partSubscriptionId);
+            return SubscriptionUtils.getPartSubscription(existingSub, partSubscriptionId);
         }
         return null;
     }
@@ -79,5 +82,11 @@ public class InMemorySubscriptionService implements SubscriptionService {
 	@Override
 	public List<Subscription> getAllSubscriptionsForBroker(String brokerId) {
 		 return new ArrayList<>(subscriptionsMap.values());
+	}
+
+	@Override
+	public List<PartSubscription> getPartSubscriptions(Subscription subscription) {
+		//TODO:
+        return null;
 	}
 }

@@ -22,6 +22,15 @@ public class CallbackConfig {
     public CallbackConfig(final Set<CodeRange> codeRanges) {
         this.codeRanges.addAll(codeRanges);
     }
+    
+    public static CallbackConfig getCallbackConfig(com.flipkart.vbroker.entities.CallbackConfig callbackConfig){
+    	Set<CodeRange> newCodeRanges;
+    	for (int i = 0; i < callbackConfig.codeRangesLength(); i ++){
+    		com.flipkart.vbroker.entities.CodeRange range = callbackConfig.codeRanges(i);
+    		newCodeRanges.add(new CodeRange(range.from(), range.to()));
+    	}
+    	return new CallbackConfig(newCodeRanges);
+    }
 
     /**
      * Assuming request json will be list of code ranges, sent in http message as a header
