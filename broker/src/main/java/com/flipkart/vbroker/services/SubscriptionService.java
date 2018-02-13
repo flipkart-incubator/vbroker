@@ -9,21 +9,21 @@ import java.util.Set;
 
 public interface SubscriptionService {
 
-	//public void createPartSubscription(Subscription subscription, PartSubscription partSubscription);
-	
+    //public void createPartSubscription(Subscription subscription, PartSubscription partSubscription);
+
     public void createSubscription(Subscription subscription);
 
     public Subscription getSubscription(short topicId, short subscriptionId);
 
     public Set<Subscription> getAllSubscriptions();
-    
+
     public List<Subscription> getSubscriptionsForTopic(short topicId);
-    
+
     public List<Subscription> getAllSubscriptionsForBroker(String brokerId);
 
     public PartSubscription getPartSubscription(Subscription subscription, short partSubscriptionId);
 
     public PartSubscriber getPartSubscriber(PartSubscription subscription);
-    
+
     public List<PartSubscription> getPartSubscriptions(Subscription subscription);
 }

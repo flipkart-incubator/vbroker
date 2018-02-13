@@ -9,7 +9,7 @@ public interface TopicService {
 
     public void createTopic(Topic topic);
 
-   // public void createTopicPartition(Topic topic, TopicPartition topicPartition);
+    // public void createTopicPartition(Topic topic, TopicPartition topicPartition);
 
     public TopicPartition getTopicPartition(Topic topic, short topicPartitionId);
 

@@ -20,11 +20,11 @@ public final class CodeRange extends Table {
     }
 
     public static int createCodeRange(FlatBufferBuilder builder,
-                                      int fromOffset,
-                                      int toOffset) {
+                                      short from,
+                                      short to) {
         builder.startObject(2);
-        CodeRange.addTo(builder, toOffset);
-        CodeRange.addFrom(builder, fromOffset);
+        CodeRange.addTo(builder, to);
+        CodeRange.addFrom(builder, from);
         return CodeRange.endCodeRange(builder);
     }
 
@@ -32,12 +32,12 @@ public final class CodeRange extends Table {
         builder.startObject(2);
     }
 
-    public static void addFrom(FlatBufferBuilder builder, int fromOffset) {
-        builder.addOffset(0, fromOffset, 0);
+    public static void addFrom(FlatBufferBuilder builder, short from) {
+        builder.addShort(0, from, 0);
     }
 
-    public static void addTo(FlatBufferBuilder builder, int toOffset) {
-        builder.addOffset(1, toOffset, 0);
+    public static void addTo(FlatBufferBuilder builder, short to) {
+        builder.addShort(1, to, 0);
     }
 
     public static int endCodeRange(FlatBufferBuilder builder) {
@@ -55,22 +55,14 @@ public final class CodeRange extends Table {
         return this;
     }
 
-    public String from() {
+    public short from() {
         int o = __offset(4);
-        return o != 0 ? __string(o + bb_pos) : null;
+        return o != 0 ? bb.getShort(o + bb_pos) : 0;
     }
 
-    public ByteBuffer fromAsByteBuffer() {
-        return __vector_as_bytebuffer(4, 1);
-    }
-
-    public String to() {
+    public short to() {
         int o = __offset(6);
-        return o != 0 ? __string(o + bb_pos) : null;
-    }
-
-    public ByteBuffer toAsByteBuffer() {
-        return __vector_as_bytebuffer(6, 1);
+        return o != 0 ? bb.getShort(o + bb_pos) : 0;
     }
 }
 

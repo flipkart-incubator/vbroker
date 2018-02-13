@@ -36,9 +36,9 @@ public class TopicCreateTest {
 
         FlatBufferBuilder builder = new FlatBufferBuilder();
 
-        int topicName = builder.createString("topic3");
+        int topicName = builder.createString("topic201");
 
-        int topic = Topic.createTopic(builder, (short) 1, topicName, true, (short) 1, (short) 3, TopicType.MAIN, TopicCategory.TOPIC);
+        int topic = Topic.createTopic(builder, (short) 201, topicName, true, (short) 1, (short) 3, TopicType.MAIN, TopicCategory.TOPIC);
         int topicCreateRequest = TopicCreateRequest.createTopicCreateRequest(builder, topic);
         int vRequest = VRequest.createVRequest(builder, (byte) 1, 1002, RequestMessage.TopicCreateRequest,
             topicCreateRequest);

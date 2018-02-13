@@ -62,8 +62,8 @@ public class SubscriberDaemon implements Runnable {
                     int[] topicFetchRequests = new int[1];
                     for (int s = 0; s < subscriptions.size(); s++) {
                         Subscription subscription = subscriptions.get(s);
-                        Topic topic = subscription.getTopic();
-                        List<PartSubscription> partSubscriptions = subscription.getPartSubscriptions();
+                        //Topic topic = subscription.getTopic();
+                        List<PartSubscription> partSubscriptions = subscriptionService.getPartSubscriptions(subscription);
 
                         int[] tpFetchRequests = new int[partSubscriptions.size()];
                         for (int ps = 0; ps < partSubscriptions.size(); ps++) {
@@ -76,8 +76,8 @@ public class SubscriberDaemon implements Runnable {
 
                         int partitionRequestsVector = TopicFetchRequest.createPartitionRequestsVector(builder, tpFetchRequests);
                         int topicFetchRequest = TopicFetchRequest.createTopicFetchRequest(builder,
-                            subscription.getId(),
-                            topic.getId(),
+                            subscription.subscriptionId(),
+                            subscription.topicId(),
                             partitionRequestsVector);
                         topicFetchRequests[s] = topicFetchRequest;
                     }
