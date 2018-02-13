@@ -36,12 +36,6 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private final ConcurrentMap<PartSubscription, PartSubscriber> subscriberMap = new ConcurrentHashMap<>();
 
 
-//    @Override
-//	public void createPartSubscription(Subscription subscription, PartSubscription partSubscription) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-
     @Override
     public void createSubscription(Subscription subscription) {
         subscriptionsMap.putIfAbsent(subscription.subscriptionId(), subscription);
@@ -145,9 +139,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public List<PartSubscription> getPartSubscriptions(Subscription subscription) {
-        Topic topic = topicService.getTopic(subscription.topicId());
+        //temporary until this entire method is made async. never to this!
+        Topic topic = topicService.getTopic(subscription.topicId()).toCompletableFuture().join();
         return SubscriptionUtils.getPartSubscriptions(subscription, topic.partitions());
     }
-
-
 }

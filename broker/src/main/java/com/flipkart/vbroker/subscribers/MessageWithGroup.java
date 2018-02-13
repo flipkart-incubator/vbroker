@@ -62,7 +62,7 @@ public class MessageWithGroup {
     public short subscriptionId() {
         return subscriberGroup.getPartSubscription().getSubscriptionId();
     }
-    
+
     public short getTopicId() {
         return subscriberGroup.getTopicPartition().getTopicId();
     }

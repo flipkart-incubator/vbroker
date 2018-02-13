@@ -11,7 +11,6 @@ import com.flipkart.vbroker.handlers.ResponseHandlerFactory;
 import com.flipkart.vbroker.handlers.VBrokerResponseHandler;
 import com.flipkart.vbroker.protocol.codecs.VBrokerClientCodec;
 import com.flipkart.vbroker.services.*;
-import com.flipkart.vbroker.subscribers.DummyEntities;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -72,7 +71,7 @@ public class VBrokerServer implements Runnable {
         SubscriberMetadataService subscriberMetadataService = new SubscriberMetadataService(subscriptionService, topicService, topicPartDataManager);
 
         log.debug("Loading topicMetadata");
-        List<Topic> allTopics = topicService.getAllTopics();
+        List<Topic> allTopics = topicService.getAllTopics().toCompletableFuture().join(); //we want to block here
         for (Topic topic : allTopics) {
             topicMetadataService.fetchTopicMetadata(topic);
         }
@@ -86,8 +85,8 @@ public class VBrokerServer implements Runnable {
         //TODO: now that metadata is created, we need to add actual data to the metadata entries
         //=> populate message groups in topic partitions
 
-       // topicService.createTopic(DummyEntities.topic1);
-       // subscriptionService.createSubscription(DummyEntities.subscription1);
+        // topicService.createTopic(DummyEntities.topic1);
+        // subscriptionService.createSubscription(DummyEntities.subscription1);
 
         ProducerService producerService = new ProducerService(topicPartDataManager);
         RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactory(

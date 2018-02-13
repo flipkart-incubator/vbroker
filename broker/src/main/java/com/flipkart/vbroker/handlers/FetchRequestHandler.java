@@ -9,7 +9,6 @@ import com.flipkart.vbroker.subscribers.MessageWithGroup;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
 import com.google.common.collect.PeekingIterator;
 import com.google.common.primitives.Ints;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.AllArgsConstructor;
@@ -18,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
@@ -31,11 +32,11 @@ public class FetchRequestHandler implements RequestHandler {
     private final ListeningExecutorService listeningExecutorService;
 
     @Override
-    public ListenableFuture<VResponse> handle(VRequest vRequest) {
+    public CompletionStage<VResponse> handle(VRequest vRequest) {
         FetchRequest fetchRequest = (FetchRequest) vRequest.requestMessage(new FetchRequest());
         assert nonNull(fetchRequest);
 
-        return listeningExecutorService.submit(() -> {
+        return CompletableFuture.supplyAsync(() -> {
             FlatBufferBuilder builder = new FlatBufferBuilder();
             int fetchResponse = buildFetchResponse(fetchRequest, builder);
             int vResponse = VResponse.createVResponse(builder,
@@ -54,8 +55,10 @@ public class FetchRequestHandler implements RequestHandler {
 
         for (int i = 0; i < noOfTopics; i++) {
             TopicFetchRequest topicFetchRequest = fetchRequest.topicRequests(i);
-            Topic topic = topicService.getTopic(topicFetchRequest.topicId());
+
+            Topic topic = topicService.getTopic(topicFetchRequest.topicId()).toCompletableFuture().join();
             Subscription subscription = subscriptionService.getSubscription(topicFetchRequest.topicId(), topicFetchRequest.subscriptionId());
+
             int noOfPartitionsInFetchReq = topicFetchRequest.partitionRequestsLength();
             log.info("Handling FetchRequest for topic {} and subscription {} with {} partition requests",
                 topic.topicId(), subscription.subscriptionId(), noOfPartitionsInFetchReq);
@@ -63,7 +66,8 @@ public class FetchRequestHandler implements RequestHandler {
             for (int j = 0; j < noOfPartitionsInFetchReq; j++) {
                 TopicPartitionFetchRequest topicPartitionFetchRequest = topicFetchRequest.partitionRequests(j);
                 short partitionId = topicPartitionFetchRequest.partitionId();
-                TopicPartition topicPartition = topicService.getTopicPartition(topic, partitionId);
+
+                TopicPartition topicPartition = topicService.getTopicPartition(topic, partitionId).toCompletableFuture().join();
                 PartSubscription partSubscription = subscriptionService.getPartSubscription(subscription, topicPartition.getId());
 
                 partitionFetchResponses[j] = buildTopicPartitionFetchResponse(

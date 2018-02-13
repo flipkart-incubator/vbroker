@@ -87,7 +87,8 @@ public class InMemorySubscriptionService implements SubscriptionService {
 
     @Override
     public List<PartSubscription> getPartSubscriptions(Subscription subscription) {
-        Topic topic = topicService.getTopic(subscription.topicId());
+        //never do this - remove this when this method is made async
+        Topic topic = topicService.getTopic(subscription.topicId()).toCompletableFuture().join();
         return SubscriptionUtils.getPartSubscriptions(subscription, topic.partitions());
     }
 }
