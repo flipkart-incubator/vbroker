@@ -4,7 +4,6 @@ import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.services.TopicService;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.AllArgsConstructor;
@@ -12,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 
 import static java.util.Objects.nonNull;
 
@@ -23,7 +24,7 @@ public class TopicCreateRequestHandler implements RequestHandler {
     private final ListeningExecutorService listeningExecutorService;
 
     @Override
-    public ListenableFuture<VResponse> handle(VRequest vRequest) {
+    public CompletionStage<VResponse> handle(VRequest vRequest) {
         TopicCreateRequest topicCreateRequest = (TopicCreateRequest) vRequest.requestMessage(new TopicCreateRequest());
         assert nonNull(topicCreateRequest);
         List<TopicPartition> partitions = new ArrayList<>();
@@ -36,7 +37,7 @@ public class TopicCreateRequestHandler implements RequestHandler {
             .withReplicationFactor(topicCreateRequest.topic().replicationFactor()).withPartitions(partitions)
             .build();
 
-        return listeningExecutorService.submit(() -> {
+        return CompletableFuture.supplyAsync(() -> {
             log.info("Creating topic with id {}, name {}", topic.getId(), topic.getName());
             topicService.createTopic(topic);
 

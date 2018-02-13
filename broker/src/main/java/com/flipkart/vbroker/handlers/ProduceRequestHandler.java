@@ -6,7 +6,6 @@ import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.services.ProducerService;
 import com.flipkart.vbroker.services.TopicService;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.AllArgsConstructor;
@@ -16,6 +15,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 
 import static java.util.Objects.nonNull;
 
@@ -28,10 +29,9 @@ public class ProduceRequestHandler implements RequestHandler {
     private final ListeningExecutorService listeningExecutorService;
 
     @Override
-    public ListenableFuture<VResponse> handle(VRequest vRequest) {
+    public CompletionStage<VResponse> handle(VRequest vRequest) {
         ProduceRequest produceRequest = (ProduceRequest) vRequest.requestMessage(new ProduceRequest());
         assert nonNull(produceRequest);
-
 
         FlatBufferBuilder builder = new FlatBufferBuilder();
         Map<Short, List<Integer>> topicPartitionResponseMap = new HashMap<>();
@@ -54,7 +54,7 @@ public class ProduceRequestHandler implements RequestHandler {
             }
         }
 
-        return listeningExecutorService.submit(() -> {
+        return CompletableFuture.supplyAsync(() -> {
             //below call can block
             producerService.produceMessages(messagesToProduce);
 
