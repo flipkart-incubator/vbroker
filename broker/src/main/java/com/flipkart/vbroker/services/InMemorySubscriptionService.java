@@ -4,10 +4,8 @@ import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.entities.Subscription;
 import com.flipkart.vbroker.entities.Topic;
-import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
 import com.flipkart.vbroker.utils.SubscriptionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -20,13 +18,13 @@ import java.util.concurrent.ConcurrentMap;
 @Slf4j
 public class InMemorySubscriptionService implements SubscriptionService {
 
-	private final TopicService topicService;
+    private final TopicService topicService;
     private final TopicPartDataManager topicPartDataManager;
     private final ConcurrentMap<Short, Subscription> subscriptionsMap = new ConcurrentHashMap<>();
     private final ConcurrentMap<PartSubscription, PartSubscriber> subscriberMap = new ConcurrentHashMap<>();
 
     public InMemorySubscriptionService(TopicService topicService, TopicPartDataManager topicPartDataManager) {
-    	this.topicService = topicService;
+        this.topicService = topicService;
         this.topicPartDataManager = topicPartDataManager;
     }
 
@@ -72,24 +70,24 @@ public class InMemorySubscriptionService implements SubscriptionService {
         return subscriberMap.get(partSubscription);
     }
 
-	@Override
-	public Subscription getSubscription(short topicId, short subscriptionId) {
-		return subscriptionsMap.get(subscriptionId);
-	}
+    @Override
+    public Subscription getSubscription(short topicId, short subscriptionId) {
+        return subscriptionsMap.get(subscriptionId);
+    }
 
-	@Override
-	public List<Subscription> getSubscriptionsForTopic(short topicId) {
-		 return new ArrayList<>(subscriptionsMap.values());
-	}
+    @Override
+    public List<Subscription> getSubscriptionsForTopic(short topicId) {
+        return new ArrayList<>(subscriptionsMap.values());
+    }
 
-	@Override
-	public List<Subscription> getAllSubscriptionsForBroker(String brokerId) {
-		 return new ArrayList<>(subscriptionsMap.values());
-	}
+    @Override
+    public List<Subscription> getAllSubscriptionsForBroker(String brokerId) {
+        return new ArrayList<>(subscriptionsMap.values());
+    }
 
-	@Override
-	public List<PartSubscription> getPartSubscriptions(Subscription subscription) {
-		Topic topic = topicService.getTopic(subscription.topicId());
+    @Override
+    public List<PartSubscription> getPartSubscriptions(Subscription subscription) {
+        Topic topic = topicService.getTopic(subscription.topicId());
         return SubscriptionUtils.getPartSubscriptions(subscription, topic.partitions());
-	}
+    }
 }

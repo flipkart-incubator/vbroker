@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -24,7 +25,7 @@ public class CallbackConfig {
     }
     
     public static CallbackConfig getCallbackConfig(com.flipkart.vbroker.entities.CallbackConfig callbackConfig){
-    	Set<CodeRange> newCodeRanges;
+    	Set<CodeRange> newCodeRanges = new HashSet<>();
     	for (int i = 0; i < callbackConfig.codeRangesLength(); i ++){
     		com.flipkart.vbroker.entities.CodeRange range = callbackConfig.codeRanges(i);
     		newCodeRanges.add(new CodeRange(range.from(), range.to()));

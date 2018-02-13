@@ -43,7 +43,7 @@ public class InMemoryTopicService implements TopicService {
     @Override
     public List<TopicPartition> getPartitions(Topic topic) {
         //return topic.getPartitions();
-    	return TopicUtils.getTopicPartitions(topic.topicId(), topic.partitions());
+        return TopicUtils.getTopicPartitions(topic.topicId(), topic.partitions());
     }
 
     @Override

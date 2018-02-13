@@ -84,7 +84,7 @@ public class BrokerSubscriber implements Runnable {
         List<PartSubscriber> partSubscribers = new ArrayList<>();
         Set<Subscription> allSubscriptions = subscriptionService.getAllSubscriptions();
         for (Subscription subscription : allSubscriptions) {
-            List<PartSubscription> partSubscriptions = subscription.getPartSubscriptions();
+            List<PartSubscription> partSubscriptions = subscriptionService.getPartSubscriptions(subscription);
             for (PartSubscription partSubscription : partSubscriptions) {
                 PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription);
                 partSubscribers.add(partSubscriber);

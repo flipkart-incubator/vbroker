@@ -6,7 +6,6 @@ import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.utils.TopicUtils;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
