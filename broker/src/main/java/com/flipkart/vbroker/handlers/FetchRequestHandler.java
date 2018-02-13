@@ -57,7 +57,7 @@ public class FetchRequestHandler implements RequestHandler {
             TopicFetchRequest topicFetchRequest = fetchRequest.topicRequests(i);
 
             Topic topic = topicService.getTopic(topicFetchRequest.topicId()).toCompletableFuture().join();
-            Subscription subscription = subscriptionService.getSubscription(topicFetchRequest.topicId(), topicFetchRequest.subscriptionId());
+            Subscription subscription = subscriptionService.getSubscription(topicFetchRequest.topicId(), topicFetchRequest.subscriptionId()).toCompletableFuture().join();
 
             int noOfPartitionsInFetchReq = topicFetchRequest.partitionRequestsLength();
             log.info("Handling FetchRequest for topic {} and subscription {} with {} partition requests",
@@ -68,7 +68,7 @@ public class FetchRequestHandler implements RequestHandler {
                 short partitionId = topicPartitionFetchRequest.partitionId();
 
                 TopicPartition topicPartition = topicService.getTopicPartition(topic, partitionId).toCompletableFuture().join();
-                PartSubscription partSubscription = subscriptionService.getPartSubscription(subscription, topicPartition.getId());
+                PartSubscription partSubscription = subscriptionService.getPartSubscription(subscription, topicPartition.getId()).toCompletableFuture().join();
 
                 partitionFetchResponses[j] = buildTopicPartitionFetchResponse(
                     builder,
@@ -118,7 +118,7 @@ public class FetchRequestHandler implements RequestHandler {
     private int[] buildMessages(FlatBufferBuilder builder,
                                 PartSubscription partSubscription,
                                 short noOfMessagesToFetch) {
-        PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription);
+        PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription).toCompletableFuture().join();
         List<Integer> messages = new LinkedList<>();
 
         int i = 0;

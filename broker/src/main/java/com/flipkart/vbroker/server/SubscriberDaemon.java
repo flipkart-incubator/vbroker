@@ -55,7 +55,7 @@ public class SubscriberDaemon implements Runnable {
 
                     FlatBufferBuilder builder = new FlatBufferBuilder();
 
-                    Set<Subscription> subscriptionSet = subscriptionService.getAllSubscriptions();
+                    Set<Subscription> subscriptionSet = subscriptionService.getAllSubscriptions().toCompletableFuture().join();
                     List<Subscription> subscriptions = new ArrayList<>(subscriptionSet);
                     short reqNoOfMessages = 1;
 
@@ -63,7 +63,7 @@ public class SubscriberDaemon implements Runnable {
                     for (int s = 0; s < subscriptions.size(); s++) {
                         Subscription subscription = subscriptions.get(s);
                         //Topic topic = subscription.getTopic();
-                        List<PartSubscription> partSubscriptions = subscriptionService.getPartSubscriptions(subscription);
+                        List<PartSubscription> partSubscriptions = subscriptionService.getPartSubscriptions(subscription).toCompletableFuture().join();
 
                         int[] tpFetchRequests = new int[partSubscriptions.size()];
                         for (int ps = 0; ps < partSubscriptions.size(); ps++) {

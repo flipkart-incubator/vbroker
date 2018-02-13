@@ -79,9 +79,12 @@ public class HttpMessageProcessor implements MessageProcessor {
         int statusCode = response.getStatusCode();
         if (statusCode >= 200 && statusCode < 300) {
             log.info("Response code is {}. Success in making httpRequest. Message processing now complete", statusCode);
-            if (isCallbackRequired(statusCode, messageWithGroup.getMessage(), messageWithGroup.getTopicId(), messageWithGroup.subscriptionId())) {
-                makeCallback(messageWithGroup.getMessage(), response);
-            }
+            CompletionStage<Subscription> subscriptionStage = subscriptionService.getSubscription(messageWithGroup.getTopicId(), messageWithGroup.subscriptionId());
+            subscriptionStage.thenAccept(subscription -> {
+                if (isCallbackRequired(statusCode, messageWithGroup.getMessage(), subscription)) {
+                    makeCallback(messageWithGroup.getMessage(), response);
+                }
+            });
         } else if (statusCode >= 400 && statusCode < 500) {
             log.info("Response is 4xx. Sidelining the message");
             messageWithGroup.sidelineGroup();
@@ -96,12 +99,12 @@ public class HttpMessageProcessor implements MessageProcessor {
      * 1. Callback should be enabled in the config
      * 2. message shouldn't be a bridged message
      *
-     * @param statusCode     after forward http call
-     * @param message        being processed
-     * @param subscriptionId to check callback for
+     * @param statusCode   after forward http call
+     * @param message      being processed
+     * @param subscription to check callback for
      * @return if callback is required for the message
      */
-    private boolean isCallbackRequired(int statusCode, Message message, short topicId, short subscriptionId) {
+    private boolean isCallbackRequired(int statusCode, Message message, Subscription subscription) {
         String callbackCodes = null;
         Optional<String> isBridged = Optional.empty();
         for (int i = 0; i < message.headersLength(); i++) {
@@ -121,12 +124,11 @@ public class HttpMessageProcessor implements MessageProcessor {
             }
         } else {
             try {
-                Subscription subscription = subscriptionService.getSubscription(topicId, subscriptionId);
                 callbackConfig = CallbackConfig.getCallbackConfig(subscription.callbackConfig());
             } catch (SubscriptionNotFoundException e) {
-                log.debug("Unable to find subscription with id {}. Assuming that this message is from a topic. Ignoring callback", subscriptionId);
+                log.debug("Unable to find subscription with id {}. Assuming that this message is from a topic. Ignoring callback", subscription.subscriptionId());
             } catch (Exception ex) {
-                log.error("Unable to get queue configuration for callback for subscription id {}. Ignoring.", subscriptionId, ex);
+                log.error("Unable to get queue configuration for callback for subscription id {}. Ignoring.", subscription, ex);
             }
         }
 

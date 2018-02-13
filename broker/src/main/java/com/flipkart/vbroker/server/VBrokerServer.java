@@ -77,7 +77,7 @@ public class VBrokerServer implements Runnable {
         }
 
         log.debug("Loading subscriptionMetadata");
-        Set<Subscription> allSubscriptions = subscriptionService.getAllSubscriptions();
+        Set<Subscription> allSubscriptions = subscriptionService.getAllSubscriptions().toCompletableFuture().join();
         for (Subscription subscription : allSubscriptions) {
             subscriberMetadataService.loadSubscriptionMetadata(subscription);
         }
