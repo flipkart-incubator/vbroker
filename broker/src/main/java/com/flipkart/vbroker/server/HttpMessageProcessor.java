@@ -22,6 +22,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 
 import static java.util.Objects.nonNull;
@@ -145,9 +146,11 @@ public class HttpMessageProcessor implements MessageProcessor {
             log.info("Callback is enabled for this message {}", message.messageId());
             Message callbackMsg = MessageUtils.getCallbackMsg(message, response);
             try {
-                Topic topic = topicService.getTopic(callbackMsg.topicId());
-                log.info("Producing callback for message to {} queue", topic.getName());
-                producerService.produceMessage(topic, callbackMsg);
+                CompletionStage<Topic> topicStage = topicService.getTopic(callbackMsg.topicId());
+                topicStage.thenAcceptAsync(topic -> {
+                    log.info("Producing callback for message to {} queue", topic.getName());
+                    producerService.produceMessage(topic, callbackMsg);
+                });
             } catch (TopicNotFoundException ex) {
                 log.error("Topic with id {} not found to produce callback message. Dropping it");
             }
