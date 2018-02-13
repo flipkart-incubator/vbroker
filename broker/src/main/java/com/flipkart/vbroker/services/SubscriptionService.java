@@ -16,9 +16,9 @@ public interface SubscriptionService {
     public Subscription getSubscription(short topicId, short subscriptionId);
 
     public Set<Subscription> getAllSubscriptions();
-    
+
     public List<Subscription> getSubscriptionsForTopic(short topicId);
-    
+
     public List<Subscription> getAllSubscriptionsForBroker(String brokerId);
 
     public PartSubscription getPartSubscription(Subscription subscription, short partSubscriptionId);

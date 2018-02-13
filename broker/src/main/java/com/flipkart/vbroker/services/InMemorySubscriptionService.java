@@ -66,18 +66,18 @@ public class InMemorySubscriptionService implements SubscriptionService {
         return subscriberMap.get(partSubscription);
     }
 
-	@Override
-	public Subscription getSubscription(short topicId, short subscriptionId) {
-		return subscriptionsMap.get(subscriptionId);
-	}
+    @Override
+    public Subscription getSubscription(short topicId, short subscriptionId) {
+        return subscriptionsMap.get(subscriptionId);
+    }
 
-	@Override
-	public List<Subscription> getSubscriptionsForTopic(short topicId) {
-		 return new ArrayList<>(subscriptionsMap.values());
-	}
+    @Override
+    public List<Subscription> getSubscriptionsForTopic(short topicId) {
+        return new ArrayList<>(subscriptionsMap.values());
+    }
 
-	@Override
-	public List<Subscription> getAllSubscriptionsForBroker(String brokerId) {
-		 return new ArrayList<>(subscriptionsMap.values());
-	}
+    @Override
+    public List<Subscription> getAllSubscriptionsForBroker(String brokerId) {
+        return new ArrayList<>(subscriptionsMap.values());
+    }
 }
