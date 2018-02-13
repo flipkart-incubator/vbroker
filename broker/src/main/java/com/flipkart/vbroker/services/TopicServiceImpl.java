@@ -3,10 +3,12 @@ package com.flipkart.vbroker.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.vbroker.VBrokerConfig;
-import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.core.TopicPartition;
+import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.utils.JsonUtils;
+import com.flipkart.vbroker.utils.TopicUtils;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.CreateMode;
@@ -31,9 +33,9 @@ public class TopicServiceImpl implements TopicService {
     @Override
     public synchronized void createTopic(Topic topic) {
 
-        topicsMap.putIfAbsent(topic.getId(), topic);
+        topicsMap.putIfAbsent(topic.topicId(), topic);
         try {
-            curatorService.createNodeAndSetData(config.getTopicsPath() + "/" + topic.getId(), CreateMode.PERSISTENT,
+            curatorService.createNodeAndSetData(config.getTopicsPath() + "/" + topic.topicId(), CreateMode.PERSISTENT,
                 topic.toJson().getBytes()).handle((data, exception) -> {
                 if (exception != null) {
                     log.error("Failure in creating topic!");
@@ -41,23 +43,24 @@ public class TopicServiceImpl implements TopicService {
                 return null;
             });
         } catch (JsonProcessingException je) {
-            throw new VBrokerException("Json serialization failed for topic with id " + topic.getId());
+            throw new VBrokerException("Json serialization failed for topic with id " + topic.topicId());
         }
     }
 
-    @Override
-    public synchronized void createTopicPartition(Topic topic, TopicPartition topicPartition) {
-        topic.addPartition(topicPartition);
-        topicsMap.putIfAbsent(topic.getId(), topic);
-    }
+//    @Override
+//    public synchronized void createTopicPartition(Topic topic, TopicPartition topicPartition) {
+//        topic.addPartition(topicPartition);
+//        topicsMap.putIfAbsent(topic.topicId(), topic);
+//    }
 
     @Override
     public TopicPartition getTopicPartition(Topic topic, short topicPartitionId) {
-        if (!topicsMap.containsKey(topic.getId())) {
-            throw new VBrokerException("Not found topic with id: " + topic.getId());
+        if (!topicsMap.containsKey(topic.topicId())) {
+            throw new VBrokerException("Not found topic with id: " + topic.topicId());
         }
-        Topic existingTopic = topicsMap.get(topic.getId());
-        return existingTopic.getPartition(topicPartitionId);
+        Topic existingTopic = topicsMap.get(topic.topicId());
+        //return existingTopic.getPartition(topicPartitionId);
+        return TopicUtils.getTopicPartitions(existingTopic.topicId(), existingTopic.partitions()).get(topicPartitionId);
     }
 
     @Override
@@ -81,7 +84,8 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public List<TopicPartition> getPartitions(Topic topic) {
-        return topic.getPartitions();
+        //return topic.getPartitions();
+    	return TopicUtils.getTopicPartitions(topic.topicId(), topic.partitions());
     }
 
     @Override

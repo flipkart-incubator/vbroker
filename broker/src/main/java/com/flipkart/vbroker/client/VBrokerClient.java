@@ -1,12 +1,12 @@
 package com.flipkart.vbroker.client;
 
 import com.flipkart.vbroker.VBrokerConfig;
-import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.handlers.ResponseHandlerFactory;
 import com.flipkart.vbroker.protocol.Request;
 import com.flipkart.vbroker.subscribers.DummyEntities;
+import com.flipkart.vbroker.utils.TopicUtils;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -19,8 +19,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Slf4j
 public class VBrokerClient {
@@ -49,7 +51,7 @@ public class VBrokerClient {
             int[] topicRequests = new int[topics.size()];
             for (int tIdx = 0; tIdx < topics.size(); tIdx++) {
                 Topic topic = topics.get(tIdx);
-                List<TopicPartition> partitions = topic.getPartitions();
+                List<TopicPartition> partitions = TopicUtils.getTopicPartitions(topic.topicId(), topic.partitions());
                 int[] partitionRequests = new int[partitions.size()];
 
                 for (int i = 0; i < partitions.size(); i++) {
@@ -72,7 +74,7 @@ public class VBrokerClient {
                 }
 
                 int partitionRequestsVector = TopicProduceRequest.createPartitionRequestsVector(builder, partitionRequests);
-                int topicProduceRequest = TopicProduceRequest.createTopicProduceRequest(builder, topic.getId(), partitionRequestsVector);
+                int topicProduceRequest = TopicProduceRequest.createTopicProduceRequest(builder, topic.topicId(), partitionRequestsVector);
                 topicRequests[tIdx] = topicProduceRequest;
             }
 

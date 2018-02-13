@@ -1,12 +1,12 @@
 package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.core.CallbackConfig;
-import com.flipkart.vbroker.core.Subscription;
-import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.entities.HttpHeader;
 import com.flipkart.vbroker.entities.HttpMethod;
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.entities.MessageConstants;
+import com.flipkart.vbroker.entities.Subscription;
+import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.exceptions.SubscriptionNotFoundException;
 import com.flipkart.vbroker.exceptions.TopicNotFoundException;
 import com.flipkart.vbroker.services.ProducerService;
@@ -126,7 +126,7 @@ public class HttpMessageProcessor implements MessageProcessor {
         } else {
             try {
                 Subscription subscription = subscriptionService.getSubscription(topicId, subscriptionId);
-                callbackConfig = subscription.getCallbackConfig();
+                callbackConfig = CallbackConfig.getCallbackConfig(subscription.callbackConfig());
             } catch (SubscriptionNotFoundException e) {
                 log.debug("Unable to find subscription with id {}. Assuming that this message is from a topic. Ignoring callback", subscriptionId);
             } catch (Exception ex) {
@@ -146,7 +146,7 @@ public class HttpMessageProcessor implements MessageProcessor {
             Message callbackMsg = MessageUtils.getCallbackMsg(message, response);
             try {
                 Topic topic = topicService.getTopic(callbackMsg.topicId());
-                log.info("Producing callback for message to {} queue", topic.getName());
+                log.info("Producing callback for message to {} queue", topic.topicName());
                 producerService.produceMessage(topic, callbackMsg);
             } catch (TopicNotFoundException ex) {
                 log.error("Topic with id {} not found to produce callback message. Dropping it");

@@ -15,11 +15,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.PartSubscription;
-import com.flipkart.vbroker.core.Subscription;
 import com.flipkart.vbroker.data.TopicPartDataManager;
+import com.flipkart.vbroker.entities.Subscription;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
 import com.flipkart.vbroker.utils.JsonUtils;
+import com.flipkart.vbroker.utils.SubscriptionUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,21 +37,19 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private final ConcurrentMap<Short, Subscription> subscriptionsMap = new ConcurrentHashMap<>();
     private final ConcurrentMap<PartSubscription, PartSubscriber> subscriberMap = new ConcurrentHashMap<>();
 
-    @Override
-    public void createPartSubscription(Subscription subscription, PartSubscription partSubscription) {
-        if (subscriptionsMap.containsKey(subscription.getId())) {
-            subscriptionsMap.get(subscription.getId()).addPartSubscription(partSubscription);
-        } else {
-            throw new VBrokerException("Subscription " + subscription + " not present to add partSubscription: " + subscription);
-        }
-    }
+
+//    @Override
+//	public void createPartSubscription(Subscription subscription, PartSubscription partSubscription) {
+//		// TODO Auto-generated method stub
+//		
+//	}
 
     @Override
     public void createSubscription(Subscription subscription) {
-        subscriptionsMap.putIfAbsent(subscription.getId(), subscription);
-        String path = config.getTopicsPath() + "/" + subscription.getTopic().getId() + "/subscriptions/" + subscription.getId();
+        subscriptionsMap.putIfAbsent(subscription.subscriptionId(), subscription);
+        String path = config.getTopicsPath() + "/" + subscription.topicId() + "/subscriptions/" + subscription.subscriptionId();
         try {
-            curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT, subscription.toJson().getBytes());
+            curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT, subscription.getByteBuffer()..toJson().getBytes());
         } catch (JsonProcessingException e) {
             log.error("Error while parsing json to save subscription.");
             e.printStackTrace();
@@ -64,9 +63,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public PartSubscription getPartSubscription(Subscription subscription, short partSubscriptionId) {
-        if (subscriptionsMap.containsKey(subscription.getId())) {
-            Subscription existingSub = subscriptionsMap.get(subscription.getId());
-            return existingSub.getPartSubscription(partSubscriptionId);
+        if (subscriptionsMap.containsKey(subscription.subscriptionId())) {
+            Subscription existingSub = subscriptionsMap.get(subscription.subscriptionId());
+            //return existingSub.getPartSubscription(partSubscriptionId);
+            return SubscriptionUtils.getPartSubscription(existingSub, partSubscriptionId);
         }
         return null;
     }
@@ -145,6 +145,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 			e.printStackTrace();
 		}
 		return subscriptions;
+	}
+
+	@Override
+	public List<PartSubscription> getPartSubscriptions(Subscription subscription) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

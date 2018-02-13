@@ -1,6 +1,6 @@
 package com.flipkart.vbroker.curator;
 
-import com.flipkart.vbroker.core.Topic;
+import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.services.CuratorService;
 import com.flipkart.vbroker.services.TopicService;
 import com.flipkart.vbroker.services.TopicServiceImpl;
@@ -13,6 +13,6 @@ public class GetTopicTest {
         CuratorService curatorService = new CuratorService(null);
         TopicService topicService = new TopicServiceImpl(null, curatorService);
         Topic topic = topicService.getTopic((short) 1);
-        System.out.println(topic.toJson());
+        System.out.println(topic.topicId());
     }
 }

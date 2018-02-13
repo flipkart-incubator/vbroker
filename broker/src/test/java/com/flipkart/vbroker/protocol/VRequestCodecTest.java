@@ -1,10 +1,10 @@
 package com.flipkart.vbroker.protocol;
 
 import com.flipkart.vbroker.client.MessageStore;
-import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.subscribers.DummyEntities;
+import com.flipkart.vbroker.utils.TopicUtils;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -36,7 +36,7 @@ public class VRequestCodecTest {
         int[] topicRequests = new int[topics.size()];
         for (int tIdx = 0; tIdx < topics.size(); tIdx++) {
             Topic topic = topics.get(tIdx);
-            List<TopicPartition> partitions = topic.getPartitions();
+            List<TopicPartition> partitions = TopicUtils.getTopicPartitions(topic.topicId(),topic.partitions());
             int[] partitionRequests = new int[partitions.size()];
 
             for (int i = 0; i < partitions.size(); i++) {
@@ -59,7 +59,7 @@ public class VRequestCodecTest {
             }
 
             int partitionRequestsVector = TopicProduceRequest.createPartitionRequestsVector(builder, partitionRequests);
-            int topicProduceRequest = TopicProduceRequest.createTopicProduceRequest(builder, topic.getId(), partitionRequestsVector);
+            int topicProduceRequest = TopicProduceRequest.createTopicProduceRequest(builder, topic.topicId(), partitionRequestsVector);
             topicRequests[tIdx] = topicProduceRequest;
         }
 

@@ -2,7 +2,7 @@ package com.flipkart.vbroker.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.vbroker.VBrokerConfig;
-import com.flipkart.vbroker.core.Queue;
+import com.flipkart.vbroker.entities.Queue;
 import com.flipkart.vbroker.utils.JsonUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

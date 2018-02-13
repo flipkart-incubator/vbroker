@@ -110,8 +110,8 @@ table FilterKeyValues {
 }
 
 table CodeRange {
-	  from:string;
-	  to:string;
+	  from:int16;
+	  to:int16;
 }
 
 table CallbackConfig {

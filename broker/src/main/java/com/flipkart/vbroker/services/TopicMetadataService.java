@@ -3,9 +3,9 @@ package com.flipkart.vbroker.services;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.vbroker.core.MessageGroup;
-import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.TopicPartDataManager;
+import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.utils.JsonUtils;
 
 import java.io.BufferedWriter;
@@ -34,14 +34,14 @@ public class TopicMetadataService {
 
     public void saveTopicMetadata(Topic topic) throws IOException {
         Map<String, List<String>> partitionToGroupIdsMap = new HashMap<>();
-        for (TopicPartition partition : topic.getPartitions()) {
+        for (TopicPartition partition : topicService.getPartitions(topic)) {
             List<String> groups = new ArrayList<>(topicPartDataManager.getUniqueGroups(partition));
             partitionToGroupIdsMap.put(String.valueOf(partition.getId()), groups);
         }
 
         File dir = new File("metadata");
         dir.mkdirs();
-        File tmp = new File(dir, String.valueOf(topic.getId()).concat(".json"));
+        File tmp = new File(dir, String.valueOf(topic.topicId()).concat(".json"));
         tmp.createNewFile();
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(tmp));
         bufferedWriter.write(MAPPER.writeValueAsString(partitionToGroupIdsMap));
@@ -59,13 +59,13 @@ public class TopicMetadataService {
 
     public void fetchTopicMetadata(Topic topic) throws IOException {
         File dir = new File("metadata");
-        File tmp = new File(dir, String.valueOf(topic.getId()).concat(".json"));
+        File tmp = new File(dir, String.valueOf(topic.topicId()).concat(".json"));
         TypeReference<HashMap<String, List<String>>> typeRef
             = new TypeReference<HashMap<String, List<String>>>() {
         };
 
         Map<String, List<String>> partitionToGroupIdsMap = MAPPER.readValue(tmp, typeRef);
-        for (TopicPartition partition : topic.getPartitions()) {
+        for (TopicPartition partition : topicService.getPartitions(topic)) {
             List<String> groupIds = partitionToGroupIdsMap.get(String.valueOf(partition.getId()));
             for (String groupId : groupIds) {
                 MessageGroup messageGroup = new MessageGroup(groupId, partition);

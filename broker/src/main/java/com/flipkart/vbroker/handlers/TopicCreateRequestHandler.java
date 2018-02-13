@@ -1,6 +1,5 @@
 package com.flipkart.vbroker.handlers;
 
-import com.flipkart.vbroker.core.Topic;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.services.TopicService;
@@ -26,23 +25,14 @@ public class TopicCreateRequestHandler implements RequestHandler {
     public ListenableFuture<VResponse> handle(VRequest vRequest) {
         TopicCreateRequest topicCreateRequest = (TopicCreateRequest) vRequest.requestMessage(new TopicCreateRequest());
         assert nonNull(topicCreateRequest);
-        List<TopicPartition> partitions = new ArrayList<>();
-        for (int i = 0; i < topicCreateRequest.topic().partitions(); i++) {
-            partitions.add(new TopicPartition((short) i, topicCreateRequest.topic().topicId()));
-        }
-        Topic topic = Topic.TopicBuilder.aTopic().withGrouped(topicCreateRequest.topic().grouped())
-            .withId(topicCreateRequest.topic().topicId()).withName(topicCreateRequest.topic().topicName())
-            .withNoOfPartitions(topicCreateRequest.topic().partitions())
-            .withReplicationFactor(topicCreateRequest.topic().replicationFactor()).withPartitions(partitions)
-            .build();
 
         return listeningExecutorService.submit(() -> {
-            log.info("Creating topic with id {}, name {}", topic.getId(), topic.getName());
-            topicService.createTopic(topic);
+            log.info("Creating topic with id {}, name {}", topicCreateRequest.topic().topicId(), topicCreateRequest.topic().topicName());
+            topicService.createTopic(topicCreateRequest.topic());
 
             FlatBufferBuilder topicResponseBuilder = new FlatBufferBuilder();
             int status = VStatus.createVStatus(topicResponseBuilder, StatusCode.Success, topicResponseBuilder.createString(""));
-            int topicCreateResponse = TopicCreateResponse.createTopicCreateResponse(topicResponseBuilder, topic.getId(),
+            int topicCreateResponse = TopicCreateResponse.createTopicCreateResponse(topicResponseBuilder, topicCreateRequest.topic().topicId(),
                 status);
             int topicVResponse = VResponse.createVResponse(topicResponseBuilder, 1002, RequestMessage.TopicCreateRequest,
                 topicCreateResponse);
