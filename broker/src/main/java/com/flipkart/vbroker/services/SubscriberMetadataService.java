@@ -25,7 +25,7 @@ public class SubscriberMetadataService {
     private final TopicPartDataManager topicPartDataManager;
 
     public void saveSubscriptionMetadata(Subscription subscription) throws IOException {
-        Topic topic = topicService.getTopic(subscription.topicId());
+        Topic topic = topicService.getTopic(subscription.topicId()).toCompletableFuture().join();
         //Save each group's file as : metadata/{topicID}/subs/{subID}/{partitionID}/{groupID}.txt
         for (PartSubscription partSubscription : SubscriptionUtils.getPartSubscriptions(subscription, topic.partitions())) {
             PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription);
@@ -44,7 +44,7 @@ public class SubscriberMetadataService {
     }
 
     public void loadSubscriptionMetadata(Subscription subscription) {
-        Topic topic = topicService.getTopic(subscription.topicId());
+        Topic topic = topicService.getTopic(subscription.topicId()).toCompletableFuture().join();
         for (PartSubscription partSubscription : SubscriptionUtils.getPartSubscriptions(subscription, topic.partitions())) {
             PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription);
             TopicPartition partition = partSubscription.getTopicPartition();

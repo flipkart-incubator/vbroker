@@ -15,6 +15,7 @@ public final class StatusCode {
     public static final short SubscriptionCreateFailed_NoTopic = 451;
     public static final short SubscriptionCreateFailed_AlreadyExists = 452;
     public static final short SubscriptionCreateFailed_Validation = 453;
+
     private StatusCode() {
     }
 }
