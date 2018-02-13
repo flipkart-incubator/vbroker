@@ -28,7 +28,7 @@ public class SubscriberMetadataService {
         Topic topic = topicService.getTopic(subscription.topicId()).toCompletableFuture().join();
         //Save each group's file as : metadata/{topicID}/subs/{subID}/{partitionID}/{groupID}.txt
         for (PartSubscription partSubscription : SubscriptionUtils.getPartSubscriptions(subscription, topic.partitions())) {
-            PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription);
+            PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription).toCompletableFuture().join();
             File dir = new File(getPartSubscriberPath(partSubscriber));
             dir.mkdirs();
             for (SubscriberGroup subscriberGroup : partSubscriber.getSubscriberGroupsMap().values()) {
@@ -46,7 +46,7 @@ public class SubscriberMetadataService {
     public void loadSubscriptionMetadata(Subscription subscription) {
         Topic topic = topicService.getTopic(subscription.topicId()).toCompletableFuture().join();
         for (PartSubscription partSubscription : SubscriptionUtils.getPartSubscriptions(subscription, topic.partitions())) {
-            PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription);
+            PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription).toCompletableFuture().join();
             TopicPartition partition = partSubscription.getTopicPartition();
             File dir = new File(getPartSubscriberPath(partSubscriber));
             for (String groupId : topicPartDataManager.getUniqueGroups(partition)) {
@@ -69,10 +69,9 @@ public class SubscriberMetadataService {
     }
 
     public void saveAllSubscribers() throws IOException {
-        for (Subscription subscription : subscriptionService.getAllSubscriptions()) {
+        for (Subscription subscription : subscriptionService.getAllSubscriptions().toCompletableFuture().join()) {
             saveSubscriptionMetadata(subscription);
         }
-
     }
 
     private String getPartSubscriberPath(PartSubscriber partSubscriber) {

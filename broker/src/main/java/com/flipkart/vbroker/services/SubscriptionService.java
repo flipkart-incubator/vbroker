@@ -6,24 +6,23 @@ import com.flipkart.vbroker.subscribers.PartSubscriber;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletionStage;
 
 public interface SubscriptionService {
 
-    //public void createPartSubscription(Subscription subscription, PartSubscription partSubscription);
+    public CompletionStage<Subscription> createSubscription(Subscription subscription);
 
-    public void createSubscription(Subscription subscription);
+    public CompletionStage<Subscription> getSubscription(short topicId, short subscriptionId);
 
-    public Subscription getSubscription(short topicId, short subscriptionId);
+    public CompletionStage<Set<Subscription>> getAllSubscriptions();
 
-    public Set<Subscription> getAllSubscriptions();
+    public CompletionStage<List<Subscription>> getSubscriptionsForTopic(short topicId);
 
-    public List<Subscription> getSubscriptionsForTopic(short topicId);
+    public CompletionStage<List<Subscription>> getAllSubscriptionsForBroker(String brokerId);
 
-    public List<Subscription> getAllSubscriptionsForBroker(String brokerId);
+    public CompletionStage<PartSubscription> getPartSubscription(Subscription subscription, short partSubscriptionId);
 
-    public PartSubscription getPartSubscription(Subscription subscription, short partSubscriptionId);
+    public CompletionStage<PartSubscriber> getPartSubscriber(PartSubscription subscription);
 
-    public PartSubscriber getPartSubscriber(PartSubscription subscription);
-
-    public List<PartSubscription> getPartSubscriptions(Subscription subscription);
+    public CompletionStage<List<PartSubscription>> getPartSubscriptions(Subscription subscription);
 }

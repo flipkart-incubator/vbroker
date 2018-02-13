@@ -1,6 +1,5 @@
 package com.flipkart.vbroker.controller;
 
-import com.flipkart.vbroker.entities.Subscription;
 import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.services.CuratorService;
 import com.flipkart.vbroker.services.SubscriptionService;
@@ -32,11 +31,12 @@ public class DummyAllocationStrategy implements AllocationStrategy {
         CompletionStage<List<Topic>> topicStage = topicService.getAllTopics();
         topicStage.thenAcceptAsync(topics -> {
             topics.forEach(topic -> {
-                List<Subscription> subscriptions = subscriptionService.getSubscriptionsForTopic(topic.topicId());
-                for (Subscription sub : subscriptions) {
-                    String nodePath = path + topic.topicId() + "-" + sub.subscriptionId();
-                    curatorService.createNodeAndSetData(nodePath, CreateMode.PERSISTENT, "".getBytes());
-                }
+                subscriptionService.getSubscriptionsForTopic(topic.topicId()).thenAcceptAsync(subscriptions -> {
+                    subscriptions.forEach(subscription -> {
+                        String nodePath = path + topic.topicId() + "-" + subscription.subscriptionId();
+                        curatorService.createNodeAndSetData(nodePath, CreateMode.PERSISTENT, "".getBytes());
+                    });
+                });
             });
         });
     }
