@@ -39,9 +39,9 @@ public class SubscriptionCreateRequestHandler implements RequestHandler {
             int status = VStatus.createVStatus(subscriptionResponseBuilder, StatusCode.Success, subscriptionResponseBuilder.createString(""));
             int subscriptionCreateResponse = SubscriptionCreateResponse
                 .createSubscriptionCreateResponse(subscriptionResponseBuilder, subscription.getId(), status);
-            int vresponse = VResponse.createVResponse(subscriptionResponseBuilder, 1003,
+            int vResponse = VResponse.createVResponse(subscriptionResponseBuilder, 1003,
                 ResponseMessage.SubscriptionCreateResponse, subscriptionCreateResponse);
-            subscriptionResponseBuilder.finish(vresponse);
+            subscriptionResponseBuilder.finish(vResponse);
             return VResponse.getRootAsVResponse(subscriptionResponseBuilder.dataBuffer());
         });
     }

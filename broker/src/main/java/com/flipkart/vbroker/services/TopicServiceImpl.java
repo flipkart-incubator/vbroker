@@ -12,11 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.CreateMode;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @AllArgsConstructor
@@ -29,20 +27,22 @@ public class TopicServiceImpl implements TopicService {
     private final ConcurrentMap<Short, Topic> topicsMap = new ConcurrentHashMap<>();
 
     @Override
-    public synchronized void createTopic(Topic topic) {
-
-        topicsMap.putIfAbsent(topic.getId(), topic);
-        try {
-            curatorService.createNodeAndSetData(config.getTopicsPath() + "/" + topic.getId(), CreateMode.PERSISTENT,
-                topic.toJson().getBytes()).handle((data, exception) -> {
-                if (exception != null) {
-                    log.error("Failure in creating topic!");
-                }
-                return null;
-            });
-        } catch (JsonProcessingException je) {
-            throw new VBrokerException("Json serialization failed for topic with id " + topic.getId());
-        }
+    public synchronized CompletionStage<Topic> createTopic(Topic topic) {
+        return CompletableFuture.supplyAsync(() -> {
+            topicsMap.putIfAbsent(topic.getId(), topic);
+            try {
+                curatorService.createNodeAndSetData(config.getTopicsPath() + "/" + topic.getId(), CreateMode.PERSISTENT,
+                    topic.toJson().getBytes()).handle((data, exception) -> {
+                    if (exception != null) {
+                        log.error("Failure in creating topic!");
+                    }
+                    return null;
+                });
+            } catch (JsonProcessingException je) {
+                throw new VBrokerException("Json serialization failed for topic with id " + topic.getId());
+            }
+            return topic;
+        });
     }
 
     @Override
@@ -52,18 +52,28 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public TopicPartition getTopicPartition(Topic topic, short topicPartitionId) {
-        if (!topicsMap.containsKey(topic.getId())) {
-            throw new VBrokerException("Not found topic with id: " + topic.getId());
-        }
-        Topic existingTopic = topicsMap.get(topic.getId());
-        return existingTopic.getPartition(topicPartitionId);
+    public CompletionStage<TopicPartition> getTopicPartition(Topic topic, short topicPartitionId) {
+        return CompletableFuture.supplyAsync(() -> {
+            if (!topicsMap.containsKey(topic.getId())) {
+                throw new VBrokerException("Not found topic with id: " + topic.getId());
+            }
+            Topic existingTopic = topicsMap.get(topic.getId());
+            return existingTopic.getPartition(topicPartitionId);
+        });
     }
 
     @Override
-    public Topic getTopic(short topicId) {
+    public CompletionStage<Topic> getTopic(short topicId) {
+        // return topicsMap.get(topicId);
+        return CompletableFuture.supplyAsync(() -> {
+            return getTopicByBlocking(topicId);
+        });
+    }
+
+    private Topic getTopicByBlocking(short topicId) {
         try {
             return curatorService.getData(config.getTopicsPath() + "/" + topicId).handle((data, exception) -> {
+
                 try {
                     return MAPPER.readValue(data, Topic.class);
                 } catch (IOException e) {
@@ -75,8 +85,8 @@ public class TopicServiceImpl implements TopicService {
         } catch (InterruptedException | ExecutionException e) {
             log.error("Error while fetching topic from co-ordinator.");
             e.printStackTrace();
-            return null;
         }
+        return null;
     }
 
     @Override
@@ -85,21 +95,10 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-	public List<Topic> getAllTopics() {
-		List<Topic> topics = new ArrayList<>();
-		List<String> topicIds;
-		try {
-			topicIds = curatorService.getChildren(config.getTopicsPath()).handle((data, exception) -> {
-				return data;
-			}).toCompletableFuture().get();
-			for (String id : topicIds) {
-				topics.add(this.getTopic(Short.valueOf(id)));
-			}
-
-		} catch (InterruptedException | ExecutionException e) {
-			log.error("Error while fetching all topics");
-			e.printStackTrace();
-		}
-		return topics;
-	}
+    public CompletionStage<List<Topic>> getAllTopics() {
+        return curatorService.getChildren(config.getTopicsPath()).handle((data, exception) -> data)
+            .thenComposeAsync(strings -> CompletableFuture.supplyAsync(() -> strings.stream()
+                .map(id -> getTopicByBlocking(Short.valueOf(id)))
+                .collect(Collectors.toList())));
+    }
 }

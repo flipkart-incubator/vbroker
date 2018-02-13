@@ -57,8 +57,10 @@ public class FetchRequestHandler implements RequestHandler {
 
         for (int i = 0; i < noOfTopics; i++) {
             TopicFetchRequest topicFetchRequest = fetchRequest.topicRequests(i);
-            Topic topic = topicService.getTopic(topicFetchRequest.topicId());
+
+            Topic topic = topicService.getTopic(topicFetchRequest.topicId()).toCompletableFuture().join();
             Subscription subscription = subscriptionService.getSubscription(topicFetchRequest.topicId(), topicFetchRequest.subscriptionId());
+
             int noOfPartitionsInFetchReq = topicFetchRequest.partitionRequestsLength();
             log.info("Handling FetchRequest for topic {} and subscription {} with {} partition requests",
                 topic.getId(), subscription.getId(), noOfPartitionsInFetchReq);
@@ -66,7 +68,7 @@ public class FetchRequestHandler implements RequestHandler {
             for (int j = 0; j < noOfPartitionsInFetchReq; j++) {
                 TopicPartitionFetchRequest topicPartitionFetchRequest = topicFetchRequest.partitionRequests(j);
                 short partitionId = topicPartitionFetchRequest.partitionId();
-                TopicPartition topicPartition = topicService.getTopicPartition(topic, partitionId);
+                TopicPartition topicPartition = topicService.getTopicPartition(topic, partitionId).toCompletableFuture().join();
                 PartSubscription partSubscription = subscription.getPartSubscription(topicPartition.getId());
 
                 partitionFetchResponses[j] = buildTopicPartitionFetchResponse(

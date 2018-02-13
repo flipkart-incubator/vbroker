@@ -12,7 +12,7 @@ public class GetTopicTest {
     public void getTopicTest() throws Exception {
         CuratorService curatorService = new CuratorService(null);
         TopicService topicService = new TopicServiceImpl(null, curatorService);
-        Topic topic = topicService.getTopic((short) 1);
+        Topic topic = topicService.getTopic((short) 1).toCompletableFuture().join();
         System.out.println(topic.toJson());
     }
 }
