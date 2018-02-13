@@ -36,7 +36,7 @@ public class TopicServiceImpl implements TopicService {
                     if (exception != null) {
                         log.error("Failure in creating topic!");
                     }
-                    return null;
+                    return getTopic(topic.getId());
                 });
             } catch (JsonProcessingException je) {
                 throw new VBrokerException("Json serialization failed for topic with id " + topic.getId());
@@ -64,16 +64,12 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public CompletionStage<Topic> getTopic(short topicId) {
-        // return topicsMap.get(topicId);
-        return CompletableFuture.supplyAsync(() -> {
-            return getTopicByBlocking(topicId);
-        });
+        return CompletableFuture.supplyAsync(() -> getTopicByBlocking(topicId));
     }
 
     private Topic getTopicByBlocking(short topicId) {
         try {
             return curatorService.getData(config.getTopicsPath() + "/" + topicId).handle((data, exception) -> {
-
                 try {
                     return MAPPER.readValue(data, Topic.class);
                 } catch (IOException e) {
@@ -83,7 +79,7 @@ public class TopicServiceImpl implements TopicService {
                 return null;
             }).toCompletableFuture().get();
         } catch (InterruptedException | ExecutionException e) {
-            log.error("Error while fetching topic from co-ordinator.");
+            log.error("Error while fetching topic from coordinator.");
             e.printStackTrace();
         }
         return null;
