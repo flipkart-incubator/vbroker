@@ -17,6 +17,7 @@ import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.entities.Subscription;
+import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
 import com.flipkart.vbroker.utils.JsonUtils;
@@ -29,10 +30,11 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class SubscriptionServiceImpl implements SubscriptionService {
 
-	 private static final ObjectMapper MAPPER = JsonUtils.getObjectMapper();
+	private static final ObjectMapper MAPPER = JsonUtils.getObjectMapper();
     private final VBrokerConfig config;
     private final CuratorService curatorService;
     private final TopicPartDataManager topicPartDataManager;
+    private final TopicService topicService;
 
     private final ConcurrentMap<Short, Subscription> subscriptionsMap = new ConcurrentHashMap<>();
     private final ConcurrentMap<PartSubscription, PartSubscriber> subscriberMap = new ConcurrentHashMap<>();
@@ -149,8 +151,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
 	@Override
 	public List<PartSubscription> getPartSubscriptions(Subscription subscription) {
-		// TODO Auto-generated method stub
-		return null;
+		Topic topic = topicService.getTopic(subscription.topicId());
+		return SubscriptionUtils.getPartSubscriptions(subscription, topic.partitions());
 	}
 
 
