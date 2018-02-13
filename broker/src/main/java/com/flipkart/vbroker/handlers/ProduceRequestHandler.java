@@ -37,24 +37,26 @@ public class ProduceRequestHandler implements RequestHandler {
         Map<Short, List<Integer>> topicPartitionResponseMap = new HashMap<>();
         List<TopicPartMessage> messagesToProduce = new LinkedList<>();
 
-        for (int i = 0; i < produceRequest.topicRequestsLength(); i++) {
-            TopicProduceRequest topicProduceRequest = produceRequest.topicRequests(i);
-            Topic topic = topicService.getTopic(topicProduceRequest.topicId());
+        return CompletableFuture.supplyAsync(() -> {
+            for (int i = 0; i < produceRequest.topicRequestsLength(); i++) {
+                TopicProduceRequest topicProduceRequest = produceRequest.topicRequests(i);
+                Topic topic = topicService.getTopic(topicProduceRequest.topicId()).toCompletableFuture().join();
 
-            for (int j = 0; j < topicProduceRequest.partitionRequestsLength(); j++) {
-                TopicPartitionProduceRequest topicPartitionProduceRequest = topicProduceRequest.partitionRequests(j);
-                log.info("Getting messageSet for topic {} and partition {}", topicProduceRequest.topicId(), topicPartitionProduceRequest.partitionId());
-                TopicPartition topicPartition = topicService.getTopicPartition(topic, topicPartitionProduceRequest.partitionId());
+                for (int j = 0; j < topicProduceRequest.partitionRequestsLength(); j++) {
+                    TopicPartitionProduceRequest topicPartitionProduceRequest = topicProduceRequest.partitionRequests(j);
+                    log.info("Getting messageSet for topic {} and partition {}", topicProduceRequest.topicId(), topicPartitionProduceRequest.partitionId());
+                    TopicPartition topicPartition = topicService
+                        .getTopicPartition(topic, topicPartitionProduceRequest.partitionId())
+                        .toCompletableFuture().join();
 
-                MessageSet messageSet = topicPartitionProduceRequest.messageSet();
-                for (int m = 0; m < messageSet.messagesLength(); m++) {
-                    Message message = messageSet.messages(m);
-                    messagesToProduce.add(TopicPartMessage.newInstance(topicPartition, message));
+                    MessageSet messageSet = topicPartitionProduceRequest.messageSet();
+                    for (int m = 0; m < messageSet.messagesLength(); m++) {
+                        Message message = messageSet.messages(m);
+                        messagesToProduce.add(TopicPartMessage.newInstance(topicPartition, message));
+                    }
                 }
             }
-        }
 
-        return CompletableFuture.supplyAsync(() -> {
             //below call can block
             producerService.produceMessages(messagesToProduce);
 

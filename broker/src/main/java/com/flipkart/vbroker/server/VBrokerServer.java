@@ -72,7 +72,7 @@ public class VBrokerServer implements Runnable {
         SubscriberMetadataService subscriberMetadataService = new SubscriberMetadataService(subscriptionService, topicService, topicPartDataManager);
 
         log.debug("Loading topicMetadata");
-        List<Topic> allTopics = topicService.getAllTopics();
+        List<Topic> allTopics = topicService.getAllTopics().toCompletableFuture().join(); //we want to block here
         for (Topic topic : allTopics) {
             topicMetadataService.fetchTopicMetadata(topic);
         }

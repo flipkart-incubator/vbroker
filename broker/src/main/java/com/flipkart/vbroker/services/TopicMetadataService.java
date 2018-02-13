@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletionStage;
 
 /**
  * Created by hooda on 2/2/18
@@ -49,12 +50,15 @@ public class TopicMetadataService {
     }
 
     public void saveAllTopicMetadata() {
-        for (Topic topic : topicService.getAllTopics()) {
-            try {
-                saveTopicMetadata(topic);
-            } catch (IOException ignored) {
-            }
-        }
+        CompletionStage<List<Topic>> allTopics = topicService.getAllTopics();
+        allTopics.thenAcceptAsync(topics -> {
+            topics.forEach(topic1 -> {
+                try {
+                    saveTopicMetadata(topic1);
+                } catch (IOException ignored) {
+                }
+            });
+        });
     }
 
     public void fetchTopicMetadata(Topic topic) throws IOException {
