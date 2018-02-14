@@ -34,15 +34,9 @@ public class ProduceMessageTest {
 
         Thread t = new Thread(new Runnable() {
             public void run() {
-                CuratorService curatorService;
-                try {
-                    curatorService = new CuratorService(config);
-                    server = new VBrokerServer(config, curatorService);
-                    server.run();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+                CuratorService curatorService = new CuratorService(null);
+                server = new VBrokerServer(config, curatorService);
+                server.run();
             }
         });
 
