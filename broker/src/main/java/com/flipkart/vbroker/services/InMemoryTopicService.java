@@ -34,7 +34,6 @@ public class InMemoryTopicService implements TopicService {
         return CompletableFuture.supplyAsync(() -> topicsMap.get(topicId));
     }
 
-
     @Override
     public List<TopicPartition> getPartitions(Topic topic) {
         return TopicUtils.getTopicPartitions(topic.topicId(), topic.partitions());

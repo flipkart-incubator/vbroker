@@ -2,7 +2,7 @@ namespace com.flipkart.vbroker.entities;
 
 enum ApiKey:byte {ProduceRequest=0, ProduceResponse=1}
 
-enum StatusCode:int16 {None=0, ProduceSuccess_NoError=101, ProduceFailed_NoLeader=151, ProduceFailed_NotEnoughReplicas=152, ConsumeSuccess_NoError=201, 
+enum StatusCode:int16 {None=0, ProduceSuccess_NoError=101, ProduceFailed_NoLeader=151, ProduceFailed_NotEnoughReplicas=152, ConsumeSuccess_NoError=201,
 ConsumeError_DestinationDown=251, Success = 301, TopicCreateFailed_AlreadyExists=351, TopicCreateFailed_Validation=352, SubscriptionCreateFailed_NoTopic=451, SubscriptionCreateFailed_AlreadyExists=452,
 SubscriptionCreateFailed_Validation=453}
 

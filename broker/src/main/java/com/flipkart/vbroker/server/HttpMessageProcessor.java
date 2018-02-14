@@ -2,7 +2,6 @@ package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.core.CallbackConfig;
 import com.flipkart.vbroker.entities.*;
-import com.flipkart.vbroker.exceptions.SubscriptionNotFoundException;
 import com.flipkart.vbroker.exceptions.TopicNotFoundException;
 import com.flipkart.vbroker.services.ProducerService;
 import com.flipkart.vbroker.services.SubscriptionService;
@@ -123,13 +122,7 @@ public class HttpMessageProcessor implements MessageProcessor {
                 callbackConfig = callbackConfigOpt.get();
             }
         } else {
-            try {
-                callbackConfig = CallbackConfig.getCallbackConfig(subscription.callbackConfig());
-            } catch (SubscriptionNotFoundException e) {
-                log.debug("Unable to find subscription with id {}. Assuming that this message is from a topic. Ignoring callback", subscription.subscriptionId());
-            } catch (Exception ex) {
-                log.error("Unable to get queue configuration for callback for subscription id {}. Ignoring.", subscription, ex);
-            }
+            callbackConfig = CallbackConfig.getCallbackConfig(subscription.callbackConfig());
         }
 
         return nonNull(callbackConfig) && callbackConfig.shouldCallback(statusCode)
