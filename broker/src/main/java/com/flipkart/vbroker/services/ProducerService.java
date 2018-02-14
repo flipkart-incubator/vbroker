@@ -1,5 +1,6 @@
 package com.flipkart.vbroker.services;
 
+import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.core.TopicPartMessage;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.TopicPartDataManager;
@@ -10,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.concurrent.CompletionStage;
 
 @Slf4j
 @AllArgsConstructor
@@ -18,19 +20,20 @@ public class ProducerService {
     private final TopicPartDataManager topicPartDataManager;
 
     //TODO: make this return MessageMetadata which contains where the message is produced
-    public void produceMessage(TopicPartition topicPartition, Message message) {
+    public CompletionStage<MessageMetadata> produceMessage(TopicPartMessage topicPartMessage) {
+        Message message = topicPartMessage.getMessage();
         log.info("Producing message with msg_id: {} and group_id: {}", message.messageId(), message.groupId());
-        topicPartDataManager.addMessage(topicPartition, message);
+        return topicPartDataManager.addMessage(topicPartMessage.getTopicPartition(), message);
     }
 
-    public void produceMessages(List<TopicPartMessage> topicPartMessages) {
-        for (TopicPartMessage topicPartMessage : topicPartMessages) {
-            produceMessage(topicPartMessage.getTopicPartition(), topicPartMessage.getMessage());
-        }
+    public CompletionStage<List<MessageMetadata>> produceMessages(List<TopicPartMessage> topicPartMessages) {
+        return topicPartDataManager.addMessages(topicPartMessages);
     }
 
-    public void produceMessage(Topic topic, Message message) {
-        //TODO: do this correctly
-        produceMessage(TopicUtils.getTopicPartitions(topic.topicId(), (short) 1).get(0), message);
+    public CompletionStage<MessageMetadata> produceMessage(Topic topic, Message message) {
+        //TODO: do the partitioning logic correctly - currently defaulting to 1st partition always
+        TopicPartition topicPartition = TopicUtils.getTopicPartitions(topic.topicId(), (short) 1).get(0);
+        TopicPartMessage topicPartMessage = TopicPartMessage.newInstance(topicPartition, message);
+        return produceMessage(topicPartMessage);
     }
 }

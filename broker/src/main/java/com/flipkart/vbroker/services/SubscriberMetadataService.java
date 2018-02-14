@@ -49,22 +49,23 @@ public class SubscriberMetadataService {
             PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription).toCompletableFuture().join();
             TopicPartition partition = partSubscription.getTopicPartition();
             File dir = new File(getPartSubscriberPath(partSubscriber));
-            for (String groupId : topicPartDataManager.getUniqueGroups(partition)) {
-                MessageGroup messageGroup = new MessageGroup(groupId, partition);
-                File subscriberGroupFile = new File(dir, groupId.concat(".txt"));
-                SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, partSubscription, topicPartDataManager);
-                try {
-                    BufferedReader reader = new BufferedReader(new FileReader(subscriberGroupFile));
-                    SubscriberGroup.QType qType = SubscriberGroup.QType.valueOf(reader.readLine());
-                    AtomicInteger seqNo = new AtomicInteger(Integer.parseInt(reader.readLine()));
-                    subscriberGroup.setCurrSeqNo(seqNo);
-                    subscriberGroup.setQType(qType);
-                } catch (IOException ignored) {
-                } finally {
-                    partSubscriber.getSubscriberGroupsMap().put(groupId, subscriberGroup);
+            topicPartDataManager.getUniqueGroups(partition).thenAccept(uniqueGroupIds -> {
+                for (String groupId : uniqueGroupIds) {
+                    MessageGroup messageGroup = new MessageGroup(groupId, partition);
+                    File subscriberGroupFile = new File(dir, groupId.concat(".txt"));
+                    SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, partSubscription, topicPartDataManager);
+                    try {
+                        BufferedReader reader = new BufferedReader(new FileReader(subscriberGroupFile));
+                        SubscriberGroup.QType qType = SubscriberGroup.QType.valueOf(reader.readLine());
+                        AtomicInteger seqNo = new AtomicInteger(Integer.parseInt(reader.readLine()));
+                        subscriberGroup.setCurrSeqNo(seqNo);
+                        subscriberGroup.setQType(qType);
+                    } catch (IOException ignored) {
+                    } finally {
+                        partSubscriber.getSubscriberGroupsMap().put(groupId, subscriberGroup);
+                    }
                 }
-            }
-
+            });
         }
     }
 

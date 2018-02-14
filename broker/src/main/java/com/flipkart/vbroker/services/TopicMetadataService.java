@@ -36,8 +36,10 @@ public class TopicMetadataService {
     public void saveTopicMetadata(Topic topic) throws IOException {
         Map<String, List<String>> partitionToGroupIdsMap = new HashMap<>();
         for (TopicPartition partition : topicService.getPartitions(topic)) {
-            List<String> groups = new ArrayList<>(topicPartDataManager.getUniqueGroups(partition));
-            partitionToGroupIdsMap.put(String.valueOf(partition.getId()), groups);
+            topicPartDataManager.getUniqueGroups(partition).thenAccept(uniqueGroupIds -> {
+                List<String> groups = new ArrayList<>(uniqueGroupIds);
+                partitionToGroupIdsMap.put(String.valueOf(partition.getId()), groups);
+            }).toCompletableFuture().join();
         }
 
         File dir = new File("metadata");

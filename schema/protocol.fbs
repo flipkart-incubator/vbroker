@@ -3,16 +3,16 @@ namespace com.flipkart.vbroker.entities;
 enum ApiKey:byte {ProduceRequest=0, ProduceResponse=1}
 
 enum StatusCode:int16 {None=0, ProduceSuccess_NoError=101, ProduceFailed_NoLeader=151, ProduceFailed_NotEnoughReplicas=152, ConsumeSuccess_NoError=201,
-ConsumeError_DestinationDown=251, Success = 301, TopicCreateFailed_AlreadyExists=351, TopicCreateFailed_Validation=352, SubscriptionCreateFailed_NoTopic=451, SubscriptionCreateFailed_AlreadyExists=452,
-SubscriptionCreateFailed_Validation=453}
+	ConsumeError_DestinationDown=251, Success = 301, TopicCreateFailed_AlreadyExists=351, TopicCreateFailed_Validation=352, SubscriptionCreateFailed_NoTopic=451, SubscriptionCreateFailed_AlreadyExists=452,
+	SubscriptionCreateFailed_Validation=453}
 
 table VStatus {
-      statusCode:StatusCode;
-      message:string;
+	statusCode:StatusCode;
+	message:string;
 }
 
 union RequestMessage { ProduceRequest, FetchRequest, TopicCreateRequest, SubscriptionCreateRequest, GetTopicsRequest,
-GetQueuesRequest, GetQueueRequest, GetTopicRequest }
+	GetQueuesRequest, GetQueueRequest, GetTopicRequest }
 
 enum HttpMethod:byte {POST=0, PUT=1, DELETE=2, PATCH=3}
 
@@ -25,67 +25,67 @@ enum SubscriptionType:byte {STATIC=0, DYNAMIC=1}
 enum SubscriptionMechanism:byte {PUSH=0, PULL=1}
 
 table VRequest {
-      version:int8;
-      correlationId:int32;
-      requestMessage:RequestMessage;
+	version:int8;
+	correlationId:int32;
+	requestMessage:RequestMessage;
 }
 
 table HttpHeader {
-      key:string;
-      value:string;
+	key:string;
+	value:string;
 }
 
 table Message {
-      messageId:string;
-      groupId:string;
-      crc:int8;
-      version:int8;
-      seqNo:int32;
-      topicId:int16;
-      partitionId:int16;
-      attributes:int32;
-      httpUri:string;
-      httpMethod:HttpMethod;
-      callbackTopicId:int16;
-      callbackHttpUri:string;
-      callbackHttpMethod:HttpMethod;
-      headers:[HttpHeader];
-      bodyLength:int32;
-      bodyPayload:[int8];
+	messageId:string;
+	groupId:string;
+	crc:int8;
+	version:int8;
+	seqNo:int32;
+	topicId:int16;
+	partitionId:int16;
+	attributes:int32;
+	httpUri:string;
+	httpMethod:HttpMethod;
+	callbackTopicId:int16;
+	callbackHttpUri:string;
+	callbackHttpMethod:HttpMethod;
+	headers:[HttpHeader];
+	bodyLength:int32;
+	bodyPayload:[int8];
 }
 
 table MessageSet {
-      messages:[Message];
+	messages:[Message];
 }
 
 table TopicPartitionProduceRequest {
-      partitionId:int16;
-      requiredAcks:int16;
-      messageSet:MessageSet;
+	partitionId:int16;
+	requiredAcks:int16;
+	messageSet:MessageSet;
 }
 
 table TopicProduceRequest {
-      topicId:int16;
-      partitionRequests:[TopicPartitionProduceRequest];
+	topicId:int16;
+	partitionRequests:[TopicPartitionProduceRequest];
 }
 
 table ProduceRequest {
-      topicRequests:[TopicProduceRequest];
+	topicRequests:[TopicProduceRequest];
 }
 
 table TopicPartitionFetchRequest {
-      partitionId:int16;
-      noOfMessages:int16;
+	partitionId:int16;
+	noOfMessages:int16;
 }
 
 table TopicFetchRequest {
-      subscriptionId:int16;
-      topicId:int16;
-      partitionRequests:[TopicPartitionFetchRequest];
+	subscriptionId:int16;
+	topicId:int16;
+	partitionRequests:[TopicPartitionFetchRequest];
 }
 
 table FetchRequest {
-      topicRequests:[TopicFetchRequest];
+	topicRequests:[TopicFetchRequest];
 }
 
 table GetTopicsRequest{
@@ -95,65 +95,65 @@ table GetQueuesRequest{
 }
 
 table Topic {
-	  topicId:int16;
-      topicName:string;
-      grouped:bool;
-      partitions:int16;
-      replicationFactor:int16;
-      topicType:TopicType;
-      topicCategory:TopicCategory;
+	topicId:int16;
+	topicName:string;
+	grouped:bool;
+	partitions:int16;
+	replicationFactor:int16;
+	topicType:TopicType;
+	topicCategory:TopicCategory;
 }
 
 table FilterKeyValues {
-	  key:string;
-	  values:string;
+	key:string;
+	values:string;
 }
 
 table CodeRange {
-	  from:int16;
-	  to:int16;
+	from:int16;
+	to:int16;
 }
 
 table CallbackConfig {
-	  codeRanges:[CodeRange];
+	codeRanges:[CodeRange];
 }
 
 table Subscription {
-	  subscriptionId:int16;
-	  topicId:int16;
-      name:string;
-      grouped:bool;
-      parallelism:int16;
-      requestTimeout:int16;
-      subscriptionType:SubscriptionType;
-      subscriptionMechanism:SubscriptionMechanism;
-      endpoint:string;
-      httpMethod:string;
-      elastic:bool;
-      filterOperator:string;
-      filterKeyValuesList:[FilterKeyValues];
-      callbackConfig:CallbackConfig;
+	subscriptionId:int16;
+	topicId:int16;
+	name:string;
+	grouped:bool;
+	parallelism:int16;
+	requestTimeout:int16;
+	subscriptionType:SubscriptionType;
+	subscriptionMechanism:SubscriptionMechanism;
+	endpoint:string;
+	httpMethod:string;
+	elastic:bool;
+	filterOperator:string;
+	filterKeyValuesList:[FilterKeyValues];
+	callbackConfig:CallbackConfig;
 }
 
 table Queue {
-	  topic:Topic;
-	  subscription:Subscription;
+	topic:Topic;
+	subscription:Subscription;
 }
 
 table TopicCreateRequest {
-	  topic:Topic;
+	topic:Topic;
 }
 
 table SubscriptionCreateRequest {
-	  subscription:Subscription;
+	subscription:Subscription;
 }
 
 table GetQueueRequest {
-	  queueId:int16;
+	queueId:int16;
 }
 
 table GetTopicRequest {
-	  topicId:int16;
+	topicId:int16;
 }
 
 root_type VRequest;
@@ -162,75 +162,75 @@ root_type VRequest;
 // responses
 
 union ResponseMessage { ProduceResponse, FetchResponse, TopicCreateResponse, SubscriptionCreateResponse, GetTopicsResponse,
-GetQueuesResponse, GetQueueResponse, GetTopicResponse }
+	GetQueuesResponse, GetQueueResponse, GetTopicResponse }
 
 table VResponse {
-      correlationId:int32;
-      responseMessage:ResponseMessage;
+	correlationId:int32;
+	responseMessage:ResponseMessage;
 }
 
 //ProduceResponse
 
 table TopicPartitionProduceResponse {
-      partitionId:int16;
-      status:VStatus;
+	partitionId:int16;
+	status:VStatus;
 }
 
 table TopicProduceResponse {
-      topicId:int16;
-      partitionResponses:[TopicPartitionProduceResponse];
+	topicId:int16;
+	partitionResponses:[TopicPartitionProduceResponse];
 }
 
 table ProduceResponse {
-      topicResponses:[TopicProduceResponse];
+	topicResponses:[TopicProduceResponse];
 }
 
 //FetchResponse
 
 table TopicPartitionFetchResponse {
-      partitionId:int16;
-      status:VStatus;
-      messageSet:MessageSet;
+	partitionId:int16;
+	status:VStatus;
+	messageSet:MessageSet;
 }
 
 table TopicFetchResponse {
-      subscriptionId:int16;
-      topicId:int16;
-      partitionResponses:[TopicPartitionFetchResponse];
+	subscriptionId:int16;
+	topicId:int16;
+	partitionResponses:[TopicPartitionFetchResponse];
 }
 
 table FetchResponse {
-      topicResponses:[TopicFetchResponse];
+	topicResponses:[TopicFetchResponse];
 }
 
 table TopicCreateResponse {
-      topicId:int16;
-      status:VStatus;
+	topicId:int16;
+	status:VStatus;
 }
 
 table SubscriptionCreateResponse {
-      subscriptionId:int16;
-      status:VStatus;
+	subscriptionId:int16;
+	status:VStatus;
 }
 
 table GetTopicsResponse {
-	  topics:[Topic];
-	  status:VStatus;
+	topics:[Topic];
+	status:VStatus;
 }
 
 table GetQueuesResponse {
-	  queues:[Queue];
-	  status:VStatus;
+	queues:[Queue];
+	status:VStatus;
 }
 
 table GetQueueResponse {
-	  status:VStatus;
-	  queue:Queue;
+	status:VStatus;
+	queue:Queue;
 }
 
 table GetTopicResponse {
-	  status:VStatus;
-	  topic:Topic;
+	status:VStatus;
+	topic:Topic;
 }
 
 root_type VResponse;
