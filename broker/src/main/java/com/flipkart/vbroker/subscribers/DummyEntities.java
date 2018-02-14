@@ -1,7 +1,7 @@
 package com.flipkart.vbroker.subscribers;
 
-import com.flipkart.vbroker.entities.Subscription;
-import com.flipkart.vbroker.entities.Topic;
+import com.flipkart.vbroker.entities.*;
+import com.google.flatbuffers.FlatBufferBuilder;
 
 public class DummyEntities {
 
@@ -9,11 +9,41 @@ public class DummyEntities {
     public static Subscription subscription1;
 
     static {
-//        topic1 = new Topic((short) 101, "topic1");
-//        TopicPartition topicPartition1 = new TopicPartition((short) 0, topic1.getId());
-//        topic1.addPartition(topicPartition1);
-//        subscription1 = new Subscription((short) 1001, "subscription1", topic1, new LinkedList<>(), true, Queue.DEFAULT_CALLBACK_CONFIG);
-//        PartSubscription partSubscription1 = new PartSubscription((short) 0, topicPartition1, subscription1.getId());
-//        subscription1.addPartSubscription(partSubscription1);
+        FlatBufferBuilder topicBuilder = new FlatBufferBuilder();
+        int topicOffset = Topic.createTopic(topicBuilder,
+            (short) 101,
+            topicBuilder.createString("topic_1"),
+            true,
+            (short) 1,
+            (short) 1,
+            TopicType.MAIN,
+            TopicCategory.QUEUE);
+        topicBuilder.finish(topicOffset);
+        topic1 = Topic.getRootAsTopic(topicBuilder.dataBuffer());
+
+        FlatBufferBuilder subBuilder = new FlatBufferBuilder();
+
+        int codeRangeOffset = CodeRange.createCodeRange(subBuilder, (short) 200, (short) 299);
+        int codeRangesVectorOffset = CallbackConfig.createCodeRangesVector(subBuilder, new int[]{codeRangeOffset});
+        int callbackConfigOffset = CallbackConfig.createCallbackConfig(subBuilder, codeRangesVectorOffset);
+
+        int subscriptionOffset = Subscription.createSubscription(subBuilder,
+            (short) 1001,
+            topic1.topicId(),
+            subBuilder.createString("subscription_1"),
+            true,
+            (short) 1,
+            (short) 60000,
+            SubscriptionType.DYNAMIC,
+            SubscriptionMechanism.PUSH,
+            subBuilder.createString("http://localhost:13000/messages"),
+            subBuilder.createString("POST"),
+            true,
+            subBuilder.createString("NOR"),
+            subBuilder.createString(""),
+            callbackConfigOffset
+        );
+        subBuilder.finish(subscriptionOffset);
+        subscription1 = Subscription.getRootAsSubscription(subBuilder.dataBuffer());
     }
 }
