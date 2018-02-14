@@ -44,16 +44,16 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
             partSubscription.getId(), partSubscription.getTopicPartition().getId());
         TopicPartition topicPartition = partSubscription.getTopicPartition();
 
-        Set<String> uniqueMsgGroups = topicPartDataManager.getUniqueGroups(topicPartition);
-        Set<String> uniqueSubscriberGroups = subscriberGroupsMap.keySet();
-
-        Sets.SetView<String> difference = Sets.difference(uniqueMsgGroups, uniqueSubscriberGroups);
-        for (String group : difference) {
-            MessageGroup messageGroup = new MessageGroup(group, topicPartition);
-            SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, partSubscription, topicPartDataManager);
-            subscriberGroupsMap.put(group, subscriberGroup);
-            subscriberGroupIteratorMap.put(subscriberGroup, subscriberGroup.iterator());
-        }
+        topicPartDataManager.getUniqueGroups(topicPartition).thenAccept(uniqueMsgGroups -> {
+            Set<String> uniqueSubscriberGroups = subscriberGroupsMap.keySet();
+            Sets.SetView<String> difference = Sets.difference(uniqueMsgGroups, uniqueSubscriberGroups);
+            for (String group : difference) {
+                MessageGroup messageGroup = new MessageGroup(group, topicPartition);
+                SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, partSubscription, topicPartDataManager);
+                subscriberGroupsMap.put(group, subscriberGroup);
+                subscriberGroupIteratorMap.put(subscriberGroup, subscriberGroup.iterator());
+            }
+        });
     }
 
     @Override

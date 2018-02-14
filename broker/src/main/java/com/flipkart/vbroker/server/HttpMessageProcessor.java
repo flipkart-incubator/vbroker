@@ -1,5 +1,6 @@
 package com.flipkart.vbroker.server;
 
+import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.core.CallbackConfig;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.exceptions.TopicNotFoundException;
@@ -137,10 +138,11 @@ public class HttpMessageProcessor implements MessageProcessor {
             Message callbackMsg = MessageUtils.getCallbackMsg(message, response);
             try {
                 CompletionStage<Topic> topicStage = topicService.getTopic(callbackMsg.topicId());
-                topicStage.thenAcceptAsync(topic -> {
+                CompletionStage<MessageMetadata> messageMetadataState = topicStage.thenCompose(topic -> {
                     log.info("Producing callback for message to {} queue", topic.topicName());
-                    producerService.produceMessage(topic, callbackMsg);
+                    return producerService.produceMessage(topic, callbackMsg);
                 });
+                //TODO: you need to handle the case where the callback producing fails
             } catch (TopicNotFoundException ex) {
                 log.error("Topic with id {} not found to produce callback message. Dropping it");
             }

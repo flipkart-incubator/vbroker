@@ -1,5 +1,6 @@
 package com.flipkart.vbroker.data;
 
+import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.core.MessageGroup;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.HttpHeader;
@@ -13,7 +14,10 @@ import org.redisson.api.RedissonClient;
 
 import java.nio.ByteBuffer;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 
 @Slf4j
 public class RedisTopicPartData implements TopicPartData {
@@ -31,21 +35,29 @@ public class RedisTopicPartData implements TopicPartData {
     }
 
     @Override
-    public void addMessage(Message message) {
-        Message messageBuffer = Message.getRootAsMessage(buildMessage(message));
-        MessageGroup messageGroup = new MessageGroup(messageBuffer.groupId(), topicPartition);
-        RList<Message> rList = messageCodecClient.getList(messageGroup.toString());
-        RList<String> stringRList = defaultCodecClient.getList(topicPartition.toString());
-        stringRList.add(messageBuffer.groupId());
-        rList.add(messageBuffer);
+    public CompletionStage<MessageMetadata> addMessage(Message message) {
+        return CompletableFuture.supplyAsync(() -> {
+            Message messageBuffer = Message.getRootAsMessage(buildMessage(message));
+            MessageGroup messageGroup = new MessageGroup(messageBuffer.groupId(), topicPartition);
+            RList<Message> rList = messageCodecClient.getList(messageGroup.toString());
+            RList<String> stringRList = defaultCodecClient.getList(topicPartition.toString());
+            stringRList.add(messageBuffer.groupId());
+            rList.add(messageBuffer);
+
+            return new MessageMetadata(message.topicId(), message.partitionId(), new Random().nextInt());
+        });
     }
 
     @Override
-    public Set<String> getUniqueGroups() {
-        RList<String> stringRList = defaultCodecClient.getList(topicPartition.toString());
-        if (stringRList.size() != 0) {
-            return new HashSet<String>(stringRList.subList(0, stringRList.size()));
-        } else return new HashSet<>();
+    public CompletionStage<Set<String>> getUniqueGroups() {
+        return CompletableFuture.supplyAsync(() -> {
+            RList<String> stringRList = defaultCodecClient.getList(topicPartition.toString());
+            if (stringRList.size() != 0) {
+                return new HashSet<>(stringRList.subList(0, stringRList.size()));
+            } else {
+                return new HashSet<>();
+            }
+        });
     }
 
     @Override

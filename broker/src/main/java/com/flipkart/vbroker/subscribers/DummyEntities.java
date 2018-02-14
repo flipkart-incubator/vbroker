@@ -17,16 +17,15 @@ public class DummyEntities {
             (short) 1,
             (short) 1,
             TopicType.MAIN,
-            TopicCategory.QUEUE);
+            TopicCategory.QUEUE
+        );
         topicBuilder.finish(topicOffset);
         topic1 = Topic.getRootAsTopic(topicBuilder.dataBuffer());
 
         FlatBufferBuilder subBuilder = new FlatBufferBuilder();
-
         int codeRangeOffset = CodeRange.createCodeRange(subBuilder, (short) 200, (short) 299);
         int codeRangesVectorOffset = CallbackConfig.createCodeRangesVector(subBuilder, new int[]{codeRangeOffset});
         int callbackConfigOffset = CallbackConfig.createCallbackConfig(subBuilder, codeRangesVectorOffset);
-
         int subscriptionOffset = Subscription.createSubscription(subBuilder,
             (short) 1001,
             topic1.topicId(),
