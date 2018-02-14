@@ -21,7 +21,6 @@ public class VBrokerController {
     }
 
     public void watch() {
-
         log.info("Setting watch on topics path...");
         CompletionStage<WatchedEvent> s = curatorService.watchNode(path);
         handleWatchedStage(s);
