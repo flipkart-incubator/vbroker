@@ -8,6 +8,7 @@ import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.google.common.collect.PeekingIterator;
+import io.netty.channel.EventLoopGroup;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
@@ -32,10 +33,12 @@ public class RedisTopicPartDataManager implements TopicPartDataManager {
     private static Codec redisCodec = new RedisMessageCodec();
     private final Map<TopicPartition, TopicPartData> allPartitionsDataMap = new LinkedHashMap<>();
 
-    public RedisTopicPartDataManager(VBrokerConfig brokerConfig) {
+    public RedisTopicPartDataManager(VBrokerConfig brokerConfig, EventLoopGroup workerGroup) {
         messageCodecConfig.useSingleServer().setAddress(brokerConfig.getRedisUrl());
         defaultCodecConfig.useSingleServer().setAddress(brokerConfig.getRedisUrl());
         messageCodecConfig.setCodec(redisCodec);
+        messageCodecConfig.setEventLoopGroup(workerGroup);
+        defaultCodecConfig.setEventLoopGroup(workerGroup);
         this.messageCodecClient = Redisson.create(messageCodecConfig);
         this.defaultCodecClient = Redisson.create(defaultCodecConfig);
     }
