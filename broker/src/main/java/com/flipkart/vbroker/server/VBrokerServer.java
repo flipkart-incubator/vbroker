@@ -66,9 +66,6 @@ public class VBrokerServer extends AbstractExecutionThreadService {
 
         CuratorService curatorService = new CuratorService(asyncZkClient);
 
-        //global broker controller
-        VBrokerController controller = new VBrokerController(curatorService);
-        controller.watch();
 
         EventLoopGroup bossGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("server_boss"));
         EventLoopGroup workerGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("server_worker"));
@@ -86,6 +83,11 @@ public class VBrokerServer extends AbstractExecutionThreadService {
 
         TopicMetadataService topicMetadataService = new TopicMetadataService(topicService, topicPartDataManager);
         SubscriberMetadataService subscriberMetadataService = new SubscriberMetadataService(subscriptionService, topicService, topicPartDataManager);
+
+        //global broker controller
+        VBrokerController controller = new VBrokerController(curatorService, topicService, config);
+        log.info("Starting controller and awaiting it to be ready");
+        controller.startAsync().awaitRunning();
 
         log.debug("Loading topicMetadata");
         List<Topic> allTopics = topicService.getAllTopics().toCompletableFuture().join(); //we want to block here

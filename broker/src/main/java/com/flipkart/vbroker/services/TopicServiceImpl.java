@@ -17,6 +17,8 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.nonNull;
+
 
 @Slf4j
 @AllArgsConstructor
@@ -47,6 +49,11 @@ public class TopicServiceImpl implements TopicService {
     public CompletionStage<TopicPartition> getTopicPartition(Topic topic, short topicPartitionId) {
         return getTopic(topic.topicId())
             .thenApplyAsync(topic1 -> new TopicPartition(topicPartitionId, topic.topicId()));
+    }
+
+    @Override
+    public CompletionStage<Boolean> isTopicPresent(short topicId) {
+        return CompletableFuture.supplyAsync(() -> nonNull(getTopicByBlocking(topicId)));
     }
 
     @Override

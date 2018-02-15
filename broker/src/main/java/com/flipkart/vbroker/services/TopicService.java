@@ -14,6 +14,14 @@ public interface TopicService {
 
     public CompletionStage<TopicPartition> getTopicPartition(Topic topic, short topicPartitionId);
 
+    /**
+     * check if the topic is present
+     *
+     * @param topicId of the topic to check
+     * @return async true if present and false otherwise
+     */
+    public CompletionStage<Boolean> isTopicPresent(short topicId);
+
     public CompletionStage<Topic> getTopic(short topicId);
 
     public List<TopicPartition> getPartitions(Topic topic);
