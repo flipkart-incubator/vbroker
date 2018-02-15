@@ -59,6 +59,26 @@ public class CuratorService {
     }
 
     /**
+     * set watch for the data change on path
+     *
+     * @param path to set watch on
+     * @return the completion stage of watch event
+     */
+    public CompletionStage<WatchedEvent> watchNodeData(String path) {
+        return asyncZkClient.watched().getData().forPath(path).event();
+    }
+
+    /**
+     * set watch for the child node changes for a parent path
+     *
+     * @param path to set watch on
+     * @return the completion stage of watch event
+     */
+    public CompletionStage<WatchedEvent> watchNodeChildren(String path) {
+        return asyncZkClient.watched().getChildren().forPath(path).event();
+    }
+
+    /**
      * Gets data at path.
      *
      * @param path
