@@ -5,18 +5,21 @@ import com.flipkart.vbroker.core.MessageGroup;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.HttpHeader;
 import com.flipkart.vbroker.entities.Message;
+import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.PeekingIterator;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RFuture;
 import org.redisson.api.RList;
+import org.redisson.api.RListAsync;
 import org.redisson.api.RedissonClient;
 
 import java.nio.ByteBuffer;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 @Slf4j
@@ -36,27 +39,44 @@ public class RedisTopicPartData implements TopicPartData {
 
     @Override
     public CompletionStage<MessageMetadata> addMessage(Message message) {
-        return CompletableFuture.supplyAsync(() -> {
-            Message messageBuffer = Message.getRootAsMessage(buildMessage(message));
-            MessageGroup messageGroup = new MessageGroup(messageBuffer.groupId(), topicPartition);
-            RList<Message> rList = messageCodecClient.getList(messageGroup.toString());
-            RList<String> stringRList = defaultCodecClient.getList(topicPartition.toString());
-            stringRList.add(messageBuffer.groupId());
-            rList.add(messageBuffer);
 
-            return new MessageMetadata(message.topicId(), message.partitionId(), new Random().nextInt());
+        Message messageBuffer = Message.getRootAsMessage(buildMessage(message));
+        MessageGroup messageGroup = new MessageGroup(messageBuffer.groupId(), topicPartition);
+
+        RListAsync<Message> messageGroupList = messageCodecClient.getList(messageGroup.toString());
+        RListAsync<String> topicPartitionList = defaultCodecClient.getList(topicPartition.toString());
+
+        RFuture<Boolean> topicPartitionAddFuture = topicPartitionList.addAsync(messageBuffer.groupId());
+        RFuture<Boolean> messageGroupAddFuture = messageGroupList.addAsync(messageBuffer);
+
+        return topicPartitionAddFuture.thenCombineAsync(messageGroupAddFuture, (topicPartitionResult, messageGroupResult) -> {
+            if (topicPartitionResult && messageGroupResult) {
+                return new MessageMetadata(message.topicId(), message.partitionId(), new Random().nextInt());
+            } else {
+                throw new VBrokerException("Unable to add message to redis : adding to topicPartitionList or messageGroupList failed");
+            }
+        }).exceptionally(exception -> {
+            throw new VBrokerException("Unable to add message to redis : " + exception.getMessage());
         });
     }
 
     @Override
     public CompletionStage<Set<String>> getUniqueGroups() {
-        return CompletableFuture.supplyAsync(() -> {
-            RList<String> stringRList = defaultCodecClient.getList(topicPartition.toString());
-            if (stringRList.size() != 0) {
-                return new HashSet<>(stringRList.subList(0, stringRList.size()));
+        RListAsync<String> topicPartitionList = defaultCodecClient.getList(topicPartition.toString());
+
+        RFuture<Integer> topicPartitionListSizeFuture = topicPartitionList.sizeAsync();
+        RFuture<List<String>> topicPartitionReadFuture = topicPartitionList.readAllAsync();
+
+        return topicPartitionListSizeFuture.thenCombineAsync(topicPartitionReadFuture, (sizeResult, readResult) -> {
+            if (sizeResult > 0 && readResult.size() > 0) {
+                return ((Set<String>) new HashSet<>(readResult));
+            } else if (sizeResult == 0 && readResult.size() == 0) {
+                return null;
             } else {
-                return new HashSet<>();
+                throw new VBrokerException("Unable to get Unique Groups : inconsistent results from topicPartitionList");
             }
+        }).exceptionally(exception -> {
+            throw new VBrokerException("Unable to get Unique Groups : " + exception.getMessage());
         });
     }
 

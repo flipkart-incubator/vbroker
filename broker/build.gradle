@@ -9,11 +9,12 @@ mainClassName = "com.flipkart.vbroker.VBrokerApp"
 def nettyVersion = "4.1.21.Final"
 def asyncHttpClientVersion = "2.3.0"
 def curatorXAsyncVersion = "4.0.0"
-def zookeeperVersion = "3.4.10"
+def zookeeperVersion = "3.5.3-beta"
 def redissonVersion = "3.6.0"
 
 //test dependencies
 def restitoVersion = "0.9.3"
+def testNgVersion = "6.14.2"
 
 dependencies {
     //networking
@@ -42,6 +43,10 @@ dependencies {
         exclude group: 'org.apache.zookeeper', module: 'zookeeper'
     }
 
+    compile("org.apache.curator:curator-test:${curatorXAsyncVersion}") {
+        exclude group: 'org.apache.zookeeper', module: 'zookeeper'
+    }
+
     compile("org.apache.zookeeper:zookeeper:${zookeeperVersion}") {
         exclude group: 'org.slf4j', module: 'slf4j-api'
         exclude group: 'org.slf4j', module: 'slf4j-log4j12'
@@ -62,5 +67,9 @@ dependencies {
     compile project(':core')
 
     //testing
-    testCompile "com.xebialabs.restito:restito:${restitoVersion}"
+    testCompile("com.xebialabs.restito:restito:${restitoVersion}") {
+        exclude group: 'junit', module: 'junit'
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
+    testCompile "org.testng:testng:${testNgVersion}"
 }

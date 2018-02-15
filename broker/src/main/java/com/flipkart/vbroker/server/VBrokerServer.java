@@ -1,6 +1,7 @@
 package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.VBrokerConfig;
+import com.flipkart.vbroker.controller.VBrokerController;
 import com.flipkart.vbroker.data.InMemoryTopicPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.entities.Subscription;
@@ -12,6 +13,7 @@ import com.flipkart.vbroker.handlers.VBrokerResponseHandler;
 import com.flipkart.vbroker.protocol.codecs.VBrokerClientCodec;
 import com.flipkart.vbroker.services.*;
 import com.flipkart.vbroker.subscribers.DummyEntities;
+import com.google.common.util.concurrent.AbstractExecutionThreadService;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -26,6 +28,10 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.retry.ExponentialBackoffRetry;
+import org.apache.curator.x.async.AsyncCuratorFramework;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
@@ -37,22 +43,32 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Slf4j
-public class VBrokerServer implements Runnable {
+import static java.util.Objects.nonNull;
 
-    private final VBrokerConfig config;
-    private final CuratorService curatorService;
+@Slf4j
+public class VBrokerServer extends AbstractExecutionThreadService {
+
     private final CountDownLatch mainLatch = new CountDownLatch(1);
     private Channel serverChannel;
     private Channel serverLocalChannel;
+    private CuratorFramework curatorClient;
 
-    public VBrokerServer(VBrokerConfig config, CuratorService curatorService) {
-        this.config = config;
-        this.curatorService = curatorService;
-    }
-
-    private void start() throws IOException {
+    private void startServer() throws IOException {
         Thread.currentThread().setName("vbroker_server");
+
+        VBrokerConfig config = VBrokerConfig.newConfig("broker.properties");
+        log.info("Configs: {}", config);
+
+        curatorClient = CuratorFrameworkFactory.newClient(config.getZookeeperUrl(),
+            new ExponentialBackoffRetry(1000, 5));
+        curatorClient.start();
+        AsyncCuratorFramework asyncZkClient = AsyncCuratorFramework.wrap(curatorClient);
+
+        CuratorService curatorService = new CuratorService(asyncZkClient);
+
+        //global broker controller
+        VBrokerController controller = new VBrokerController(curatorService);
+        controller.watch();
 
         EventLoopGroup bossGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("server_boss"));
         EventLoopGroup workerGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("server_worker"));
@@ -63,7 +79,7 @@ public class VBrokerServer implements Runnable {
 
         //TopicPartDataManager topicPartDataManager = new TopicPartitionDataManagerImpl();
         TopicPartDataManager topicPartDataManager = new InMemoryTopicPartDataManager();
-        //TopicPartDataManager topicPartDataManager = new RedisTopicPartDataManager(config);
+        //TopicPartDataManager topicPartDataManager = new RedisTopicPartDataManager(config, workerGroup);
 
         //SubscriptionService subscriptionService = new SubscriptionServiceImpl(config, curatorService, topicPartDataManager, topicService);
         SubscriptionService subscriptionService = new InMemorySubscriptionService(topicService, topicPartDataManager);
@@ -94,7 +110,7 @@ public class VBrokerServer implements Runnable {
             producerService, topicService, subscriptionService);
 
         //TODO: declare broker as healthy by registering in /brokers/ids for example now that everything is validated
-        //the broker can now start accepting new requests
+        //the broker can now startServer accepting new requests
         CountDownLatch latch = new CountDownLatch(1);
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
@@ -163,7 +179,8 @@ public class VBrokerServer implements Runnable {
         }
     }
 
-    public void stop() throws InterruptedException {
+    private void stopServer() throws InterruptedException {
+        log.info("Stopping the server");
         if (serverChannel != null) {
             log.info("Closing serverChannel");
             serverChannel.close();
@@ -176,6 +193,12 @@ public class VBrokerServer implements Runnable {
 
         log.info("Waiting for servers to shutdown peacefully");
         mainLatch.await();
+
+        if (nonNull(curatorClient)) {
+            log.info("Closing zookeeper client");
+            curatorClient.close();
+        }
+        log.info("Yay! Clean stop of VBrokerServer is successful");
     }
 
     private void setupLocalSubscribers(EventLoopGroup localGroup,
@@ -217,11 +240,21 @@ public class VBrokerServer implements Runnable {
     }
 
     @Override
-    public void run() {
+    protected void run() {
         try {
-            start();
+            startServer();
         } catch (IOException e) {
             log.error("Exception in starting app", e);
+        }
+    }
+
+    @Override
+    protected void triggerShutdown() {
+        log.info("service shutDown triggered");
+        try {
+            stopServer();
+        } catch (Exception ex) {
+            log.error("Exception in stopping the VBrokerServer. Ignoring", ex);
         }
     }
 }

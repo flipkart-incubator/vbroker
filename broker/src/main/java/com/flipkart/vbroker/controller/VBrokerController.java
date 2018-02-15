@@ -9,6 +9,10 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+/**
+ * global broker controller
+ * which is leader elected across all broker nodes
+ */
 @Slf4j
 public class VBrokerController {
 
@@ -21,7 +25,6 @@ public class VBrokerController {
     }
 
     public void watch() {
-
         log.info("Setting watch on topics path...");
         CompletionStage<WatchedEvent> s = curatorService.watchNode(path);
         handleWatchedStage(s);
