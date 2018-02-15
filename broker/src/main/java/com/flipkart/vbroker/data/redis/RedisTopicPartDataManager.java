@@ -1,10 +1,12 @@
-package com.flipkart.vbroker.data;
+package com.flipkart.vbroker.data.redis;
 
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.core.MessageGroup;
 import com.flipkart.vbroker.core.TopicPartMessage;
 import com.flipkart.vbroker.core.TopicPartition;
+import com.flipkart.vbroker.data.TopicPartData;
+import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.google.common.collect.PeekingIterator;
@@ -26,27 +28,22 @@ import java.util.stream.Collectors;
 @Slf4j
 public class RedisTopicPartDataManager implements TopicPartDataManager {
 
-    private static final Config messageCodecConfig = new Config();
-    private static final Config defaultCodecConfig = new Config();
-    private static RedissonClient messageCodecClient;
-    private static RedissonClient defaultCodecClient;
+    private static final Config config = new Config();
+    private static RedissonClient client;
     private static Codec redisCodec = new RedisMessageCodec();
     private final Map<TopicPartition, TopicPartData> allPartitionsDataMap = new LinkedHashMap<>();
 
     public RedisTopicPartDataManager(VBrokerConfig brokerConfig, EventLoopGroup workerGroup) {
-        messageCodecConfig.useSingleServer().setAddress(brokerConfig.getRedisUrl());
-        defaultCodecConfig.useSingleServer().setAddress(brokerConfig.getRedisUrl());
-        messageCodecConfig.setCodec(redisCodec);
-        messageCodecConfig.setEventLoopGroup(workerGroup);
-        defaultCodecConfig.setEventLoopGroup(workerGroup);
-        this.messageCodecClient = Redisson.create(messageCodecConfig);
-        this.defaultCodecClient = Redisson.create(defaultCodecConfig);
+        config.useSingleServer().setAddress(brokerConfig.getRedisUrl());
+        config.setCodec(redisCodec);
+        config.setEventLoopGroup(workerGroup);
+        this.client = Redisson.create(config);
     }
 
     @Override
     public CompletionStage<TopicPartData> getTopicPartData(TopicPartition topicPartition) {
         return CompletableFuture.supplyAsync(() -> {
-            allPartitionsDataMap.putIfAbsent(topicPartition, new RedisTopicPartData(messageCodecClient, defaultCodecClient, topicPartition));
+            allPartitionsDataMap.putIfAbsent(topicPartition, new RedisTopicPartData(client, topicPartition));
             return allPartitionsDataMap.get(topicPartition);
         });
     }

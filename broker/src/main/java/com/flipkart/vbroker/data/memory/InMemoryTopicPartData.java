@@ -1,6 +1,7 @@
-package com.flipkart.vbroker.data;
+package com.flipkart.vbroker.data.memory;
 
 import com.flipkart.vbroker.client.MessageMetadata;
+import com.flipkart.vbroker.data.TopicPartData;
 import com.flipkart.vbroker.entities.Message;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.PeekingIterator;
