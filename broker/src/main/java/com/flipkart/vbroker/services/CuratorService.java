@@ -1,10 +1,7 @@
 package com.flipkart.vbroker.services;
 
-import com.flipkart.vbroker.VBrokerConfig;
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
+import lombok.AllArgsConstructor;
 import org.apache.curator.framework.api.transaction.CuratorOp;
-import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.x.async.AsyncCuratorFramework;
 import org.apache.curator.x.async.AsyncStage;
 import org.apache.curator.x.async.api.CreateOption;
@@ -12,34 +9,15 @@ import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.data.Stat;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 
 import static java.util.EnumSet.of;
 
+@AllArgsConstructor
 public class CuratorService {
 
-    private final VBrokerConfig config;
-    private AsyncCuratorFramework asyncZkClient;
-
-    public CuratorService(VBrokerConfig config) throws IOException {
-        this.config = config;
-        init();
-    }
-
-    /**
-     * Initializes the async client.
-     *
-     * @throws IOException
-     */
-    public void init() throws IOException {
-
-        CuratorFramework client = CuratorFrameworkFactory.newClient(config.getZookeeperUrl(),
-            new ExponentialBackoffRetry(1000, 5));
-        client.start();
-        asyncZkClient = AsyncCuratorFramework.wrap(client);
-    }
+    private final AsyncCuratorFramework asyncZkClient;
 
     /**
      * Creates node as per path. If already exists, this method won't throw an
