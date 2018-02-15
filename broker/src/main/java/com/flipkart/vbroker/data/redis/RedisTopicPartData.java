@@ -1,8 +1,9 @@
-package com.flipkart.vbroker.data;
+package com.flipkart.vbroker.data.redis;
 
 import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.core.MessageGroup;
 import com.flipkart.vbroker.core.TopicPartition;
+import com.flipkart.vbroker.data.TopicPartData;
 import com.flipkart.vbroker.entities.HttpHeader;
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.exceptions.VBrokerException;
@@ -21,19 +22,17 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.CompletionStage;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class RedisTopicPartData implements TopicPartData {
 
-    private static RedissonClient messageCodecClient;
-    private static RedissonClient defaultCodecClient;
+    private static RedissonClient client;
     private TopicPartition topicPartition;
 
-    public RedisTopicPartData(RedissonClient messageCodecClient,
-                              RedissonClient defaultCodecClient,
+    public RedisTopicPartData(RedissonClient client,
                               TopicPartition topicPartition) {
-        this.messageCodecClient = messageCodecClient;
-        this.defaultCodecClient = defaultCodecClient;
+        this.client = client;
         this.topicPartition = topicPartition;
     }
 
@@ -43,11 +42,14 @@ public class RedisTopicPartData implements TopicPartData {
         Message messageBuffer = Message.getRootAsMessage(buildMessage(message));
         MessageGroup messageGroup = new MessageGroup(messageBuffer.groupId(), topicPartition);
 
-        RListAsync<Message> messageGroupList = messageCodecClient.getList(messageGroup.toString());
-        RListAsync<String> topicPartitionList = defaultCodecClient.getList(topicPartition.toString());
+        RListAsync<RedisObject> messageGroupList = client.getList(messageGroup.toString());
+        RListAsync<RedisObject> topicPartitionList = client.getList(topicPartition.toString());
 
-        RFuture<Boolean> topicPartitionAddFuture = topicPartitionList.addAsync(messageBuffer.groupId());
-        RFuture<Boolean> messageGroupAddFuture = messageGroupList.addAsync(messageBuffer);
+        RedisObject rObjMessage = new RedisMessageObject(messageBuffer);
+        RedisObject rObjString = new RedisStringObject(messageBuffer.groupId());
+
+        RFuture<Boolean> topicPartitionAddFuture = topicPartitionList.addAsync(rObjString);
+        RFuture<Boolean> messageGroupAddFuture = messageGroupList.addAsync(rObjMessage);
 
         return topicPartitionAddFuture.thenCombineAsync(messageGroupAddFuture, (topicPartitionResult, messageGroupResult) -> {
             if (topicPartitionResult && messageGroupResult) {
@@ -62,14 +64,18 @@ public class RedisTopicPartData implements TopicPartData {
 
     @Override
     public CompletionStage<Set<String>> getUniqueGroups() {
-        RListAsync<String> topicPartitionList = defaultCodecClient.getList(topicPartition.toString());
+        RListAsync<RedisObject> topicPartitionList = client.getList(topicPartition.toString());
 
         RFuture<Integer> topicPartitionListSizeFuture = topicPartitionList.sizeAsync();
-        RFuture<List<String>> topicPartitionReadFuture = topicPartitionList.readAllAsync();
+        RFuture<List<RedisObject>> topicPartitionReadFuture = topicPartitionList.readAllAsync();
 
         return topicPartitionListSizeFuture.thenCombineAsync(topicPartitionReadFuture, (sizeResult, readResult) -> {
             if (sizeResult > 0 && readResult.size() > 0) {
-                return ((Set<String>) new HashSet<>(readResult));
+                List l = readResult
+                    .stream()
+                    .map(entry -> ((RedisStringObject) entry).getStringData())
+                    .collect(Collectors.toList());
+                return ((Set<String>) new HashSet<>(l));
             } else if (sizeResult == 0 && readResult.size() == 0) {
                 return null;
             } else {
@@ -84,8 +90,11 @@ public class RedisTopicPartData implements TopicPartData {
     public PeekingIterator<Message> iteratorFrom(String groupId, int seqNoFrom) {
         log.info("getting peeking iterator");
         MessageGroup messageGroup = new MessageGroup(groupId, topicPartition);
-        RList<Message> rList = messageCodecClient.getList(messageGroup.toString());
-        return Iterators.peekingIterator(rList.listIterator(seqNoFrom));
+        RList<RedisObject> rList = client.getList(messageGroup.toString());
+        List l = (rList.stream().map(entry -> {
+            return ((RedisMessageObject) entry).getMessage();
+        }).collect(Collectors.toList()));
+        return Iterators.peekingIterator(l.listIterator(seqNoFrom));
     }
 
     private ByteBuffer buildMessage(Message message) {
