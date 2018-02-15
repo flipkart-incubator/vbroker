@@ -2,8 +2,8 @@ package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.controller.VBrokerController;
-import com.flipkart.vbroker.data.InMemoryTopicPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
+import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
 import com.flipkart.vbroker.entities.Subscription;
 import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.handlers.HttpResponseHandler;
@@ -51,6 +51,7 @@ public class VBrokerServer extends AbstractExecutionThreadService {
     private final CountDownLatch mainLatch = new CountDownLatch(1);
     private Channel serverChannel;
     private Channel serverLocalChannel;
+    private VBrokerController brokerController;
     private CuratorFramework curatorClient;
 
     private void startServer() throws IOException {
@@ -66,9 +67,6 @@ public class VBrokerServer extends AbstractExecutionThreadService {
 
         CuratorService curatorService = new CuratorService(asyncZkClient);
 
-        //global broker controller
-        VBrokerController controller = new VBrokerController(curatorService);
-        controller.watch();
 
         EventLoopGroup bossGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("server_boss"));
         EventLoopGroup workerGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("server_worker"));
@@ -86,6 +84,11 @@ public class VBrokerServer extends AbstractExecutionThreadService {
 
         TopicMetadataService topicMetadataService = new TopicMetadataService(topicService, topicPartDataManager);
         SubscriberMetadataService subscriberMetadataService = new SubscriberMetadataService(subscriptionService, topicService, topicPartDataManager);
+
+        //global broker controller
+        brokerController = new VBrokerController(curatorService, topicService, config);
+        log.info("Starting controller and awaiting it to be ready");
+        brokerController.startAsync().awaitRunning();
 
         log.debug("Loading topicMetadata");
         List<Topic> allTopics = topicService.getAllTopics().toCompletableFuture().join(); //we want to block here
@@ -193,6 +196,11 @@ public class VBrokerServer extends AbstractExecutionThreadService {
 
         log.info("Waiting for servers to shutdown peacefully");
         mainLatch.await();
+
+        if (nonNull(brokerController)) {
+            log.info("Stopping VBrokerController");
+            brokerController.stopAsync().awaitTerminated();
+        }
 
         if (nonNull(curatorClient)) {
             log.info("Closing zookeeper client");

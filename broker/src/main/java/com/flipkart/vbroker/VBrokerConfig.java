@@ -11,18 +11,23 @@ import java.io.InputStream;
 import java.util.Properties;
 
 @Getter
-@ToString(includeFieldNames = true)
+@ToString
 public class VBrokerConfig {
     private final Properties properties;
 
     private String brokerHost;
     private int brokerPort;
     private String zookeeperUrl;
+    private int consumerPort;
+
     private String topicsPath;
     private String queuesPath;
-    private String redisUrl;
+    private String controllerPath;
+    private int controllerQueueSize;
+    private int controllerQueuePollTimeMs;
+    private String adminTasksPath;
 
-    private int consumerPort;
+    private String redisUrl;
 
     public VBrokerConfig(Properties props) {
         this.properties = props;
@@ -45,6 +50,10 @@ public class VBrokerConfig {
         this.consumerPort = Ints.tryParse(properties.getProperty("consumer.port"));
         this.topicsPath = properties.getProperty("topics.path");
         this.queuesPath = properties.getProperty("queues.path");
+        this.controllerPath = properties.getProperty("controller.path");
+        this.controllerQueueSize = Ints.tryParse(properties.getProperty("controller.queue.size"));
+        this.controllerQueuePollTimeMs = Ints.tryParse(properties.getProperty("controller.queue.poll.time.ms"));
+        this.adminTasksPath = properties.getProperty("admin.tasks.path");
         this.redisUrl = properties.getProperty("redis.url");
     }
 }
