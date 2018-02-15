@@ -16,7 +16,7 @@ import java.util.concurrent.Executors;
 @Slf4j
 public class VBrokerController {
 
-    private final String path = "/topics";
+    private final String path = "/admin";
     private final CuratorService curatorService;
     private Executor executor = Executors.newSingleThreadExecutor();
 
@@ -28,6 +28,10 @@ public class VBrokerController {
         log.info("Setting watch on topics path...");
         CompletionStage<WatchedEvent> s = curatorService.watchNode(path);
         handleWatchedStage(s);
+    }
+
+    public void watchOnAdminPath(String adminPath) {
+        //curatorService.watchNode(adminPath).thenApplyAsync();
     }
 
     private void handleWatchedStage(CompletionStage<WatchedEvent> watchedStage) {
