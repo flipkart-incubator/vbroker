@@ -24,6 +24,7 @@ public class VBrokerConfig {
     private String queuesPath;
     private String controllerPath;
     private int controllerQueueSize;
+    private int controllerQueuePollTimeMs;
     private String adminTasksPath;
 
     private String redisUrl;
@@ -51,6 +52,7 @@ public class VBrokerConfig {
         this.queuesPath = properties.getProperty("queues.path");
         this.controllerPath = properties.getProperty("controller.path");
         this.controllerQueueSize = Ints.tryParse(properties.getProperty("controller.queue.size"));
+        this.controllerQueuePollTimeMs = Ints.tryParse(properties.getProperty("controller.queue.poll.time.ms"));
         this.adminTasksPath = properties.getProperty("admin.tasks.path");
         this.redisUrl = properties.getProperty("redis.url");
     }
