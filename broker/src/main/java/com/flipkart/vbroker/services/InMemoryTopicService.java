@@ -30,6 +30,11 @@ public class InMemoryTopicService implements TopicService {
     }
 
     @Override
+    public CompletionStage<Boolean> isTopicPresent(short topicId) {
+        return CompletableFuture.supplyAsync(() -> topicsMap.containsKey(topicId));
+    }
+
+    @Override
     public CompletionStage<Topic> getTopic(short topicId) {
         return CompletableFuture.supplyAsync(() -> topicsMap.get(topicId));
     }

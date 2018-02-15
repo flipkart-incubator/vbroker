@@ -1,6 +1,9 @@
 package com.flipkart.vbroker.utils;
 
 import com.flipkart.vbroker.core.TopicPartition;
+import com.flipkart.vbroker.entities.Topic;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,5 +24,10 @@ public class TopicUtils {
             topicPartitions.add(new TopicPartition(i, topicId));
         }
         return topicPartitions;
+    }
+
+    public static Topic getTopic(byte[] bytes) {
+        ByteBuf byteBuf = Unpooled.wrappedBuffer(bytes);
+        return Topic.getRootAsTopic(byteBuf.nioBuffer());
     }
 }
