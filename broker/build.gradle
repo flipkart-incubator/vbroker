@@ -67,6 +67,9 @@ dependencies {
     compile project(':core')
 
     //testing
-    testCompile "com.xebialabs.restito:restito:${restitoVersion}"
+    testCompile("com.xebialabs.restito:restito:${restitoVersion}") {
+        exclude group: 'junit', module: 'junit'
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
     testCompile "org.testng:testng:${testNgVersion}"
 }
