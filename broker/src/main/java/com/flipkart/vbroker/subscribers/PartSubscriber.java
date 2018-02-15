@@ -47,12 +47,12 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
         topicPartDataManager.getUniqueGroups(topicPartition).thenAccept(uniqueMsgGroups -> {
             Set<String> uniqueSubscriberGroups = subscriberGroupsMap.keySet();
             Sets.SetView<String> difference = Sets.difference(uniqueMsgGroups, uniqueSubscriberGroups);
-            for (String group : difference) {
+            difference.iterator().forEachRemaining(group -> {
                 MessageGroup messageGroup = new MessageGroup(group, topicPartition);
                 SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, partSubscription, topicPartDataManager);
                 subscriberGroupsMap.put(group, subscriberGroup);
                 subscriberGroupIteratorMap.put(subscriberGroup, subscriberGroup.iterator());
-            }
+            });
         });
     }
 
@@ -62,13 +62,20 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
             PeekingIterator<MessageWithGroup> currIterator;
 
             boolean refresh() {
+                log.info("Refreshing currIterator: {}", currIterator);
+                if (currIterator != null && currIterator.hasNext()) {
+                    log.info("peek: {}", currIterator.peek());
+                }
                 boolean refreshed = false;
                 if (currIterator != null
                     && currIterator.hasNext()
                     && !currIterator.peek().isGroupLocked()) {
+                    log.info("Group {} is not locked, hence returning true", currIterator.peek().getMessage().groupId());
                     return true;
                 }
 
+                log.info("SubscriberGroupsMap values");
+                log.info("SubscriberGroupsMap values: {}", subscriberGroupsMap.values());
                 for (SubscriberGroup subscriberGroup : subscriberGroupsMap.values()) {
                     if (!subscriberGroup.isLocked()) {
                         PeekingIterator<MessageWithGroup> groupIterator = subscriberGroupIteratorMap.get(subscriberGroup);
@@ -79,6 +86,7 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
                         }
                     }
                 }
+                log.info("Refreshed currIterator: {}", currIterator);
                 return refreshed;
             }
 
@@ -99,7 +107,14 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
 
             @Override
             public boolean hasNext() {
-                return refresh() && currIterator.hasNext();
+                try {
+                    if (refresh()) {
+                        return currIterator.hasNext();
+                    }
+                } catch (Exception e) {
+                    log.error("Exception in refresh/hasNext", e);
+                }
+                return false;
             }
         };
     }
