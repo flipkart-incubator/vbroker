@@ -11,7 +11,11 @@ import org.apache.zookeeper.WatchedEvent;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static java.util.Objects.nonNull;
 
 /**
  * global broker controller
@@ -28,6 +32,7 @@ public class VBrokerController extends AbstractExecutionThreadService {
     private final String adminDeleteTopicPath;
     private final BlockingQueue<WatchedEvent> watchEventsQueue;
     private volatile AtomicBoolean running = new AtomicBoolean(false);
+    private final CountDownLatch runningLatch = new CountDownLatch(1);
 
     public VBrokerController(CuratorService curatorService,
                              TopicService topicService,
@@ -58,9 +63,13 @@ public class VBrokerController extends AbstractExecutionThreadService {
     @Override
     protected void run() throws Exception {
         while (this.running.get()) {
-            WatchedEvent watchedEvent = watchEventsQueue.take();
-            handleWatchEvent(watchedEvent);
+            WatchedEvent watchedEvent =
+                watchEventsQueue.poll(config.getControllerQueuePollTimeMs(), TimeUnit.MILLISECONDS);
+            if (nonNull(watchedEvent)) {
+                handleWatchEvent(watchedEvent);
+            }
         }
+        runningLatch.countDown();
     }
 
     /**
@@ -116,5 +125,9 @@ public class VBrokerController extends AbstractExecutionThreadService {
     protected void triggerShutdown() {
         //TODO: cleanup watches first
         running.set(false);
+        try {
+            runningLatch.await();
+        } catch (InterruptedException ignored) {
+        }
     }
 }

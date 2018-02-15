@@ -2,8 +2,8 @@ package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.controller.VBrokerController;
-import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
+import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
 import com.flipkart.vbroker.entities.Subscription;
 import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.handlers.HttpResponseHandler;
@@ -51,6 +51,7 @@ public class VBrokerServer extends AbstractExecutionThreadService {
     private final CountDownLatch mainLatch = new CountDownLatch(1);
     private Channel serverChannel;
     private Channel serverLocalChannel;
+    private VBrokerController brokerController;
     private CuratorFramework curatorClient;
 
     private void startServer() throws IOException {
@@ -85,9 +86,9 @@ public class VBrokerServer extends AbstractExecutionThreadService {
         SubscriberMetadataService subscriberMetadataService = new SubscriberMetadataService(subscriptionService, topicService, topicPartDataManager);
 
         //global broker controller
-        VBrokerController controller = new VBrokerController(curatorService, topicService, config);
+        brokerController = new VBrokerController(curatorService, topicService, config);
         log.info("Starting controller and awaiting it to be ready");
-        controller.startAsync().awaitRunning();
+        brokerController.startAsync().awaitRunning();
 
         log.debug("Loading topicMetadata");
         List<Topic> allTopics = topicService.getAllTopics().toCompletableFuture().join(); //we want to block here
@@ -195,6 +196,11 @@ public class VBrokerServer extends AbstractExecutionThreadService {
 
         log.info("Waiting for servers to shutdown peacefully");
         mainLatch.await();
+
+        if (nonNull(brokerController)) {
+            log.info("Stopping VBrokerController");
+            brokerController.stopAsync().awaitTerminated();
+        }
 
         if (nonNull(curatorClient)) {
             log.info("Closing zookeeper client");
