@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.Topic;
+import com.flipkart.vbroker.utils.ByteBufUtils;
 import com.flipkart.vbroker.utils.JsonUtils;
 import com.flipkart.vbroker.utils.TopicUtils;
 import lombok.AllArgsConstructor;
@@ -31,10 +32,8 @@ public class TopicServiceImpl implements TopicService {
     @Override
     public synchronized CompletionStage<Topic> createTopic(Topic topic) {
         return CompletableFuture.supplyAsync(() -> {
-            byte[] bytes = new byte[topic.getByteBuffer().remaining()];
-            topic.getByteBuffer().get(bytes);
             curatorService
-                .createNodeAndSetData(config.getTopicsPath() + "/" + topic.topicId(), CreateMode.PERSISTENT, bytes)
+                .createNodeAndSetData(config.getTopicsPath() + "/" + topic.topicId(), CreateMode.PERSISTENT, ByteBufUtils.getBytes(topic.getByteBuffer()))
                 .handle((data, exception) -> {
                     if (exception != null) {
                         log.error("Failure in creating topic!");
