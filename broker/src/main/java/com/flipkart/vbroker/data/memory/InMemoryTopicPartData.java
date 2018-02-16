@@ -12,7 +12,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
 
 @Slf4j
 public class InMemoryTopicPartData implements TopicPartData {
@@ -21,8 +20,8 @@ public class InMemoryTopicPartData implements TopicPartData {
     public synchronized CompletionStage<MessageMetadata> addMessage(Message message) {
         return CompletableFuture.supplyAsync(() -> {
             getMessages(message.groupId()).add(message);
-            log.info("Added message with msg_id {} and group_id {} to the map", message.messageId(), message.groupId());
-            log.info("Group messages: {}", topicPartitionData.get(message.groupId()));
+            log.trace("Added message with msg_id {} and group_id {} to the map", message.messageId(), message.groupId());
+            log.trace("Group messages: {}", topicPartitionData.get(message.groupId()));
             return new MessageMetadata(message.topicId(), message.partitionId(), new Random().nextInt());
         });
     }
@@ -32,21 +31,20 @@ public class InMemoryTopicPartData implements TopicPartData {
     }
 
     public PeekingIterator<Message> iteratorFrom(String group, int seqNoFrom) {
-
         return new PeekingIterator<Message>() {
             AtomicInteger index = new AtomicInteger(seqNoFrom);
 
             @Override
             public Message peek() {
                 Message message = topicPartitionData.get(group).get(index.get());
-                log.info("Peeking message {}", message.messageId());
+                log.trace("Peeking message {}", message.messageId());
                 return message;
             }
 
             @Override
             public Message next() {
                 Message message = topicPartitionData.get(group).get(index.getAndIncrement());
-                log.info("Next message {}", message.messageId());
+                log.trace("Next message {}", message.messageId());
                 return message;
             }
 
@@ -60,10 +58,6 @@ public class InMemoryTopicPartData implements TopicPartData {
                 return index.get() < topicPartitionData.get(group).size();
             }
         };
-    }
-
-    public Stream<Message> streamFrom(String group, int seqNoFrom) {
-        return getMessages(group).stream().skip(seqNoFrom);
     }
 
     private synchronized List<Message> getMessages(String group) {

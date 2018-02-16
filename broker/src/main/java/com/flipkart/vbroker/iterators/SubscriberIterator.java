@@ -38,7 +38,6 @@ public class SubscriberIterator implements PeekingIterator<MessageWithGroup> {
         if (currIterator.hasNext() && !currIterator.peek().isGroupLocked()) {
             return true;
         }
-        log.info("Top Subscriber IteratorQ size: {}", iteratorQueue.size());
 
         for (int i = 0; i < iteratorQueue.size(); i++) {
             PeekingIterator<MessageWithGroup> iterator = iteratorQueue.peek();
@@ -49,7 +48,6 @@ public class SubscriberIterator implements PeekingIterator<MessageWithGroup> {
             }
             iteratorQueue.add(iteratorQueue.poll());
         }
-        log.info("Subscriber IteratorQ size: {}", iteratorQueue.size());
         return currIterator.hasNext();
     }
 

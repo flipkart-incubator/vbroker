@@ -31,8 +31,8 @@ public class VBrokerController extends AbstractExecutionThreadService {
     private final String adminCreateTopicPath;
     private final String adminDeleteTopicPath;
     private final BlockingQueue<WatchedEvent> watchEventsQueue;
-    private volatile AtomicBoolean running = new AtomicBoolean(false);
     private final CountDownLatch runningLatch = new CountDownLatch(1);
+    private volatile AtomicBoolean running = new AtomicBoolean(false);
 
     public VBrokerController(CuratorService curatorService,
                              TopicService topicService,
