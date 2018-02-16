@@ -1,0 +1,75 @@
+apply plugin: 'application'
+apply plugin: 'java'
+
+version = '1.0-SNAPSHOT'
+sourceCompatibility = '1.8'
+mainClassName = "com.flipkart.vbroker.VBrokerApp"
+
+//src dependencies
+def nettyVersion = "4.1.21.Final"
+def asyncHttpClientVersion = "2.3.0"
+def curatorXAsyncVersion = "4.0.0"
+def zookeeperVersion = "3.5.3-beta"
+def redissonVersion = "3.6.0"
+
+//test dependencies
+def restitoVersion = "0.9.3"
+def testNgVersion = "6.14.2"
+
+dependencies {
+    //networking
+    compile "io.netty:netty-all:${nettyVersion}"
+
+    //http
+    //temporary
+    compile("org.asynchttpclient:async-http-client:${asyncHttpClientVersion}") {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'io.netty', module: 'netty-buffer'
+        exclude group: 'io.netty', module: 'netty-codec-http'
+        exclude group: 'io.netty', module: 'netty-handler'
+        exclude group: 'io.netty', module: 'netty-codec-socks'
+        exclude group: 'io.netty', module: 'netty-handler-proxy'
+        exclude group: 'io.netty', module: 'netty-transport-native-epoll'
+        exclude group: 'io.netty', module: 'netty-resolver-dns'
+        exclude group: 'io.netty', module: 'netty-codec-http'
+    }
+
+    //coordination
+    compile("org.apache.curator:curator-x-async:${curatorXAsyncVersion}") {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'log4j', module: 'log4j'
+        exclude group: 'io.netty', module: 'netty'
+        exclude group: 'com.google.guava', module: 'guava'
+        exclude group: 'org.apache.zookeeper', module: 'zookeeper'
+    }
+
+    compile("org.apache.curator:curator-test:${curatorXAsyncVersion}") {
+        exclude group: 'org.apache.zookeeper', module: 'zookeeper'
+    }
+
+    compile("org.apache.zookeeper:zookeeper:${zookeeperVersion}") {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+        exclude group: 'log4j', module: 'log4j'
+    }
+
+    //redis
+    compile("org.redisson:redisson:${redissonVersion}") {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+        exclude group: 'io.netty', module: 'netty-common'
+        exclude group: 'io.netty', module: 'netty-codec'
+        exclude group: 'io.netty', module: 'netty-buffer'
+        exclude group: 'io.netty', module: 'netty-transport'
+        exclude group: 'io.netty', module: 'netty-resolver-dns'
+        exclude group: 'io.netty', module: 'netty-handler'
+    }
+
+    compile project(':core')
+
+    //testing
+    testCompile("com.xebialabs.restito:restito:${restitoVersion}") {
+        exclude group: 'junit', module: 'junit'
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
+    testCompile "org.testng:testng:${testNgVersion}"
+}
