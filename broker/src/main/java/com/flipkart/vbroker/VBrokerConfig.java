@@ -19,6 +19,7 @@ public class VBrokerConfig {
     private int brokerPort;
     private String zookeeperUrl;
     private int consumerPort;
+    private int subscriberPollTimeMs;
 
     private String topicsPath;
     private String queuesPath;
@@ -48,6 +49,7 @@ public class VBrokerConfig {
         this.brokerPort = Ints.tryParse(properties.getProperty("broker.port"));
         this.zookeeperUrl = properties.getProperty("zookeeper.url");
         this.consumerPort = Ints.tryParse(properties.getProperty("consumer.port"));
+        this.subscriberPollTimeMs = Ints.tryParse(properties.getProperty("subscriber.poll.time.ms"));
         this.topicsPath = properties.getProperty("topics.path");
         this.queuesPath = properties.getProperty("queues.path");
         this.controllerPath = properties.getProperty("controller.path");

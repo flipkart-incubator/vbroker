@@ -142,7 +142,11 @@ public class VBrokerServer extends AbstractExecutionThreadService {
             AsyncHttpClient httpClient = new DefaultAsyncHttpClient(httpClientConfig);
             MessageProcessor messageProcessor = new HttpMessageProcessor(httpClient, topicService, subscriptionService, producerService);
 
-            BrokerSubscriber brokerSubscriber = new BrokerSubscriber(subscriptionService, messageProcessor, subscriberMetadataService, topicMetadataService);
+            BrokerSubscriber brokerSubscriber = new BrokerSubscriber(subscriptionService,
+                messageProcessor,
+                subscriberMetadataService,
+                topicMetadataService,
+                config);
             ExecutorService subscriberExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("subscriber"));
             subscriberExecutor.submit(brokerSubscriber);
 
