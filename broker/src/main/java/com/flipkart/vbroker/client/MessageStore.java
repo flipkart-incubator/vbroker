@@ -37,10 +37,25 @@ public class MessageStore {
         return builder.dataBuffer();
     }
 
+    public static Message getRandomMsg(String groupId) {
+        FlatBufferBuilder builder = new FlatBufferBuilder();
+        int sampleMsg = getSampleMsg(builder,
+            builder.createString(UUID.randomUUID().toString()),
+            builder.createString(groupId));
+        builder.finish(sampleMsg);
+
+        return Message.getRootAsMessage(encodeSampleMsg());
+    }
+
+
     public static int getSampleMsg(FlatBufferBuilder builder) {
         String msgId = UUID.randomUUID().toString();
         int messageId = builder.createString(msgId);
         int groupId = builder.createString(msgId);
+        return getSampleMsg(builder, messageId, groupId);
+    }
+
+    private static int getSampleMsg(FlatBufferBuilder builder, int messageId, int groupId) {
         byte crc = '1';
         byte version = '1';
         short seqNo = 1;

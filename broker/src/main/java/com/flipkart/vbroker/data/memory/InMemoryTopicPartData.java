@@ -29,6 +29,7 @@ public class InMemoryTopicPartData implements TopicPartData {
     }
 
     public PeekingIterator<Message> iteratorFrom(String group, int seqNoFrom) {
-        return Iterators.peekingIterator(topicPartitionData.get(group).listIterator(seqNoFrom));
+        List<Message> messages = topicPartitionData.get(group);
+        return Iterators.peekingIterator(messages.listIterator(seqNoFrom));
     }
 }
