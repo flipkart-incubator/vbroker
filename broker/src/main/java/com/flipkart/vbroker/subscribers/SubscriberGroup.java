@@ -103,7 +103,7 @@ public class SubscriberGroup implements Iterable<MessageWithGroup> {
     private class SubscriberGroupIterator implements PeekingIterator<MessageWithGroup> {
 
         SubscriberGroup subscriberGroup;
-        volatile PeekingIterator<Message> groupIterator = topicPartDataManager.getIterator(topicPartition, getGroupId(), currSeqNo.get());
+        PeekingIterator<Message> groupIterator = topicPartDataManager.getIterator(topicPartition, getGroupId(), currSeqNo.get());
 
         public SubscriberGroupIterator(SubscriberGroup subscriberGroup) {
             this.subscriberGroup = subscriberGroup;
@@ -127,7 +127,7 @@ public class SubscriberGroup implements Iterable<MessageWithGroup> {
         }
 
         @Override
-        public boolean hasNext() {
+        public synchronized boolean hasNext() {
             return groupIterator.hasNext();
         }
     }

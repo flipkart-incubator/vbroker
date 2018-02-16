@@ -11,9 +11,8 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @EqualsAndHashCode(exclude = {"subscriberGroupsMap", "subscriberGroupIteratorMap"})
@@ -75,10 +74,16 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
                 }
 
                 log.info("SubscriberGroupsMap values");
-                log.info("SubscriberGroupsMap values: {}", subscriberGroupsMap.values());
+                List<String> groupIds = subscriberGroupsMap.values().stream()
+                    .map(subGroup -> subGroup.getGroupId())
+                    .collect(Collectors.toList());
+                log.info("SubscriberGroupsMap values: {}", Arrays.asList(groupIds));
+
                 for (SubscriberGroup subscriberGroup : subscriberGroupsMap.values()) {
+                    log.info("SubscriberGroup {} locked status: {}", subscriberGroup.getGroupId(), subscriberGroup.isLocked());
                     if (!subscriberGroup.isLocked()) {
                         PeekingIterator<MessageWithGroup> groupIterator = subscriberGroupIteratorMap.get(subscriberGroup);
+                        log.info("Iterator {} for subscriberGroup {} hasNext: {}", groupIterator, subscriberGroup.getGroupId(), groupIterator.hasNext());
                         if (groupIterator.hasNext()) {
                             currIterator = groupIterator;
                             refreshed = true;

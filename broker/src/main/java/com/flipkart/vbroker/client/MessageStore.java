@@ -44,7 +44,7 @@ public class MessageStore {
             builder.createString(groupId));
         builder.finish(sampleMsg);
 
-        return Message.getRootAsMessage(encodeSampleMsg());
+        return Message.getRootAsMessage(builder.dataBuffer());
     }
 
 
