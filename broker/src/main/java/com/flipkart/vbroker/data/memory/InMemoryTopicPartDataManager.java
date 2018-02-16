@@ -25,9 +25,10 @@ public class InMemoryTopicPartDataManager implements TopicPartDataManager {
     private final Map<TopicPartition, TopicPartData> allPartitionsDataMap = new LinkedHashMap<>();
 
     @Override
-    public CompletionStage<TopicPartData> getTopicPartData(TopicPartition topicPartition) {
+    public synchronized CompletionStage<TopicPartData> getTopicPartData(TopicPartition topicPartition) {
         return CompletableFuture.supplyAsync(() -> {
-            allPartitionsDataMap.putIfAbsent(topicPartition, new InMemoryTopicPartData());
+            allPartitionsDataMap.computeIfAbsent(topicPartition, topicPartition1 -> new InMemoryTopicPartData());
+            //allPartitionsDataMap.putIfAbsent(topicPartition, new InMemoryTopicPartData());
             return allPartitionsDataMap.get(topicPartition);
         });
     }

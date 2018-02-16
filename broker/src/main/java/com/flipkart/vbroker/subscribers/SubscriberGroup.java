@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by hooda on 19/1/18
  */
 @Slf4j
-@EqualsAndHashCode(exclude = {"qType", "currSeqNo", "topicPartDataManager"})
+@EqualsAndHashCode(exclude = {"qType", "currSeqNo", "topicPartDataManager", "locked"})
 //TODO: crude implementation of seqNo. Handle the concurrency here correctly
 public class SubscriberGroup implements Iterable<MessageWithGroup> {
     private final MessageGroup messageGroup;
@@ -110,7 +110,7 @@ public class SubscriberGroup implements Iterable<MessageWithGroup> {
         }
 
         @Override
-        public MessageWithGroup peek() {
+        public synchronized MessageWithGroup peek() {
             return MessageWithGroup.newInstance(groupIterator.peek(), subscriberGroup);
         }
 
@@ -127,7 +127,7 @@ public class SubscriberGroup implements Iterable<MessageWithGroup> {
         }
 
         @Override
-        public boolean hasNext() {
+        public synchronized boolean hasNext() {
             return groupIterator.hasNext();
         }
     }

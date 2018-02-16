@@ -19,7 +19,7 @@ public class MessageUtils {
     public static Message getCallbackMsg(Message message, Response response) {
         FlatBufferBuilder builder = new FlatBufferBuilder();
 
-        int messageId = builder.createString(requireNonNull(message.messageId()));
+        int messageId = builder.createString("cbk_" + requireNonNull(message.messageId()));
         int groupId = builder.createString(requireNonNull(message.groupId()));
         byte crc = message.crc();
         byte version = message.version();

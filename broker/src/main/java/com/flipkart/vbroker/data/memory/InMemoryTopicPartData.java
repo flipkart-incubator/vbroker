@@ -3,20 +3,25 @@ package com.flipkart.vbroker.data.memory;
 import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.data.TopicPartData;
 import com.flipkart.vbroker.entities.Message;
-import com.google.common.collect.Iterators;
+import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.google.common.collect.PeekingIterator;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
+@Slf4j
 public class InMemoryTopicPartData implements TopicPartData {
     private final Map<String, List<Message>> topicPartitionData = new LinkedHashMap<>();
 
     public synchronized CompletionStage<MessageMetadata> addMessage(Message message) {
         return CompletableFuture.supplyAsync(() -> {
-            this.topicPartitionData.computeIfAbsent(message.groupId(), key -> new LinkedList<>());
-            this.topicPartitionData.get(message.groupId()).add(message);
+            getMessages(message.groupId()).add(message);
+            log.trace("Added message with msg_id {} and group_id {} to the map", message.messageId(), message.groupId());
+            log.trace("Group messages: {}", topicPartitionData.get(message.groupId()));
             return new MessageMetadata(message.topicId(), message.partitionId(), new Random().nextInt());
         });
     }
@@ -26,6 +31,36 @@ public class InMemoryTopicPartData implements TopicPartData {
     }
 
     public PeekingIterator<Message> iteratorFrom(String group, int seqNoFrom) {
-        return Iterators.peekingIterator(topicPartitionData.get(group).listIterator(seqNoFrom));
+        return new PeekingIterator<Message>() {
+            AtomicInteger index = new AtomicInteger(seqNoFrom);
+
+            @Override
+            public Message peek() {
+                Message message = topicPartitionData.get(group).get(index.get());
+                log.trace("Peeking message {}", message.messageId());
+                return message;
+            }
+
+            @Override
+            public Message next() {
+                Message message = topicPartitionData.get(group).get(index.getAndIncrement());
+                log.trace("Next message {}", message.messageId());
+                return message;
+            }
+
+            @Override
+            public void remove() {
+                throw new NotImplementedException();
+            }
+
+            @Override
+            public boolean hasNext() {
+                return index.get() < topicPartitionData.get(group).size();
+            }
+        };
+    }
+
+    private synchronized List<Message> getMessages(String group) {
+        return topicPartitionData.computeIfAbsent(group, key -> new CopyOnWriteArrayList<>());
     }
 }

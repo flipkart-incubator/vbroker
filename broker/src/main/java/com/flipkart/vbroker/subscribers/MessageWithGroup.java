@@ -3,11 +3,13 @@ package com.flipkart.vbroker.subscribers;
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @AllArgsConstructor
 @Slf4j
+@EqualsAndHashCode
 public class MessageWithGroup {
     @Getter
     private final Message message;
@@ -52,10 +54,12 @@ public class MessageWithGroup {
     }
 
     public boolean lockGroup() {
+        log.info("Locking the group {}", subscriberGroup.getGroupId());
         return subscriberGroup.lock();
     }
 
     public void forceUnlockGroup() {
+        log.info("Unlocking the group {}", subscriberGroup.getGroupId());
         subscriberGroup.forceUnlock();
     }
 

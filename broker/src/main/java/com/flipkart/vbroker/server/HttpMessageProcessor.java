@@ -1,7 +1,8 @@
 package com.flipkart.vbroker.server;
 
-import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.core.CallbackConfig;
+import com.flipkart.vbroker.core.TopicPartMessage;
+import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.exceptions.TopicNotFoundException;
 import com.flipkart.vbroker.services.ProducerService;
@@ -19,6 +20,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
@@ -64,10 +67,13 @@ public class HttpMessageProcessor implements MessageProcessor {
          */
         reqFuture.addListener(() -> {
             try {
-                Response response = reqFuture.get();
+                Response response = reqFuture.get(5, TimeUnit.SECONDS);
                 handleResponse(response, messageWithGroup);
             } catch (InterruptedException | ExecutionException e) {
                 log.error("Exception in executing request", e);
+                messageWithGroup.sidelineGroup();
+            } catch (TimeoutException e) {
+                log.error("Timed out while making the http request", e);
                 messageWithGroup.sidelineGroup();
             } finally {
                 messageWithGroup.forceUnlockGroup();
@@ -138,9 +144,14 @@ public class HttpMessageProcessor implements MessageProcessor {
             Message callbackMsg = MessageUtils.getCallbackMsg(message, response);
             try {
                 CompletionStage<Topic> topicStage = topicService.getTopic(callbackMsg.topicId());
-                CompletionStage<MessageMetadata> messageMetadataState = topicStage.thenCompose(topic -> {
-                    log.info("Producing callback for message to {} queue", topic.topicName());
-                    return producerService.produceMessage(topic, callbackMsg);
+                topicStage.thenCompose(topic -> {
+                    log.info("Producing callback for message to {} queue", topic.topicId());
+                    TopicPartMessage topicPartMessage =
+                        TopicPartMessage.newInstance(new TopicPartition(callbackMsg.partitionId(), topic.topicId()), callbackMsg);
+                    return producerService.produceMessage(topicPartMessage).toCompletableFuture();
+                }).exceptionally(throwable -> {
+                    log.error("Exception in producing callback", throwable);
+                    return null;
                 });
                 //TODO: you need to handle the case where the callback producing fails
             } catch (TopicNotFoundException ex) {
