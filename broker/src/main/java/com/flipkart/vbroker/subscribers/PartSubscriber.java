@@ -61,29 +61,26 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
             PeekingIterator<MessageWithGroup> currIterator;
 
             boolean refresh() {
-                log.info("Refreshing currIterator: {}", currIterator);
-                if (currIterator != null && currIterator.hasNext()) {
-                    log.info("peek: {}", currIterator.peek());
-                }
                 boolean refreshed = false;
                 if (currIterator != null
                     && currIterator.hasNext()
                     && !currIterator.peek().isGroupLocked()) {
-                    log.info("Group {} is not locked, hence returning true", currIterator.peek().getMessage().groupId());
+                    log.trace("Group {} is not locked, hence returning true", currIterator.peek().getMessage().groupId());
                     return true;
                 }
 
-                log.info("SubscriberGroupsMap values");
-                List<String> groupIds = subscriberGroupsMap.values().stream()
-                    .map(subGroup -> subGroup.getGroupId())
-                    .collect(Collectors.toList());
-                log.info("SubscriberGroupsMap values: {}", Arrays.asList(groupIds));
+                if (log.isDebugEnabled()) {
+                    List<String> groupIds = subscriberGroupsMap.values().stream()
+                        .map(SubscriberGroup::getGroupId)
+                        .collect(Collectors.toList());
+                    log.debug("SubscriberGroupsMap values: {}", Collections.singletonList(groupIds));
+                }
 
                 for (SubscriberGroup subscriberGroup : subscriberGroupsMap.values()) {
-                    log.info("SubscriberGroup {} locked status: {}", subscriberGroup.getGroupId(), subscriberGroup.isLocked());
+                    log.trace("SubscriberGroup {} locked status: {}", subscriberGroup.getGroupId(), subscriberGroup.isLocked());
                     if (!subscriberGroup.isLocked()) {
                         PeekingIterator<MessageWithGroup> groupIterator = subscriberGroupIteratorMap.get(subscriberGroup);
-                        log.info("Iterator {} for subscriberGroup {} hasNext: {}", groupIterator, subscriberGroup.getGroupId(), groupIterator.hasNext());
+                        log.trace("Iterator {} for subscriberGroup {} hasNext: {}", groupIterator, subscriberGroup.getGroupId(), groupIterator.hasNext());
                         if (groupIterator.hasNext()) {
                             currIterator = groupIterator;
                             refreshed = true;
@@ -91,7 +88,6 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
                         }
                     }
                 }
-                log.info("Refreshed currIterator: {}", currIterator);
                 return refreshed;
             }
 

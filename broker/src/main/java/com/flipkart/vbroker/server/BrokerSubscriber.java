@@ -1,5 +1,6 @@
 package com.flipkart.vbroker.server;
 
+import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.entities.Subscription;
 import com.flipkart.vbroker.iterators.SubscriberIterator;
@@ -26,14 +27,20 @@ public class BrokerSubscriber implements Runnable {
     private final MessageProcessor messageProcessor;
     private final SubscriberMetadataService subscriberMetadataService;
     private final TopicMetadataService topicMetadataService;
+    private final VBrokerConfig config;
     private SubscriberGroupSyncer syncer;
     private volatile AtomicBoolean running = new AtomicBoolean(true);
 
-    public BrokerSubscriber(SubscriptionService subscriptionService, MessageProcessor messageProcessor, SubscriberMetadataService subscriberMetadataService, TopicMetadataService topicMetadataService) {
+    public BrokerSubscriber(SubscriptionService subscriptionService,
+                            MessageProcessor messageProcessor,
+                            SubscriberMetadataService subscriberMetadataService,
+                            TopicMetadataService topicMetadataService,
+                            VBrokerConfig config) {
         this.subscriptionService = subscriptionService;
         this.messageProcessor = messageProcessor;
         this.subscriberMetadataService = subscriberMetadataService;
         this.topicMetadataService = topicMetadataService;
+        this.config = config;
     }
 
     public void run() {
@@ -54,18 +61,16 @@ public class BrokerSubscriber implements Runnable {
                 SubscriberIterator subscriberIterator = new SubscriberIterator(partSubscribers);
                 MessageConsumer messageConsumer = MessageConsumer.newInstance(subscriberIterator, messageProcessor);
 
-                long pollTimeMs = 2 * 1000;
+                long pollTimeMs = config.getControllerQueuePollTimeMs();
                 while (running.get()) {
                     log.info("Polling for new messages");
                     while (running.get() && subscriberIterator.hasNext()) {
-                        log.info("Consuming..");
                         try {
                             messageConsumer.consume();
                         } catch (Exception e) {
                             log.error("Exception in consuming the message", e);
                             Thread.sleep(pollTimeMs);
                         }
-                        Thread.sleep(pollTimeMs);
                     }
                     Thread.sleep(pollTimeMs);
                 }
