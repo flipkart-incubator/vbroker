@@ -43,7 +43,7 @@ public class RedisTopicPartDataManager implements TopicPartDataManager {
     @Override
     public CompletionStage<TopicPartData> getTopicPartData(TopicPartition topicPartition) {
         return CompletableFuture.supplyAsync(() -> {
-            allPartitionsDataMap.putIfAbsent(topicPartition, new RedisTopicPartData(client, topicPartition));
+            allPartitionsDataMap.putIfAbsent(topicPartition, new RedisTopicPartDataLua(client, topicPartition));
             return allPartitionsDataMap.get(topicPartition);
         });
     }
