@@ -4,6 +4,8 @@ import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.controller.VBrokerController;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
+import com.flipkart.vbroker.data.redis.RedisMessageCodec;
+import com.flipkart.vbroker.data.redis.RedisTopicPartDataManager;
 import com.flipkart.vbroker.entities.Subscription;
 import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.handlers.HttpResponseHandler;
@@ -35,6 +37,8 @@ import org.apache.curator.x.async.AsyncCuratorFramework;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
+import org.redisson.Redisson;
+import org.redisson.config.Config;
 
 import java.io.IOException;
 import java.util.List;
@@ -75,9 +79,18 @@ public class VBrokerServer extends AbstractExecutionThreadService {
         //TopicService topicService = new TopicServiceImpl(config, curatorService);
         TopicService topicService = new InMemoryTopicService();
 
+        Config redissonConfig = new Config();
+        redissonConfig.useSingleServer().setAddress(config.getRedisUrl());
+        redissonConfig.setCodec(new RedisMessageCodec());
+        redissonConfig.setEventLoopGroup(workerGroup);
+
         //TopicPartDataManager topicPartDataManager = new TopicPartitionDataManagerImpl();
+
+        /* Ultimately, one of these 2 topicPartDataManager would be used.
+        *  Keeping both of these for now, for in-mem and redis dev/test
+        *  */
         TopicPartDataManager topicPartDataManager = new InMemoryTopicPartDataManager();
-        //TopicPartDataManager topicPartDataManager = new RedisTopicPartDataManager(config, workerGroup);
+        TopicPartDataManager redisTopicPartDataManager = new RedisTopicPartDataManager(Redisson.create(redissonConfig));
 
         //SubscriptionService subscriptionService = new SubscriptionServiceImpl(config, curatorService, topicPartDataManager, topicService);
         SubscriptionService subscriptionService = new InMemorySubscriptionService(topicService, topicPartDataManager);
