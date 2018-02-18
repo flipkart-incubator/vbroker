@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @EqualsAndHashCode(exclude = {"subscriberGroupsMap", "subscriberGroupIteratorMap"})
 @ToString
-public class PartSubscriber implements Iterable<MessageWithGroup> {
+public class PartSubscriber implements Iterable<IMessageWithGroup> {
     public static final Integer DEFAULT_PARALLELISM = 5;
     public static final Integer MAX_GROUPS_IN_ITERATOR = 100;
 
@@ -25,7 +25,7 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
     private final PartSubscription partSubscription;
     @Getter
     private final Map<String, SubscriberGroup> subscriberGroupsMap = new LinkedHashMap<>();
-    private final Map<SubscriberGroup, PeekingIterator<MessageWithGroup>> subscriberGroupIteratorMap = new LinkedHashMap<>();
+    private final Map<SubscriberGroup, PeekingIterator<IMessageWithGroup>> subscriberGroupIteratorMap = new LinkedHashMap<>();
     private final TopicPartDataManager topicPartDataManager;
 
     public PartSubscriber(TopicPartDataManager topicPartDataManager,
@@ -56,15 +56,15 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
     }
 
     @Override
-    public PeekingIterator<MessageWithGroup> iterator() {
-        return new PeekingIterator<MessageWithGroup>() {
-            PeekingIterator<MessageWithGroup> currIterator;
+    public PeekingIterator<IMessageWithGroup> iterator() {
+        return new PeekingIterator<IMessageWithGroup>() {
+            PeekingIterator<IMessageWithGroup> currIterator;
 
             boolean refresh() {
                 boolean refreshed = false;
                 if (currIterator != null
                     && currIterator.hasNext()
-                    && !currIterator.peek().isGroupLocked()) {
+                    && !currIterator.peek().isLocked()) {
                     log.trace("Group {} is not locked, hence returning true", currIterator.peek().getMessage().groupId());
                     return true;
                 }
@@ -79,7 +79,7 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
                 for (SubscriberGroup subscriberGroup : subscriberGroupsMap.values()) {
                     log.trace("SubscriberGroup {} locked status: {}", subscriberGroup.getGroupId(), subscriberGroup.isLocked());
                     if (!subscriberGroup.isLocked()) {
-                        PeekingIterator<MessageWithGroup> groupIterator = subscriberGroupIteratorMap.get(subscriberGroup);
+                        PeekingIterator<IMessageWithGroup> groupIterator = subscriberGroupIteratorMap.get(subscriberGroup);
                         log.trace("Iterator {} for subscriberGroup {} hasNext: {}", groupIterator, subscriberGroup.getGroupId(), groupIterator.hasNext());
                         if (groupIterator.hasNext()) {
                             currIterator = groupIterator;
@@ -92,12 +92,12 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
             }
 
             @Override
-            public MessageWithGroup peek() {
+            public IMessageWithGroup peek() {
                 return currIterator.peek();
             }
 
             @Override
-            public MessageWithGroup next() {
+            public IMessageWithGroup next() {
                 return currIterator.next();
             }
 
