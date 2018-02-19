@@ -76,4 +76,9 @@ public class RedisTopicPartDataManager implements TopicPartDataManager {
             .thenApplyAsync(topicPartData -> topicPartData.iteratorFrom(group, seqNoFrom))
             .toCompletableFuture().join();
     }
+
+    @Override
+    public PeekingIterator<Message> getIterator(TopicPartition topicPartition, int seqNoFrom) {
+        throw new UnsupportedOperationException("You cannot have a global iterator for partition for a grouped topic-partition");
+    }
 }

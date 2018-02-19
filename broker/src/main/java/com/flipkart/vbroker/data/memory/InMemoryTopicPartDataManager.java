@@ -71,4 +71,11 @@ public class InMemoryTopicPartDataManager implements TopicPartDataManager {
             .thenApplyAsync(topicPartData -> topicPartData.iteratorFrom(group, seqNoFrom))
             .toCompletableFuture().join();
     }
+
+    @Override
+    public PeekingIterator<Message> getIterator(TopicPartition topicPartition, int seqNoFrom) {
+        return getTopicPartData(topicPartition)
+            .thenApplyAsync(topicPartData -> topicPartData.iteratorFrom(seqNoFrom))
+            .toCompletableFuture().join();
+    }
 }

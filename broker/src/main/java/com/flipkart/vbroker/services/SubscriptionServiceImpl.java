@@ -6,6 +6,7 @@ import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.entities.Subscription;
 import com.flipkart.vbroker.entities.Topic;
+import com.flipkart.vbroker.subscribers.IPartSubscriber;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
 import com.flipkart.vbroker.utils.JsonUtils;
 import com.flipkart.vbroker.utils.SubscriptionUtils;
@@ -34,7 +35,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private final TopicService topicService;
 
     private final ConcurrentMap<Short, Subscription> subscriptionsMap = new ConcurrentHashMap<>();
-    private final ConcurrentMap<PartSubscription, PartSubscriber> subscriberMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<PartSubscription, IPartSubscriber> subscriberMap = new ConcurrentHashMap<>();
 
     @Override
     public CompletionStage<Subscription> createSubscription(Subscription subscription) {
@@ -63,7 +64,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public CompletionStage<PartSubscriber> getPartSubscriber(PartSubscription partSubscription) {
+    public CompletionStage<IPartSubscriber> getPartSubscriber(PartSubscription partSubscription) {
         return CompletableFuture.supplyAsync(() -> {
             log.trace("SubscriberMap contents: {}", subscriberMap);
             log.debug("SubscriberMap status of the part-subscription {} is {}", partSubscription, subscriberMap.containsKey(partSubscription));

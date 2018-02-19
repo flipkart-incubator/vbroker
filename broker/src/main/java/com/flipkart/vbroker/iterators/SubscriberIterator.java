@@ -2,7 +2,7 @@ package com.flipkart.vbroker.iterators;
 
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.subscribers.IMessageWithGroup;
-import com.flipkart.vbroker.subscribers.PartSubscriber;
+import com.flipkart.vbroker.subscribers.IPartSubscriber;
 import com.google.common.collect.PeekingIterator;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,8 +16,8 @@ public class SubscriberIterator implements PeekingIterator<IMessageWithGroup> {
     private final Queue<PeekingIterator<IMessageWithGroup>> iteratorQueue = new ArrayDeque<>();
     private PeekingIterator<IMessageWithGroup> currIterator;
 
-    public SubscriberIterator(List<PartSubscriber> partSubscribers) {
-        for (PartSubscriber partSubscriber : partSubscribers) {
+    public SubscriberIterator(List<IPartSubscriber> partSubscribers) {
+        for (IPartSubscriber partSubscriber : partSubscribers) {
             PeekingIterator<IMessageWithGroup> iterator = partSubscriber.iterator();
             iteratorQueue.add(iterator);
         }

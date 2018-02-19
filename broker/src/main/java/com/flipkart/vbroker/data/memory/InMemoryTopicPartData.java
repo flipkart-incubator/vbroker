@@ -60,6 +60,11 @@ public class InMemoryTopicPartData implements TopicPartData {
         };
     }
 
+    @Override
+    public PeekingIterator<Message> iteratorFrom(int seqNoFrom) {
+        throw new UnsupportedOperationException("You cannot have a global iterator for partition for a grouped topic-partition");
+    }
+
     private synchronized List<Message> getMessages(String group) {
         return topicPartitionData.computeIfAbsent(group, key -> new CopyOnWriteArrayList<>());
     }
