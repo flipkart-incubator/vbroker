@@ -15,4 +15,5 @@ import lombok.ToString;
 public class TopicPartition {
     private final short id;
     private final short topicId;
+    private final boolean grouped;
 }

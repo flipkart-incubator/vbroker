@@ -31,12 +31,12 @@ public class VRequestCodecTest {
         FlatBufferBuilder builder = new FlatBufferBuilder();
 
         List<Topic> topics = new LinkedList<>();
-        topics.add(DummyEntities.topic1);
+        topics.add(DummyEntities.groupedTopic);
 
         int[] topicRequests = new int[topics.size()];
         for (int tIdx = 0; tIdx < topics.size(); tIdx++) {
             Topic topic = topics.get(tIdx);
-            List<TopicPartition> partitions = TopicUtils.getTopicPartitions(topic.id(), topic.partitions());
+            List<TopicPartition> partitions = TopicUtils.getTopicPartitions(topic);
             int[] partitionRequests = new int[partitions.size()];
 
             for (int i = 0; i < partitions.size(); i++) {

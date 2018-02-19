@@ -10,24 +10,26 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @Slf4j
 @EqualsAndHashCode
-public class MessageWithGroup {
+public class GroupedMessageWithGroup implements IMessageWithGroup {
     @Getter
     private final Message message;
     private final SubscriberGroup subscriberGroup;
 
-    public static MessageWithGroup newInstance(Message message, SubscriberGroup subscriberGroup) {
-        return new MessageWithGroup(message, subscriberGroup);
+    public static GroupedMessageWithGroup newInstance(Message message, SubscriberGroup subscriberGroup) {
+        return new GroupedMessageWithGroup(message, subscriberGroup);
     }
 
     public void setQType(SubscriberGroup.QType qType) {
         this.subscriberGroup.setQType(qType);
     }
 
-    public void sidelineGroup() {
+    @Override
+    public void sideline() {
         log.info("Sidelining the group {}", subscriberGroup.getGroupId());
         this.subscriberGroup.setQType(SubscriberGroup.QType.SIDELINE);
     }
 
+    @Override
     public void retry() {
         SubscriberGroup.QType destinationQType;
         switch (subscriberGroup.getQType()) {
@@ -49,24 +51,29 @@ public class MessageWithGroup {
         this.subscriberGroup.setQType(destinationQType);
     }
 
-    public boolean isGroupLocked() {
+    @Override
+    public boolean isLocked() {
         return subscriberGroup.isLocked();
     }
 
-    public boolean lockGroup() {
+    @Override
+    public boolean lock() {
         log.info("Locking the group {}", subscriberGroup.getGroupId());
         return subscriberGroup.lock();
     }
 
-    public void forceUnlockGroup() {
+    @Override
+    public void unlock() {
         log.info("Unlocking the group {}", subscriberGroup.getGroupId());
         subscriberGroup.forceUnlock();
     }
 
+    @Override
     public short subscriptionId() {
         return subscriberGroup.getPartSubscription().getSubscriptionId();
     }
 
+    @Override
     public short getTopicId() {
         return subscriberGroup.getTopicPartition().getTopicId();
     }

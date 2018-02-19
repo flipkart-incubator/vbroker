@@ -17,12 +17,13 @@ import static org.testng.Assert.assertEquals;
 @Slf4j
 public class SubscriberGroupTest {
 
-    SubscriberGroup subscriberGroup;
+    private SubscriberGroup subscriberGroup;
 
-    String group = "group-123";
-    TopicPartition topicPartition = new TopicPartition((short) 0, (short) 101);
-    MessageGroup messageGroup = new MessageGroup(group, topicPartition);
-    PartSubscription partSubscription = new PartSubscription(topicPartition.getId(), topicPartition, DummyEntities.subscription1.id());
+    private String group = "group-123";
+    private TopicPartition topicPartition = new TopicPartition((short) 0, (short) 101, true);
+    private MessageGroup messageGroup = new MessageGroup(group, topicPartition);
+    private PartSubscription partSubscription = new PartSubscription(topicPartition.getId(),
+        topicPartition, DummyEntities.groupedSubscription.id(), true);
 
     @BeforeMethod
     public void setUp() {
@@ -41,7 +42,7 @@ public class SubscriberGroupTest {
 
     @Test(invocationCount = 20)
     public void shouldIterateMessages_ForSameGroup_CheckConsistencyOverMultipleRuns() {
-        PeekingIterator<MessageWithGroup> iterator = subscriberGroup.iterator();
+        PeekingIterator<IMessageWithGroup> iterator = subscriberGroup.iterator();
         int count = 0;
         while (iterator.hasNext()) {
             iterator.next();

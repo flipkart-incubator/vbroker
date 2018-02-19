@@ -7,7 +7,7 @@ import com.flipkart.vbroker.iterators.SubscriberIterator;
 import com.flipkart.vbroker.services.SubscriberMetadataService;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicMetadataService;
-import com.flipkart.vbroker.subscribers.PartSubscriber;
+import com.flipkart.vbroker.subscribers.IPartSubscriber;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -53,11 +53,12 @@ public class BrokerSubscriber implements Runnable {
                 log.info("Sleeping for {} milli secs before connecting to server", timeMs);
                 Thread.sleep(timeMs);
 
-                List<PartSubscriber> partSubscribers = getPartSubscribersForCurrentBroker();
+                List<IPartSubscriber> partSubscribers = getPartSubscribersForCurrentBroker();
                 syncer = new SubscriberGroupSyncer(partSubscribers, subscriberMetadataService, topicMetadataService);
                 new Thread(syncer).start();
 
                 log.info("No of partSubscribers are {}", partSubscribers.size());
+                log.info("PartSubscribers in the current broker are {}", partSubscribers);
                 SubscriberIterator subscriberIterator = new SubscriberIterator(partSubscribers);
                 MessageConsumer messageConsumer = MessageConsumer.newInstance(subscriberIterator, messageProcessor);
 
@@ -86,13 +87,13 @@ public class BrokerSubscriber implements Runnable {
         this.running.set(false);
     }
 
-    private List<PartSubscriber> getPartSubscribersForCurrentBroker() {
-        List<PartSubscriber> partSubscribers = new ArrayList<>();
+    private List<IPartSubscriber> getPartSubscribersForCurrentBroker() {
+        List<IPartSubscriber> partSubscribers = new ArrayList<>();
         Set<Subscription> subscriptions = subscriptionService.getAllSubscriptions().toCompletableFuture().join();
         for (Subscription subscription : subscriptions) {
             List<PartSubscription> partSubscriptions = subscriptionService.getPartSubscriptions(subscription).toCompletableFuture().join();
             for (PartSubscription partSubscription : partSubscriptions) {
-                PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription).toCompletableFuture().join();
+                IPartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription).toCompletableFuture().join();
                 partSubscribers.add(partSubscriber);
             }
         }
