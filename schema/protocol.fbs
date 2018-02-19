@@ -6,9 +6,11 @@ enum ApiKey:byte {ProduceRequest=0, ProduceResponse=1}
 
 enum StatusCode:int16 {
 None=0,
+ProduceSuccess_NoError=101,
 ProduceFailed_NoLeader=151,
 ProduceFailed_NotEnoughReplicas=152,
 Success=200,
+ConsumeSuccess_NoError=201,
 ConsumeError_DestinationDown=251,
 TopicCreateFailed_AlreadyExists=351, 
 TopicCreateFailed_Validation=352,

@@ -61,7 +61,7 @@ public class FetchRequestHandler implements RequestHandler {
 
             int noOfPartitionsInFetchReq = topicFetchRequest.partitionRequestsLength();
             log.info("Handling FetchRequest for topic {} and subscription {} with {} partition requests",
-                topic.topicId(), subscription.subscriptionId(), noOfPartitionsInFetchReq);
+                topic.id(), subscription.id(), noOfPartitionsInFetchReq);
             int[] partitionFetchResponses = new int[noOfPartitionsInFetchReq];
             for (int j = 0; j < noOfPartitionsInFetchReq; j++) {
                 TopicPartitionFetchRequest topicPartitionFetchRequest = topicFetchRequest.partitionRequests(j);
@@ -81,7 +81,7 @@ public class FetchRequestHandler implements RequestHandler {
             int partitionResponsesVector = TopicFetchResponse.createPartitionResponsesVector(builder, partitionFetchResponses);
             int topicFetchResponse = TopicFetchResponse.createTopicFetchResponse(
                 builder,
-                subscription.subscriptionId(),
+                subscription.id(),
                 topicFetchRequest.topicId(),
                 partitionResponsesVector);
             topicFetchResponses[i] = topicFetchResponse;
@@ -99,7 +99,7 @@ public class FetchRequestHandler implements RequestHandler {
         short noOfMessagesToFetch = topicPartitionFetchRequest.noOfMessages();
         short partitionId = topicPartitionFetchRequest.partitionId();
         log.info("Handling FetchRequest for {} messages for topic {} and partition {}",
-            noOfMessagesToFetch, topic.topicId(), partitionId);
+            noOfMessagesToFetch, topic.id(), partitionId);
 
         int[] messages = buildMessages(builder, partSubscription, noOfMessagesToFetch);
         log.debug("Writing {} messages for topic {} and partition {} in FetchResponse",

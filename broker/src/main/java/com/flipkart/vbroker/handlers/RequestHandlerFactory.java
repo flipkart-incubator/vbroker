@@ -50,11 +50,11 @@ public class RequestHandlerFactory {
                 log.info("Request is of type FetchRequest");
                 requestHandler = fetchRequestHandler;
                 break;
-            case RequestMessage.TopicCreateRequest:
+            case RequestMessage.CreateTopicsRequest:
                 log.info("Request is of type TopicCreateRequest");
                 requestHandler = topicCreateRequestHandler;
                 break;
-            case RequestMessage.SubscriptionCreateRequest:
+            case RequestMessage.CreateSubscriptionsRequest:
                 requestHandler = subscriptionCreateRequestHandler;
                 break;
             default:

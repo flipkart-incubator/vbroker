@@ -18,15 +18,15 @@ public class InMemoryTopicService implements TopicService {
     @Override
     public synchronized CompletionStage<Topic> createTopic(Topic topic) {
         return CompletableFuture.supplyAsync(() -> {
-            topicsMap.putIfAbsent(topic.topicId(), topic);
+            topicsMap.putIfAbsent(topic.id(), topic);
             return topic;
         });
     }
 
     @Override
     public CompletionStage<TopicPartition> getTopicPartition(Topic topic, short topicPartitionId) {
-        return getTopic(topic.topicId())
-            .thenApplyAsync(topic1 -> new TopicPartition(topicPartitionId, topic.topicId()));
+        return getTopic(topic.id())
+            .thenApplyAsync(topic1 -> new TopicPartition(topicPartitionId, topic.id()));
     }
 
     @Override
@@ -41,7 +41,7 @@ public class InMemoryTopicService implements TopicService {
 
     @Override
     public List<TopicPartition> getPartitions(Topic topic) {
-        return TopicUtils.getTopicPartitions(topic.topicId(), topic.partitions());
+        return TopicUtils.getTopicPartitions(topic.id(), topic.partitions());
     }
 
     @Override

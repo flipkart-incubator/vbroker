@@ -38,9 +38,9 @@ public class TopicCreateTest {
 
         int topicName = builder.createString("topic201");
 
-        int topic = Topic.createTopic(builder, (short) 201, topicName, true, (short) 1, (short) 3, TopicType.MAIN, TopicCategory.TOPIC);
+        int topic = Topic.createTopic(builder, (short) 201, topicName, true, (short) 1, (short) 3, TopicCategory.TOPIC);
         int topicCreateRequest = TopicCreateRequest.createTopicCreateRequest(builder, topic);
-        int vRequest = VRequest.createVRequest(builder, (byte) 1, 1002, RequestMessage.TopicCreateRequest,
+        int vRequest = VRequest.createVRequest(builder, (byte) 1, 1002, RequestMessage.CreateTopicsRequest,
             topicCreateRequest);
         builder.finish(vRequest);
 

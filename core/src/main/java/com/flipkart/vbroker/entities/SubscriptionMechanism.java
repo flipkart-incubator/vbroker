@@ -3,15 +3,12 @@
 package com.flipkart.vbroker.entities;
 
 public final class SubscriptionMechanism {
-    public static final byte PUSH = 0;
-    public static final byte PULL = 1;
-    public static final String[] names = {"PUSH", "PULL",};
+  private SubscriptionMechanism() { }
+  public static final byte PUSH = 0;
+  public static final byte PULL = 1;
 
-    private SubscriptionMechanism() {
-    }
+  public static final String[] names = { "PUSH", "PULL", };
 
-    public static String name(int e) {
-        return names[e];
-    }
+  public static String name(int e) { return names[e]; }
 }
 

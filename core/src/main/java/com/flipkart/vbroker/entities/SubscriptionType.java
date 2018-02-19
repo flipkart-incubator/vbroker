@@ -3,15 +3,12 @@
 package com.flipkart.vbroker.entities;
 
 public final class SubscriptionType {
-    public static final byte STATIC = 0;
-    public static final byte DYNAMIC = 1;
-    public static final String[] names = {"STATIC", "DYNAMIC",};
+  private SubscriptionType() { }
+  public static final byte STATIC = 0;
+  public static final byte DYNAMIC = 1;
 
-    private SubscriptionType() {
-    }
+  public static final String[] names = { "STATIC", "DYNAMIC", };
 
-    public static String name(int e) {
-        return names[e];
-    }
+  public static String name(int e) { return names[e]; }
 }
 

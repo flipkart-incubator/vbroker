@@ -2,67 +2,36 @@
 
 package com.flipkart.vbroker.entities;
 
-import com.google.flatbuffers.FlatBufferBuilder;
-import com.google.flatbuffers.Table;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.nio.*;
+import java.lang.*;
+import java.util.*;
+import com.google.flatbuffers.*;
 
 @SuppressWarnings("unused")
 public final class CodeRange extends Table {
-    public static CodeRange getRootAsCodeRange(ByteBuffer _bb) {
-        return getRootAsCodeRange(_bb, new CodeRange());
-    }
+  public static CodeRange getRootAsCodeRange(ByteBuffer _bb) { return getRootAsCodeRange(_bb, new CodeRange()); }
+  public static CodeRange getRootAsCodeRange(ByteBuffer _bb, CodeRange obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; }
+  public CodeRange __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-    public static CodeRange getRootAsCodeRange(ByteBuffer _bb, CodeRange obj) {
-        _bb.order(ByteOrder.LITTLE_ENDIAN);
-        return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
-    }
+  public short from() { int o = __offset(4); return o != 0 ? bb.getShort(o + bb_pos) : 0; }
+  public short to() { int o = __offset(6); return o != 0 ? bb.getShort(o + bb_pos) : 0; }
 
-    public static int createCodeRange(FlatBufferBuilder builder,
-                                      short from,
-                                      short to) {
-        builder.startObject(2);
-        CodeRange.addTo(builder, to);
-        CodeRange.addFrom(builder, from);
-        return CodeRange.endCodeRange(builder);
-    }
+  public static int createCodeRange(FlatBufferBuilder builder,
+      short from,
+      short to) {
+    builder.startObject(2);
+    CodeRange.addTo(builder, to);
+    CodeRange.addFrom(builder, from);
+    return CodeRange.endCodeRange(builder);
+  }
 
-    public static void startCodeRange(FlatBufferBuilder builder) {
-        builder.startObject(2);
-    }
-
-    public static void addFrom(FlatBufferBuilder builder, short from) {
-        builder.addShort(0, from, 0);
-    }
-
-    public static void addTo(FlatBufferBuilder builder, short to) {
-        builder.addShort(1, to, 0);
-    }
-
-    public static int endCodeRange(FlatBufferBuilder builder) {
-        int o = builder.endObject();
-        return o;
-    }
-
-    public void __init(int _i, ByteBuffer _bb) {
-        bb_pos = _i;
-        bb = _bb;
-    }
-
-    public CodeRange __assign(int _i, ByteBuffer _bb) {
-        __init(_i, _bb);
-        return this;
-    }
-
-    public short from() {
-        int o = __offset(4);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
-    }
-
-    public short to() {
-        int o = __offset(6);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
-    }
+  public static void startCodeRange(FlatBufferBuilder builder) { builder.startObject(2); }
+  public static void addFrom(FlatBufferBuilder builder, short from) { builder.addShort(0, from, 0); }
+  public static void addTo(FlatBufferBuilder builder, short to) { builder.addShort(1, to, 0); }
+  public static int endCodeRange(FlatBufferBuilder builder) {
+    int o = builder.endObject();
+    return o;
+  }
 }
 

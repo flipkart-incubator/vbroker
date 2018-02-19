@@ -31,7 +31,7 @@ public class InMemorySubscriptionService implements SubscriptionService {
 
     @Override
     public CompletionStage<Subscription> createSubscription(Subscription subscription) {
-        return CompletableFuture.supplyAsync(() -> subscriptionsMap.putIfAbsent(subscription.subscriptionId(), subscription));
+        return CompletableFuture.supplyAsync(() -> subscriptionsMap.putIfAbsent(subscription.id(), subscription));
     }
 
     @Override
@@ -42,8 +42,8 @@ public class InMemorySubscriptionService implements SubscriptionService {
     @Override
     public CompletionStage<PartSubscription> getPartSubscription(Subscription subscription, short partSubscriptionId) {
         return CompletableFuture.supplyAsync(() -> {
-            if (subscriptionsMap.containsKey(subscription.subscriptionId())) {
-                Subscription existingSub = subscriptionsMap.get(subscription.subscriptionId());
+            if (subscriptionsMap.containsKey(subscription.id())) {
+                Subscription existingSub = subscriptionsMap.get(subscription.id());
                 //return existingSub.getPartSubscription(partSubscriptionId);
                 return SubscriptionUtils.getPartSubscription(existingSub, partSubscriptionId);
             }

@@ -40,7 +40,7 @@ public class ProducerService {
 
     public CompletionStage<MessageMetadata> produceMessage(Topic topic, Message message) {
         //TODO: do the partitioning logic correctly - currently defaulting to 1st partition always
-        TopicPartition topicPartition = TopicUtils.getTopicPartitions(topic.topicId(), (short) 1).get(0);
+        TopicPartition topicPartition = TopicUtils.getTopicPartitions(topic.id(), (short) 1).get(0);
         TopicPartMessage topicPartMessage = TopicPartMessage.newInstance(topicPartition, message);
         return produceMessage(topicPartMessage);
     }

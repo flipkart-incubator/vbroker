@@ -2,126 +2,53 @@
 
 package com.flipkart.vbroker.entities;
 
-import com.google.flatbuffers.FlatBufferBuilder;
-import com.google.flatbuffers.Table;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.nio.*;
+import java.lang.*;
+import java.util.*;
+import com.google.flatbuffers.*;
 
 @SuppressWarnings("unused")
 public final class Topic extends Table {
-    public static Topic getRootAsTopic(ByteBuffer _bb) {
-        return getRootAsTopic(_bb, new Topic());
-    }
+  public static Topic getRootAsTopic(ByteBuffer _bb) { return getRootAsTopic(_bb, new Topic()); }
+  public static Topic getRootAsTopic(ByteBuffer _bb, Topic obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; }
+  public Topic __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-    public static Topic getRootAsTopic(ByteBuffer _bb, Topic obj) {
-        _bb.order(ByteOrder.LITTLE_ENDIAN);
-        return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
-    }
+  public short id() { int o = __offset(4); return o != 0 ? bb.getShort(o + bb_pos) : 0; }
+  public String name() { int o = __offset(6); return o != 0 ? __string(o + bb_pos) : null; }
+  public ByteBuffer nameAsByteBuffer() { return __vector_as_bytebuffer(6, 1); }
+  public boolean grouped() { int o = __offset(8); return o != 0 ? 0!=bb.get(o + bb_pos) : false; }
+  public short partitions() { int o = __offset(10); return o != 0 ? bb.getShort(o + bb_pos) : 0; }
+  public short replicationFactor() { int o = __offset(12); return o != 0 ? bb.getShort(o + bb_pos) : 0; }
+  public byte topicCategory() { int o = __offset(14); return o != 0 ? bb.get(o + bb_pos) : 0; }
 
-    public static int createTopic(FlatBufferBuilder builder,
-                                  short topicId,
-                                  int topicNameOffset,
-                                  boolean grouped,
-                                  short partitions,
-                                  short replicationFactor,
-                                  byte topicType,
-                                  byte topicCategory) {
-        builder.startObject(7);
-        Topic.addTopicName(builder, topicNameOffset);
-        Topic.addReplicationFactor(builder, replicationFactor);
-        Topic.addPartitions(builder, partitions);
-        Topic.addTopicId(builder, topicId);
-        Topic.addTopicCategory(builder, topicCategory);
-        Topic.addTopicType(builder, topicType);
-        Topic.addGrouped(builder, grouped);
-        return Topic.endTopic(builder);
-    }
+  public static int createTopic(FlatBufferBuilder builder,
+      short id,
+      int nameOffset,
+      boolean grouped,
+      short partitions,
+      short replicationFactor,
+      byte topicCategory) {
+    builder.startObject(6);
+    Topic.addName(builder, nameOffset);
+    Topic.addReplicationFactor(builder, replicationFactor);
+    Topic.addPartitions(builder, partitions);
+    Topic.addId(builder, id);
+    Topic.addTopicCategory(builder, topicCategory);
+    Topic.addGrouped(builder, grouped);
+    return Topic.endTopic(builder);
+  }
 
-    public static void startTopic(FlatBufferBuilder builder) {
-        builder.startObject(7);
-    }
-
-    public static void addTopicId(FlatBufferBuilder builder, short topicId) {
-        builder.addShort(0, topicId, 0);
-    }
-
-    public static void addTopicName(FlatBufferBuilder builder, int topicNameOffset) {
-        builder.addOffset(1, topicNameOffset, 0);
-    }
-
-    public static void addGrouped(FlatBufferBuilder builder, boolean grouped) {
-        builder.addBoolean(2, grouped, false);
-    }
-
-    public static void addPartitions(FlatBufferBuilder builder, short partitions) {
-        builder.addShort(3, partitions, 0);
-    }
-
-    public static void addReplicationFactor(FlatBufferBuilder builder, short replicationFactor) {
-        builder.addShort(4, replicationFactor, 0);
-    }
-
-    public static void addTopicType(FlatBufferBuilder builder, byte topicType) {
-        builder.addByte(5, topicType, 0);
-    }
-
-    public static void addTopicCategory(FlatBufferBuilder builder, byte topicCategory) {
-        builder.addByte(6, topicCategory, 0);
-    }
-
-    public static int endTopic(FlatBufferBuilder builder) {
-        int o = builder.endObject();
-        return o;
-    }
-
-    public void __init(int _i, ByteBuffer _bb) {
-        bb_pos = _i;
-        bb = _bb;
-    }
-
-    public Topic __assign(int _i, ByteBuffer _bb) {
-        __init(_i, _bb);
-        return this;
-    }
-
-    public short topicId() {
-        int o = __offset(4);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
-    }
-
-    public String topicName() {
-        int o = __offset(6);
-        return o != 0 ? __string(o + bb_pos) : null;
-    }
-
-    public ByteBuffer topicNameAsByteBuffer() {
-        return __vector_as_bytebuffer(6, 1);
-    }
-
-    public boolean grouped() {
-        int o = __offset(8);
-        return o != 0 ? 0 != bb.get(o + bb_pos) : false;
-    }
-
-    public short partitions() {
-        int o = __offset(10);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
-    }
-
-    public short replicationFactor() {
-        int o = __offset(12);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
-    }
-
-    public byte topicType() {
-        int o = __offset(14);
-        return o != 0 ? bb.get(o + bb_pos) : 0;
-    }
-
-    public byte topicCategory() {
-        int o = __offset(16);
-        return o != 0 ? bb.get(o + bb_pos) : 0;
-    }
+  public static void startTopic(FlatBufferBuilder builder) { builder.startObject(6); }
+  public static void addId(FlatBufferBuilder builder, short id) { builder.addShort(0, id, 0); }
+  public static void addName(FlatBufferBuilder builder, int nameOffset) { builder.addOffset(1, nameOffset, 0); }
+  public static void addGrouped(FlatBufferBuilder builder, boolean grouped) { builder.addBoolean(2, grouped, false); }
+  public static void addPartitions(FlatBufferBuilder builder, short partitions) { builder.addShort(3, partitions, 0); }
+  public static void addReplicationFactor(FlatBufferBuilder builder, short replicationFactor) { builder.addShort(4, replicationFactor, 0); }
+  public static void addTopicCategory(FlatBufferBuilder builder, byte topicCategory) { builder.addByte(5, topicCategory, 0); }
+  public static int endTopic(FlatBufferBuilder builder) {
+    int o = builder.endObject();
+    return o;
+  }
 }
 

@@ -3,15 +3,12 @@
 package com.flipkart.vbroker.entities;
 
 public final class TopicCategory {
-    public static final byte QUEUE = 0;
-    public static final byte TOPIC = 1;
-    public static final String[] names = {"QUEUE", "TOPIC",};
+  private TopicCategory() { }
+  public static final byte QUEUE = 0;
+  public static final byte TOPIC = 1;
 
-    private TopicCategory() {
-    }
+  public static final String[] names = { "QUEUE", "TOPIC", };
 
-    public static String name(int e) {
-        return names[e];
-    }
+  public static String name(int e) { return names[e]; }
 }
 

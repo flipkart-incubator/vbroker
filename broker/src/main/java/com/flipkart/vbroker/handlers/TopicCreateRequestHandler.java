@@ -24,15 +24,15 @@ public class TopicCreateRequestHandler implements RequestHandler {
         assert nonNull(topicCreateRequest);
 
         Topic topic = topicCreateRequest.topic();
-        log.info("Creating topic with id {}, name {}", topic.topicId(), topic.topicName());
+        log.info("Creating topic with id {}, name {}", topic.id(), topic.name());
         return topicService
             .createTopic(topic)
             .thenApplyAsync(createdTopic -> {
                 FlatBufferBuilder topicResponseBuilder = new FlatBufferBuilder();
                 int status = VStatus.createVStatus(topicResponseBuilder, StatusCode.Success, topicResponseBuilder.createString(""));
-                int topicCreateResponse = TopicCreateResponse.createTopicCreateResponse(topicResponseBuilder, createdTopic.topicId(),
+                int topicCreateResponse = TopicCreateResponse.createTopicCreateResponse(topicResponseBuilder, createdTopic.id(),
                     status);
-                int topicVResponse = VResponse.createVResponse(topicResponseBuilder, 1002, RequestMessage.TopicCreateRequest,
+                int topicVResponse = VResponse.createVResponse(topicResponseBuilder, 1002, RequestMessage.CreateTopicsRequest,
                     topicCreateResponse);
                 topicResponseBuilder.finish(topicVResponse);
                 return VResponse.getRootAsVResponse(topicResponseBuilder.dataBuffer());

@@ -28,15 +28,15 @@ public class SubscriptionCreateRequestHandler implements RequestHandler {
         Subscription subscription = subscriptionCreateRequest.subscription();
 
         return CompletableFuture.supplyAsync(() -> {
-            log.info("Creating subscription with id {}, name {}", subscription.subscriptionId(), subscription.name());
+            log.info("Creating subscription with id {}, name {}", subscription.id(), subscription.name());
             subscriptionService.createSubscription(subscription);
 
             FlatBufferBuilder subscriptionResponseBuilder = new FlatBufferBuilder();
             int status = VStatus.createVStatus(subscriptionResponseBuilder, StatusCode.Success, subscriptionResponseBuilder.createString(""));
             int subscriptionCreateResponse = SubscriptionCreateResponse
-                .createSubscriptionCreateResponse(subscriptionResponseBuilder, subscription.subscriptionId(), status);
+                .createSubscriptionCreateResponse(subscriptionResponseBuilder, subscription.id(), status);
             int vResponse = VResponse.createVResponse(subscriptionResponseBuilder, 1003,
-                ResponseMessage.SubscriptionCreateResponse, subscriptionCreateResponse);
+                ResponseMessage.CreateSubscriptionsResponse, subscriptionCreateResponse);
             subscriptionResponseBuilder.finish(vResponse);
             return VResponse.getRootAsVResponse(subscriptionResponseBuilder.dataBuffer());
         });

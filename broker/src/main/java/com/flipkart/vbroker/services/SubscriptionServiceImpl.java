@@ -38,8 +38,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public CompletionStage<Subscription> createSubscription(Subscription subscription) {
-        subscriptionsMap.putIfAbsent(subscription.subscriptionId(), subscription);
-        String path = config.getTopicsPath() + "/" + subscription.topicId() + "/subscriptions/" + subscription.subscriptionId();
+        subscriptionsMap.putIfAbsent(subscription.id(), subscription);
+        String path = config.getTopicsPath() + "/" + subscription.topicId() + "/subscriptions/" + subscription.id();
 
         return curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT, subscription.getByteBuffer().array())
             .event().thenApplyAsync(watchedEvent -> subscription);
@@ -53,8 +53,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     @Override
     public CompletionStage<PartSubscription> getPartSubscription(Subscription subscription, short partSubscriptionId) {
         return CompletableFuture.supplyAsync(() -> {
-            if (subscriptionsMap.containsKey(subscription.subscriptionId())) {
-                Subscription existingSub = subscriptionsMap.get(subscription.subscriptionId());
+            if (subscriptionsMap.containsKey(subscription.id())) {
+                Subscription existingSub = subscriptionsMap.get(subscription.id());
                 //return existingSub.getPartSubscription(partSubscriptionId);
                 return SubscriptionUtils.getPartSubscription(existingSub, partSubscriptionId);
             }

@@ -2,75 +2,38 @@
 
 package com.flipkart.vbroker.entities;
 
-import com.google.flatbuffers.FlatBufferBuilder;
-import com.google.flatbuffers.Table;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.nio.*;
+import java.lang.*;
+import java.util.*;
+import com.google.flatbuffers.*;
 
 @SuppressWarnings("unused")
 public final class Queue extends Table {
-    public static Queue getRootAsQueue(ByteBuffer _bb) {
-        return getRootAsQueue(_bb, new Queue());
-    }
+  public static Queue getRootAsQueue(ByteBuffer _bb) { return getRootAsQueue(_bb, new Queue()); }
+  public static Queue getRootAsQueue(ByteBuffer _bb, Queue obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; }
+  public Queue __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-    public static Queue getRootAsQueue(ByteBuffer _bb, Queue obj) {
-        _bb.order(ByteOrder.LITTLE_ENDIAN);
-        return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
-    }
+  public Topic topic() { return topic(new Topic()); }
+  public Topic topic(Topic obj) { int o = __offset(4); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
+  public Subscription subscription() { return subscription(new Subscription()); }
+  public Subscription subscription(Subscription obj) { int o = __offset(6); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
 
-    public static int createQueue(FlatBufferBuilder builder,
-                                  int topicOffset,
-                                  int subscriptionOffset) {
-        builder.startObject(2);
-        Queue.addSubscription(builder, subscriptionOffset);
-        Queue.addTopic(builder, topicOffset);
-        return Queue.endQueue(builder);
-    }
+  public static int createQueue(FlatBufferBuilder builder,
+      int topicOffset,
+      int subscriptionOffset) {
+    builder.startObject(2);
+    Queue.addSubscription(builder, subscriptionOffset);
+    Queue.addTopic(builder, topicOffset);
+    return Queue.endQueue(builder);
+  }
 
-    public static void startQueue(FlatBufferBuilder builder) {
-        builder.startObject(2);
-    }
-
-    public static void addTopic(FlatBufferBuilder builder, int topicOffset) {
-        builder.addOffset(0, topicOffset, 0);
-    }
-
-    public static void addSubscription(FlatBufferBuilder builder, int subscriptionOffset) {
-        builder.addOffset(1, subscriptionOffset, 0);
-    }
-
-    public static int endQueue(FlatBufferBuilder builder) {
-        int o = builder.endObject();
-        return o;
-    }
-
-    public void __init(int _i, ByteBuffer _bb) {
-        bb_pos = _i;
-        bb = _bb;
-    }
-
-    public Queue __assign(int _i, ByteBuffer _bb) {
-        __init(_i, _bb);
-        return this;
-    }
-
-    public Topic topic() {
-        return topic(new Topic());
-    }
-
-    public Topic topic(Topic obj) {
-        int o = __offset(4);
-        return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null;
-    }
-
-    public Subscription subscription() {
-        return subscription(new Subscription());
-    }
-
-    public Subscription subscription(Subscription obj) {
-        int o = __offset(6);
-        return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null;
-    }
+  public static void startQueue(FlatBufferBuilder builder) { builder.startObject(2); }
+  public static void addTopic(FlatBufferBuilder builder, int topicOffset) { builder.addOffset(0, topicOffset, 0); }
+  public static void addSubscription(FlatBufferBuilder builder, int subscriptionOffset) { builder.addOffset(1, subscriptionOffset, 0); }
+  public static int endQueue(FlatBufferBuilder builder) {
+    int o = builder.endObject();
+    return o;
+  }
 }
 

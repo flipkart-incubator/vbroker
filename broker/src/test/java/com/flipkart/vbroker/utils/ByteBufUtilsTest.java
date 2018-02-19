@@ -30,8 +30,8 @@ public class ByteBufUtilsTest {
 
         ByteBuffer buffer = ByteBuffer.wrap(bytes);
         Topic topic2 = Topic.getRootAsTopic(buffer);
-        assertEquals(topic1.topicName(), topic2.topicName());
-        assertEquals(topic1.topicId(), topic2.topicId());
+        assertEquals(topic1.name(), topic2.name());
+        assertEquals(topic1.id(), topic2.id());
 
     }
 }

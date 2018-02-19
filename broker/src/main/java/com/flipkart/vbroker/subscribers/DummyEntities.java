@@ -16,9 +16,7 @@ public class DummyEntities {
             true,
             (short) 1,
             (short) 1,
-            TopicType.MAIN,
-            TopicCategory.QUEUE
-        );
+            TopicCategory.QUEUE);
         topicBuilder.finish(topicOffset);
         topic1 = Topic.getRootAsTopic(topicBuilder.dataBuffer());
 
@@ -28,7 +26,7 @@ public class DummyEntities {
         int callbackConfigOffset = CallbackConfig.createCallbackConfig(subBuilder, codeRangesVectorOffset);
         int subscriptionOffset = Subscription.createSubscription(subBuilder,
             (short) 1001,
-            topic1.topicId(),
+            topic1.id(),
             subBuilder.createString("subscription_1"),
             true,
             (short) 1,

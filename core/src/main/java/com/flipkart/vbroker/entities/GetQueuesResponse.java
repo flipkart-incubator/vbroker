@@ -2,90 +2,36 @@
 
 package com.flipkart.vbroker.entities;
 
-import com.google.flatbuffers.FlatBufferBuilder;
-import com.google.flatbuffers.Table;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.nio.*;
+import java.lang.*;
+import java.util.*;
+import com.google.flatbuffers.*;
 
 @SuppressWarnings("unused")
 public final class GetQueuesResponse extends Table {
-    public static GetQueuesResponse getRootAsGetQueuesResponse(ByteBuffer _bb) {
-        return getRootAsGetQueuesResponse(_bb, new GetQueuesResponse());
-    }
+  public static GetQueuesResponse getRootAsGetQueuesResponse(ByteBuffer _bb) { return getRootAsGetQueuesResponse(_bb, new GetQueuesResponse()); }
+  public static GetQueuesResponse getRootAsGetQueuesResponse(ByteBuffer _bb, GetQueuesResponse obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; }
+  public GetQueuesResponse __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-    public static GetQueuesResponse getRootAsGetQueuesResponse(ByteBuffer _bb, GetQueuesResponse obj) {
-        _bb.order(ByteOrder.LITTLE_ENDIAN);
-        return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
-    }
+  public GetQueueResponse queues(int j) { return queues(new GetQueueResponse(), j); }
+  public GetQueueResponse queues(GetQueueResponse obj, int j) { int o = __offset(4); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
+  public int queuesLength() { int o = __offset(4); return o != 0 ? __vector_len(o) : 0; }
 
-    public static int createGetQueuesResponse(FlatBufferBuilder builder,
-                                              int queuesOffset,
-                                              int statusOffset) {
-        builder.startObject(2);
-        GetQueuesResponse.addStatus(builder, statusOffset);
-        GetQueuesResponse.addQueues(builder, queuesOffset);
-        return GetQueuesResponse.endGetQueuesResponse(builder);
-    }
+  public static int createGetQueuesResponse(FlatBufferBuilder builder,
+      int queuesOffset) {
+    builder.startObject(1);
+    GetQueuesResponse.addQueues(builder, queuesOffset);
+    return GetQueuesResponse.endGetQueuesResponse(builder);
+  }
 
-    public static void startGetQueuesResponse(FlatBufferBuilder builder) {
-        builder.startObject(2);
-    }
-
-    public static void addQueues(FlatBufferBuilder builder, int queuesOffset) {
-        builder.addOffset(0, queuesOffset, 0);
-    }
-
-    public static int createQueuesVector(FlatBufferBuilder builder, int[] data) {
-        builder.startVector(4, data.length, 4);
-        for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]);
-        return builder.endVector();
-    }
-
-    public static void startQueuesVector(FlatBufferBuilder builder, int numElems) {
-        builder.startVector(4, numElems, 4);
-    }
-
-    public static void addStatus(FlatBufferBuilder builder, int statusOffset) {
-        builder.addOffset(1, statusOffset, 0);
-    }
-
-    public static int endGetQueuesResponse(FlatBufferBuilder builder) {
-        int o = builder.endObject();
-        return o;
-    }
-
-    public void __init(int _i, ByteBuffer _bb) {
-        bb_pos = _i;
-        bb = _bb;
-    }
-
-    public GetQueuesResponse __assign(int _i, ByteBuffer _bb) {
-        __init(_i, _bb);
-        return this;
-    }
-
-    public Queue queues(int j) {
-        return queues(new Queue(), j);
-    }
-
-    public Queue queues(Queue obj, int j) {
-        int o = __offset(4);
-        return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null;
-    }
-
-    public int queuesLength() {
-        int o = __offset(4);
-        return o != 0 ? __vector_len(o) : 0;
-    }
-
-    public VStatus status() {
-        return status(new VStatus());
-    }
-
-    public VStatus status(VStatus obj) {
-        int o = __offset(6);
-        return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null;
-    }
+  public static void startGetQueuesResponse(FlatBufferBuilder builder) { builder.startObject(1); }
+  public static void addQueues(FlatBufferBuilder builder, int queuesOffset) { builder.addOffset(0, queuesOffset, 0); }
+  public static int createQueuesVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
+  public static void startQueuesVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
+  public static int endGetQueuesResponse(FlatBufferBuilder builder) {
+    int o = builder.endObject();
+    return o;
+  }
 }
 

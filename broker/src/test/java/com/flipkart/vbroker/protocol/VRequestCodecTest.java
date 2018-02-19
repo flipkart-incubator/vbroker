@@ -36,7 +36,7 @@ public class VRequestCodecTest {
         int[] topicRequests = new int[topics.size()];
         for (int tIdx = 0; tIdx < topics.size(); tIdx++) {
             Topic topic = topics.get(tIdx);
-            List<TopicPartition> partitions = TopicUtils.getTopicPartitions(topic.topicId(), topic.partitions());
+            List<TopicPartition> partitions = TopicUtils.getTopicPartitions(topic.id(), topic.partitions());
             int[] partitionRequests = new int[partitions.size()];
 
             for (int i = 0; i < partitions.size(); i++) {
@@ -59,7 +59,7 @@ public class VRequestCodecTest {
             }
 
             int partitionRequestsVector = TopicProduceRequest.createPartitionRequestsVector(builder, partitionRequests);
-            int topicProduceRequest = TopicProduceRequest.createTopicProduceRequest(builder, topic.topicId(), partitionRequestsVector);
+            int topicProduceRequest = TopicProduceRequest.createTopicProduceRequest(builder, topic.id(), partitionRequestsVector);
             topicRequests[tIdx] = topicProduceRequest;
         }
 

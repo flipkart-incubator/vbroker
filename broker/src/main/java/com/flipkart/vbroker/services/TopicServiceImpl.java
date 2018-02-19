@@ -33,7 +33,7 @@ public class TopicServiceImpl implements TopicService {
     public synchronized CompletionStage<Topic> createTopic(Topic topic) {
         return CompletableFuture.supplyAsync(() -> {
             curatorService
-                .createNodeAndSetData(config.getTopicsPath() + "/" + topic.topicId(), CreateMode.PERSISTENT, ByteBufUtils.getBytes(topic.getByteBuffer()))
+                .createNodeAndSetData(config.getTopicsPath() + "/" + topic.id(), CreateMode.PERSISTENT, ByteBufUtils.getBytes(topic.getByteBuffer()))
                 .handle((data, exception) -> {
                     if (exception != null) {
                         log.error("Failure in creating topic!");
@@ -46,8 +46,8 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public CompletionStage<TopicPartition> getTopicPartition(Topic topic, short topicPartitionId) {
-        return getTopic(topic.topicId())
-            .thenApplyAsync(topic1 -> new TopicPartition(topicPartitionId, topic.topicId()));
+        return getTopic(topic.id())
+            .thenApplyAsync(topic1 -> new TopicPartition(topicPartitionId, topic.id()));
     }
 
     @Override
@@ -75,7 +75,7 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public List<TopicPartition> getPartitions(Topic topic) {
-        return TopicUtils.getTopicPartitions(topic.topicId(), topic.partitions());
+        return TopicUtils.getTopicPartitions(topic.id(), topic.partitions());
     }
 
     @Override

@@ -19,7 +19,7 @@ public class SubscriptionUtils {
      */
     public static PartSubscription getPartSubscription(Subscription subscription, short partitionId) {
         return new PartSubscription(partitionId, new TopicPartition(partitionId, subscription.topicId()),
-            subscription.subscriptionId());
+            subscription.id());
     }
 
     /**
@@ -34,7 +34,7 @@ public class SubscriptionUtils {
         List<PartSubscription> partSubscriptions = new ArrayList<>();
         for (short i = 0; i < partitions; i++) {
             partSubscriptions.add(new PartSubscription(i, new TopicPartition(i, subscription.topicId()),
-                subscription.subscriptionId()));
+                subscription.id()));
         }
         return partSubscriptions;
     }
