@@ -18,7 +18,7 @@ public class UnGroupedPartSubscriber implements IPartSubscriber {
     @Getter
     private final PartSubscription partSubscription;
     private final TopicPartDataManager topicPartDataManager;
-    private final AtomicInteger seqNo = new AtomicInteger();
+    private final AtomicInteger currSeqNo = new AtomicInteger(0);
 
     public UnGroupedPartSubscriber(TopicPartDataManager topicPartDataManager,
                                    PartSubscription partSubscription) {
@@ -37,7 +37,7 @@ public class UnGroupedPartSubscriber implements IPartSubscriber {
             @Override
             protected Optional<PeekingIterator<IMessageWithGroup>> nextIterator() {
                 PeekingIterator<Message> iterator = topicPartDataManager
-                    .getIterator(partSubscription.getTopicPartition(), seqNo.get());
+                    .getIterator(partSubscription.getTopicPartition(), currSeqNo.get());
 
                 PeekingIterator<IMessageWithGroup> peekingIterator = new PeekingIterator<IMessageWithGroup>() {
                     @Override
@@ -51,8 +51,10 @@ public class UnGroupedPartSubscriber implements IPartSubscriber {
                     }
 
                     @Override
-                    public IMessageWithGroup next() {
-                        return new UngroupedMessageWithGroup(iterator.next());
+                    public synchronized IMessageWithGroup next() {
+                        IMessageWithGroup messageWithGroup = new UngroupedMessageWithGroup(iterator.next());
+                        currSeqNo.incrementAndGet();
+                        return messageWithGroup;
                     }
 
                     @Override
