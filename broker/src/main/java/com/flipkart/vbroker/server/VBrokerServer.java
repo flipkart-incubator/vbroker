@@ -115,8 +115,8 @@ public class VBrokerServer extends AbstractExecutionThreadService {
         //TODO: now that metadata is created, we need to add actual data to the metadata entries
         //=> populate message groups in topic partitions
 
-        topicService.createTopic(DummyEntities.topic1);
-        subscriptionService.createSubscription(DummyEntities.subscription1);
+        topicService.createTopic(DummyEntities.groupedTopic);
+        subscriptionService.createSubscription(DummyEntities.groupedSubscription);
 
         ProducerService producerService = new ProducerService(topicPartDataManager);
         RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactory(

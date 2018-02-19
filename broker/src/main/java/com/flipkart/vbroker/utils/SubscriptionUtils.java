@@ -18,7 +18,7 @@ public class SubscriptionUtils {
      * @return
      */
     public static PartSubscription getPartSubscription(Subscription subscription, short partitionId) {
-        return new PartSubscription(partitionId, new TopicPartition(partitionId, subscription.topicId()),
+        return new PartSubscription(partitionId, new TopicPartition(partitionId, subscription.topicId(), subscription.grouped()),
             subscription.subscriptionId(), subscription.grouped());
     }
 
@@ -31,9 +31,10 @@ public class SubscriptionUtils {
      * @return
      */
     public static List<PartSubscription> getPartSubscriptions(Subscription subscription, short partitions) {
+        //TODO: this shouldn't be a static method - move this to SubscriptionService
         List<PartSubscription> partSubscriptions = new ArrayList<>();
         for (short i = 0; i < partitions; i++) {
-            partSubscriptions.add(new PartSubscription(i, new TopicPartition(i, subscription.topicId()),
+            partSubscriptions.add(new PartSubscription(i, new TopicPartition(i, subscription.topicId(), subscription.grouped()),
                 subscription.subscriptionId(), subscription.grouped()));
         }
         return partSubscriptions;

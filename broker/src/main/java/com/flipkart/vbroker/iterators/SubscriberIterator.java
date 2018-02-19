@@ -35,6 +35,7 @@ public class SubscriberIterator implements PeekingIterator<IMessageWithGroup> {
 
     @Override
     public boolean hasNext() {
+        log.trace("CurrIterator {} hasNext {}", currIterator, currIterator.hasNext());
         if (currIterator.hasNext() && !currIterator.peek().isLocked()) {
             return true;
         }

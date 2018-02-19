@@ -25,7 +25,7 @@ public class ByteBufUtilsTest {
     @Test
     public void shouldConvertRightlyForTopicEntity() {
 
-        Topic topic1 = DummyEntities.topic1;
+        Topic topic1 = DummyEntities.groupedTopic;
         byte[] bytes = ByteBufUtils.getBytes(topic1.getByteBuffer());
 
         ByteBuffer buffer = ByteBuffer.wrap(bytes);

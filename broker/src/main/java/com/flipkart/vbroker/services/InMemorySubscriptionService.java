@@ -61,13 +61,15 @@ public class InMemorySubscriptionService implements SubscriptionService {
             //wanted below to work but its creating a new PartSubscriber each time though key is already present
             //subscriberMap.putIfAbsent(partSubscription, new PartSubscriber(partSubscription));
 
-            IPartSubscriber partSubscriber;
-            if (partSubscription.isGrouped()) {
-                partSubscriber = new PartSubscriber(topicPartDataManager, partSubscription);
-            } else {
-                partSubscriber = new UnGroupedPartSubscriber(topicPartDataManager, partSubscription);
-            }
-            subscriberMap.putIfAbsent(partSubscription, partSubscriber);
+            subscriberMap.computeIfAbsent(partSubscription, partSubscription1 -> {
+                IPartSubscriber partSubscriber;
+                if (partSubscription1.isGrouped()) {
+                    partSubscriber = new PartSubscriber(topicPartDataManager, partSubscription1);
+                } else {
+                    partSubscriber = new UnGroupedPartSubscriber(topicPartDataManager, partSubscription1);
+                }
+                return partSubscriber;
+            });
             return subscriberMap.get(partSubscription);
         });
     }

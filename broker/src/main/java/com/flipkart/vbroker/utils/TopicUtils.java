@@ -5,25 +5,16 @@ import com.flipkart.vbroker.entities.Topic;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class TopicUtils {
 
-    /**
-     * Utility method to retrieve list of TopicPartition entities from given
-     * parameters.
-     *
-     * @param topicId    topic id
-     * @param partitions no of partitions
-     * @return
-     */
-    public static List<TopicPartition> getTopicPartitions(short topicId, short partitions) {
-        List<TopicPartition> topicPartitions = new ArrayList<>();
-        for (short i = 0; i < partitions; i++) {
-            topicPartitions.add(new TopicPartition(i, topicId));
-        }
-        return topicPartitions;
+    public static List<TopicPartition> getTopicPartitions(Topic topic) {
+        return IntStream.range(0, topic.partitions())
+            .mapToObj(i -> new TopicPartition((short) i, topic.topicId(), topic.grouped()))
+            .collect(Collectors.toList());
     }
 
     public static Topic getTopic(byte[] bytes) {

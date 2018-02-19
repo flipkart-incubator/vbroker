@@ -1,22 +1,22 @@
 package com.flipkart.vbroker.subscribers;
 
+import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.entities.Message;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
-public class UngroupedMessageWithGroup implements IMessageWithGroup {
+public class UnGroupedMessageWithGroup implements IMessageWithGroup {
     @Getter
     private final Message message;
+    private final PartSubscription partSubscription;
 
     @Override
     public void sideline() {
-
     }
 
     @Override
     public void retry() {
-
     }
 
     @Override
@@ -26,21 +26,20 @@ public class UngroupedMessageWithGroup implements IMessageWithGroup {
 
     @Override
     public boolean lock() {
-        return false;
+        return true;
     }
 
     @Override
     public void unlock() {
-
     }
 
     @Override
     public short subscriptionId() {
-        return 0;
+        return partSubscription.getSubscriptionId();
     }
 
     @Override
     public short getTopicId() {
-        return 0;
+        return partSubscription.getTopicPartition().getTopicId();
     }
 }

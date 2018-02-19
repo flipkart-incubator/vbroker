@@ -146,8 +146,9 @@ public class HttpMessageProcessor implements MessageProcessor {
                 CompletionStage<Topic> topicStage = topicService.getTopic(callbackMsg.topicId());
                 topicStage.thenCompose(topic -> {
                     log.info("Producing callback for message to {} queue", topic.topicId());
+                    TopicPartition topicPartition = new TopicPartition(callbackMsg.partitionId(), topic.topicId(), topic.grouped());
                     TopicPartMessage topicPartMessage =
-                        TopicPartMessage.newInstance(new TopicPartition(callbackMsg.partitionId(), topic.topicId()), callbackMsg);
+                        TopicPartMessage.newInstance(topicPartition, callbackMsg);
                     return producerService.produceMessage(topicPartMessage).toCompletableFuture();
                 }).exceptionally(throwable -> {
                     log.error("Exception in producing callback", throwable);
