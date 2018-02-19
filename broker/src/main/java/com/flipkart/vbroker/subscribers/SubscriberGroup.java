@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 @EqualsAndHashCode(exclude = {"qType", "currSeqNo", "topicPartDataManager", "locked"})
 //TODO: crude implementation of seqNo. Handle the concurrency here correctly
-public class SubscriberGroup implements Iterable<GroupedMessageWithGroup> {
+public class SubscriberGroup implements Iterable<IMessageWithGroup> {
     private final MessageGroup messageGroup;
     @Getter
     private final TopicPartition topicPartition;
@@ -100,7 +100,7 @@ public class SubscriberGroup implements Iterable<GroupedMessageWithGroup> {
         MAIN, SIDELINE, RETRY_1, RETRY_2, RETRY_3
     }
 
-    private class SubscriberGroupIterator implements PeekingIterator<GroupedMessageWithGroup> {
+    private class SubscriberGroupIterator implements PeekingIterator<IMessageWithGroup> {
 
         SubscriberGroup subscriberGroup;
         PeekingIterator<Message> groupIterator = topicPartDataManager.getIterator(topicPartition, getGroupId(), currSeqNo.get());

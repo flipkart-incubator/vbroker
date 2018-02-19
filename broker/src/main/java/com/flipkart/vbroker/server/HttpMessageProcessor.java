@@ -8,7 +8,7 @@ import com.flipkart.vbroker.exceptions.TopicNotFoundException;
 import com.flipkart.vbroker.services.ProducerService;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
-import com.flipkart.vbroker.subscribers.GroupedMessageWithGroup;
+import com.flipkart.vbroker.subscribers.IMessageWithGroup;
 import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +36,7 @@ public class HttpMessageProcessor implements MessageProcessor {
     private final ProducerService producerService;
 
     @Override
-    public void process(GroupedMessageWithGroup messageWithGroup) throws Exception {
+    public void process(IMessageWithGroup messageWithGroup) throws Exception {
         Message message = messageWithGroup.getMessage();
 
         String httpUri = requireNonNull(message.httpUri());
@@ -81,7 +81,7 @@ public class HttpMessageProcessor implements MessageProcessor {
         }, null);
     }
 
-    private void handleResponse(Response response, GroupedMessageWithGroup messageWithGroup) {
+    private void handleResponse(Response response, IMessageWithGroup messageWithGroup) {
         int statusCode = response.getStatusCode();
         if (statusCode >= 200 && statusCode < 300) {
             log.info("Response code is {}. Success in making httpRequest. Message processing now complete", statusCode);
