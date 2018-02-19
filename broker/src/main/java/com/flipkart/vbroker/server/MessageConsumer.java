@@ -3,7 +3,7 @@ package com.flipkart.vbroker.server;
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.exceptions.LockFailedException;
 import com.flipkart.vbroker.iterators.SubscriberIterator;
-import com.flipkart.vbroker.subscribers.GroupedMessageWithGroup;
+import com.flipkart.vbroker.subscribers.IMessageWithGroup;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,7 +21,7 @@ public class MessageConsumer {
 
     public void consume() throws Exception {
         //peek the message first
-        GroupedMessageWithGroup messageWithGroup = subscriberIterator.peek();
+        IMessageWithGroup messageWithGroup = subscriberIterator.peek();
         Message message = messageWithGroup.getMessage();
 
         //lock the subscriberGroup and process the message

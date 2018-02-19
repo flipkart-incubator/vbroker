@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.nonNull;
+
 @Slf4j
 @EqualsAndHashCode(exclude = {"subscriberGroupsMap", "subscriberGroupIteratorMap"})
 @ToString
@@ -46,7 +48,8 @@ public class PartSubscriber implements Iterable<IMessageWithGroup> {
         topicPartDataManager.getUniqueGroups(topicPartition).thenAccept(uniqueMsgGroups -> {
             Set<String> uniqueSubscriberGroups = subscriberGroupsMap.keySet();
             Sets.SetView<String> difference = Sets.difference(uniqueMsgGroups, uniqueSubscriberGroups);
-            difference.iterator().forEachRemaining(group -> {
+
+            difference.forEach(group -> {
                 MessageGroup messageGroup = new MessageGroup(group, topicPartition);
                 SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, partSubscription, topicPartDataManager);
                 subscriberGroupsMap.put(group, subscriberGroup);
@@ -60,15 +63,7 @@ public class PartSubscriber implements Iterable<IMessageWithGroup> {
         return new PeekingIterator<IMessageWithGroup>() {
             PeekingIterator<IMessageWithGroup> currIterator;
 
-            boolean refresh() {
-                boolean refreshed = false;
-                if (currIterator != null
-                    && currIterator.hasNext()
-                    && !currIterator.peek().isLocked()) {
-                    log.trace("Group {} is not locked, hence returning true", currIterator.peek().getMessage().groupId());
-                    return true;
-                }
-
+            Optional<PeekingIterator<IMessageWithGroup>> nextIterator() {
                 if (log.isDebugEnabled()) {
                     List<String> groupIds = subscriberGroupsMap.values().stream()
                         .map(SubscriberGroup::getGroupId)
@@ -76,19 +71,18 @@ public class PartSubscriber implements Iterable<IMessageWithGroup> {
                     log.debug("SubscriberGroupsMap values: {}", Collections.singletonList(groupIds));
                 }
 
-                for (SubscriberGroup subscriberGroup : subscriberGroupsMap.values()) {
-                    log.trace("SubscriberGroup {} locked status: {}", subscriberGroup.getGroupId(), subscriberGroup.isLocked());
-                    if (!subscriberGroup.isLocked()) {
-                        PeekingIterator<IMessageWithGroup> groupIterator = subscriberGroupIteratorMap.get(subscriberGroup);
-                        log.trace("Iterator {} for subscriberGroup {} hasNext: {}", groupIterator, subscriberGroup.getGroupId(), groupIterator.hasNext());
-                        if (groupIterator.hasNext()) {
-                            currIterator = groupIterator;
-                            refreshed = true;
-                            break;
-                        }
-                    }
+                if (nonNull(currIterator) && currIterator.hasNext() && !currIterator.peek().isLocked()) {
+                    log.trace("Group {} is not locked, hence returning true", currIterator.peek().getMessage().groupId());
+                    return Optional.of(currIterator);
                 }
-                return refreshed;
+
+                return subscriberGroupsMap.values()
+                    .stream()
+                    .filter(group -> !group.isLocked())
+                    .filter(subscriberGroupIteratorMap::containsKey)
+                    .map(subscriberGroupIteratorMap::get)
+                    .filter(Iterator::hasNext)
+                    .findFirst();
             }
 
             @Override
@@ -109,11 +103,14 @@ public class PartSubscriber implements Iterable<IMessageWithGroup> {
             @Override
             public boolean hasNext() {
                 try {
-                    if (refresh()) {
+                    Optional<PeekingIterator<IMessageWithGroup>> iteratorOpt = nextIterator();
+                    if (iteratorOpt.isPresent()) {
+                        currIterator = iteratorOpt.get();
                         return currIterator.hasNext();
                     }
+                    return false;
                 } catch (Exception e) {
-                    log.error("Exception in refresh/hasNext", e);
+                    log.error("Exception in nextIterator/hasNext", e);
                 }
                 return false;
             }

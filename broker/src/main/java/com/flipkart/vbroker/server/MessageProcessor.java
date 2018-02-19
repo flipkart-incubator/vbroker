@@ -1,8 +1,8 @@
 package com.flipkart.vbroker.server;
 
-import com.flipkart.vbroker.subscribers.GroupedMessageWithGroup;
+import com.flipkart.vbroker.subscribers.IMessageWithGroup;
 
 public interface MessageProcessor {
 
-    void process(GroupedMessageWithGroup messageWithGroup) throws Exception;
+    void process(IMessageWithGroup messageWithGroup) throws Exception;
 }
