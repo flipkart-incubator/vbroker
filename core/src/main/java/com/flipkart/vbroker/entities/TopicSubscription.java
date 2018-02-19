@@ -2,36 +2,67 @@
 
 package com.flipkart.vbroker.entities;
 
-import java.nio.*;
-import java.lang.*;
-import java.util.*;
-import com.google.flatbuffers.*;
+import com.google.flatbuffers.FlatBufferBuilder;
+import com.google.flatbuffers.Table;
+
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 @SuppressWarnings("unused")
 public final class TopicSubscription extends Table {
-  public static TopicSubscription getRootAsTopicSubscription(ByteBuffer _bb) { return getRootAsTopicSubscription(_bb, new TopicSubscription()); }
-  public static TopicSubscription getRootAsTopicSubscription(ByteBuffer _bb, TopicSubscription obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; }
-  public TopicSubscription __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+    public static TopicSubscription getRootAsTopicSubscription(ByteBuffer _bb) {
+        return getRootAsTopicSubscription(_bb, new TopicSubscription());
+    }
 
-  public short topicId() { int o = __offset(4); return o != 0 ? bb.getShort(o + bb_pos) : 0; }
-  public short subscriptionId() { int o = __offset(6); return o != 0 ? bb.getShort(o + bb_pos) : 0; }
+    public static TopicSubscription getRootAsTopicSubscription(ByteBuffer _bb, TopicSubscription obj) {
+        _bb.order(ByteOrder.LITTLE_ENDIAN);
+        return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
+    }
 
-  public static int createTopicSubscription(FlatBufferBuilder builder,
-      short topicId,
-      short subscriptionId) {
-    builder.startObject(2);
-    TopicSubscription.addSubscriptionId(builder, subscriptionId);
-    TopicSubscription.addTopicId(builder, topicId);
-    return TopicSubscription.endTopicSubscription(builder);
-  }
+    public static int createTopicSubscription(FlatBufferBuilder builder,
+                                              short topicId,
+                                              short subscriptionId) {
+        builder.startObject(2);
+        TopicSubscription.addSubscriptionId(builder, subscriptionId);
+        TopicSubscription.addTopicId(builder, topicId);
+        return TopicSubscription.endTopicSubscription(builder);
+    }
 
-  public static void startTopicSubscription(FlatBufferBuilder builder) { builder.startObject(2); }
-  public static void addTopicId(FlatBufferBuilder builder, short topicId) { builder.addShort(0, topicId, 0); }
-  public static void addSubscriptionId(FlatBufferBuilder builder, short subscriptionId) { builder.addShort(1, subscriptionId, 0); }
-  public static int endTopicSubscription(FlatBufferBuilder builder) {
-    int o = builder.endObject();
-    return o;
-  }
+    public static void startTopicSubscription(FlatBufferBuilder builder) {
+        builder.startObject(2);
+    }
+
+    public static void addTopicId(FlatBufferBuilder builder, short topicId) {
+        builder.addShort(0, topicId, 0);
+    }
+
+    public static void addSubscriptionId(FlatBufferBuilder builder, short subscriptionId) {
+        builder.addShort(1, subscriptionId, 0);
+    }
+
+    public static int endTopicSubscription(FlatBufferBuilder builder) {
+        int o = builder.endObject();
+        return o;
+    }
+
+    public void __init(int _i, ByteBuffer _bb) {
+        bb_pos = _i;
+        bb = _bb;
+    }
+
+    public TopicSubscription __assign(int _i, ByteBuffer _bb) {
+        __init(_i, _bb);
+        return this;
+    }
+
+    public short topicId() {
+        int o = __offset(4);
+        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+    }
+
+    public short subscriptionId() {
+        int o = __offset(6);
+        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+    }
 }
 

@@ -2,45 +2,93 @@
 
 package com.flipkart.vbroker.entities;
 
-import java.nio.*;
-import java.lang.*;
-import java.util.*;
-import com.google.flatbuffers.*;
+import com.google.flatbuffers.FlatBufferBuilder;
+import com.google.flatbuffers.Table;
+
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 @SuppressWarnings("unused")
 public final class CreateQueueResponse extends Table {
-  public static CreateQueueResponse getRootAsCreateQueueResponse(ByteBuffer _bb) { return getRootAsCreateQueueResponse(_bb, new CreateQueueResponse()); }
-  public static CreateQueueResponse getRootAsCreateQueueResponse(ByteBuffer _bb, CreateQueueResponse obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; }
-  public CreateQueueResponse __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+    public static CreateQueueResponse getRootAsCreateQueueResponse(ByteBuffer _bb) {
+        return getRootAsCreateQueueResponse(_bb, new CreateQueueResponse());
+    }
 
-  public short id() { int o = __offset(4); return o != 0 ? bb.getShort(o + bb_pos) : 0; }
-  public short topicId() { int o = __offset(6); return o != 0 ? bb.getShort(o + bb_pos) : 0; }
-  public short subscriptionId() { int o = __offset(8); return o != 0 ? bb.getShort(o + bb_pos) : 0; }
-  public VStatus status() { return status(new VStatus()); }
-  public VStatus status(VStatus obj) { int o = __offset(10); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
+    public static CreateQueueResponse getRootAsCreateQueueResponse(ByteBuffer _bb, CreateQueueResponse obj) {
+        _bb.order(ByteOrder.LITTLE_ENDIAN);
+        return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
+    }
 
-  public static int createCreateQueueResponse(FlatBufferBuilder builder,
-      short id,
-      short topicId,
-      short subscriptionId,
-      int statusOffset) {
-    builder.startObject(4);
-    CreateQueueResponse.addStatus(builder, statusOffset);
-    CreateQueueResponse.addSubscriptionId(builder, subscriptionId);
-    CreateQueueResponse.addTopicId(builder, topicId);
-    CreateQueueResponse.addId(builder, id);
-    return CreateQueueResponse.endCreateQueueResponse(builder);
-  }
+    public static int createCreateQueueResponse(FlatBufferBuilder builder,
+                                                short id,
+                                                short topicId,
+                                                short subscriptionId,
+                                                int statusOffset) {
+        builder.startObject(4);
+        CreateQueueResponse.addStatus(builder, statusOffset);
+        CreateQueueResponse.addSubscriptionId(builder, subscriptionId);
+        CreateQueueResponse.addTopicId(builder, topicId);
+        CreateQueueResponse.addId(builder, id);
+        return CreateQueueResponse.endCreateQueueResponse(builder);
+    }
 
-  public static void startCreateQueueResponse(FlatBufferBuilder builder) { builder.startObject(4); }
-  public static void addId(FlatBufferBuilder builder, short id) { builder.addShort(0, id, 0); }
-  public static void addTopicId(FlatBufferBuilder builder, short topicId) { builder.addShort(1, topicId, 0); }
-  public static void addSubscriptionId(FlatBufferBuilder builder, short subscriptionId) { builder.addShort(2, subscriptionId, 0); }
-  public static void addStatus(FlatBufferBuilder builder, int statusOffset) { builder.addOffset(3, statusOffset, 0); }
-  public static int endCreateQueueResponse(FlatBufferBuilder builder) {
-    int o = builder.endObject();
-    return o;
-  }
+    public static void startCreateQueueResponse(FlatBufferBuilder builder) {
+        builder.startObject(4);
+    }
+
+    public static void addId(FlatBufferBuilder builder, short id) {
+        builder.addShort(0, id, 0);
+    }
+
+    public static void addTopicId(FlatBufferBuilder builder, short topicId) {
+        builder.addShort(1, topicId, 0);
+    }
+
+    public static void addSubscriptionId(FlatBufferBuilder builder, short subscriptionId) {
+        builder.addShort(2, subscriptionId, 0);
+    }
+
+    public static void addStatus(FlatBufferBuilder builder, int statusOffset) {
+        builder.addOffset(3, statusOffset, 0);
+    }
+
+    public static int endCreateQueueResponse(FlatBufferBuilder builder) {
+        int o = builder.endObject();
+        return o;
+    }
+
+    public void __init(int _i, ByteBuffer _bb) {
+        bb_pos = _i;
+        bb = _bb;
+    }
+
+    public CreateQueueResponse __assign(int _i, ByteBuffer _bb) {
+        __init(_i, _bb);
+        return this;
+    }
+
+    public short id() {
+        int o = __offset(4);
+        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+    }
+
+    public short topicId() {
+        int o = __offset(6);
+        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+    }
+
+    public short subscriptionId() {
+        int o = __offset(8);
+        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+    }
+
+    public VStatus status() {
+        return status(new VStatus());
+    }
+
+    public VStatus status(VStatus obj) {
+        int o = __offset(10);
+        return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null;
+    }
 }
 
