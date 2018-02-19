@@ -58,6 +58,7 @@ public class BrokerSubscriber implements Runnable {
                 new Thread(syncer).start();
 
                 log.info("No of partSubscribers are {}", partSubscribers.size());
+                log.info("PartSubscribers in the current broker are {}", partSubscribers);
                 SubscriberIterator subscriberIterator = new SubscriberIterator(partSubscribers);
                 MessageConsumer messageConsumer = MessageConsumer.newInstance(subscriberIterator, messageProcessor);
 

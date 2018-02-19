@@ -4,32 +4,27 @@ import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.data.TopicPartData;
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
-import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.google.common.collect.PeekingIterator;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-
-import static java.util.Objects.nonNull;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
-public class InMemoryUngroupedTopicPartData implements TopicPartData {
+public class InMemoryUnGroupedTopicPartData implements TopicPartData {
 
-    private BlockingQueue<Message> messageQueue = new ArrayBlockingQueue<>(10000);
+    //private BlockingQueue<Message> messageQueue = new ArrayBlockingQueue<>(10000);
+    private List<Message> messages = new CopyOnWriteArrayList<>();
 
     @Override
     public CompletionStage<MessageMetadata> addMessage(Message message) {
         return CompletableFuture.supplyAsync(() -> {
-            try {
-                messageQueue.put(message);
-            } catch (InterruptedException e) {
-                throw new VBrokerException(e);
-            }
+            messages.add(message);
             return new MessageMetadata(message.topicId(), message.partitionId(), new Random().nextInt());
         });
     }
@@ -47,17 +42,18 @@ public class InMemoryUngroupedTopicPartData implements TopicPartData {
     @Override
     public PeekingIterator<Message> iteratorFrom(int seqNoFrom) {
         return new PeekingIterator<Message>() {
+            AtomicInteger index = new AtomicInteger(seqNoFrom);
 
             @Override
             public Message peek() {
-                Message message = messageQueue.peek();
+                Message message = messages.get(index.get());
                 log.trace("Peeking message {}", message.messageId());
                 return message;
             }
 
             @Override
             public Message next() {
-                Message message = messageQueue.poll();
+                Message message = messages.get(index.getAndIncrement());
                 log.trace("Next message {}", message.messageId());
                 return message;
             }
@@ -69,7 +65,7 @@ public class InMemoryUngroupedTopicPartData implements TopicPartData {
 
             @Override
             public boolean hasNext() {
-                return nonNull(messageQueue.peek());
+                return index.get() < messages.size();
             }
         };
     }

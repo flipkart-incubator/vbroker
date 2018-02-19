@@ -47,7 +47,7 @@ public class TopicServiceImpl implements TopicService {
     @Override
     public CompletionStage<TopicPartition> getTopicPartition(Topic topic, short topicPartitionId) {
         return getTopic(topic.topicId())
-            .thenApplyAsync(topic1 -> new TopicPartition(topicPartitionId, topic.topicId()));
+            .thenApplyAsync(topic1 -> new TopicPartition(topicPartitionId, topic.topicId(), topic.grouped()));
     }
 
     @Override
@@ -75,7 +75,7 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public List<TopicPartition> getPartitions(Topic topic) {
-        return TopicUtils.getTopicPartitions(topic.topicId(), topic.partitions());
+        return TopicUtils.getTopicPartitions(topic);
     }
 
     @Override

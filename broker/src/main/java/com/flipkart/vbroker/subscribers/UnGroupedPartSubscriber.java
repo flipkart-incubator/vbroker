@@ -6,13 +6,17 @@ import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.iterators.PartSubscriberIterator;
 import com.google.common.collect.PeekingIterator;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
+@EqualsAndHashCode(exclude = {"topicPartDataManager", "currSeqNo"})
+@ToString(exclude = {"topicPartDataManager", "currSeqNo"})
 public class UnGroupedPartSubscriber implements IPartSubscriber {
 
     @Getter
@@ -24,6 +28,8 @@ public class UnGroupedPartSubscriber implements IPartSubscriber {
                                    PartSubscription partSubscription) {
         this.topicPartDataManager = topicPartDataManager;
         this.partSubscription = partSubscription;
+
+        log.info("Creating UnGroupedPartSubscriber object for partSubscription {}", partSubscription);
     }
 
     @Override
@@ -33,6 +39,7 @@ public class UnGroupedPartSubscriber implements IPartSubscriber {
 
     @Override
     public PeekingIterator<IMessageWithGroup> iterator() {
+        log.info("Creating UnGroupedPartSubscriber iterator for partSub {} from seqNo {}", partSubscription, currSeqNo.get());
         return new PartSubscriberIterator() {
             @Override
             protected Optional<PeekingIterator<IMessageWithGroup>> nextIterator() {
@@ -42,7 +49,7 @@ public class UnGroupedPartSubscriber implements IPartSubscriber {
                 PeekingIterator<IMessageWithGroup> peekingIterator = new PeekingIterator<IMessageWithGroup>() {
                     @Override
                     public IMessageWithGroup peek() {
-                        return new UngroupedMessageWithGroup(iterator.peek());
+                        return new UnGroupedMessageWithGroup(iterator.peek(), partSubscription);
                     }
 
                     @Override
@@ -52,7 +59,7 @@ public class UnGroupedPartSubscriber implements IPartSubscriber {
 
                     @Override
                     public synchronized IMessageWithGroup next() {
-                        IMessageWithGroup messageWithGroup = new UngroupedMessageWithGroup(iterator.next());
+                        IMessageWithGroup messageWithGroup = new UnGroupedMessageWithGroup(iterator.next(), partSubscription);
                         currSeqNo.incrementAndGet();
                         return messageWithGroup;
                     }

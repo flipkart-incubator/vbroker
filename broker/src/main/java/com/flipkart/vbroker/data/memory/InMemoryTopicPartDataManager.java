@@ -27,7 +27,12 @@ public class InMemoryTopicPartDataManager implements TopicPartDataManager {
     @Override
     public synchronized CompletionStage<TopicPartData> getTopicPartData(TopicPartition topicPartition) {
         return CompletableFuture.supplyAsync(() -> {
-            allPartitionsDataMap.computeIfAbsent(topicPartition, topicPartition1 -> new InMemoryTopicPartData());
+            allPartitionsDataMap.computeIfAbsent(topicPartition, topicPartition1 -> {
+                TopicPartData topicPartData = topicPartition.isGrouped() ?
+                    new InMemoryTopicPartData() : new InMemoryUnGroupedTopicPartData();
+                log.info("TopicPartData: {} for TopicPartition: {}", topicPartData, topicPartition1);
+                return topicPartData;
+            });
             //allPartitionsDataMap.putIfAbsent(topicPartition, new InMemoryTopicPartData());
             return allPartitionsDataMap.get(topicPartition);
         });

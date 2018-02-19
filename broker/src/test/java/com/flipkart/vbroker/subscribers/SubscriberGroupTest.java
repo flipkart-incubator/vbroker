@@ -20,10 +20,10 @@ public class SubscriberGroupTest {
     SubscriberGroup subscriberGroup;
 
     String group = "group-123";
-    TopicPartition topicPartition = new TopicPartition((short) 0, (short) 101);
+    TopicPartition topicPartition = new TopicPartition((short) 0, (short) 101, true);
     MessageGroup messageGroup = new MessageGroup(group, topicPartition);
     PartSubscription partSubscription = new PartSubscription(topicPartition.getId(),
-        topicPartition, DummyEntities.subscription1.subscriptionId(), true);
+        topicPartition, DummyEntities.groupedSubscription.subscriptionId(), true);
 
     @BeforeMethod
     public void setUp() {
