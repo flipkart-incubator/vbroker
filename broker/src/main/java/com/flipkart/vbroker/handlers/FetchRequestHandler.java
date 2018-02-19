@@ -6,7 +6,7 @@ import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
 import com.flipkart.vbroker.subscribers.IMessageWithGroup;
-import com.flipkart.vbroker.subscribers.PartSubscriber;
+import com.flipkart.vbroker.subscribers.IPartSubscriber;
 import com.google.common.collect.PeekingIterator;
 import com.google.common.primitives.Ints;
 import com.google.common.util.concurrent.ListeningExecutorService;
@@ -118,7 +118,7 @@ public class FetchRequestHandler implements RequestHandler {
     private int[] buildMessages(FlatBufferBuilder builder,
                                 PartSubscription partSubscription,
                                 short noOfMessagesToFetch) {
-        PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription).toCompletableFuture().join();
+        IPartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription).toCompletableFuture().join();
         List<Integer> messages = new LinkedList<>();
 
         int i = 0;

@@ -22,7 +22,8 @@ public class SubscriberGroupTest {
     String group = "group-123";
     TopicPartition topicPartition = new TopicPartition((short) 0, (short) 101);
     MessageGroup messageGroup = new MessageGroup(group, topicPartition);
-    PartSubscription partSubscription = new PartSubscription(topicPartition.getId(), topicPartition, DummyEntities.subscription1.subscriptionId());
+    PartSubscription partSubscription = new PartSubscription(topicPartition.getId(),
+        topicPartition, DummyEntities.subscription1.subscriptionId(), true);
 
     @BeforeMethod
     public void setUp() {

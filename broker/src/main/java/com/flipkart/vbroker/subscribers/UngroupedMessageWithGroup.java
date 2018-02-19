@@ -6,7 +6,6 @@ import lombok.Getter;
 
 @AllArgsConstructor
 public class UngroupedMessageWithGroup implements IMessageWithGroup {
-
     @Getter
     private final Message message;
 
