@@ -92,7 +92,7 @@ public class VBrokerServer extends AbstractExecutionThreadService {
         TopicPartDataManager topicPartDataManager = new InMemoryTopicPartDataManager();
         //TopicPartDataManager redisTopicPartDataManager = new RedisTopicPartDataManager(Redisson.create(redissonConfig));
 
-        SubPartDataManager subPartDataManager = new InMemorySubPartDataManager();
+        SubPartDataManager subPartDataManager = new InMemorySubPartDataManager(topicPartDataManager);
         //SubscriptionService subscriptionService = new SubscriptionServiceImpl(config, curatorService, topicPartDataManager, topicService);
         SubscriptionService subscriptionService = new InMemorySubscriptionService(topicService, topicPartDataManager, subPartDataManager);
 

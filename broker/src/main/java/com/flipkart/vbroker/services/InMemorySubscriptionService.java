@@ -1,7 +1,6 @@
 package com.flipkart.vbroker.services;
 
 import com.flipkart.vbroker.core.PartSubscription;
-import com.flipkart.vbroker.data.SubPartData;
 import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.entities.Subscription;
@@ -68,12 +67,11 @@ public class InMemorySubscriptionService implements SubscriptionService {
             //subscriberMap.putIfAbsent(partSubscription, new PartSubscriber(partSubscription));
 
             subscriberMap.computeIfAbsent(partSubscription, partSubscription1 -> {
-                SubPartData subPartData = subPartDataManager.getSubPartData(partSubscription1);
                 IPartSubscriber partSubscriber;
                 if (partSubscription1.isGrouped()) {
-                    partSubscriber = new PartSubscriber(topicPartDataManager, subPartData, partSubscription1);
+                    partSubscriber = new PartSubscriber(topicPartDataManager, subPartDataManager, partSubscription1);
                 } else {
-                    partSubscriber = new UnGroupedPartSubscriber(topicPartDataManager, partSubscription1);
+                    partSubscriber = new UnGroupedPartSubscriber(subPartDataManager, partSubscription1);
                 }
                 return partSubscriber;
             });
