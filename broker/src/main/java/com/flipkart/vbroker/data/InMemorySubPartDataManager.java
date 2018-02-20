@@ -42,13 +42,13 @@ public class InMemorySubPartDataManager implements SubPartDataManager {
     }
 
     @Override
-    public CompletionStage<Void> sideline(PartSubscription partSubscription, QType qType, String groupId) {
-        return getSubPartDataAsync(partSubscription).thenCompose(subPartData -> subPartData.sideline(qType, groupId));
+    public CompletionStage<Void> sideline(PartSubscription partSubscription, MessageWithMetadata messageWithMetadata) {
+        return getSubPartDataAsync(partSubscription).thenCompose(subPartData -> subPartData.sideline(messageWithMetadata));
     }
 
     @Override
-    public CompletionStage<Void> retry(PartSubscription partSubscription, QType qType, String groupId) {
-        return getSubPartDataAsync(partSubscription).thenCompose(subPartData -> subPartData.retry(qType, groupId));
+    public CompletionStage<Void> retry(PartSubscription partSubscription, MessageWithMetadata messageWithMetadata) {
+        return getSubPartDataAsync(partSubscription).thenCompose(subPartData -> subPartData.retry(messageWithMetadata));
     }
 
     @Override

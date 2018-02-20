@@ -104,15 +104,11 @@ public class HttpMessageProcessor implements MessageProcessor {
     }
 
     private CompletionStage<Void> sideline(MessageWithMetadata messageWithGroup) {
-        return subPartDataManager.sideline(messageWithGroup.getPartSubscription(),
-            messageWithGroup.getQType(),
-            messageWithGroup.getGroupId());
+        return subPartDataManager.sideline(messageWithGroup.getPartSubscription(), messageWithGroup);
     }
 
     private CompletionStage<Void> retry(MessageWithMetadata messageWithGroup) {
-        return subPartDataManager.retry(messageWithGroup.getPartSubscription(),
-            messageWithGroup.getQType(),
-            messageWithGroup.getGroupId());
+        return subPartDataManager.retry(messageWithGroup.getPartSubscription(), messageWithGroup);
     }
 
     /**

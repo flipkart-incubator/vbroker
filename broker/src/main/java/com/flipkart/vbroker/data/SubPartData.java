@@ -16,9 +16,9 @@ public interface SubPartData {
 
     CompletionStage<Set<String>> getUniqueGroups();
 
-    CompletionStage<Void> sideline(QType qType, String groupId);
+    CompletionStage<Void> sideline(MessageWithMetadata messageWithMetadata);
 
-    CompletionStage<Void> retry(QType qType, String groupId);
+    CompletionStage<Void> retry(MessageWithMetadata messageWithMetadata);
 
     PeekingIterator<MessageWithMetadata> getIterator(String groupId);
 

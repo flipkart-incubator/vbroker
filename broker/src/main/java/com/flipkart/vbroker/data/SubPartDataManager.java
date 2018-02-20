@@ -19,9 +19,9 @@ public interface SubPartDataManager {
 
     CompletionStage<Set<String>> getUniqueGroups(PartSubscription partSubscription);
 
-    CompletionStage<Void> sideline(PartSubscription partSubscription, QType qType, String groupId);
+    CompletionStage<Void> sideline(PartSubscription partSubscription, MessageWithMetadata messageWithMetadata);
 
-    CompletionStage<Void> retry(PartSubscription partSubscription, QType qType, String groupId);
+    CompletionStage<Void> retry(PartSubscription partSubscription, MessageWithMetadata messageWithMetadata);
 
     PeekingIterator<MessageWithMetadata> getIterator(PartSubscription partSubscription, String groupId);
 

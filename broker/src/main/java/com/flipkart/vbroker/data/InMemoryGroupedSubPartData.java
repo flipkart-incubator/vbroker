@@ -15,6 +15,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
+import static com.flipkart.vbroker.subscribers.QType.*;
+
 @Slf4j
 public class InMemoryGroupedSubPartData implements SubPartData {
 
@@ -23,6 +25,7 @@ public class InMemoryGroupedSubPartData implements SubPartData {
     private final Map<String, SubscriberGroup> subscriberGroupsMap = new LinkedHashMap<>();
     private final Map<SubscriberGroup, PeekingIterator<MessageWithMetadata>> subscriberGroupIteratorMap = new LinkedHashMap<>();
     private final Map<QType, List<String>> failedGroups = new LinkedHashMap<>();
+
     public InMemoryGroupedSubPartData(PartSubscription partSubscription) {
         this.partSubscription = partSubscription;
     }
@@ -50,41 +53,41 @@ public class InMemoryGroupedSubPartData implements SubPartData {
         });
     }
 
-    private List<String> getFailedGroupsByBlocking(QType qType) {
-        failedGroups.computeIfAbsent(qType, qType1 -> new LinkedList<>());
-        return failedGroups.get(qType);
+    private List<String> getFailedGroupsByBlocking(MessageWithMetadata messageWithMetadata) {
+        failedGroups.computeIfAbsent(messageWithMetadata.getQType(), qType1 -> new LinkedList<>());
+        return failedGroups.get(messageWithMetadata.getQType());
     }
 
     @Override
-    public CompletionStage<Void> sideline(QType qType, String groupId) {
-        return getFailedGroups(qType).thenApplyAsync(groups -> {
-            groups.add(groupId);
+    public CompletionStage<Void> sideline(MessageWithMetadata messageWithMetadata) {
+        return getFailedGroups(messageWithMetadata.getQType()).thenApplyAsync(groups -> {
+            groups.add(messageWithMetadata.getGroupId());
             return null;
         });
     }
 
     @Override
-    public CompletionStage<Void> retry(QType qType, String groupId) {
+    public CompletionStage<Void> retry(MessageWithMetadata messageWithMetadata) {
         QType destinationQType;
-        switch (qType) {
+        switch (messageWithMetadata.getQType()) {
             case MAIN:
-                destinationQType = QType.RETRY_1;
+                destinationQType = RETRY_1;
                 break;
             case RETRY_1:
-                destinationQType = QType.RETRY_2;
+                destinationQType = RETRY_2;
                 break;
             case RETRY_2:
-                destinationQType = QType.RETRY_3;
+                destinationQType = RETRY_3;
                 break;
             case RETRY_3:
                 destinationQType = QType.SIDELINE;
                 break;
             default:
-                throw new VBrokerException("Unknown QType: " + qType);
+                throw new VBrokerException("Unknown QType: " + messageWithMetadata.getQType());
         }
 
         return getFailedGroups(destinationQType).thenApplyAsync(groups -> {
-            groups.add(groupId);
+            groups.add(messageWithMetadata.getGroupId());
             return null;
         });
     }
