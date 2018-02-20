@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
@@ -95,6 +96,14 @@ public class RedisTopicPartData implements TopicPartData {
             return ((RedisMessageObject) entry).getMessage();
         }).collect(Collectors.toList()));
         return Iterators.peekingIterator(l.listIterator(seqNoFrom));
+    }
+
+    @Override
+    public CompletionStage<Integer> getCurrentOffset(String group) {
+            log.info(String.format("Fetching offset for group {}", group));
+            MessageGroup messageGroup = new MessageGroup(group, topicPartition);
+            RListAsync<RedisObject> rList = client.getList(messageGroup.toString());
+            return rList.sizeAsync();
     }
 
     private ByteBuffer buildMessage(Message message) {

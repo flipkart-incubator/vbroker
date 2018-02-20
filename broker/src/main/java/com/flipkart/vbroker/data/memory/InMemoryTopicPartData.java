@@ -60,6 +60,13 @@ public class InMemoryTopicPartData implements TopicPartData {
         };
     }
 
+    @Override
+    public CompletionStage<Integer> getCurrentOffset(String group) {
+        CompletableFuture<Integer> offsetFuture = new CompletableFuture<>();
+        offsetFuture.complete(this.topicPartitionData.get(group).size());
+        return offsetFuture;
+    }
+
     private synchronized List<Message> getMessages(String group) {
         return topicPartitionData.computeIfAbsent(group, key -> new CopyOnWriteArrayList<>());
     }

@@ -26,4 +26,6 @@ public interface TopicPartDataManager {
     public PeekingIterator<Message> getIterator(TopicPartition topicPartition, String group);
 
     public PeekingIterator<Message> getIterator(TopicPartition topicPartition, String group, int seqNoFrom);
+
+    public CompletionStage<Integer> getCurrentOffset(TopicPartition topicPartition, String group);
 }

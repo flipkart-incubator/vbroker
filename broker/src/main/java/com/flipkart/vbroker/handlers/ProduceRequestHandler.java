@@ -92,7 +92,7 @@ public class ProduceRequestHandler implements RequestHandler {
             int topicResponsesVector = ProduceResponse.createTopicResponsesVector(builder, topicProduceResponses);
             int produceResponse = ProduceResponse.createProduceResponse(builder, topicResponsesVector);
             int vResponse = VResponse.createVResponse(builder,
-                1001,
+                vRequest.correlationId(),
                 ResponseMessage.ProduceResponse,
                 produceResponse);
             builder.finish(vResponse);

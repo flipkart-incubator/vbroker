@@ -14,4 +14,6 @@ public interface TopicPartData {
     public CompletionStage<Set<String>> getUniqueGroups();
 
     public PeekingIterator<Message> iteratorFrom(String group, int seqNoFrom);
+
+    public CompletionStage<Integer> getCurrentOffset(String group);
 }

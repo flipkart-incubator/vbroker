@@ -16,6 +16,7 @@ subprojects {
     //test dependencies
     //def jUnitVersion = "4.12"
     def testngVersion = "6.14.2"
+    def mockitoVersion = "2.15.0"
 
     dependencies {
         //logging
@@ -38,6 +39,8 @@ subprojects {
         //testing
         //testCompile "junit:junit:${jUnitVersion}"
         testCompile "org.testng:testng:${testngVersion}"
+        testCompile "org.mockito:mockito-core:${mockitoVersion}"
+
     }
 }
 

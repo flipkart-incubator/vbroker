@@ -91,6 +91,14 @@ public class RedisTopicPartDataLua implements TopicPartData {
         return Iterators.peekingIterator(l.listIterator(seqNoFrom));
     }
 
+    @Override
+    public CompletionStage<Integer> getCurrentOffset(String group) {
+        log.info(String.format("Fetching offset for group {}", group));
+        MessageGroup messageGroup = new MessageGroup(group, topicPartition);
+        RListAsync<RedisObject> rList = client.getList(messageGroup.toString());
+        return rList.sizeAsync();
+    }
+
     private ByteBuffer buildMessage(Message message) {
         FlatBufferBuilder builder = new FlatBufferBuilder();
         int httpHeader = HttpHeader.createHttpHeader(builder,
