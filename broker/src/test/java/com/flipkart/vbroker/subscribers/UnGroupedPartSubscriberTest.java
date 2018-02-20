@@ -2,6 +2,8 @@ package com.flipkart.vbroker.subscribers;
 
 import com.flipkart.vbroker.client.MessageStore;
 import com.flipkart.vbroker.core.PartSubscription;
+import com.flipkart.vbroker.data.InMemoryUnGroupedSubPartData;
+import com.flipkart.vbroker.data.SubPartData;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
 import com.flipkart.vbroker.entities.Message;
@@ -22,14 +24,16 @@ public class UnGroupedPartSubscriberTest {
     private UnGroupedPartSubscriber partSubscriber;
 
     private PartSubscription partSubscription;
+    private SubPartData subPartData;
     private TopicPartDataManager topicPartDataManager;
 
     @BeforeMethod
     public void setUp() {
         partSubscription = SubscriptionUtils.getPartSubscription(DummyEntities.unGroupedSubscription, (short) 0);
         topicPartDataManager = new InMemoryTopicPartDataManager();
+        subPartData = new InMemoryUnGroupedSubPartData(partSubscription, topicPartDataManager);
 
-        partSubscriber = new UnGroupedPartSubscriber(topicPartDataManager, partSubscription);
+        partSubscriber = new UnGroupedPartSubscriber(topicPartDataManager, subPartData, partSubscription);
     }
 
     @Test

@@ -73,7 +73,7 @@ public class InMemorySubscriptionService implements SubscriptionService {
                 if (partSubscription1.isGrouped()) {
                     partSubscriber = new PartSubscriber(topicPartDataManager, subPartData, partSubscription1);
                 } else {
-                    partSubscriber = new UnGroupedPartSubscriber(topicPartDataManager, partSubscription1);
+                    partSubscriber = new UnGroupedPartSubscriber(topicPartDataManager, subPartData, partSubscription1);
                 }
                 return partSubscriber;
             });
