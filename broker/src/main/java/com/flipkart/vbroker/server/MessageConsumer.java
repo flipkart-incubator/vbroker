@@ -20,21 +20,22 @@ public class MessageConsumer {
     }
 
     public void consume() throws Exception {
-        //peek the message first
-        IMessageWithGroup messageWithGroup = subscriberIterator.peek();
-        Message message = messageWithGroup.getMessage();
+        if (subscriberIterator.hasNext()) {
+            //peek the message first
+            IMessageWithGroup messageWithGroup = subscriberIterator.peek();
+            Message message = messageWithGroup.getMessage();
 
-        //lock the subscriberGroup and process the message
-        if (messageWithGroup.lock()) {
-            log.debug("Consuming message with msg_id: {} and group_id: {}", message.messageId(), message.groupId());
-            messageProcessor.process(messageWithGroup);
-
-            log.trace("Done processing..moving to next message");
-            //move over to the next message
-            subscriberIterator.next();
-            log.trace("Moved to next message");
-        } else {
-            throw new LockFailedException("Failed to acquire an already acquired lock for group: " + message.groupId());
+            //lock the subscriberGroup and process the message
+            if (messageWithGroup.lock()) {
+                log.debug("Consuming message with msg_id: {} and group_id: {}", message.messageId(), message.groupId());
+                messageProcessor.process(messageWithGroup);
+                log.trace("Done processing..moving to next message");
+                //move over to the next message
+                subscriberIterator.next();
+                log.trace("Moved to next message");
+            } else {
+                throw new LockFailedException("Failed to acquire an already acquired lock for group: " + message.groupId());
+            }
         }
     }
 }

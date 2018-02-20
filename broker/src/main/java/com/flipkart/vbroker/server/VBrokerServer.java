@@ -54,6 +54,7 @@ public class VBrokerServer extends AbstractExecutionThreadService {
     private Channel serverChannel;
     private Channel serverLocalChannel;
     private VBrokerController brokerController;
+    private BrokerSubscriber brokerSubscriber;
     private CuratorFramework curatorClient;
 
     private void startServer() throws IOException {
@@ -152,7 +153,7 @@ public class VBrokerServer extends AbstractExecutionThreadService {
             AsyncHttpClient httpClient = new DefaultAsyncHttpClient(httpClientConfig);
             MessageProcessor messageProcessor = new HttpMessageProcessor(httpClient, topicService, subscriptionService, producerService);
 
-            BrokerSubscriber brokerSubscriber = new BrokerSubscriber(subscriptionService,
+            brokerSubscriber = new BrokerSubscriber(subscriptionService,
                 messageProcessor,
                 subscriberMetadataService,
                 topicMetadataService,
@@ -214,6 +215,11 @@ public class VBrokerServer extends AbstractExecutionThreadService {
         if (nonNull(brokerController)) {
             log.info("Stopping VBrokerController");
             brokerController.stopAsync().awaitTerminated();
+        }
+
+        if (nonNull(brokerSubscriber)) {
+            log.info("Stopping BrokerSubscriber");
+            brokerSubscriber.stop();
         }
 
         if (nonNull(curatorClient)) {

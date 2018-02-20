@@ -12,9 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static java.util.Objects.nonNull;
 
 /**
  * This is the main subscriber which runs on the broker machine and consumes the messages
@@ -62,18 +63,16 @@ public class BrokerSubscriber implements Runnable {
                 SubscriberIterator subscriberIterator = new SubscriberIterator(partSubscribers);
                 MessageConsumer messageConsumer = MessageConsumer.newInstance(subscriberIterator, messageProcessor);
 
-                long pollTimeMs = config.getControllerQueuePollTimeMs();
+                long pollTimeMs = config.getSubscriberPollTimeMs();
                 while (running.get()) {
                     log.info("Polling for new messages");
-                    while (running.get() && subscriberIterator.hasNext()) {
-                        try {
-                            messageConsumer.consume();
-                        } catch (Exception e) {
-                            log.error("Exception in consuming the message", e);
-                            Thread.sleep(pollTimeMs);
-                        }
+                    try {
+                        messageConsumer.consume();
+                        Thread.sleep(pollTimeMs);
+                    } catch (Exception e) {
+                        log.error("Exception in consuming the message. Sleeping for {}ms", e, pollTimeMs);
+                        Thread.sleep(pollTimeMs);
                     }
-                    Thread.sleep(pollTimeMs);
                 }
             } catch (InterruptedException ignored) {
             }
@@ -81,7 +80,7 @@ public class BrokerSubscriber implements Runnable {
     }
 
     public void stop() {
-        if (Objects.nonNull(syncer)) {
+        if (nonNull(syncer)) {
             syncer.stop();
         }
         this.running.set(false);
