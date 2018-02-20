@@ -1,6 +1,5 @@
 package com.flipkart.vbroker.subscribers;
 
-import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.client.MessageStore;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.data.TopicPartDataManager;
@@ -37,11 +36,11 @@ public class UnGroupedPartSubscriberTest {
     public void shouldIterateOverNewMessages() throws InterruptedException {
         int noOfMessages = 10;
         List<Message> messages = generateMessages(noOfMessages);
-        List<MessageMetadata> messageMetadataList = addPartData(messages);
+        List<com.flipkart.vbroker.client.MessageMetadata> messageMetadataList = addPartData(messages);
         assertEquals(messageMetadataList.size(), noOfMessages);
 
         int count = 0;
-        PeekingIterator<IMessageWithGroup> iterator = partSubscriber.iterator();
+        PeekingIterator<MessageWithMetadata> iterator = partSubscriber.iterator();
 
         CountDownLatch latch = new CountDownLatch(1);
         int moreNoOfMessages = 5;
@@ -52,7 +51,7 @@ public class UnGroupedPartSubscriberTest {
          */
         new Thread(() -> {
             List<Message> moreMessages = generateMessages(moreNoOfMessages);
-            List<MessageMetadata> moreMetadataList = addPartData(moreMessages);
+            List<com.flipkart.vbroker.client.MessageMetadata> moreMetadataList = addPartData(moreMessages);
             assertEquals(moreMetadataList.size(), moreMessages.size());
 
             latch.countDown();
@@ -68,7 +67,7 @@ public class UnGroupedPartSubscriberTest {
         assertEquals(count, noOfMessages + moreNoOfMessages);
     }
 
-    private List<MessageMetadata> addPartData(List<Message> messages) {
+    private List<com.flipkart.vbroker.client.MessageMetadata> addPartData(List<Message> messages) {
         return messages.stream()
             .map(message -> topicPartDataManager.addMessage(partSubscription.getTopicPartition(), message)
                 .toCompletableFuture().join())

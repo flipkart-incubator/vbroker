@@ -38,18 +38,18 @@ public class UnGroupedPartSubscriber implements IPartSubscriber {
     }
 
     @Override
-    public PeekingIterator<IMessageWithGroup> iterator() {
+    public PeekingIterator<MessageWithMetadata> iterator() {
         log.info("Creating UnGroupedPartSubscriber iterator for partSub {} from seqNo {}", partSubscription, currSeqNo.get());
         return new PartSubscriberIterator() {
             @Override
-            protected Optional<PeekingIterator<IMessageWithGroup>> nextIterator() {
+            protected Optional<PeekingIterator<MessageWithMetadata>> nextIterator() {
                 PeekingIterator<Message> iterator = topicPartDataManager
                     .getIterator(partSubscription.getTopicPartition(), currSeqNo.get());
 
-                PeekingIterator<IMessageWithGroup> peekingIterator = new PeekingIterator<IMessageWithGroup>() {
+                PeekingIterator<MessageWithMetadata> peekingIterator = new PeekingIterator<MessageWithMetadata>() {
                     @Override
-                    public IMessageWithGroup peek() {
-                        return new UnGroupedMessageWithGroup(iterator.peek(), partSubscription);
+                    public MessageWithMetadata peek() {
+                        return new UnGroupedMessageWithMetadata(iterator.peek(), partSubscription);
                     }
 
                     @Override
@@ -58,8 +58,8 @@ public class UnGroupedPartSubscriber implements IPartSubscriber {
                     }
 
                     @Override
-                    public synchronized IMessageWithGroup next() {
-                        IMessageWithGroup messageWithGroup = new UnGroupedMessageWithGroup(iterator.next(), partSubscription);
+                    public synchronized MessageWithMetadata next() {
+                        MessageWithMetadata messageWithGroup = new UnGroupedMessageWithMetadata(iterator.next(), partSubscription);
                         currSeqNo.incrementAndGet();
                         return messageWithGroup;
                     }
@@ -73,5 +73,15 @@ public class UnGroupedPartSubscriber implements IPartSubscriber {
                 return Optional.of(peekingIterator);
             }
         };
+    }
+
+    @Override
+    public PeekingIterator<MessageWithMetadata> sidelineIterator() {
+        return null;
+    }
+
+    @Override
+    public PeekingIterator<MessageWithMetadata> retryIterator(int retryQNo) {
+        return null;
     }
 }

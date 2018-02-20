@@ -1,0 +1,65 @@
+package com.flipkart.vbroker.data;
+
+import com.flipkart.vbroker.client.MessageMetadata;
+import com.flipkart.vbroker.core.PartSubscription;
+import com.flipkart.vbroker.subscribers.MessageWithMetadata;
+import com.flipkart.vbroker.subscribers.QType;
+import com.flipkart.vbroker.subscribers.SubscriberGroup;
+import com.google.common.collect.PeekingIterator;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+
+public class InMemorySubPartDataManager implements SubPartDataManager {
+
+    private final Map<PartSubscription, SubPartData> dataMap = new LinkedHashMap<>();
+
+    @Override
+    public SubPartData getSubPartData(PartSubscription partSubscription) {
+        dataMap.computeIfAbsent(partSubscription, InMemoryGroupedSubPartData::new);
+        return dataMap.get(partSubscription);
+    }
+
+    private CompletionStage<SubPartData> getSubPartDataAsync(PartSubscription partSubscription) {
+        return CompletableFuture.supplyAsync(() -> {
+            dataMap.computeIfAbsent(partSubscription, InMemoryGroupedSubPartData::new);
+            return dataMap.get(partSubscription);
+        });
+    }
+
+    @Override
+    public CompletionStage<MessageMetadata> addGroup(PartSubscription partSubscription, SubscriberGroup subscriberGroup) {
+        return getSubPartDataAsync(partSubscription).thenCompose(subPartData -> subPartData.addGroup(subscriberGroup));
+    }
+
+    @Override
+    public CompletionStage<Set<String>> getUniqueGroups(PartSubscription partSubscription) {
+        return getSubPartDataAsync(partSubscription).thenCompose(SubPartData::getUniqueGroups);
+    }
+
+    @Override
+    public CompletionStage<Void> sideline(PartSubscription partSubscription, QType qType, String groupId) {
+        return getSubPartDataAsync(partSubscription).thenCompose(subPartData -> subPartData.sideline(qType, groupId));
+    }
+
+    @Override
+    public CompletionStage<Void> retry(PartSubscription partSubscription, QType qType, String groupId) {
+        return getSubPartDataAsync(partSubscription).thenCompose(subPartData -> subPartData.retry(qType, groupId));
+    }
+
+    @Override
+    public PeekingIterator<MessageWithMetadata> getIterator(PartSubscription partSubscription, String groupId) {
+        return getSubPartDataAsync(partSubscription).thenApplyAsync(subPartData -> subPartData.getIterator(groupId))
+            .toCompletableFuture().join(); //TODO: fix this!
+    }
+
+    @Override
+    public Optional<PeekingIterator<MessageWithMetadata>> getIterator(PartSubscription partSubscription, QType qType) {
+        return getSubPartDataAsync(partSubscription).thenApplyAsync(subPartData -> subPartData.getIterator(qType))
+            .toCompletableFuture().join(); //TODO: fix this!
+    }
+}

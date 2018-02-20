@@ -42,7 +42,7 @@ public class SubscriberGroupTest {
 
     @Test(invocationCount = 20)
     public void shouldIterateMessages_ForSameGroup_CheckConsistencyOverMultipleRuns() {
-        PeekingIterator<IMessageWithGroup> iterator = subscriberGroup.iterator();
+        PeekingIterator<MessageWithMetadata> iterator = subscriberGroup.iterator();
         int count = 0;
         while (iterator.hasNext()) {
             iterator.next();
