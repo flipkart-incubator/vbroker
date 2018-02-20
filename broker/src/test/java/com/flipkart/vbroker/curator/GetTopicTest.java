@@ -32,7 +32,7 @@ public class GetTopicTest {
     @Test
     public void createTopicTest() throws Exception {
         String topicPath = config.getTopicsPath() + "/" + "0";
-        Topic topic = DummyEntities.topic1;
+        Topic topic = DummyEntities.groupedTopic;
         curatorService.createNodeAndSetData(topicPath, CreateMode.PERSISTENT_SEQUENTIAL,
             ByteBufUtils.getBytes(topic.getByteBuffer())).handleAsync((data, exception) -> {
             System.out.println("created " + data);

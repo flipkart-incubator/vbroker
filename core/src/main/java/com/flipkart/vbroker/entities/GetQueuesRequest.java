@@ -19,8 +19,29 @@ public final class GetQueuesRequest extends Table {
         return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
     }
 
+    public static int createGetQueuesRequest(FlatBufferBuilder builder,
+                                             int idsOffset) {
+        builder.startObject(1);
+        GetQueuesRequest.addIds(builder, idsOffset);
+        return GetQueuesRequest.endGetQueuesRequest(builder);
+    }
+
     public static void startGetQueuesRequest(FlatBufferBuilder builder) {
-        builder.startObject(0);
+        builder.startObject(1);
+    }
+
+    public static void addIds(FlatBufferBuilder builder, int idsOffset) {
+        builder.addOffset(0, idsOffset, 0);
+    }
+
+    public static int createIdsVector(FlatBufferBuilder builder, short[] data) {
+        builder.startVector(2, data.length, 2);
+        for (int i = data.length - 1; i >= 0; i--) builder.addShort(data[i]);
+        return builder.endVector();
+    }
+
+    public static void startIdsVector(FlatBufferBuilder builder, int numElems) {
+        builder.startVector(2, numElems, 2);
     }
 
     public static int endGetQueuesRequest(FlatBufferBuilder builder) {
@@ -36,6 +57,20 @@ public final class GetQueuesRequest extends Table {
     public GetQueuesRequest __assign(int _i, ByteBuffer _bb) {
         __init(_i, _bb);
         return this;
+    }
+
+    public short ids(int j) {
+        int o = __offset(4);
+        return o != 0 ? bb.getShort(__vector(o) + j * 2) : 0;
+    }
+
+    public int idsLength() {
+        int o = __offset(4);
+        return o != 0 ? __vector_len(o) : 0;
+    }
+
+    public ByteBuffer idsAsByteBuffer() {
+        return __vector_as_bytebuffer(4, 2);
     }
 }
 

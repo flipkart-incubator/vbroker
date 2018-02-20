@@ -40,10 +40,10 @@ public class TopicServiceImplTest {
             return "topics/0001";
         });
         when(curatorService.createNodeAndSetData(any(String.class), any(CreateMode.class), any())).thenReturn(value);
-        Topic topic1 = DummyEntities.topic1;
+        Topic topic1 = DummyEntities.groupedTopic;
         topicService.createTopic(topic1).handle((data, exception) -> {
-            assertEquals(data.topicId(), 0001);
-            assertEquals(topic1.topicName(), data.topicName());
+            assertEquals(data.id(), 0001);
+            assertEquals(topic1.name(), data.name());
             assertEquals(topic1.grouped(), data.grouped());
             return null;
         }).toCompletableFuture().get();
@@ -55,7 +55,7 @@ public class TopicServiceImplTest {
             return "0001";
         });
         when(curatorService.createNodeAndSetData(any(String.class), any(CreateMode.class), any())).thenReturn(value);
-        Topic topic1 = DummyEntities.topic1;
+        Topic topic1 = DummyEntities.groupedTopic;
         topicService.createTopic(topic1).handle((data, exception) -> {
             assertTrue(exception.getCause() instanceof ArrayIndexOutOfBoundsException);
             return null;
@@ -69,7 +69,7 @@ public class TopicServiceImplTest {
         });
         when(curatorService.createNodeAndSetData(any(String.class), any(CreateMode.class), any()))
             .thenReturn(value);
-        Topic topic1 = DummyEntities.topic1;
+        Topic topic1 = DummyEntities.groupedTopic;
         topicService.createTopic(topic1).handle((data, exception) -> {
             assertTrue(exception.getCause() instanceof TopicCreationException);
             return null;

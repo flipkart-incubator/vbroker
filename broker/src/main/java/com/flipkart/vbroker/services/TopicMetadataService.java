@@ -44,7 +44,7 @@ public class TopicMetadataService {
 
         File dir = new File("metadata");
         dir.mkdirs();
-        File tmp = new File(dir, String.valueOf(topic.topicId()).concat(".json"));
+        File tmp = new File(dir, String.valueOf(topic.id()).concat(".json"));
         tmp.createNewFile();
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(tmp));
         bufferedWriter.write(MAPPER.writeValueAsString(partitionToGroupIdsMap));
@@ -65,7 +65,7 @@ public class TopicMetadataService {
 
     public void fetchTopicMetadata(Topic topic) throws IOException {
         File dir = new File("metadata");
-        File tmp = new File(dir, String.valueOf(topic.topicId()).concat(".json"));
+        File tmp = new File(dir, String.valueOf(topic.id()).concat(".json"));
         TypeReference<HashMap<String, List<String>>> typeRef
             = new TypeReference<HashMap<String, List<String>>>() {
         };

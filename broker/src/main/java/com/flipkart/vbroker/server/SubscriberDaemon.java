@@ -76,7 +76,7 @@ public class SubscriberDaemon implements Runnable {
 
                         int partitionRequestsVector = TopicFetchRequest.createPartitionRequestsVector(builder, tpFetchRequests);
                         int topicFetchRequest = TopicFetchRequest.createTopicFetchRequest(builder,
-                            subscription.subscriptionId(),
+                            subscription.id(),
                             subscription.topicId(),
                             partitionRequestsVector);
                         topicFetchRequests[s] = topicFetchRequest;

@@ -47,7 +47,7 @@ public class TopicServiceImpl implements TopicService {
                 log.info("Created topic with id - " + topicId);
                 return newTopicModelFromTopic(Short.valueOf(topicId), topic);
             }
-        });
+            });
     }
 
     /**
@@ -69,17 +69,17 @@ public class TopicServiceImpl implements TopicService {
      */
     private Topic newTopicModelFromTopic(short id, Topic topic) {
         FlatBufferBuilder topicBuilder = new FlatBufferBuilder();
-        int topicNameOffset = topicBuilder.createString(topic.topicName());
+        int topicNameOffset = topicBuilder.createString(topic.name());
         int topicOffset = Topic.createTopic(topicBuilder, id, topicNameOffset, topic.grouped(), topic.partitions(),
-            topic.replicationFactor(), topic.topicType(), topic.topicCategory());
+            topic.replicationFactor(), topic.topicCategory());
         topicBuilder.finish(topicOffset);
         return Topic.getRootAsTopic(topicBuilder.dataBuffer());
     }
 
     @Override
     public CompletionStage<TopicPartition> getTopicPartition(Topic topic, short topicPartitionId) {
-        return getTopic(topic.topicId())
-            .thenApplyAsync(topic1 -> new TopicPartition(topicPartitionId, topic1.topicId()));
+        return getTopic(topic.id())
+            .thenApplyAsync(topic1 -> new TopicPartition(topicPartitionId, topic.id(), topic.grouped()));
     }
 
     @Override
@@ -109,7 +109,7 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public List<TopicPartition> getPartitions(Topic topic) {
-        return TopicUtils.getTopicPartitions(topic.topicId(), topic.partitions());
+        return TopicUtils.getTopicPartitions(topic);
     }
 
     @Override
@@ -135,6 +135,6 @@ public class TopicServiceImpl implements TopicService {
     }
 
     private boolean checkIfPresent(List<Topic> topics, String name) {
-        return topics.stream().anyMatch(topic -> topic.topicName().equals(name));
+        return topics.stream().anyMatch(topic -> topic.name().equals(name));
     }
 }

@@ -13,16 +13,16 @@ public class Subscriber {
 
     @Getter
     private final String subscriberId;
-    private final Map<PartSubscription, PartSubscriber> map = new LinkedHashMap<>();
+    private final Map<PartSubscription, IPartSubscriber> map = new LinkedHashMap<>();
 
-    public Subscriber(String subscriberId, List<PartSubscriber> partSubscribers) {
+    public Subscriber(String subscriberId, List<IPartSubscriber> partSubscribers) {
         this.subscriberId = subscriberId;
-        for (PartSubscriber partSubscriber : partSubscribers) {
+        for (IPartSubscriber partSubscriber : partSubscribers) {
             this.map.put(partSubscriber.getPartSubscription(), partSubscriber);
         }
     }
 
-    public PartSubscriber getPartSubscriber(PartSubscription partSubscription) {
+    public IPartSubscriber getPartSubscriber(PartSubscription partSubscription) {
         return this.map.get(partSubscription);
     }
 }

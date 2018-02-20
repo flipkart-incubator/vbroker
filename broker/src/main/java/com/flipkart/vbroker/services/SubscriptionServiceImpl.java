@@ -10,6 +10,7 @@ import com.flipkart.vbroker.entities.FilterKeyValues;
 import com.flipkart.vbroker.entities.Subscription;
 import com.flipkart.vbroker.exceptions.SubscriptionCreationException;
 import com.flipkart.vbroker.exceptions.VBrokerException;
+import com.flipkart.vbroker.subscribers.IPartSubscriber;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
 import com.flipkart.vbroker.utils.JsonUtils;
 import com.flipkart.vbroker.utils.SubscriptionUtils;
@@ -39,7 +40,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private final TopicService topicService;
 
     private final ConcurrentMap<Short, Subscription> subscriptionsMap = new ConcurrentHashMap<>();
-    private final ConcurrentMap<PartSubscription, PartSubscriber> subscriberMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<PartSubscription, IPartSubscriber> subscriberMap = new ConcurrentHashMap<>();
 
     @Override
     public CompletionStage<Subscription> createSubscription(Subscription subscription) {
@@ -88,9 +89,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         int filterKeyValuesListOffset = Subscription.createFilterKeyValuesListVector(dataBuilder, filterKeyValues);
         int subscriptionNameOffset = dataBuilder.createString(subscription.name());
-        int subscriptionEndpointOffset = dataBuilder.createString(subscription.endpoint());
+        int subscriptionEndpointOffset = dataBuilder.createString(subscription.httpUri());
         int subscriptionHttpMethodOffset = dataBuilder.createString(subscription.httpMethod());
-        int subscriptionOffset = Subscription.createSubscription(dataBuilder, id, subscription.subscriptionId(),
+        int subscriptionOffset = Subscription.createSubscription(dataBuilder, id, subscription.id(),
             subscriptionNameOffset, subscription.grouped(), subscription.parallelism(),
             subscription.requestTimeout(), subscription.subscriptionType(), subscription.subscriptionMechanism(),
             subscriptionEndpointOffset, subscriptionHttpMethodOffset, subscription.elastic(), filterOperatorOffset,
@@ -107,9 +108,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     @Override
     public CompletionStage<PartSubscription> getPartSubscription(Subscription subscription, short partSubscriptionId) {
         return CompletableFuture.supplyAsync(() -> {
-            if (subscriptionsMap.containsKey(subscription.subscriptionId())) {
-                Subscription existingSub = subscriptionsMap.get(subscription.subscriptionId());
-                // return existingSub.getPartSubscription(partSubscriptionId);
+            if (subscriptionsMap.containsKey(subscription.id())) {
+                Subscription existingSub = subscriptionsMap.get(subscription.id());
                 return SubscriptionUtils.getPartSubscription(existingSub, partSubscriptionId);
             }
             return null;
@@ -117,7 +117,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public CompletionStage<PartSubscriber> getPartSubscriber(PartSubscription partSubscription) {
+    public CompletionStage<IPartSubscriber> getPartSubscriber(PartSubscription partSubscription) {
         return CompletableFuture.supplyAsync(() -> {
             log.trace("SubscriberMap contents: {}", subscriberMap);
             log.debug("SubscriberMap status of the part-subscription {} is {}", partSubscription,
@@ -185,7 +185,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 log.error("Error in get topic stage {}", exception);
                 throw new VBrokerException(exception.getMessage());
             } else {
-                log.info("Got topic {} with no of partitions {}", data.topicName(), data.partitions());
+                log.info("Got topic {} with no of partitions {}", data.name(), data.partitions());
                 return SubscriptionUtils.getPartSubscriptions(subscription, data.partitions());
             }
         });

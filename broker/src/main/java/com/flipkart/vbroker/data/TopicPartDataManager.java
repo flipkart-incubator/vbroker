@@ -26,4 +26,6 @@ public interface TopicPartDataManager {
     public PeekingIterator<Message> getIterator(TopicPartition topicPartition, String group);
 
     public PeekingIterator<Message> getIterator(TopicPartition topicPartition, String group, int seqNoFrom);
+
+    public PeekingIterator<Message> getIterator(TopicPartition topicPartition, int seqNoFrom);
 }

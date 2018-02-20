@@ -20,7 +20,7 @@ public final class Subscription extends Table {
     }
 
     public static int createSubscription(FlatBufferBuilder builder,
-                                         short subscriptionId,
+                                         short id,
                                          short topicId,
                                          int nameOffset,
                                          boolean grouped,
@@ -28,7 +28,7 @@ public final class Subscription extends Table {
                                          short requestTimeout,
                                          byte subscriptionType,
                                          byte subscriptionMechanism,
-                                         int endpointOffset,
+                                         int httpUriOffset,
                                          int httpMethodOffset,
                                          boolean elastic,
                                          int filterOperatorOffset,
@@ -39,12 +39,12 @@ public final class Subscription extends Table {
         Subscription.addFilterKeyValuesList(builder, filterKeyValuesListOffset);
         Subscription.addFilterOperator(builder, filterOperatorOffset);
         Subscription.addHttpMethod(builder, httpMethodOffset);
-        Subscription.addEndpoint(builder, endpointOffset);
+        Subscription.addHttpUri(builder, httpUriOffset);
         Subscription.addName(builder, nameOffset);
         Subscription.addRequestTimeout(builder, requestTimeout);
         Subscription.addParallelism(builder, parallelism);
         Subscription.addTopicId(builder, topicId);
-        Subscription.addSubscriptionId(builder, subscriptionId);
+        Subscription.addId(builder, id);
         Subscription.addElastic(builder, elastic);
         Subscription.addSubscriptionMechanism(builder, subscriptionMechanism);
         Subscription.addSubscriptionType(builder, subscriptionType);
@@ -56,8 +56,8 @@ public final class Subscription extends Table {
         builder.startObject(14);
     }
 
-    public static void addSubscriptionId(FlatBufferBuilder builder, short subscriptionId) {
-        builder.addShort(0, subscriptionId, 0);
+    public static void addId(FlatBufferBuilder builder, short id) {
+        builder.addShort(0, id, 0);
     }
 
     public static void addTopicId(FlatBufferBuilder builder, short topicId) {
@@ -88,8 +88,8 @@ public final class Subscription extends Table {
         builder.addByte(7, subscriptionMechanism, 0);
     }
 
-    public static void addEndpoint(FlatBufferBuilder builder, int endpointOffset) {
-        builder.addOffset(8, endpointOffset, 0);
+    public static void addHttpUri(FlatBufferBuilder builder, int httpUriOffset) {
+        builder.addOffset(8, httpUriOffset, 0);
     }
 
     public static void addHttpMethod(FlatBufferBuilder builder, int httpMethodOffset) {
@@ -137,7 +137,7 @@ public final class Subscription extends Table {
         return this;
     }
 
-    public short subscriptionId() {
+    public short id() {
         int o = __offset(4);
         return o != 0 ? bb.getShort(o + bb_pos) : 0;
     }
@@ -181,12 +181,12 @@ public final class Subscription extends Table {
         return o != 0 ? bb.get(o + bb_pos) : 0;
     }
 
-    public String endpoint() {
+    public String httpUri() {
         int o = __offset(20);
         return o != 0 ? __string(o + bb_pos) : null;
     }
 
-    public ByteBuffer endpointAsByteBuffer() {
+    public ByteBuffer httpUriAsByteBuffer() {
         return __vector_as_bytebuffer(20, 1);
     }
 

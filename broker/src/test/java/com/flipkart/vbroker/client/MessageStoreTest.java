@@ -34,6 +34,7 @@ public class MessageStoreTest {
         assertEquals((short) 101, message_2.topicId());
         assertEquals(message_2.messageId(), message_3.messageId());
 
+        Message.getRootAsMessage(MessageStore.encodeSampleMsg());
         Message msg_1 = Message.getRootAsMessage(MessageStore.encodeSampleMsg());
         Message msg_2 = Message.getRootAsMessage(MessageStore.encodeSampleMsg());
         assertEquals(msg_1.topicId(), msg_2.topicId());

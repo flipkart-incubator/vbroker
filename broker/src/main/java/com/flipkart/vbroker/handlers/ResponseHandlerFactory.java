@@ -23,10 +23,10 @@ public class ResponseHandlerFactory {
             case ResponseMessage.FetchResponse:
                 responseHandler = new FetchResponseHandler(clientBootstrap);
                 break;
-            case ResponseMessage.TopicCreateResponse:
+            case ResponseMessage.CreateTopicsResponse:
                 responseHandler = new TopicCreateResponseHandler();
                 break;
-            case ResponseMessage.SubscriptionCreateResponse:
+            case ResponseMessage.CreateSubscriptionsResponse:
                 responseHandler = new SubscriptionCreateResponseHandler();
                 break;
             default:
