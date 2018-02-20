@@ -11,9 +11,8 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @EqualsAndHashCode(exclude = {"subscriberGroupsMap", "subscriberGroupIteratorMap"})
@@ -47,12 +46,12 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
         topicPartDataManager.getUniqueGroups(topicPartition).thenAccept(uniqueMsgGroups -> {
             Set<String> uniqueSubscriberGroups = subscriberGroupsMap.keySet();
             Sets.SetView<String> difference = Sets.difference(uniqueMsgGroups, uniqueSubscriberGroups);
-            for (String group : difference) {
+            difference.iterator().forEachRemaining(group -> {
                 MessageGroup messageGroup = new MessageGroup(group, topicPartition);
                 SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, partSubscription, topicPartDataManager);
                 subscriberGroupsMap.put(group, subscriberGroup);
                 subscriberGroupIteratorMap.put(subscriberGroup, subscriberGroup.iterator());
-            }
+            });
         });
     }
 
@@ -66,12 +65,22 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
                 if (currIterator != null
                     && currIterator.hasNext()
                     && !currIterator.peek().isGroupLocked()) {
+                    log.trace("Group {} is not locked, hence returning true", currIterator.peek().getMessage().groupId());
                     return true;
                 }
 
+                if (log.isDebugEnabled()) {
+                    List<String> groupIds = subscriberGroupsMap.values().stream()
+                        .map(SubscriberGroup::getGroupId)
+                        .collect(Collectors.toList());
+                    log.debug("SubscriberGroupsMap values: {}", Collections.singletonList(groupIds));
+                }
+
                 for (SubscriberGroup subscriberGroup : subscriberGroupsMap.values()) {
+                    log.trace("SubscriberGroup {} locked status: {}", subscriberGroup.getGroupId(), subscriberGroup.isLocked());
                     if (!subscriberGroup.isLocked()) {
                         PeekingIterator<MessageWithGroup> groupIterator = subscriberGroupIteratorMap.get(subscriberGroup);
+                        log.trace("Iterator {} for subscriberGroup {} hasNext: {}", groupIterator, subscriberGroup.getGroupId(), groupIterator.hasNext());
                         if (groupIterator.hasNext()) {
                             currIterator = groupIterator;
                             refreshed = true;
@@ -99,7 +108,14 @@ public class PartSubscriber implements Iterable<MessageWithGroup> {
 
             @Override
             public boolean hasNext() {
-                return refresh() && currIterator.hasNext();
+                try {
+                    if (refresh()) {
+                        return currIterator.hasNext();
+                    }
+                } catch (Exception e) {
+                    log.error("Exception in refresh/hasNext", e);
+                }
+                return false;
             }
         };
     }

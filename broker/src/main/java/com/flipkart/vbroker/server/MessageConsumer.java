@@ -26,10 +26,13 @@ public class MessageConsumer {
 
         //lock the subscriberGroup and process the message
         if (messageWithGroup.lockGroup()) {
-            log.info("Consuming message with msg_id: {} and group_id: {}", message.messageId(), message.groupId());
+            log.debug("Consuming message with msg_id: {} and group_id: {}", message.messageId(), message.groupId());
             messageProcessor.process(messageWithGroup);
+
+            log.trace("Done processing..moving to next message");
             //move over to the next message
             subscriberIterator.next();
+            log.trace("Moved to next message");
         } else {
             throw new LockFailedException("Failed to acquire an already acquired lock for group: " + message.groupId());
         }

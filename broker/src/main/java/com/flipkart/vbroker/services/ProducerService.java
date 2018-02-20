@@ -22,11 +22,19 @@ public class ProducerService {
     //TODO: make this return MessageMetadata which contains where the message is produced
     public CompletionStage<MessageMetadata> produceMessage(TopicPartMessage topicPartMessage) {
         Message message = topicPartMessage.getMessage();
-        log.info("Producing message with msg_id: {} and group_id: {}", message.messageId(), message.groupId());
-        return topicPartDataManager.addMessage(topicPartMessage.getTopicPartition(), message);
+        TopicPartition topicPartition = topicPartMessage.getTopicPartition();
+        log.info("Producing message with msg_id: {} and group_id: {} to topic {} and partition {}",
+            message.messageId(), message.groupId(), topicPartition.getTopicId(), topicPartition.getId());
+        return topicPartDataManager.addMessage(topicPartition, message);
     }
 
     public CompletionStage<List<MessageMetadata>> produceMessages(List<TopicPartMessage> topicPartMessages) {
+        topicPartMessages.stream().forEach(topicPartMessage -> {
+            Message message = topicPartMessage.getMessage();
+            TopicPartition topicPartition = topicPartMessage.getTopicPartition();
+            log.info("BulkProducing message with msg_id: {} and group_id: {} to topic {} and partition {}",
+                message.messageId(), message.groupId(), topicPartition.getTopicId(), topicPartition.getId());
+        });
         return topicPartDataManager.addMessages(topicPartMessages);
     }
 
