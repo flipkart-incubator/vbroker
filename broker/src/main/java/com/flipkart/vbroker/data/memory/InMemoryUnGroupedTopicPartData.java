@@ -7,43 +7,58 @@ import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.google.common.collect.PeekingIterator;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
-public class InMemoryTopicPartData implements TopicPartData {
-    private final Map<String, List<Message>> topicPartitionData = new LinkedHashMap<>();
+public class InMemoryUnGroupedTopicPartData implements TopicPartData {
 
-    public synchronized CompletionStage<MessageMetadata> addMessage(Message message) {
+    //private BlockingQueue<Message> messageQueue = new ArrayBlockingQueue<>(10000);
+    private List<Message> messages = new CopyOnWriteArrayList<>();
+
+    @Override
+    public CompletionStage<MessageMetadata> addMessage(Message message) {
         return CompletableFuture.supplyAsync(() -> {
-            getMessages(message.groupId()).add(message);
-            log.trace("Added message with msg_id {} and group_id {} to the map", message.messageId(), message.groupId());
-            log.trace("Group messages: {}", topicPartitionData.get(message.groupId()));
+            messages.add(message);
             return new MessageMetadata(message.topicId(), message.partitionId(), new Random().nextInt());
         });
     }
 
+    @Override
     public CompletionStage<Set<String>> getUniqueGroups() {
-        return CompletableFuture.supplyAsync(topicPartitionData::keySet);
+        throw new UnsupportedOperationException("For an un-grouped queue, you cannot list unique groups");
     }
 
+    @Override
     public PeekingIterator<Message> iteratorFrom(String group, int seqNoFrom) {
+        throw new UnsupportedOperationException("For an un-grouped queue, you cannot have a group level iterator");
+    }
+
+    @Override
+    public CompletionStage<Integer> getCurrentOffset(String group) {
+        throw new UnsupportedOperationException("For an un-grouped queue, you cannot get group level offset");
+    }
+
+    @Override
+    public PeekingIterator<Message> iteratorFrom(int seqNoFrom) {
         return new PeekingIterator<Message>() {
             AtomicInteger index = new AtomicInteger(seqNoFrom);
 
             @Override
             public Message peek() {
-                Message message = topicPartitionData.get(group).get(index.get());
+                Message message = messages.get(index.get());
                 log.trace("Peeking message {}", message.messageId());
                 return message;
             }
 
             @Override
             public Message next() {
-                Message message = topicPartitionData.get(group).get(index.getAndIncrement());
+                Message message = messages.get(index.getAndIncrement());
                 log.trace("Next message {}", message.messageId());
                 return message;
             }
@@ -55,24 +70,8 @@ public class InMemoryTopicPartData implements TopicPartData {
 
             @Override
             public boolean hasNext() {
-                return index.get() < topicPartitionData.get(group).size();
+                return index.get() < messages.size();
             }
         };
-    }
-
-    @Override
-    public CompletionStage<Integer> getCurrentOffset(String group) {
-        CompletableFuture<Integer> offsetFuture = new CompletableFuture<>();
-        offsetFuture.complete(this.topicPartitionData.get(group).size());
-        return offsetFuture;
-    }
-
-    @Override
-    public PeekingIterator<Message> iteratorFrom(int seqNoFrom) {
-        throw new UnsupportedOperationException("You cannot have a global iterator for partition for a grouped topic-partition");
-    }
-
-    private synchronized List<Message> getMessages(String group) {
-        return topicPartitionData.computeIfAbsent(group, key -> new CopyOnWriteArrayList<>());
     }
 }

@@ -3,12 +3,13 @@ package com.flipkart.vbroker.server;
 import com.flipkart.vbroker.core.CallbackConfig;
 import com.flipkart.vbroker.core.TopicPartMessage;
 import com.flipkart.vbroker.core.TopicPartition;
+import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.exceptions.TopicNotFoundException;
 import com.flipkart.vbroker.services.ProducerService;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
-import com.flipkart.vbroker.subscribers.MessageWithGroup;
+import com.flipkart.vbroker.subscribers.MessageWithMetadata;
 import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,9 +35,10 @@ public class HttpMessageProcessor implements MessageProcessor {
     private final TopicService topicService;
     private final SubscriptionService subscriptionService;
     private final ProducerService producerService;
+    private final SubPartDataManager subPartDataManager;
 
     @Override
-    public void process(MessageWithGroup messageWithGroup) throws Exception {
+    public void process(MessageWithMetadata messageWithGroup) throws Exception {
         Message message = messageWithGroup.getMessage();
 
         String httpUri = requireNonNull(message.httpUri());
@@ -71,17 +73,18 @@ public class HttpMessageProcessor implements MessageProcessor {
                 handleResponse(response, messageWithGroup);
             } catch (InterruptedException | ExecutionException e) {
                 log.error("Exception in executing request", e);
-                messageWithGroup.sidelineGroup();
+                //subPartDataManager.sideline(messageWithGroup)
+                sideline(messageWithGroup);
             } catch (TimeoutException e) {
                 log.error("Timed out while making the http request", e);
-                messageWithGroup.sidelineGroup();
+                sideline(messageWithGroup);
             } finally {
-                messageWithGroup.forceUnlockGroup();
+                messageWithGroup.unlock();
             }
         }, null);
     }
 
-    private void handleResponse(Response response, MessageWithGroup messageWithGroup) {
+    private void handleResponse(Response response, MessageWithMetadata messageWithGroup) {
         int statusCode = response.getStatusCode();
         if (statusCode >= 200 && statusCode < 300) {
             log.info("Response code is {}. Success in making httpRequest. Message processing now complete", statusCode);
@@ -93,11 +96,19 @@ public class HttpMessageProcessor implements MessageProcessor {
             });
         } else if (statusCode >= 400 && statusCode < 500) {
             log.info("Response is 4xx. Sidelining the message");
-            messageWithGroup.sidelineGroup();
+            sideline(messageWithGroup);
         } else if (statusCode >= 500 && statusCode < 600) {
             log.info("Response is 5xx. Retrying the message");
-            messageWithGroup.retry();
+            retry(messageWithGroup);
         }
+    }
+
+    private CompletionStage<Void> sideline(MessageWithMetadata messageWithGroup) {
+        return subPartDataManager.sideline(messageWithGroup.getPartSubscription(), messageWithGroup);
+    }
+
+    private CompletionStage<Void> retry(MessageWithMetadata messageWithGroup) {
+        return subPartDataManager.retry(messageWithGroup.getPartSubscription(), messageWithGroup);
     }
 
     /**
@@ -146,8 +157,9 @@ public class HttpMessageProcessor implements MessageProcessor {
                 CompletionStage<Topic> topicStage = topicService.getTopic(callbackMsg.topicId());
                 topicStage.thenCompose(topic -> {
                     log.info("Producing callback for message to {} queue", topic.id());
+                    TopicPartition topicPartition = new TopicPartition(callbackMsg.partitionId(), topic.id(), topic.grouped());
                     TopicPartMessage topicPartMessage =
-                        TopicPartMessage.newInstance(new TopicPartition(callbackMsg.partitionId(), topic.id()), callbackMsg);
+                        TopicPartMessage.newInstance(topicPartition, callbackMsg);
                     return producerService.produceMessage(topicPartMessage).toCompletableFuture();
                 }).exceptionally(throwable -> {
                     log.error("Exception in producing callback", throwable);

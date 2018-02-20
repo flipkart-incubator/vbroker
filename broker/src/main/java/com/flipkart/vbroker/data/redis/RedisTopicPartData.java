@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
@@ -100,10 +99,15 @@ public class RedisTopicPartData implements TopicPartData {
 
     @Override
     public CompletionStage<Integer> getCurrentOffset(String group) {
-            log.info(String.format("Fetching offset for group {}", group));
-            MessageGroup messageGroup = new MessageGroup(group, topicPartition);
-            RListAsync<RedisObject> rList = client.getList(messageGroup.toString());
-            return rList.sizeAsync();
+        log.info(String.format("Fetching offset for group {}", group));
+        MessageGroup messageGroup = new MessageGroup(group, topicPartition);
+        RListAsync<RedisObject> rList = client.getList(messageGroup.toString());
+        return rList.sizeAsync();
+    }
+
+    @Override
+    public PeekingIterator<Message> iteratorFrom(int seqNoFrom) {
+        throw new UnsupportedOperationException("You cannot have a global iterator for partition for a grouped topic-partition");
     }
 
     private ByteBuffer buildMessage(Message message) {

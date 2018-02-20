@@ -19,7 +19,7 @@ public class ProducerService {
 
     private final TopicPartDataManager topicPartDataManager;
 
-    //TODO: make this return MessageMetadata which contains where the message is produced
+    //TODO: make this return MessageWithMetadata which contains where the message is produced
     public CompletionStage<MessageMetadata> produceMessage(TopicPartMessage topicPartMessage) {
         Message message = topicPartMessage.getMessage();
         TopicPartition topicPartition = topicPartMessage.getTopicPartition();
@@ -29,7 +29,7 @@ public class ProducerService {
     }
 
     public CompletionStage<List<MessageMetadata>> produceMessages(List<TopicPartMessage> topicPartMessages) {
-        topicPartMessages.stream().forEach(topicPartMessage -> {
+        topicPartMessages.forEach(topicPartMessage -> {
             Message message = topicPartMessage.getMessage();
             TopicPartition topicPartition = topicPartMessage.getTopicPartition();
             log.info("BulkProducing message with msg_id: {} and group_id: {} to topic {} and partition {}",
@@ -40,7 +40,7 @@ public class ProducerService {
 
     public CompletionStage<MessageMetadata> produceMessage(Topic topic, Message message) {
         //TODO: do the partitioning logic correctly - currently defaulting to 1st partition always
-        TopicPartition topicPartition = TopicUtils.getTopicPartitions(topic.id(), (short) 1).get(0);
+        TopicPartition topicPartition = TopicUtils.getTopicPartitions(topic).get(0);
         TopicPartMessage topicPartMessage = TopicPartMessage.newInstance(topicPartition, message);
         return produceMessage(topicPartMessage);
     }

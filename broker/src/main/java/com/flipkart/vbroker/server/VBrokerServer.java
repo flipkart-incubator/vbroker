@@ -2,10 +2,11 @@ package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.controller.VBrokerController;
+import com.flipkart.vbroker.data.InMemorySubPartDataManager;
+import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
 import com.flipkart.vbroker.data.redis.RedisMessageCodec;
-import com.flipkart.vbroker.data.redis.RedisTopicPartDataManager;
 import com.flipkart.vbroker.entities.Subscription;
 import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.handlers.HttpResponseHandler;
@@ -37,7 +38,6 @@ import org.apache.curator.x.async.AsyncCuratorFramework;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
-import org.redisson.Redisson;
 import org.redisson.config.Config;
 
 import java.io.IOException;
@@ -56,6 +56,7 @@ public class VBrokerServer extends AbstractExecutionThreadService {
     private Channel serverChannel;
     private Channel serverLocalChannel;
     private VBrokerController brokerController;
+    private BrokerSubscriber brokerSubscriber;
     private CuratorFramework curatorClient;
 
     private void startServer() throws IOException {
@@ -70,7 +71,6 @@ public class VBrokerServer extends AbstractExecutionThreadService {
         AsyncCuratorFramework asyncZkClient = AsyncCuratorFramework.wrap(curatorClient);
 
         CuratorService curatorService = new CuratorService(asyncZkClient);
-
 
         EventLoopGroup bossGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("server_boss"));
         EventLoopGroup workerGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("server_worker"));
@@ -87,13 +87,14 @@ public class VBrokerServer extends AbstractExecutionThreadService {
         //TopicPartDataManager topicPartDataManager = new TopicPartitionDataManagerImpl();
 
         /* Ultimately, one of these 2 topicPartDataManager would be used.
-        *  Keeping both of these for now, for in-mem and redis dev/test
-        *  */
+         *  Keeping both of these for now, for in-mem and redis dev/test
+         *  */
         TopicPartDataManager topicPartDataManager = new InMemoryTopicPartDataManager();
-        TopicPartDataManager redisTopicPartDataManager = new RedisTopicPartDataManager(Redisson.create(redissonConfig));
+        //TopicPartDataManager redisTopicPartDataManager = new RedisTopicPartDataManager(Redisson.create(redissonConfig));
 
+        SubPartDataManager subPartDataManager = new InMemorySubPartDataManager();
         //SubscriptionService subscriptionService = new SubscriptionServiceImpl(config, curatorService, topicPartDataManager, topicService);
-        SubscriptionService subscriptionService = new InMemorySubscriptionService(topicService, topicPartDataManager);
+        SubscriptionService subscriptionService = new InMemorySubscriptionService(topicService, topicPartDataManager, subPartDataManager);
 
         TopicMetadataService topicMetadataService = new TopicMetadataService(topicService, topicPartDataManager);
         SubscriberMetadataService subscriberMetadataService = new SubscriberMetadataService(subscriptionService, topicService, topicPartDataManager);
@@ -118,8 +119,8 @@ public class VBrokerServer extends AbstractExecutionThreadService {
         //TODO: now that metadata is created, we need to add actual data to the metadata entries
         //=> populate message groups in topic partitions
 
-        topicService.createTopic(DummyEntities.topic1);
-        subscriptionService.createSubscription(DummyEntities.subscription1);
+        topicService.createTopic(DummyEntities.groupedTopic);
+        subscriptionService.createSubscription(DummyEntities.groupedSubscription);
 
         ProducerService producerService = new ProducerService(topicPartDataManager);
         RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactory(
@@ -153,9 +154,13 @@ public class VBrokerServer extends AbstractExecutionThreadService {
                 .setThreadFactory(new DefaultThreadFactory("async_http_client"))
                 .build();
             AsyncHttpClient httpClient = new DefaultAsyncHttpClient(httpClientConfig);
-            MessageProcessor messageProcessor = new HttpMessageProcessor(httpClient, topicService, subscriptionService, producerService);
+            MessageProcessor messageProcessor = new HttpMessageProcessor(httpClient,
+                topicService,
+                subscriptionService,
+                producerService,
+                subPartDataManager);
 
-            BrokerSubscriber brokerSubscriber = new BrokerSubscriber(subscriptionService,
+            brokerSubscriber = new BrokerSubscriber(subscriptionService,
                 messageProcessor,
                 subscriberMetadataService,
                 topicMetadataService,
@@ -217,6 +222,11 @@ public class VBrokerServer extends AbstractExecutionThreadService {
         if (nonNull(brokerController)) {
             log.info("Stopping VBrokerController");
             brokerController.stopAsync().awaitTerminated();
+        }
+
+        if (nonNull(brokerSubscriber)) {
+            log.info("Stopping BrokerSubscriber");
+            brokerSubscriber.stop();
         }
 
         if (nonNull(curatorClient)) {

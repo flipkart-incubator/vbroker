@@ -99,6 +99,11 @@ public class RedisTopicPartDataLua implements TopicPartData {
         return rList.sizeAsync();
     }
 
+    @Override
+    public PeekingIterator<Message> iteratorFrom(int seqNoFrom) {
+        throw new UnsupportedOperationException("You cannot have a global iterator for partition for a grouped topic-partition");
+    }
+
     private ByteBuffer buildMessage(Message message) {
         FlatBufferBuilder builder = new FlatBufferBuilder();
         int httpHeader = HttpHeader.createHttpHeader(builder,

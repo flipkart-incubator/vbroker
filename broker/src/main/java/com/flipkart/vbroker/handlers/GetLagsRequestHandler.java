@@ -1,11 +1,8 @@
 package com.flipkart.vbroker.handlers;
 
 import com.flipkart.vbroker.core.PartSubscription;
-import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.services.SubscriptionService;
-import com.flipkart.vbroker.subscribers.PartSubscriber;
-import com.flipkart.vbroker.subscribers.SubscriberGroup;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -26,7 +22,7 @@ import java.util.stream.IntStream;
 @AllArgsConstructor
 public class GetLagsRequestHandler implements RequestHandler {
     private final SubscriptionService subscriptionService;
-    private final TopicPartDataManager topicPartDataManager;
+    //private final TopicPartDataManager topicPartDataManager;
 
     @Override
     public CompletionStage<VResponse> handle(VRequest vRequest) {
@@ -58,7 +54,6 @@ public class GetLagsRequestHandler implements RequestHandler {
                 topicSubscriptionLagRequest.topiId(),
                 getPartitionIds(topicSubscriptionLagRequest)))
             .collect(Collectors.toList());
-
 
 
         return generateVResponse(getLagsRequest, subIdToLagMap, vRequest.correlationId());
@@ -98,14 +93,14 @@ public class GetLagsRequestHandler implements RequestHandler {
         return CompletableFuture.completedFuture(new LagWithPartition((short) 1, 1));
     }
 
-    private int getPartSubscriberLag(PartSubscriber partSubscriber) {
-        int lag = 0;
-        for (SubscriberGroup group : partSubscriber.getSubscriberGroupsMap().values()) {
-            int messages = topicPartDataManager.getCurrentOffset(group.getTopicPartition(), group.getGroupId()).toCompletableFuture().join();
-            lag += messages - group.getCurrSeqNo().get();
-        }
-        return lag;
-    }
+//    private int getPartSubscriberLag(PartSubscriber partSubscriber) {
+//        int lag = 0;
+//        for (SubscriberGroup group : partSubscriber.getSubscriberGroupsMap().values()) {
+//            int messages = topicPartDataManager.getCurrentOffset(group.getTopicPartition(), group.getGroupId()).toCompletableFuture().join();
+//            lag += messages - group.getCurrSeqNo().get();
+//        }
+//        return lag;
+//    }
 
     private void addToSubIdToLagMap(Map<Short, Map<Short, Integer>> subIdToLagMap, short subscriptionId, Map<Short, Integer> partitionIdToLagMap) {
         if (!subIdToLagMap.containsKey(subscriptionId)) {

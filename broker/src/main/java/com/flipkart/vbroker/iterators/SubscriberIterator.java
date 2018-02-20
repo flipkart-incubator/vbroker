@@ -1,8 +1,8 @@
 package com.flipkart.vbroker.iterators;
 
 import com.flipkart.vbroker.exceptions.VBrokerException;
-import com.flipkart.vbroker.subscribers.MessageWithGroup;
-import com.flipkart.vbroker.subscribers.PartSubscriber;
+import com.flipkart.vbroker.subscribers.IPartSubscriber;
+import com.flipkart.vbroker.subscribers.MessageWithMetadata;
 import com.google.common.collect.PeekingIterator;
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,14 +11,14 @@ import java.util.List;
 import java.util.Queue;
 
 @Slf4j
-public class SubscriberIterator implements PeekingIterator<MessageWithGroup> {
+public class SubscriberIterator implements PeekingIterator<MessageWithMetadata> {
 
-    private final Queue<PeekingIterator<MessageWithGroup>> iteratorQueue = new ArrayDeque<>();
-    private PeekingIterator<MessageWithGroup> currIterator;
+    private final Queue<PeekingIterator<MessageWithMetadata>> iteratorQueue = new ArrayDeque<>();
+    private PeekingIterator<MessageWithMetadata> currIterator;
 
-    public SubscriberIterator(List<PartSubscriber> partSubscribers) {
-        for (PartSubscriber partSubscriber : partSubscribers) {
-            PeekingIterator<MessageWithGroup> iterator = partSubscriber.iterator();
+    public SubscriberIterator(List<IPartSubscriber> partSubscribers) {
+        for (IPartSubscriber partSubscriber : partSubscribers) {
+            PeekingIterator<MessageWithMetadata> iterator = partSubscriber.iterator();
             iteratorQueue.add(iterator);
         }
 
@@ -29,19 +29,20 @@ public class SubscriberIterator implements PeekingIterator<MessageWithGroup> {
     }
 
     @Override
-    public MessageWithGroup peek() {
+    public MessageWithMetadata peek() {
         return currIterator.peek();
     }
 
     @Override
     public boolean hasNext() {
-        if (currIterator.hasNext() && !currIterator.peek().isGroupLocked()) {
+        log.trace("CurrIterator {} hasNext {}", currIterator, currIterator.hasNext());
+        if (currIterator.hasNext() && currIterator.peek().isUnlocked()) {
             return true;
         }
 
         for (int i = 0; i < iteratorQueue.size(); i++) {
-            PeekingIterator<MessageWithGroup> iterator = iteratorQueue.peek();
-            if (iterator.hasNext() && !iterator.peek().isGroupLocked()) {
+            PeekingIterator<MessageWithMetadata> iterator = iteratorQueue.peek();
+            if (iterator.hasNext() && iterator.peek().isUnlocked()) {
                 iteratorQueue.add(currIterator);
                 currIterator = iterator;
                 break;
@@ -51,10 +52,8 @@ public class SubscriberIterator implements PeekingIterator<MessageWithGroup> {
         return currIterator.hasNext();
     }
 
-
     @Override
-
-    public MessageWithGroup next() {
+    public MessageWithMetadata next() {
         return currIterator.next();
     }
 
