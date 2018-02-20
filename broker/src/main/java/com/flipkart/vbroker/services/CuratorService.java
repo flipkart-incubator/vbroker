@@ -42,7 +42,7 @@ public class CuratorService {
      * @param data
      * @return
      */
-    public AsyncStage<String> createNodeAndSetData(String path, CreateMode createMode, byte[] data) {
+    public CompletionStage<String> createNodeAndSetData(String path, CreateMode createMode, byte[] data) {
         return asyncZkClient.create()
             .withOptions(of(CreateOption.setDataIfExists, CreateOption.createParentsIfNeeded), createMode)
             .forPath(path, data);

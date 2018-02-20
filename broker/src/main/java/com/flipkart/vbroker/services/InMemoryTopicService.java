@@ -2,6 +2,7 @@ package com.flipkart.vbroker.services;
 
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.Topic;
+import com.flipkart.vbroker.exceptions.TopicValidationException;
 import com.flipkart.vbroker.utils.TopicUtils;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class InMemoryTopicService implements TopicService {
     private final ConcurrentMap<Short, Topic> topicsMap = new ConcurrentHashMap<>();
 
     @Override
-    public synchronized CompletionStage<Topic> createTopic(Topic topic) {
+    public synchronized CompletionStage<Topic> createTopic(Topic topic) throws TopicValidationException {
         return CompletableFuture.supplyAsync(() -> {
             topicsMap.putIfAbsent(topic.topicId(), topic);
             return topic;

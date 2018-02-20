@@ -4,11 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.data.TopicPartDataManager;
+import com.flipkart.vbroker.entities.CallbackConfig;
+import com.flipkart.vbroker.entities.CodeRange;
+import com.flipkart.vbroker.entities.FilterKeyValues;
 import com.flipkart.vbroker.entities.Subscription;
-import com.flipkart.vbroker.entities.Topic;
+import com.flipkart.vbroker.exceptions.SubscriptionCreationException;
+import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
 import com.flipkart.vbroker.utils.JsonUtils;
 import com.flipkart.vbroker.utils.SubscriptionUtils;
+import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.CreateMode;
@@ -38,11 +43,60 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public CompletionStage<Subscription> createSubscription(Subscription subscription) {
-        subscriptionsMap.putIfAbsent(subscription.subscriptionId(), subscription);
-        String path = config.getTopicsPath() + "/" + subscription.topicId() + "/subscriptions/" + subscription.subscriptionId();
+        String path = config.getTopicsPath() + "/" + subscription.topicId() + "/subscriptions/" + "0";
 
         return curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT, subscription.getByteBuffer().array())
-            .event().thenApplyAsync(watchedEvent -> subscription);
+            .handle((data, exception) -> {
+                if (exception != null) {
+                    log.error("Exception in curator node create and set data stage {} ", exception);
+                    throw new SubscriptionCreationException(exception.getMessage());
+                } else {
+                    String arr[] = data.split("/");
+                    if (!data.contains("/") || arr.length != 2) {
+                        log.error("Invalid id {}", data);
+                        throw new SubscriptionCreationException("Invalid id data from curator" + data);
+                    }
+                    String subscriptionId = arr[1];
+                    log.info("Created subscription with id - " + subscriptionId);
+                    return newSubscriptionFromSubscription(Short.valueOf(subscriptionId), subscription);
+                }
+            });
+    }
+
+    private Subscription newSubscriptionFromSubscription(short id, Subscription subscription) {
+        FlatBufferBuilder dataBuilder = new FlatBufferBuilder();
+        int codeRangesLength = subscription.callbackConfig().codeRangesLength();
+        int[] codeRanges = new int[codeRangesLength];
+        for (int i = 0; i < codeRangesLength; i++) {
+            int codeRangeOffset = CodeRange.createCodeRange(dataBuilder,
+                subscription.callbackConfig().codeRanges(i).from(),
+                subscription.callbackConfig().codeRanges(i).to());
+            codeRanges[i] = codeRangeOffset;
+        }
+        int codeRangesVectorOffset = CallbackConfig.createCodeRangesVector(dataBuilder, codeRanges);
+
+        int callbackConfigOffset = CallbackConfig.createCallbackConfig(dataBuilder, codeRangesVectorOffset);
+        int filterOperatorOffset = dataBuilder.createString(subscription.filterOperator());
+
+        int filterKeyValuesLength = subscription.filterKeyValuesListLength();
+        int[] filterKeyValues = new int[filterKeyValuesLength];
+        for (int i = 0; i < filterKeyValuesLength; i++) {
+            int keyOffset = dataBuilder.createString(subscription.filterKeyValuesList(i).key());
+            int valuesOffset = dataBuilder.createString(subscription.filterKeyValuesList(i).values());
+            FilterKeyValues.createFilterKeyValues(dataBuilder, keyOffset, valuesOffset);
+        }
+
+        int filterKeyValuesListOffset = Subscription.createFilterKeyValuesListVector(dataBuilder, filterKeyValues);
+        int subscriptionNameOffset = dataBuilder.createString(subscription.name());
+        int subscriptionEndpointOffset = dataBuilder.createString(subscription.endpoint());
+        int subscriptionHttpMethodOffset = dataBuilder.createString(subscription.httpMethod());
+        int subscriptionOffset = Subscription.createSubscription(dataBuilder, id, subscription.subscriptionId(),
+            subscriptionNameOffset, subscription.grouped(), subscription.parallelism(),
+            subscription.requestTimeout(), subscription.subscriptionType(), subscription.subscriptionMechanism(),
+            subscriptionEndpointOffset, subscriptionHttpMethodOffset, subscription.elastic(), filterOperatorOffset,
+            filterKeyValuesListOffset, callbackConfigOffset);
+        dataBuilder.finish(subscriptionOffset);
+        return Subscription.getRootAsSubscription(dataBuilder.dataBuffer());
     }
 
     @Override
@@ -55,7 +109,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         return CompletableFuture.supplyAsync(() -> {
             if (subscriptionsMap.containsKey(subscription.subscriptionId())) {
                 Subscription existingSub = subscriptionsMap.get(subscription.subscriptionId());
-                //return existingSub.getPartSubscription(partSubscriptionId);
+                // return existingSub.getPartSubscription(partSubscriptionId);
                 return SubscriptionUtils.getPartSubscription(existingSub, partSubscriptionId);
             }
             return null;
@@ -66,11 +120,15 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     public CompletionStage<PartSubscriber> getPartSubscriber(PartSubscription partSubscription) {
         return CompletableFuture.supplyAsync(() -> {
             log.trace("SubscriberMap contents: {}", subscriberMap);
-            log.debug("SubscriberMap status of the part-subscription {} is {}", partSubscription, subscriberMap.containsKey(partSubscription));
-            //wanted below to work but its creating a new PartSubscriber each time though key is already present
-            //subscriberMap.putIfAbsent(partSubscription, new PartSubscriber(partSubscription));
+            log.debug("SubscriberMap status of the part-subscription {} is {}", partSubscription,
+                subscriberMap.containsKey(partSubscription));
+            // wanted below to work but its creating a new PartSubscriber each
+            // time though key is already present
+            // subscriberMap.putIfAbsent(partSubscription, new
+            // PartSubscriber(partSubscription));
 
-            subscriberMap.computeIfAbsent(partSubscription, partSubscription1 -> new PartSubscriber(topicPartDataManager, partSubscription1));
+            subscriberMap.computeIfAbsent(partSubscription,
+                partSubscription1 -> new PartSubscriber(topicPartDataManager, partSubscription1));
             return subscriberMap.get(partSubscription);
         });
     }
@@ -91,13 +149,15 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public CompletionStage<List<Subscription>> getAllSubscriptionsForBroker(String brokerId) {
-        //TODO: fix this method
+        // TODO: fix this method
         String hostPath = "/brokers/" + brokerId + "/subscriptions";
         List<Subscription> subscriptions = new ArrayList<>();
-        CompletionStage<List<String>> handleStage = curatorService.getChildren(hostPath).handle((data, exception) -> data);
+        CompletionStage<List<String>> handleStage = curatorService.getChildren(hostPath)
+            .handle((data, exception) -> data);
         List<String> subscriptionIds = handleStage.toCompletableFuture().join();
         for (String id : subscriptionIds) {
-            CompletionStage<Subscription> subscriptionStage = getSubscription(Short.valueOf(id.split("-")[0]), Short.valueOf(id.split("-")[1]));
+            CompletionStage<Subscription> subscriptionStage = getSubscription(Short.valueOf(id.split("-")[0]),
+                Short.valueOf(id.split("-")[1]));
             subscriptions.add(subscriptionStage.toCompletableFuture().join());
         }
         return CompletableFuture.supplyAsync(() -> subscriptions);
@@ -107,7 +167,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     public CompletionStage<List<Subscription>> getSubscriptionsForTopic(short topicId) {
         String path = config.getTopicsPath() + "/" + topicId + "/subscriptions";
         List<Subscription> subscriptions = new ArrayList<>();
-        List<String> subscriptionIds = curatorService.getChildren(path).handle((data, exception) -> data).toCompletableFuture().join();
+        List<String> subscriptionIds = curatorService.getChildren(path).handle((data, exception) -> data)
+            .toCompletableFuture().join();
         if (subscriptionIds != null) {
             for (String id : subscriptionIds) {
                 CompletionStage<Subscription> subscriptionStage = getSubscription(topicId, Short.valueOf(id));
@@ -119,8 +180,14 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public CompletionStage<List<PartSubscription>> getPartSubscriptions(Subscription subscription) {
-        //temporary until this entire method is made async. never to this!
-        Topic topic = topicService.getTopic(subscription.topicId()).toCompletableFuture().join();
-        return CompletableFuture.supplyAsync(() -> SubscriptionUtils.getPartSubscriptions(subscription, topic.partitions()));
+        return topicService.getTopic(subscription.topicId()).handle((data, exception) -> {
+            if (exception != null) {
+                log.error("Error in get topic stage {}", exception);
+                throw new VBrokerException(exception.getMessage());
+            } else {
+                log.info("Got topic {} with no of partitions {}", data.topicName(), data.partitions());
+                return SubscriptionUtils.getPartSubscriptions(subscription, data.partitions());
+            }
+        });
     }
 }

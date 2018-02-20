@@ -1,76 +1,110 @@
 package com.flipkart.vbroker.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.Topic;
+import com.flipkart.vbroker.exceptions.TopicCreationException;
+import com.flipkart.vbroker.exceptions.TopicValidationException;
+import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.utils.ByteBufUtils;
-import com.flipkart.vbroker.utils.JsonUtils;
 import com.flipkart.vbroker.utils.TopicUtils;
+import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.CreateMode;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
-
-import static java.util.Objects.nonNull;
-
 
 @Slf4j
 @AllArgsConstructor
 public class TopicServiceImpl implements TopicService {
 
-    private static final ObjectMapper MAPPER = JsonUtils.getObjectMapper();
     private final VBrokerConfig config;
     private final CuratorService curatorService;
 
     @Override
-    public synchronized CompletionStage<Topic> createTopic(Topic topic) {
-        return CompletableFuture.supplyAsync(() -> {
-            curatorService
-                .createNodeAndSetData(config.getTopicsPath() + "/" + topic.topicId(), CreateMode.PERSISTENT, ByteBufUtils.getBytes(topic.getByteBuffer()))
-                .handle((data, exception) -> {
-                    if (exception != null) {
-                        log.error("Failure in creating topic!");
-                    }
-                    return null;
-                });
-            return topic;
+    public CompletionStage<Topic> createTopic(Topic topic) throws TopicValidationException {
+        if (!validateCreateTopic(topic)) {
+            throw new TopicValidationException("Topic create validation failed");
+        }
+
+        String topicPath = config.getTopicsPath() + "/" + "0";
+        return curatorService.createNodeAndSetData(topicPath, CreateMode.PERSISTENT_SEQUENTIAL,
+            ByteBufUtils.getBytes(topic.getByteBuffer())).handleAsync((data, exception) -> {
+            if (exception != null) {
+                log.error("Exception in curator node create and set data stage {} ", exception);
+                throw new TopicCreationException(exception.getMessage());
+            } else {
+                String arr[] = data.split("/");
+                if (!data.contains("/") || arr.length != 2) {
+                    log.error("Invalid id {}", data);
+                    throw new TopicCreationException("Invalid id data from curator" + data);
+                }
+                String topicId = arr[1];
+                log.info("Created topic with id - " + topicId);
+                return newTopicModelFromTopic(Short.valueOf(topicId), topic);
+            }
         });
+    }
+
+    /**
+     * Run validation checks before creating topic.
+     *
+     * @param topic
+     */
+    private boolean validateCreateTopic(Topic topic) {
+        return true;
+        // TODO add validation steps
+    }
+
+    /**
+     * Returns a new topic created with id and rest of data from topic.
+     *
+     * @param id
+     * @param topic
+     * @return
+     */
+    private Topic newTopicModelFromTopic(short id, Topic topic) {
+        FlatBufferBuilder topicBuilder = new FlatBufferBuilder();
+        int topicNameOffset = topicBuilder.createString(topic.topicName());
+        int topicOffset = Topic.createTopic(topicBuilder, id, topicNameOffset, topic.grouped(), topic.partitions(),
+            topic.replicationFactor(), topic.topicType(), topic.topicCategory());
+        topicBuilder.finish(topicOffset);
+        return Topic.getRootAsTopic(topicBuilder.dataBuffer());
     }
 
     @Override
     public CompletionStage<TopicPartition> getTopicPartition(Topic topic, short topicPartitionId) {
         return getTopic(topic.topicId())
-            .thenApplyAsync(topic1 -> new TopicPartition(topicPartitionId, topic.topicId()));
+            .thenApplyAsync(topic1 -> new TopicPartition(topicPartitionId, topic1.topicId()));
     }
 
     @Override
     public CompletionStage<Boolean> isTopicPresent(short topicId) {
-        return CompletableFuture.supplyAsync(() -> nonNull(getTopicByBlocking(topicId)));
+        return this.getTopic(topicId).handle((data, exception) -> {
+            if (exception != null) {
+                log.error("Error while fetchig topic with id {} - {}", topicId, exception);
+                throw new VBrokerException(exception.getMessage());
+            } else if (data != null) {
+                return true;
+            }
+            return false;
+        });
     }
 
     @Override
     public CompletionStage<Topic> getTopic(short topicId) {
-        return CompletableFuture.supplyAsync(() -> getTopicByBlocking(topicId));
-    }
-
-    private Topic getTopicByBlocking(short topicId) {
-        try {
-            return curatorService.getData(config.getTopicsPath() + "/" + topicId).handle((data, exception) -> {
+        return curatorService.getData(config.getTopicsPath() + "/" + topicId).handle((data, exception) -> {
+            if (exception != null) {
+                log.error("Error while fethcing topic with id {} - {}", topicId, exception);
+                throw new VBrokerException(exception.getMessage());
+            } else {
                 return Topic.getRootAsTopic(ByteBuffer.wrap(data));
-                // return MAPPER.readValue(data, Topic.class);
-            }).toCompletableFuture().get();
-        } catch (InterruptedException | ExecutionException e) {
-            log.error("Error while fetching topic from coordinator.");
-            e.printStackTrace();
-        }
-        return null;
+            }
+        });
     }
 
     @Override
@@ -80,9 +114,27 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public CompletionStage<List<Topic>> getAllTopics() {
-        return curatorService.getChildren(config.getTopicsPath()).handle((data, exception) -> data)
-            .thenComposeAsync(strings -> CompletableFuture.supplyAsync(() -> strings.stream()
-                .map(id -> getTopicByBlocking(Short.valueOf(id)))
-                .collect(Collectors.toList())));
+        return curatorService.getChildren(config.getTopicsPath()).handle((data, exception) -> {
+            if (exception != null) {
+                log.error("Error while fethcing topics {}", exception);
+                throw new VBrokerException(exception.getMessage());
+            } else {
+                List<Topic> topics = new ArrayList<Topic>();
+                data.forEach((id) -> this.getTopic(Short.valueOf(id)).handle((topicData, topicException) -> {
+                    if (topicException != null) {
+                        log.error("Error while fethcing topics {}", topicException);
+                        throw new VBrokerException(topicException.getMessage());
+                    } else {
+                        topics.add(topicData);
+                        return null;
+                    }
+                }));
+                return topics;
+            }
+        });
+    }
+
+    private boolean checkIfPresent(List<Topic> topics, String name) {
+        return topics.stream().anyMatch(topic -> topic.topicName().equals(name));
     }
 }
