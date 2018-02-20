@@ -131,4 +131,14 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
 
         return Optional.of(peekingIterator);
     }
+
+    @Override
+    public CompletionStage<Integer> getCurSeqNo(String groupId) {
+        throw new UnsupportedOperationException("SeqNo is not defined at group level for ungrouped subscription");
+    }
+
+    @Override
+    public CompletionStage<Integer> getLag() {
+        return null;
+    }
 }

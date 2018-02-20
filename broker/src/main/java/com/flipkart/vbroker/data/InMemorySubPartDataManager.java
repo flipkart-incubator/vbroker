@@ -69,4 +69,9 @@ public class InMemorySubPartDataManager implements SubPartDataManager {
         return getSubPartDataAsync(partSubscription).thenApplyAsync(subPartData -> subPartData.getIterator(qType))
             .toCompletableFuture().join(); //TODO: fix this!
     }
+
+    @Override
+    public CompletionStage<Integer> getCurrSeqNo(PartSubscription partSubscription, String groupId) {
+        return getSubPartDataAsync(partSubscription).thenCompose(subPartData -> subPartData.getCurSeqNo(groupId));
+    }
 }

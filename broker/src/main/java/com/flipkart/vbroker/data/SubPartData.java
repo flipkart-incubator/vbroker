@@ -23,4 +23,8 @@ public interface SubPartData {
     PeekingIterator<MessageWithMetadata> getIterator(String groupId);
 
     Optional<PeekingIterator<MessageWithMetadata>> getIterator(QType qType);
+
+    CompletionStage<Integer> getCurSeqNo(String groupId);
+
+    CompletionStage<Integer> getLag();
 }

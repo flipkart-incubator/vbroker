@@ -12,8 +12,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Created by hooda on 19/1/18
@@ -81,6 +84,14 @@ public class SubscriberGroup implements Iterable<MessageWithMetadata> {
      */
     public boolean isLocked() {
         return locked.get();
+    }
+
+    /**
+     *
+     * @return Offset of the underlying messageGroup - currSeqNo
+     */
+    public CompletionStage<Integer> getLag(){
+        return topicPartDataManager.getCurrentOffset(topicPartition, this.getGroupId()).thenApply(offset -> offset - getCurrSeqNo().get());
     }
 
     @Override

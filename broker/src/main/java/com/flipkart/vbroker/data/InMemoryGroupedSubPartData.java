@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.flipkart.vbroker.subscribers.QType.*;
@@ -132,5 +133,22 @@ public class InMemoryGroupedSubPartData implements SubPartData {
             .map(subscriberGroupIteratorMap::get)
             .filter(Iterator::hasNext)
             .findFirst();
+    }
+
+    @Override
+    public CompletionStage<Integer> getCurSeqNo(String groupId) {
+        return CompletableFuture.completedFuture(subscriberGroupsMap.get(groupId).getCurrSeqNo().get());
+    }
+
+    @Override
+    public CompletionStage<Integer> getLag() {
+        getUniqueGroups()
+            .thenApply(new Function<Set<String>, Object>() {
+                @Override
+                public Object apply(Set<String> strings) {
+                    strings.stream().map(s -> subscriberGroupsMap.get(s).getLag()).map() {
+                    })
+                }
+            })
     }
 }
