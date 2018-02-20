@@ -2,8 +2,8 @@ package com.flipkart.vbroker.iterators;
 
 import com.flipkart.vbroker.client.MessageStore;
 import com.flipkart.vbroker.core.PartSubscription;
-import com.flipkart.vbroker.data.InMemoryUnGroupedSubPartData;
-import com.flipkart.vbroker.data.SubPartData;
+import com.flipkart.vbroker.data.InMemorySubPartDataManager;
+import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
 import com.flipkart.vbroker.entities.Message;
@@ -29,15 +29,15 @@ public class SubscriberIteratorTest {
     private SubscriberIterator subscriberIterator;
     private TopicPartDataManager topicPartDataManager;
     private PartSubscription unGroupedPartSubscription;
-    private SubPartData subPartData;
+    private SubPartDataManager subPartDataManager;
 
     @BeforeMethod
     public void setUp() {
         topicPartDataManager = new InMemoryTopicPartDataManager();
         unGroupedPartSubscription = SubscriptionUtils.getPartSubscription(DummyEntities.unGroupedSubscription, (short) 0);
-        subPartData = new InMemoryUnGroupedSubPartData(unGroupedPartSubscription, topicPartDataManager);
+        subPartDataManager = new InMemorySubPartDataManager(topicPartDataManager);
 
-        IPartSubscriber partSubscriber = new UnGroupedPartSubscriber(topicPartDataManager, subPartData, unGroupedPartSubscription);
+        IPartSubscriber partSubscriber = new UnGroupedPartSubscriber(subPartDataManager, unGroupedPartSubscription);
         List<IPartSubscriber> partSubscribers = Lists.newArrayList(partSubscriber);
         subscriberIterator = new SubscriberIterator(partSubscribers);
     }

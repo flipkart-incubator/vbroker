@@ -13,8 +13,6 @@ import java.util.concurrent.CompletionStage;
 
 public interface SubPartDataManager {
 
-    SubPartData getSubPartData(PartSubscription partSubscription);
-
     CompletionStage<MessageMetadata> addGroup(PartSubscription partSubscription, SubscriberGroup subscriberGroup);
 
     CompletionStage<Set<String>> getUniqueGroups(PartSubscription partSubscription);

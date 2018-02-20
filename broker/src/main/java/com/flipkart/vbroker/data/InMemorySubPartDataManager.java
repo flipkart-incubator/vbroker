@@ -16,17 +16,24 @@ import java.util.concurrent.CompletionStage;
 
 public class InMemorySubPartDataManager implements SubPartDataManager {
 
+    private final TopicPartDataManager topicPartDataManager;
     private final Map<PartSubscription, SubPartData> dataMap = new LinkedHashMap<>();
 
-    @Override
-    public SubPartData getSubPartData(PartSubscription partSubscription) {
-        dataMap.computeIfAbsent(partSubscription, InMemoryGroupedSubPartData::new);
-        return dataMap.get(partSubscription);
+    public InMemorySubPartDataManager(TopicPartDataManager topicPartDataManager) {
+        this.topicPartDataManager = topicPartDataManager;
     }
 
     private CompletionStage<SubPartData> getSubPartDataAsync(PartSubscription partSubscription) {
         return CompletableFuture.supplyAsync(() -> {
-            dataMap.computeIfAbsent(partSubscription, InMemoryGroupedSubPartData::new);
+            dataMap.computeIfAbsent(partSubscription, partSubscription1 -> {
+                SubPartData subPartData;
+                if (partSubscription1.isGrouped()) {
+                    subPartData = new InMemoryGroupedSubPartData(partSubscription1);
+                } else {
+                    subPartData = new InMemoryUnGroupedSubPartData(partSubscription1, topicPartDataManager);
+                }
+                return subPartData;
+            });
             return dataMap.get(partSubscription);
         });
     }

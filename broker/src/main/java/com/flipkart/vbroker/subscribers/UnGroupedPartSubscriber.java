@@ -1,7 +1,7 @@
 package com.flipkart.vbroker.subscribers;
 
 import com.flipkart.vbroker.core.PartSubscription;
-import com.flipkart.vbroker.data.SubPartData;
+import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.iterators.PartSubscriberIterator;
 import com.google.common.collect.PeekingIterator;
 import lombok.EqualsAndHashCode;
@@ -12,17 +12,17 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Optional;
 
 @Slf4j
-@EqualsAndHashCode(exclude = {"subPartData"})
-@ToString(exclude = {"subPartData"})
+@EqualsAndHashCode(exclude = {"subPartDataManager"})
+@ToString(exclude = {"subPartDataManager"})
 public class UnGroupedPartSubscriber implements IPartSubscriber {
 
-    private final SubPartData subPartData;
+    private final SubPartDataManager subPartDataManager;
     @Getter
     private final PartSubscription partSubscription;
 
-    public UnGroupedPartSubscriber(SubPartData subPartData,
+    public UnGroupedPartSubscriber(SubPartDataManager subPartDataManager,
                                    PartSubscription partSubscription) {
-        this.subPartData = subPartData;
+        this.subPartDataManager = subPartDataManager;
         this.partSubscription = partSubscription;
         log.info("Creating UnGroupedPartSubscriber object for partSubscription {}", partSubscription);
     }
@@ -38,7 +38,7 @@ public class UnGroupedPartSubscriber implements IPartSubscriber {
         return new PartSubscriberIterator() {
             @Override
             protected Optional<PeekingIterator<MessageWithMetadata>> nextIterator() {
-                return subPartData.getIterator(QType.MAIN);
+                return subPartDataManager.getIterator(partSubscription, QType.MAIN);
             }
         };
     }
@@ -48,7 +48,7 @@ public class UnGroupedPartSubscriber implements IPartSubscriber {
         return new PartSubscriberIterator() {
             @Override
             protected Optional<PeekingIterator<MessageWithMetadata>> nextIterator() {
-                return subPartData.getIterator(QType.SIDELINE);
+                return subPartDataManager.getIterator(partSubscription, QType.SIDELINE);
             }
         };
     }
@@ -59,7 +59,7 @@ public class UnGroupedPartSubscriber implements IPartSubscriber {
             @Override
             protected Optional<PeekingIterator<MessageWithMetadata>> nextIterator() {
                 QType qType = QType.retryQType(retryQNo);
-                return subPartData.getIterator(qType);
+                return subPartDataManager.getIterator(partSubscription, qType);
             }
         };
     }

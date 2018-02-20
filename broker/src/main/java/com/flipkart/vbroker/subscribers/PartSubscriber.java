@@ -3,7 +3,7 @@ package com.flipkart.vbroker.subscribers;
 import com.flipkart.vbroker.core.MessageGroup;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.core.TopicPartition;
-import com.flipkart.vbroker.data.SubPartData;
+import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.iterators.PartSubscriberIterator;
 import com.google.common.collect.PeekingIterator;
@@ -13,31 +13,24 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
-@EqualsAndHashCode(exclude = {"subscriberGroupsMap", "subscriberGroupIteratorMap"})
+@EqualsAndHashCode(exclude = {"topicPartDataManager", "subPartDataManager"})
 @ToString
 public class PartSubscriber implements IPartSubscriber {
-    public static final Integer DEFAULT_PARALLELISM = 5;
-    public static final Integer MAX_GROUPS_IN_ITERATOR = 100;
 
     @Getter
     private final PartSubscription partSubscription;
-    @Getter
-    private final Map<String, SubscriberGroup> subscriberGroupsMap = new LinkedHashMap<>();
-    private final Map<SubscriberGroup, PeekingIterator<MessageWithMetadata>> subscriberGroupIteratorMap = new LinkedHashMap<>();
     private final TopicPartDataManager topicPartDataManager;
-    private final SubPartData subPartData;
+    private final SubPartDataManager subPartDataManager;
 
     public PartSubscriber(TopicPartDataManager topicPartDataManager,
-                          SubPartData subPartData,
+                          SubPartDataManager subPartDataManager,
                           PartSubscription partSubscription) {
         this.topicPartDataManager = topicPartDataManager;
-        this.subPartData = subPartData;
+        this.subPartDataManager = subPartDataManager;
         log.trace("Creating new PartSubscriber for part-subscription {}", partSubscription);
         this.partSubscription = partSubscription;
     }
@@ -52,7 +45,7 @@ public class PartSubscriber implements IPartSubscriber {
 
         topicPartDataManager.getUniqueGroups(topicPartition).thenAccept(uniqueMsgGroups -> {
             //Set<String> uniqueSubscriberGroups = subscriberGroupsMap.keySet();
-            Set<String> uniqueSubscriberGroups = subPartData.getUniqueGroups().toCompletableFuture().join();
+            Set<String> uniqueSubscriberGroups = subPartDataManager.getUniqueGroups(partSubscription).toCompletableFuture().join();
             Sets.SetView<String> difference = Sets.difference(uniqueMsgGroups, uniqueSubscriberGroups);
 
             difference.forEach(group -> {
@@ -60,7 +53,7 @@ public class PartSubscriber implements IPartSubscriber {
                 SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, partSubscription, topicPartDataManager);
                 //subscriberGroupsMap.put(group, subscriberGroup);
                 //subscriberGroupIteratorMap.put(subscriberGroup, subscriberGroup.iterator());
-                subPartData.addGroup(subscriberGroup);
+                subPartDataManager.addGroup(partSubscription, subscriberGroup);
             });
         });
     }
@@ -89,7 +82,7 @@ public class PartSubscriber implements IPartSubscriber {
         return new PartSubscriberIterator() {
             @Override
             protected Optional<PeekingIterator<MessageWithMetadata>> nextIterator() {
-                return subPartData.getIterator(qType);
+                return subPartDataManager.getIterator(partSubscription, qType);
             }
         };
     }
