@@ -14,16 +14,16 @@ import java.util.concurrent.CompletableFuture;
 public class CompletionStageTest {
 
     @Test
-    public void shouldComposeMultipleFuturesInForLoop(){
+    public void shouldComposeMultipleFuturesInForLoop() {
         CompletableFuture<List<Integer>> cf = CompletableFuture.completedFuture(new ArrayList<>());
-        for(int i = 0; i < 10; i++){
+        for (int i = 0; i < 10; i++) {
             cf = cf.thenCompose(integers -> {
                 integers.add(integers.size());
                 return CompletableFuture.completedFuture(integers);
             });
         }
         List<Integer> ints = cf.join();
-        List<Integer> expected = Arrays.asList(0,1,2,3,4,5,6,7,8,9);
+        List<Integer> expected = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
         Assert.assertEquals(expected, ints);
     }
 }

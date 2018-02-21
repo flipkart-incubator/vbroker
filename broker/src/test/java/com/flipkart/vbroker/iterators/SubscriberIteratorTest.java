@@ -2,9 +2,9 @@ package com.flipkart.vbroker.iterators;
 
 import com.flipkart.vbroker.client.MessageStore;
 import com.flipkart.vbroker.core.PartSubscription;
-import com.flipkart.vbroker.data.memory.InMemorySubPartDataManager;
 import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
+import com.flipkart.vbroker.data.memory.InMemorySubPartDataManager;
 import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.subscribers.DummyEntities;

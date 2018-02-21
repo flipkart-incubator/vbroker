@@ -135,6 +135,7 @@ public class GetLagsRequestHandler implements RequestHandler {
         private short subscriptionId;
         private short topicId;
         private List<LagWithPartition> lagWithPartitions;
+
         public SubscriptionLag(short subscriptionId, short topicId, List<LagWithPartition> lagWithPartitions) {
             this.subscriptionId = subscriptionId;
             this.topicId = topicId;
