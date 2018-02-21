@@ -7,6 +7,7 @@ import com.flipkart.vbroker.exceptions.TopicCreationException;
 import com.flipkart.vbroker.exceptions.TopicValidationException;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.utils.ByteBufUtils;
+import com.flipkart.vbroker.utils.IdGenerator;
 import com.flipkart.vbroker.utils.TopicUtils;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.AllArgsConstructor;
@@ -30,20 +31,20 @@ public class TopicServiceImpl implements TopicService {
         if (!validateCreateTopic(topic)) {
             throw new TopicValidationException("Topic create validation failed");
         }
-
-        String topicPath = config.getTopicsPath() + "/" + "0";
-        return curatorService.createNodeAndSetData(topicPath, CreateMode.PERSISTENT_SEQUENTIAL,
+        short id = IdGenerator.randomId();
+        String topicPath = config.getTopicsPath() + "/" + id;
+        return curatorService.createNodeAndSetData(topicPath, CreateMode.PERSISTENT,
             ByteBufUtils.getBytes(topic.getByteBuffer())).handleAsync((data, exception) -> {
             if (exception != null) {
                 log.error("Exception in curator node create and set data stage {} ", exception);
                 throw new TopicCreationException(exception.getMessage());
             } else {
                 String arr[] = data.split("/");
-                if (!data.contains("/") || arr.length != 2) {
+                if (!data.contains("/") || arr.length != 3) {
                     log.error("Invalid id {}", data);
-                    throw new TopicCreationException("Invalid id data from curator" + data);
+                    throw new TopicCreationException("Invalid id data from curator " + data);
                 }
-                String topicId = arr[1];
+                String topicId = arr[2];
                 log.info("Created topic with id - " + topicId);
                 return newTopicModelFromTopic(Short.valueOf(topicId), topic);
             }

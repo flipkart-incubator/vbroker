@@ -11,6 +11,7 @@ import com.flipkart.vbroker.exceptions.SubscriptionCreationException;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.subscribers.IPartSubscriber;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
+import com.flipkart.vbroker.utils.IdGenerator;
 import com.flipkart.vbroker.utils.SubscriptionUtils;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.AllArgsConstructor;
@@ -43,7 +44,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public CompletionStage<Subscription> createSubscription(Subscription subscription) {
-        String path = config.getTopicsPath() + "/" + subscription.topicId() + "/subscriptions/" + "0";
+    	short id = IdGenerator.randomId();
+        String path = config.getTopicsPath() + "/" + subscription.topicId() + "/subscriptions/" + id;
 
         return curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT, subscription.getByteBuffer().array())
             .handleAsync((data, exception) -> {
