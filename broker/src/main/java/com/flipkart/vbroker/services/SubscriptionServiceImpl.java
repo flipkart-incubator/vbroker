@@ -1,6 +1,5 @@
 package com.flipkart.vbroker.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.data.TopicPartDataManager;
@@ -12,14 +11,13 @@ import com.flipkart.vbroker.exceptions.SubscriptionCreationException;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.subscribers.IPartSubscriber;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
-import com.flipkart.vbroker.utils.JsonUtils;
 import com.flipkart.vbroker.utils.SubscriptionUtils;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.CreateMode;
 
-import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -29,11 +27,12 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static java.util.Objects.nonNull;
+
 @Slf4j
 @AllArgsConstructor
 public class SubscriptionServiceImpl implements SubscriptionService {
 
-    private static final ObjectMapper MAPPER = JsonUtils.getObjectMapper();
     private final VBrokerConfig config;
     private final CuratorService curatorService;
     private final TopicPartDataManager topicPartDataManager;
@@ -47,7 +46,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         String path = config.getTopicsPath() + "/" + subscription.topicId() + "/subscriptions/" + "0";
 
         return curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT, subscription.getByteBuffer().array())
-            .handle((data, exception) -> {
+            .handleAsync((data, exception) -> {
                 if (exception != null) {
                     log.error("Exception in curator node create and set data stage {} ", exception);
                     throw new SubscriptionCreationException(exception.getMessage());
@@ -136,51 +135,118 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     @Override
     public CompletionStage<Subscription> getSubscription(short topicId, short subscriptionId) {
         String subscriptionPath = config.getTopicsPath() + "/" + topicId + "/subscriptions/" + subscriptionId;
-        return curatorService.getData(subscriptionPath).handle((data, exception) -> {
-            try {
-                return MAPPER.readValue(data, Subscription.class);
-            } catch (IOException e) {
-                log.error("Error while parsing subscription data");
-                e.printStackTrace();
-                return null;
+        return curatorService.getData(subscriptionPath).handleAsync((data, exception) -> {
+            if (exception != null) {
+                log.error("Error in getting susbcription data for {}-{}", topicId, subscriptionId);
+                throw new VBrokerException("Error while fetching topic subscription");
+            } else {
+                return Subscription.getRootAsSubscription(ByteBuffer.wrap(data));
             }
         });
     }
 
     @Override
     public CompletionStage<List<Subscription>> getAllSubscriptionsForBroker(String brokerId) {
-        // TODO: fix this method
         String hostPath = "/brokers/" + brokerId + "/subscriptions";
         List<Subscription> subscriptions = new ArrayList<>();
-        CompletionStage<List<String>> handleStage = curatorService.getChildren(hostPath)
-            .handle((data, exception) -> data);
-        List<String> subscriptionIds = handleStage.toCompletableFuture().join();
-        for (String id : subscriptionIds) {
-            CompletionStage<Subscription> subscriptionStage = getSubscription(Short.valueOf(id.split("-")[0]),
-                Short.valueOf(id.split("-")[1]));
-            subscriptions.add(subscriptionStage.toCompletableFuture().join());
-        }
-        return CompletableFuture.supplyAsync(() -> subscriptions);
+        return curatorService.getChildren(hostPath)
+            .handleAsync((data, exception) -> {
+                if (exception != null) {
+                    log.error("Error while fetching subscription ids for broker - {}", exception);
+                    throw new VBrokerException("Error while fetching subscriptions");
+                } else {
+                    List<String> subscriptionIds = data;
+                    if (nonNull(subscriptionIds)) {
+                        List<CompletableFuture> subStages = new ArrayList<CompletableFuture>();
+                        log.info("No of subscriptions is {}", subscriptionIds.size());
+                        for (String id : subscriptionIds) {
+                            String[] arr = id.split("-");
+                            if (arr == null || arr.length != 2) {
+                                log.error("Unexpected topic-partition id in broker assignment - {}", id);
+                                throw new VBrokerException("Invalid id in broker assignment");
+                            } else {
+                                CompletionStage<Object> subStage = this
+                                    .getSubscription(Short.valueOf(arr[0]), Short.valueOf(arr[1]))
+                                    .handleAsync((subData, subException) -> {
+                                        if (subException != null) {
+                                            log.error("Error while fetching subscription data for id {}", id);
+                                            throw new VBrokerException("Error while fetching subscription");
+                                        } else {
+                                            subscriptions.add(subData);
+                                            return null;
+                                        }
+                                    });
+                                subStages.add(subStage.toCompletableFuture());
+                            }
+                        }
+                        CompletableFuture<Void> combined = CompletableFuture
+                            .allOf((CompletableFuture<?>[]) subStages.toArray());
+                        combined.handleAsync((combinedData, combinedException) -> {
+                            if (combinedException != null) {
+                                log.error("Error while combining futures of subscription fetch {}",
+                                    combinedException);
+                                throw new VBrokerException("Error while fetching subscriptions");
+                            } else {
+                                return subscriptions;
+                            }
+                        });
+                    }
+                    return subscriptions;
+                }
+            });
     }
 
     @Override
     public CompletionStage<List<Subscription>> getSubscriptionsForTopic(short topicId) {
         String path = config.getTopicsPath() + "/" + topicId + "/subscriptions";
-        List<Subscription> subscriptions = new ArrayList<>();
-        List<String> subscriptionIds = curatorService.getChildren(path).handle((data, exception) -> data)
-            .toCompletableFuture().join();
-        if (subscriptionIds != null) {
-            for (String id : subscriptionIds) {
-                CompletionStage<Subscription> subscriptionStage = getSubscription(topicId, Short.valueOf(id));
-                subscriptions.add(subscriptionStage.toCompletableFuture().join());
+        return curatorService.getChildren(path).handleAsync((data, exception) -> {
+            if (exception != null) {
+                log.error("Error in fetching subscriptions for topic  {}", exception);
+                throw new VBrokerException(exception.getMessage());
+            } else {
+                List<Subscription> subscriptions = new ArrayList<>();
+                if (nonNull(data)) {
+                    // There are child nodes. Fetch corresponding data for each
+                    // and combine to send whole list.
+                    List<CompletableFuture> subStages = new ArrayList<CompletableFuture>();
+                    for (String id : data) {
+                        CompletionStage<Object> stage = this.getSubscription(topicId, Short.valueOf(id))
+                            .handleAsync((subData, subException) -> {
+                                if (subException != null) {
+                                    log.error("Exception while fetching subscription data for {}", id);
+                                    throw new VBrokerException("Error while fetching subscription with id " + id);
+                                } else {
+                                    subscriptions.add(subData);
+                                    return null;
+                                }
+                            });
+                        subStages.add(stage.toCompletableFuture());
+                    }
+
+                    CompletableFuture<Void> combined = CompletableFuture
+                        .allOf((CompletableFuture<?>[]) subStages.toArray());
+                    // combining futures to make sure response contains all
+                    // data.
+                    combined.handleAsync((combinedData, combinedException) -> {
+                        if (combinedException != null) {
+                            log.error("Error while combining futures of subscription fetch {}", combinedException);
+                            throw new VBrokerException("Error while fetching subscriptions");
+                        } else {
+                            return subscriptions;
+                        }
+                    });
+                } else {
+                    return subscriptions;
+                }
             }
-        }
-        return CompletableFuture.supplyAsync(() -> subscriptions);
+            // something's wrong if it reaches here.
+            return null;
+        });
     }
 
     @Override
     public CompletionStage<List<PartSubscription>> getPartSubscriptions(Subscription subscription) {
-        return topicService.getTopic(subscription.topicId()).handle((data, exception) -> {
+        return topicService.getTopic(subscription.topicId()).handleAsync((data, exception) -> {
             if (exception != null) {
                 log.error("Error in get topic stage {}", exception);
                 throw new VBrokerException(exception.getMessage());

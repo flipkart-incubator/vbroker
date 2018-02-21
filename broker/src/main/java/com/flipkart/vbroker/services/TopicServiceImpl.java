@@ -47,7 +47,7 @@ public class TopicServiceImpl implements TopicService {
                 log.info("Created topic with id - " + topicId);
                 return newTopicModelFromTopic(Short.valueOf(topicId), topic);
             }
-            });
+        });
     }
 
     /**
@@ -84,7 +84,7 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public CompletionStage<Boolean> isTopicPresent(short topicId) {
-        return this.getTopic(topicId).handle((data, exception) -> {
+        return this.getTopic(topicId).handleAsync((data, exception) -> {
             if (exception != null) {
                 log.error("Error while fetchig topic with id {} - {}", topicId, exception);
                 throw new VBrokerException(exception.getMessage());
@@ -95,9 +95,19 @@ public class TopicServiceImpl implements TopicService {
         });
     }
 
+    public CompletionStage<Boolean> isTopicPresent(String name) {
+        return this.getAllTopics().handleAsync((topics, exception) -> {
+            if (exception != null) {
+                throw new VBrokerException("Error while fetching topics");
+            } else {
+                return checkIfPresent(topics, name);
+            }
+        });
+    }
+
     @Override
     public CompletionStage<Topic> getTopic(short topicId) {
-        return curatorService.getData(config.getTopicsPath() + "/" + topicId).handle((data, exception) -> {
+        return curatorService.getData(config.getTopicsPath() + "/" + topicId).handleAsync((data, exception) -> {
             if (exception != null) {
                 log.error("Error while fethcing topic with id {} - {}", topicId, exception);
                 throw new VBrokerException(exception.getMessage());
@@ -114,13 +124,13 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public CompletionStage<List<Topic>> getAllTopics() {
-        return curatorService.getChildren(config.getTopicsPath()).handle((data, exception) -> {
+        return curatorService.getChildren(config.getTopicsPath()).handleAsync((data, exception) -> {
             if (exception != null) {
                 log.error("Error while fethcing topics {}", exception);
                 throw new VBrokerException(exception.getMessage());
             } else {
                 List<Topic> topics = new ArrayList<Topic>();
-                data.forEach((id) -> this.getTopic(Short.valueOf(id)).handle((topicData, topicException) -> {
+                data.forEach((id) -> this.getTopic(Short.valueOf(id)).handleAsync((topicData, topicException) -> {
                     if (topicException != null) {
                         log.error("Error while fethcing topics {}", topicException);
                         throw new VBrokerException(topicException.getMessage());
