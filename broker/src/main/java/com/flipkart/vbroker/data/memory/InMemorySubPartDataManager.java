@@ -1,7 +1,10 @@
-package com.flipkart.vbroker.data;
+package com.flipkart.vbroker.data.memory;
 
 import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.core.PartSubscription;
+import com.flipkart.vbroker.data.SubPartData;
+import com.flipkart.vbroker.data.SubPartDataManager;
+import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.subscribers.MessageWithMetadata;
 import com.flipkart.vbroker.subscribers.QType;
 import com.flipkart.vbroker.subscribers.SubscriberGroup;
@@ -73,5 +76,10 @@ public class InMemorySubPartDataManager implements SubPartDataManager {
     @Override
     public CompletionStage<Integer> getCurrSeqNo(PartSubscription partSubscription, String groupId) {
         return getSubPartDataAsync(partSubscription).thenCompose(subPartData -> subPartData.getCurSeqNo(groupId));
+    }
+
+    @Override
+    public CompletionStage<Integer> getLag(PartSubscription partSubscription) {
+        return getSubPartDataAsync(partSubscription).thenCompose(SubPartData::getLag);
     }
 }

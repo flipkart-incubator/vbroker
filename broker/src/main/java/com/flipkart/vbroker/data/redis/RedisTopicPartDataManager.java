@@ -85,4 +85,9 @@ public class RedisTopicPartDataManager implements TopicPartDataManager {
     public PeekingIterator<Message> getIterator(TopicPartition topicPartition, int seqNoFrom) {
         throw new UnsupportedOperationException("You cannot have a global iterator for partition for a grouped topic-partition");
     }
+
+    @Override
+    public CompletionStage<Integer> getCurrentOffset(TopicPartition topicPartition) {
+        return getTopicPartData(topicPartition).thenCompose(data -> data.getCurrentOffset());
+    }
 }

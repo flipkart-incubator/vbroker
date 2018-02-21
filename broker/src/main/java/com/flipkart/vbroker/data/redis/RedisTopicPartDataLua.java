@@ -104,6 +104,12 @@ public class RedisTopicPartDataLua implements TopicPartData {
         throw new UnsupportedOperationException("You cannot have a global iterator for partition for a grouped topic-partition");
     }
 
+    @Override
+    public CompletionStage<Integer> getCurrentOffset() {
+        throw new UnsupportedOperationException("Global offset is not defined for ungrouped topic-partition");
+    }
+
+
     private ByteBuffer buildMessage(Message message) {
         FlatBufferBuilder builder = new FlatBufferBuilder();
         int httpHeader = HttpHeader.createHttpHeader(builder,

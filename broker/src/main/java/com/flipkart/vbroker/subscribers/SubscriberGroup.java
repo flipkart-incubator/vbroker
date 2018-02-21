@@ -88,7 +88,7 @@ public class SubscriberGroup implements Iterable<MessageWithMetadata> {
 
     /**
      *
-     * @return Offset of the underlying messageGroup - currSeqNo
+     * @return (Offset of the underlying messageGroup) - (currSeqNo)
      */
     public CompletionStage<Integer> getLag(){
         return topicPartDataManager.getCurrentOffset(topicPartition, this.getGroupId()).thenApply(offset -> offset - getCurrSeqNo().get());

@@ -99,4 +99,9 @@ public class InMemorySubscriptionService implements SubscriptionService {
         return topicService.getTopic(subscription.topicId())
             .thenApplyAsync(topic -> SubscriptionUtils.getPartSubscriptions(subscription, topic.partitions()));
     }
+
+    @Override
+    public CompletionStage<Integer> getPartSubscriptionLag(PartSubscription partSubscription) {
+        return subPartDataManager.getLag(partSubscription);
+    }
 }

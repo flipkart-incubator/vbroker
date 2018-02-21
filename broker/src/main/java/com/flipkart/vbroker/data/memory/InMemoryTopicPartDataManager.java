@@ -91,4 +91,9 @@ public class InMemoryTopicPartDataManager implements TopicPartDataManager {
             .thenApplyAsync(topicPartData -> topicPartData.iteratorFrom(seqNoFrom))
             .toCompletableFuture().join();
     }
+
+    @Override
+    public CompletionStage<Integer> getCurrentOffset(TopicPartition topicPartition) {
+        return getTopicPartData(topicPartition).thenCompose(data -> data.getCurrentOffset());
+    }
 }

@@ -2,7 +2,7 @@ package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.controller.VBrokerController;
-import com.flipkart.vbroker.data.InMemorySubPartDataManager;
+import com.flipkart.vbroker.data.memory.InMemorySubPartDataManager;
 import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;

@@ -128,4 +128,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         Topic topic = topicService.getTopic(subscription.topicId()).toCompletableFuture().join();
         return CompletableFuture.supplyAsync(() -> SubscriptionUtils.getPartSubscriptions(subscription, topic.partitions()));
     }
+
+    @Override
+    public CompletionStage<Integer> getPartSubscriptionLag(PartSubscription partSubscription) {
+        return subPartDataManager.getLag(partSubscription);
+    }
 }

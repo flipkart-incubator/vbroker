@@ -14,6 +14,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 @Slf4j
 public class InMemoryUnGroupedTopicPartData implements TopicPartData {
@@ -73,5 +74,10 @@ public class InMemoryUnGroupedTopicPartData implements TopicPartData {
                 return index.get() < messages.size();
             }
         };
+    }
+
+    @Override
+    public CompletionStage<Integer> getCurrentOffset() {
+        return CompletableFuture.supplyAsync(() -> messages.size());
     }
 }

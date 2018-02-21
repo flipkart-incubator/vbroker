@@ -25,4 +25,6 @@ public interface SubscriptionService {
     public CompletionStage<IPartSubscriber> getPartSubscriber(PartSubscription subscription);
 
     public CompletionStage<List<PartSubscription>> getPartSubscriptions(Subscription subscription);
+
+    public CompletionStage<Integer> getPartSubscriptionLag(PartSubscription partSubscription);
 }

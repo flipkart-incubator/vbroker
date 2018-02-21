@@ -1,7 +1,8 @@
-package com.flipkart.vbroker.data;
+package com.flipkart.vbroker.data.memory;
 
 import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.core.PartSubscription;
+import com.flipkart.vbroker.data.SubPartData;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.subscribers.MessageWithMetadata;
 import com.flipkart.vbroker.subscribers.QType;
@@ -13,7 +14,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 
 import static com.flipkart.vbroker.subscribers.QType.*;
@@ -142,13 +146,17 @@ public class InMemoryGroupedSubPartData implements SubPartData {
 
     @Override
     public CompletionStage<Integer> getLag() {
-        getUniqueGroups()
-            .thenApply(new Function<Set<String>, Object>() {
-                @Override
-                public Object apply(Set<String> strings) {
-                    strings.stream().map(s -> subscriberGroupsMap.get(s).getLag()).map() {
-                    })
-                }
-            })
+        return getUniqueGroups().thenCompose(groups -> {
+            @SuppressWarnings("unchecked") CompletableFuture<Integer>[] lagFutures = groups.stream()
+                .map(subscriberGroupsMap::get)
+                .map(SubscriberGroup::getLag)
+                .map(CompletionStage::toCompletableFuture)
+                .toArray(CompletableFuture[]::new);
+
+            return CompletableFuture.allOf(lagFutures).thenApply(aVoid ->
+                Arrays.stream(lagFutures)
+                    .map(CompletableFuture::join)
+                    .reduce(0, (lag1, lag2) -> lag1 + lag2));
+        });
     }
 }

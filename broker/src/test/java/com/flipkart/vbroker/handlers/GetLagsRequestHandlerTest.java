@@ -1,17 +1,21 @@
 package com.flipkart.vbroker.handlers;
 
+import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.google.flatbuffers.FlatBufferBuilder;
+import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -29,8 +33,21 @@ public class GetLagsRequestHandlerTest {
     }
 
     @Test
-    public void shouldCalculateLagForOneSubscriptionWithOnePartitionAndNoGroups() throws ExecutionException, InterruptedException {
+    public void shouldGetLagForOneSubscriptionWithOnePartition() throws ExecutionException, InterruptedException {
         vRequest = generateVRequest(lagsReqForOnePartition());
+
+        Subscription subscription = mock(Subscription.class);
+        PartSubscription partSubscription = mock(PartSubscription.class);
+
+        when(subscriptionService.getSubscription((short) 1, (short) 1))
+            .thenReturn(CompletableFuture.completedFuture(subscription));
+        when(subscriptionService.getPartSubscription(subscription, (short) 1))
+            .thenReturn(CompletableFuture.completedFuture(partSubscription));
+        when(subscriptionService.getPartSubscriptionLag(partSubscription))
+            .thenReturn(CompletableFuture.completedFuture(0));
+        when(partSubscription.getId())
+            .thenReturn((short) 1);
+
         CompletionStage<VResponse> responseCompletionStage = getLagsRequestHandler.handle(vRequest);
         VResponse response = responseCompletionStage.toCompletableFuture().get();
         GetLagsResponse getLagsResponse = (GetLagsResponse) response.responseMessage(new GetLagsResponse());

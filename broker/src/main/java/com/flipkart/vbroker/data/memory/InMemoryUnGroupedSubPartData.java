@@ -1,7 +1,9 @@
-package com.flipkart.vbroker.data;
+package com.flipkart.vbroker.data.memory;
 
 import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.core.PartSubscription;
+import com.flipkart.vbroker.data.SubPartData;
+import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.iterators.PartSubscriberIterator;
@@ -139,6 +141,7 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
 
     @Override
     public CompletionStage<Integer> getLag() {
-        return null;
+        return topicPartDataManager.getCurrentOffset(partSubscription.getTopicPartition());
+
     }
 }
