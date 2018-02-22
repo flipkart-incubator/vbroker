@@ -44,7 +44,7 @@ public class UnGroupedPartSubscriberTest {
         assertEquals(messageMetadataList.size(), noOfMessages);
 
         int count = 0;
-        PeekingIterator<MessageWithMetadata> iterator = partSubscriber.iterator();
+        PeekingIterator<IterableMessage> iterator = partSubscriber.iterator();
 
         CountDownLatch latch = new CountDownLatch(1);
         int moreNoOfMessages = 5;

@@ -59,29 +59,29 @@ public class PartSubscriber implements IPartSubscriber {
     }
 
     @Override
-    public PeekingIterator<MessageWithMetadata> iterator() {
+    public PeekingIterator<IterableMessage> iterator() {
         return getIterator(QType.MAIN);
     }
 
     @Override
-    public PeekingIterator<MessageWithMetadata> sidelineIterator() {
+    public PeekingIterator<IterableMessage> sidelineIterator() {
         return getPartSubscriberIterator(QType.SIDELINE);
     }
 
     @Override
-    public PeekingIterator<MessageWithMetadata> retryIterator(int retryQNo) {
+    public PeekingIterator<IterableMessage> retryIterator(int retryQNo) {
         QType qType = QType.retryQType(retryQNo);
         return getPartSubscriberIterator(qType);
     }
 
-    private PeekingIterator<MessageWithMetadata> getPartSubscriberIterator(QType qType) {
+    private PeekingIterator<IterableMessage> getPartSubscriberIterator(QType qType) {
         return getIterator(qType);
     }
 
-    private PeekingIterator<MessageWithMetadata> getIterator(QType qType) {
+    private PeekingIterator<IterableMessage> getIterator(QType qType) {
         return new PartSubscriberIterator() {
             @Override
-            protected Optional<PeekingIterator<MessageWithMetadata>> nextIterator() {
+            protected Optional<PeekingIterator<IterableMessage>> nextIterator() {
                 return subPartDataManager.getIterator(partSubscription, qType);
             }
         };

@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
-public class UnGroupedMessageWithMetadata implements MessageWithMetadata {
+public class UnGroupedIterableMessage implements IterableMessage {
     @Getter
     private final Message message;
     private final PartSubscription partSubscription;

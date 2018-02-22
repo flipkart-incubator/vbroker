@@ -2,7 +2,7 @@ package com.flipkart.vbroker.iterators;
 
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
-import com.flipkart.vbroker.subscribers.MessageWithMetadata;
+import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.google.common.collect.PeekingIterator;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -18,7 +18,7 @@ public abstract class UnGroupedFailedMessageIterator implements PeekingIterator<
 
     protected abstract int getTotalSize();
 
-    protected abstract MessageWithMetadata getMessageWithMetadata(int indexNo);
+    protected abstract IterableMessage getMessageWithMetadata(int indexNo);
 
     @Override
     public Message next() {

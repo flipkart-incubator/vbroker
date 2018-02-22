@@ -2,7 +2,7 @@ package com.flipkart.vbroker.data;
 
 import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.core.PartSubscription;
-import com.flipkart.vbroker.subscribers.MessageWithMetadata;
+import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.flipkart.vbroker.subscribers.QType;
 import com.flipkart.vbroker.subscribers.SubscriberGroup;
 import com.google.common.collect.PeekingIterator;
@@ -49,23 +49,23 @@ public class InMemorySubPartDataManager implements SubPartDataManager {
     }
 
     @Override
-    public CompletionStage<Void> sideline(PartSubscription partSubscription, MessageWithMetadata messageWithMetadata) {
-        return getSubPartDataAsync(partSubscription).thenCompose(subPartData -> subPartData.sideline(messageWithMetadata));
+    public CompletionStage<Void> sideline(PartSubscription partSubscription, IterableMessage iterableMessage) {
+        return getSubPartDataAsync(partSubscription).thenCompose(subPartData -> subPartData.sideline(iterableMessage));
     }
 
     @Override
-    public CompletionStage<Void> retry(PartSubscription partSubscription, MessageWithMetadata messageWithMetadata) {
-        return getSubPartDataAsync(partSubscription).thenCompose(subPartData -> subPartData.retry(messageWithMetadata));
+    public CompletionStage<Void> retry(PartSubscription partSubscription, IterableMessage iterableMessage) {
+        return getSubPartDataAsync(partSubscription).thenCompose(subPartData -> subPartData.retry(iterableMessage));
     }
 
     @Override
-    public PeekingIterator<MessageWithMetadata> getIterator(PartSubscription partSubscription, String groupId) {
+    public PeekingIterator<IterableMessage> getIterator(PartSubscription partSubscription, String groupId) {
         return getSubPartDataAsync(partSubscription).thenApplyAsync(subPartData -> subPartData.getIterator(groupId))
             .toCompletableFuture().join(); //TODO: fix this!
     }
 
     @Override
-    public Optional<PeekingIterator<MessageWithMetadata>> getIterator(PartSubscription partSubscription, QType qType) {
+    public Optional<PeekingIterator<IterableMessage>> getIterator(PartSubscription partSubscription, QType qType) {
         return getSubPartDataAsync(partSubscription).thenApplyAsync(subPartData -> subPartData.getIterator(qType))
             .toCompletableFuture().join(); //TODO: fix this!
     }

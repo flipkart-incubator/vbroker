@@ -3,7 +3,7 @@ package com.flipkart.vbroker.data;
 import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.exceptions.VBrokerException;
-import com.flipkart.vbroker.subscribers.MessageWithMetadata;
+import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.flipkart.vbroker.subscribers.QType;
 import com.flipkart.vbroker.subscribers.SubscriberGroup;
 import com.google.common.collect.PeekingIterator;
@@ -23,7 +23,7 @@ public class InMemoryGroupedSubPartData implements SubPartData {
     @Getter
     private final PartSubscription partSubscription;
     private final Map<String, SubscriberGroup> subscriberGroupsMap = new LinkedHashMap<>();
-    private final Map<SubscriberGroup, PeekingIterator<MessageWithMetadata>> subscriberGroupIteratorMap = new LinkedHashMap<>();
+    private final Map<SubscriberGroup, PeekingIterator<IterableMessage>> subscriberGroupIteratorMap = new LinkedHashMap<>();
     private final Map<QType, List<String>> failedGroups = new LinkedHashMap<>();
 
     public InMemoryGroupedSubPartData(PartSubscription partSubscription) {
@@ -53,23 +53,23 @@ public class InMemoryGroupedSubPartData implements SubPartData {
         });
     }
 
-    private List<String> getFailedGroupsByBlocking(MessageWithMetadata messageWithMetadata) {
-        failedGroups.computeIfAbsent(messageWithMetadata.getQType(), qType1 -> new LinkedList<>());
-        return failedGroups.get(messageWithMetadata.getQType());
+    private List<String> getFailedGroupsByBlocking(IterableMessage iterableMessage) {
+        failedGroups.computeIfAbsent(iterableMessage.getQType(), qType1 -> new LinkedList<>());
+        return failedGroups.get(iterableMessage.getQType());
     }
 
     @Override
-    public CompletionStage<Void> sideline(MessageWithMetadata messageWithMetadata) {
-        return getFailedGroups(messageWithMetadata.getQType()).thenApplyAsync(groups -> {
-            groups.add(messageWithMetadata.getGroupId());
+    public CompletionStage<Void> sideline(IterableMessage iterableMessage) {
+        return getFailedGroups(iterableMessage.getQType()).thenApplyAsync(groups -> {
+            groups.add(iterableMessage.getGroupId());
             return null;
         });
     }
 
     @Override
-    public CompletionStage<Void> retry(MessageWithMetadata messageWithMetadata) {
+    public CompletionStage<Void> retry(IterableMessage iterableMessage) {
         QType destinationQType;
-        switch (messageWithMetadata.getQType()) {
+        switch (iterableMessage.getQType()) {
             case MAIN:
                 destinationQType = RETRY_1;
                 break;
@@ -83,23 +83,23 @@ public class InMemoryGroupedSubPartData implements SubPartData {
                 destinationQType = QType.SIDELINE;
                 break;
             default:
-                throw new VBrokerException("Unknown QType: " + messageWithMetadata.getQType());
+                throw new VBrokerException("Unknown QType: " + iterableMessage.getQType());
         }
 
         return getFailedGroups(destinationQType).thenApplyAsync(groups -> {
-            groups.add(messageWithMetadata.getGroupId());
+            groups.add(iterableMessage.getGroupId());
             return null;
         });
     }
 
     @Override
-    public PeekingIterator<MessageWithMetadata> getIterator(String groupId) {
+    public PeekingIterator<IterableMessage> getIterator(String groupId) {
         SubscriberGroup subscriberGroup = subscriberGroupsMap.get(groupId);
         return subscriberGroupIteratorMap.get(subscriberGroup);
     }
 
     @Override
-    public Optional<PeekingIterator<MessageWithMetadata>> getIterator(QType qType) {
+    public Optional<PeekingIterator<IterableMessage>> getIterator(QType qType) {
         CompletionStage<List<String>> values;
 
         switch (qType) {

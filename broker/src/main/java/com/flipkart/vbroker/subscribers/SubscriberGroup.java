@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 @EqualsAndHashCode(exclude = {"qType", "currSeqNo", "topicPartDataManager", "locked"})
 //TODO: crude implementation of seqNo. Handle the concurrency here correctly
-public class SubscriberGroup implements Iterable<MessageWithMetadata> {
+public class SubscriberGroup implements Iterable<IterableMessage> {
     private final MessageGroup messageGroup;
     @Getter
     private final TopicPartition topicPartition;
@@ -84,7 +84,7 @@ public class SubscriberGroup implements Iterable<MessageWithMetadata> {
     }
 
     @Override
-    public PeekingIterator<MessageWithMetadata> iterator() {
+    public PeekingIterator<IterableMessage> iterator() {
         return new SubscriberGroupIterator(this);
     }
 
@@ -96,7 +96,7 @@ public class SubscriberGroup implements Iterable<MessageWithMetadata> {
         return this.partSubscription;
     }
 
-    private class SubscriberGroupIterator implements PeekingIterator<MessageWithMetadata> {
+    private class SubscriberGroupIterator implements PeekingIterator<IterableMessage> {
 
         SubscriberGroup subscriberGroup;
         PeekingIterator<Message> groupIterator = topicPartDataManager.getIterator(topicPartition, getGroupId(), currSeqNo.get());
@@ -106,13 +106,13 @@ public class SubscriberGroup implements Iterable<MessageWithMetadata> {
         }
 
         @Override
-        public synchronized GroupedMessageWithMetadata peek() {
-            return GroupedMessageWithMetadata.newInstance(groupIterator.peek(), subscriberGroup);
+        public synchronized GroupedIterableMessage peek() {
+            return GroupedIterableMessage.newInstance(groupIterator.peek(), subscriberGroup);
         }
 
         @Override
-        public synchronized GroupedMessageWithMetadata next() {
-            GroupedMessageWithMetadata messageWithGroup = GroupedMessageWithMetadata.newInstance(groupIterator.next(), subscriberGroup);
+        public synchronized GroupedIterableMessage next() {
+            GroupedIterableMessage messageWithGroup = GroupedIterableMessage.newInstance(groupIterator.next(), subscriberGroup);
             currSeqNo.incrementAndGet();
             return messageWithGroup;
         }

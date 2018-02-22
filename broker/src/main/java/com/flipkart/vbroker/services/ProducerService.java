@@ -19,7 +19,7 @@ public class ProducerService {
 
     private final TopicPartDataManager topicPartDataManager;
 
-    //TODO: make this return MessageWithMetadata which contains where the message is produced
+    //TODO: make this return IterableMessage which contains where the message is produced
     public CompletionStage<MessageMetadata> produceMessage(TopicPartMessage topicPartMessage) {
         Message message = topicPartMessage.getMessage();
         TopicPartition topicPartition = topicPartMessage.getTopicPartition();
