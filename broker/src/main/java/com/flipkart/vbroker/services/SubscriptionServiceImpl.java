@@ -3,6 +3,7 @@ package com.flipkart.vbroker.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.PartSubscription;
+import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.entities.Subscription;
 import com.flipkart.vbroker.entities.Topic;
@@ -32,6 +33,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private final VBrokerConfig config;
     private final CuratorService curatorService;
     private final TopicPartDataManager topicPartDataManager;
+    private final SubPartDataManager subPartDataManager;
     private final TopicService topicService;
 
     private final ConcurrentMap<Short, Subscription> subscriptionsMap = new ConcurrentHashMap<>();
@@ -71,7 +73,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             //wanted below to work but its creating a new PartSubscriber each time though key is already present
             //subscriberMap.putIfAbsent(partSubscription, new PartSubscriber(partSubscription));
 
-            subscriberMap.computeIfAbsent(partSubscription, partSubscription1 -> new PartSubscriber(topicPartDataManager, partSubscription1));
+            subscriberMap.computeIfAbsent(partSubscription, partSubscription1 -> {
+                return new PartSubscriber(topicPartDataManager, subPartDataManager, partSubscription1);
+            });
             return subscriberMap.get(partSubscription);
         });
     }

@@ -2,6 +2,8 @@ package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.controller.VBrokerController;
+import com.flipkart.vbroker.data.InMemorySubPartDataManager;
+import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
 import com.flipkart.vbroker.data.redis.RedisMessageCodec;
@@ -90,8 +92,9 @@ public class VBrokerServer extends AbstractExecutionThreadService {
         TopicPartDataManager topicPartDataManager = new InMemoryTopicPartDataManager();
         //TopicPartDataManager redisTopicPartDataManager = new RedisTopicPartDataManager(Redisson.create(redissonConfig));
 
+        SubPartDataManager subPartDataManager = new InMemorySubPartDataManager(topicPartDataManager);
         //SubscriptionService subscriptionService = new SubscriptionServiceImpl(config, curatorService, topicPartDataManager, topicService);
-        SubscriptionService subscriptionService = new InMemorySubscriptionService(topicService, topicPartDataManager);
+        SubscriptionService subscriptionService = new InMemorySubscriptionService(topicService, topicPartDataManager, subPartDataManager);
 
         TopicMetadataService topicMetadataService = new TopicMetadataService(topicService, topicPartDataManager);
         SubscriberMetadataService subscriberMetadataService = new SubscriberMetadataService(subscriptionService, topicService, topicPartDataManager);
@@ -151,7 +154,11 @@ public class VBrokerServer extends AbstractExecutionThreadService {
                 .setThreadFactory(new DefaultThreadFactory("async_http_client"))
                 .build();
             AsyncHttpClient httpClient = new DefaultAsyncHttpClient(httpClientConfig);
-            MessageProcessor messageProcessor = new HttpMessageProcessor(httpClient, topicService, subscriptionService, producerService);
+            MessageProcessor messageProcessor = new HttpMessageProcessor(httpClient,
+                topicService,
+                subscriptionService,
+                producerService,
+                subPartDataManager);
 
             brokerSubscriber = new BrokerSubscriber(subscriptionService,
                 messageProcessor,

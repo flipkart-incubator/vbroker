@@ -7,6 +7,7 @@ import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.entities.Subscription;
 import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.subscribers.IPartSubscriber;
+import com.flipkart.vbroker.subscribers.QType;
 import com.flipkart.vbroker.subscribers.SubscriberGroup;
 import com.flipkart.vbroker.utils.SubscriptionUtils;
 import lombok.AllArgsConstructor;
@@ -61,7 +62,7 @@ public class SubscriberMetadataService {
                     SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, partSubscription, topicPartDataManager);
                     try {
                         BufferedReader reader = new BufferedReader(new FileReader(subscriberGroupFile));
-                        SubscriberGroup.QType qType = SubscriberGroup.QType.valueOf(reader.readLine());
+                        QType qType = QType.valueOf(reader.readLine());
                         AtomicInteger seqNo = new AtomicInteger(Integer.parseInt(reader.readLine()));
                         subscriberGroup.setCurrSeqNo(seqNo);
                         subscriberGroup.setQType(qType);

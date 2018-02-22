@@ -1,6 +1,7 @@
 package com.flipkart.vbroker.services;
 
 import com.flipkart.vbroker.core.PartSubscription;
+import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.entities.Subscription;
 import com.flipkart.vbroker.subscribers.IPartSubscriber;
@@ -25,10 +26,14 @@ public class InMemorySubscriptionService implements SubscriptionService {
     private final TopicPartDataManager topicPartDataManager;
     private final ConcurrentMap<Short, Subscription> subscriptionsMap = new ConcurrentHashMap<>();
     private final ConcurrentMap<PartSubscription, IPartSubscriber> subscriberMap = new ConcurrentHashMap<>();
+    private final SubPartDataManager subPartDataManager;
 
-    public InMemorySubscriptionService(TopicService topicService, TopicPartDataManager topicPartDataManager) {
+    public InMemorySubscriptionService(TopicService topicService,
+                                       TopicPartDataManager topicPartDataManager,
+                                       SubPartDataManager subPartDataManager) {
         this.topicService = topicService;
         this.topicPartDataManager = topicPartDataManager;
+        this.subPartDataManager = subPartDataManager;
     }
 
     @Override
@@ -64,9 +69,9 @@ public class InMemorySubscriptionService implements SubscriptionService {
             subscriberMap.computeIfAbsent(partSubscription, partSubscription1 -> {
                 IPartSubscriber partSubscriber;
                 if (partSubscription1.isGrouped()) {
-                    partSubscriber = new PartSubscriber(topicPartDataManager, partSubscription1);
+                    partSubscriber = new PartSubscriber(topicPartDataManager, subPartDataManager, partSubscription1);
                 } else {
-                    partSubscriber = new UnGroupedPartSubscriber(topicPartDataManager, partSubscription1);
+                    partSubscriber = new UnGroupedPartSubscriber(subPartDataManager, partSubscription1);
                 }
                 return partSubscriber;
             });
