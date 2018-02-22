@@ -17,6 +17,8 @@ public interface TopicService {
      */
     public CompletionStage<Topic> createTopic(Topic topic) throws TopicValidationException;
 
+    public CompletionStage<Topic> createTopicAdmin(Topic topic) throws TopicValidationException;
+
     // public void createTopicPartition(Topic topic, TopicPartition topicPartition);
 
     /**

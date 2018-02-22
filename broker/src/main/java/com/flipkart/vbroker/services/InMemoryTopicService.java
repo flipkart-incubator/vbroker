@@ -49,4 +49,10 @@ public class InMemoryTopicService implements TopicService {
     public CompletionStage<List<Topic>> getAllTopics() {
         return CompletableFuture.supplyAsync(() -> new ArrayList<>(topicsMap.values()));
     }
+
+    @Override
+    public CompletionStage<Topic> createTopicAdmin(Topic topic) throws TopicValidationException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

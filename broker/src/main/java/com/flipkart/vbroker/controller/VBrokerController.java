@@ -4,22 +4,17 @@ import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.services.CuratorService;
 import com.flipkart.vbroker.services.TopicService;
 import com.flipkart.vbroker.utils.TopicUtils;
-import com.google.common.primitives.Shorts;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.WatchedEvent;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.Objects.nonNull;
 
 /**
- * global broker controller
- * which is leader elected across all broker nodes
+ * global broker controller which is leader elected across all broker nodes
  */
 @Slf4j
 public class VBrokerController extends AbstractExecutionThreadService {
@@ -34,9 +29,7 @@ public class VBrokerController extends AbstractExecutionThreadService {
     private final CountDownLatch runningLatch = new CountDownLatch(1);
     private volatile AtomicBoolean running = new AtomicBoolean(false);
 
-    public VBrokerController(CuratorService curatorService,
-                             TopicService topicService,
-                             VBrokerConfig config) {
+    public VBrokerController(CuratorService curatorService, TopicService topicService, VBrokerConfig config) {
         this.curatorService = curatorService;
         this.topicService = topicService;
         this.config = config;
@@ -51,9 +44,12 @@ public class VBrokerController extends AbstractExecutionThreadService {
     protected void startUp() throws Exception {
         log.info("Setting up controller watches");
         running.set(true);
+        watch();
+    }
 
-        //set watches on admin create_topic task
-        curatorService.watchNodeChildren(adminCreateTopicPath)
+    protected void watch() throws Exception {
+        // set watches on admin create_topic task
+        CompletionStage<Void> stage = curatorService.watchNodeChildren(adminCreateTopicPath)
             .thenAcceptAsync(watchedEvent -> {
                 log.info("Handling {} event", watchedEvent.getType());
                 watchEventsQueue.offer(watchedEvent);
@@ -63,8 +59,8 @@ public class VBrokerController extends AbstractExecutionThreadService {
     @Override
     protected void run() throws Exception {
         while (this.running.get()) {
-            WatchedEvent watchedEvent =
-                watchEventsQueue.poll(config.getControllerQueuePollTimeMs(), TimeUnit.MILLISECONDS);
+            WatchedEvent watchedEvent = watchEventsQueue.poll(config.getControllerQueuePollTimeMs(),
+                TimeUnit.MILLISECONDS);
             if (nonNull(watchedEvent)) {
                 handleWatchEvent(watchedEvent);
             }
@@ -81,7 +77,7 @@ public class VBrokerController extends AbstractExecutionThreadService {
         log.info("Handling WatchedEvent {}", watchedEvent);
 
         String watchedEventPath = watchedEvent.getPath();
-        //TODO: model this as commands
+        // TODO: model this as commands
         switch (watchedEvent.getType()) {
             case NodeChildrenChanged:
                 handleNodeChildrenChanged(watchedEventPath);
@@ -90,8 +86,6 @@ public class VBrokerController extends AbstractExecutionThreadService {
             case NodeCreated:
             case NodeDeleted:
             case NodeDataChanged:
-            case DataWatchRemoved:
-            case ChildWatchRemoved:
             default:
                 log.info("Unsupported watchedEvent type {}. Ignoring", watchedEvent.getType());
                 break;
@@ -99,31 +93,29 @@ public class VBrokerController extends AbstractExecutionThreadService {
     }
 
     private void handleNodeChildrenChanged(String watchedEventPath) {
-        curatorService.getChildren(watchedEventPath)
-            .thenAcceptAsync(children -> children.forEach(child -> {
-                if (adminCreateTopicPath.equalsIgnoreCase(watchedEventPath)) {
-                    String fullPath = watchedEventPath + "/" + child;
-                    handleTopicCreation(fullPath, child);
-                }
-            }));
+        curatorService.getChildren(watchedEventPath).thenAcceptAsync(children -> children.forEach(child -> {
+            if (adminCreateTopicPath.equalsIgnoreCase(watchedEventPath)) {
+                String fullPath = watchedEventPath + "/" + child;
+                handleTopicCreation(fullPath, child);
+            }
+        }));
     }
 
     private void handleTopicCreation(String fullPath, String nodeName) {
-        short topicId = Shorts.fromByteArray(nodeName.getBytes());
-        topicService.isTopicPresent(topicId)
-            .thenAcceptAsync(isPresent -> {
-                if (isPresent) {
-                    log.error("Topic with id {} already present. Cannot create again. Ignoring", topicId);
-                } else {
-                    curatorService.getData(fullPath)
-                        .thenComposeAsync(bytes -> topicService.createTopic(TopicUtils.getTopic(bytes)));
-                }
-            }).toCompletableFuture().join(); //make it blocking here
+        short topicId = Short.valueOf(nodeName);
+        topicService.isTopicPresent(topicId).thenAcceptAsync(isPresent -> {
+            if (isPresent) {
+                log.error("Topic with id {} already present. Cannot create again. Ignoring", topicId);
+            } else {
+                curatorService.getData(fullPath)
+                    .thenComposeAsync(bytes -> topicService.createTopicAdmin(TopicUtils.getTopic(bytes)));
+            }
+        }).toCompletableFuture().join(); // make it blocking here
     }
 
     @Override
     protected void triggerShutdown() {
-        //TODO: cleanup watches first
+        // TODO: cleanup watches first
         running.set(false);
         try {
             runningLatch.await();

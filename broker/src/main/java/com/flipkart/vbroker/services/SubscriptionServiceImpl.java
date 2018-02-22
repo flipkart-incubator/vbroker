@@ -23,10 +23,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.*;
 
 import static java.util.Objects.nonNull;
 
@@ -44,7 +41,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public CompletionStage<Subscription> createSubscription(Subscription subscription) {
-    	short id = IdGenerator.randomId();
+        short id = IdGenerator.randomId();
         String path = config.getTopicsPath() + "/" + subscription.topicId() + "/subscriptions/" + id;
 
         return curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT, subscription.getByteBuffer().array())
@@ -151,84 +148,37 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     public CompletionStage<List<Subscription>> getAllSubscriptionsForBroker(String brokerId) {
         String hostPath = "/brokers/" + brokerId + "/subscriptions";
         List<Subscription> subscriptions = new ArrayList<>();
-        return curatorService.getChildren(hostPath)
-            .handleAsync((data, exception) -> {
-                if (exception != null) {
-                    log.error("Error while fetching subscription ids for broker - {}", exception);
-                    throw new VBrokerException("Error while fetching subscriptions");
-                } else {
-                    List<String> subscriptionIds = data;
-                    if (nonNull(subscriptionIds)) {
-                        List<CompletableFuture> subStages = new ArrayList<CompletableFuture>();
-                        log.info("No of subscriptions is {}", subscriptionIds.size());
-                        for (String id : subscriptionIds) {
-                            String[] arr = id.split("-");
-                            if (arr == null || arr.length != 2) {
-                                log.error("Unexpected topic-partition id in broker assignment - {}", id);
-                                throw new VBrokerException("Invalid id in broker assignment");
-                            } else {
-                                CompletionStage<Object> subStage = this
-                                    .getSubscription(Short.valueOf(arr[0]), Short.valueOf(arr[1]))
-                                    .handleAsync((subData, subException) -> {
-                                        if (subException != null) {
-                                            log.error("Error while fetching subscription data for id {}", id);
-                                            throw new VBrokerException("Error while fetching subscription");
-                                        } else {
-                                            subscriptions.add(subData);
-                                            return null;
-                                        }
-                                    });
-                                subStages.add(subStage.toCompletableFuture());
-                            }
-                        }
-                        CompletableFuture<Void> combined = CompletableFuture
-                            .allOf((CompletableFuture<?>[]) subStages.toArray());
-                        combined.handleAsync((combinedData, combinedException) -> {
-                            if (combinedException != null) {
-                                log.error("Error while combining futures of subscription fetch {}",
-                                    combinedException);
-                                throw new VBrokerException("Error while fetching subscriptions");
-                            } else {
-                                return subscriptions;
-                            }
-                        });
-                    }
-                    return subscriptions;
-                }
-            });
-    }
-
-    @Override
-    public CompletionStage<List<Subscription>> getSubscriptionsForTopic(short topicId) {
-        String path = config.getTopicsPath() + "/" + topicId + "/subscriptions";
-        return curatorService.getChildren(path).handleAsync((data, exception) -> {
+        return curatorService.getChildren(hostPath).handleAsync((data, exception) -> {
             if (exception != null) {
-                log.error("Error in fetching subscriptions for topic  {}", exception);
-                throw new VBrokerException(exception.getMessage());
+                log.error("Error while fetching subscription ids for broker - {}", exception);
+                throw new VBrokerException("Error while fetching subscriptions");
             } else {
-                List<Subscription> subscriptions = new ArrayList<>();
-                if (nonNull(data)) {
-                    // There are child nodes. Fetch corresponding data for each
-                    // and combine to send whole list.
+                List<String> subscriptionIds = data;
+                if (nonNull(subscriptionIds)) {
                     List<CompletableFuture> subStages = new ArrayList<CompletableFuture>();
-                    for (String id : data) {
-                        CompletionStage<Object> stage = this.getSubscription(topicId, Short.valueOf(id))
-                            .handleAsync((subData, subException) -> {
-                                if (subException != null) {
-                                    log.error("Exception while fetching subscription data for {}", id);
-                                    throw new VBrokerException("Error while fetching subscription with id " + id);
-                                } else {
-                                    subscriptions.add(subData);
-                                    return null;
-                                }
-                            });
-                        subStages.add(stage.toCompletableFuture());
+                    log.info("No of subscriptions is {}", subscriptionIds.size());
+                    for (String id : subscriptionIds) {
+                        String[] arr = id.split("-");
+                        if (arr == null || arr.length != 2) {
+                            log.error("Unexpected topic-partition id in broker assignment - {}", id);
+                            throw new VBrokerException("Invalid id in broker assignment");
+                        } else {
+                            CompletionStage<Object> subStage = this
+                                .getSubscription(Short.valueOf(arr[0]), Short.valueOf(arr[1]))
+                                .handleAsync((subData, subException) -> {
+                                    if (subException != null) {
+                                        log.error("Error while fetching subscription data for id {}", id);
+                                        throw new VBrokerException("Error while fetching subscription");
+                                    } else {
+                                        subscriptions.add(subData);
+                                        return null;
+                                    }
+                                });
+                            subStages.add(subStage.toCompletableFuture());
+                        }
                     }
-
                     CompletableFuture<Void> combined = CompletableFuture
                         .allOf((CompletableFuture<?>[]) subStages.toArray());
-                    // combining futures to make sure response contains all
-                    // data.
                     combined.handleAsync((combinedData, combinedException) -> {
                         if (combinedException != null) {
                             log.error("Error while combining futures of subscription fetch {}", combinedException);
@@ -237,12 +187,65 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                             return subscriptions;
                         }
                     });
-                } else {
-                    return subscriptions;
+                }
+                return subscriptions;
+            }
+        });
+    }
+
+    public CompletionStage<List<Subscription>> getSubscriptionsForIds(short topicId, List<String> ids) {
+        CompletableFuture[] stages = new CompletableFuture[ids.size()];
+        List<Subscription> subs = new ArrayList<>();
+        int j = 0;
+        for (String id : ids) {
+            stages[j] = this.getSubscription(topicId, Short.valueOf(id)).toCompletableFuture();
+            j++;
+        }
+        return CompletableFuture.allOf(stages).handleAsync((data, exception) -> {
+            for (int i = 0; i < stages.length; i++) {
+                Subscription sub;
+                try {
+                    sub = (Subscription) stages[i].toCompletableFuture().get();
+                    subs.add(sub);
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
                 }
             }
-            // something's wrong if it reaches here.
-            return null;
+            return subs;
+        });
+
+    }
+
+    @Override
+    public CompletionStage<List<Subscription>> getSubscriptionsForTopic(short topicId) {
+
+        String path = config.getTopicsPath() + "/" + topicId + "/subscriptions";
+        List<Subscription> subscriptions = new ArrayList<>();
+
+        return curatorService.getChildren(path).thenCompose((data) -> {
+            if (nonNull(data)) {
+                List<CompletableFuture> subStages = new ArrayList<CompletableFuture>();
+                for (String id : data) {
+                    CompletionStage<Object> stage = this.getSubscription(topicId, Short.valueOf(id))
+                        .handleAsync((subData, subException) -> {
+                            if (subException != null) {
+                                log.error("Exception while fetching subscription data for {}", id);
+                                throw new VBrokerException("Error while fetching subscription with id " + id);
+                            } else {
+                                subscriptions.add(subData);
+                                return null;
+                            }
+                        });
+                    subStages.add(stage.toCompletableFuture());
+                }
+                CompletableFuture<Void> combined = CompletableFuture
+                    .allOf(subStages.toArray(new CompletableFuture[subStages.size()]));
+                return combined.handleAsync((combinedData, combinedException) -> {
+                    return subscriptions;
+                });
+            } else {
+                return null;
+            }
         });
     }
 

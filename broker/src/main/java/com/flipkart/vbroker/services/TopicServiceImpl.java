@@ -4,6 +4,7 @@ import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.exceptions.TopicCreationException;
+import com.flipkart.vbroker.exceptions.TopicNotFoundException;
 import com.flipkart.vbroker.exceptions.TopicValidationException;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.utils.ByteBufUtils;
@@ -13,6 +14,7 @@ import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.KeeperException;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -32,23 +34,24 @@ public class TopicServiceImpl implements TopicService {
             throw new TopicValidationException("Topic create validation failed");
         }
         short id = IdGenerator.randomId();
-        String topicPath = config.getTopicsPath() + "/" + id;
-        return curatorService.createNodeAndSetData(topicPath, CreateMode.PERSISTENT,
-            ByteBufUtils.getBytes(topic.getByteBuffer())).handleAsync((data, exception) -> {
-            if (exception != null) {
-                log.error("Exception in curator node create and set data stage {} ", exception);
-                throw new TopicCreationException(exception.getMessage());
-            } else {
-                String arr[] = data.split("/");
-                if (!data.contains("/") || arr.length != 3) {
-                    log.error("Invalid id {}", data);
-                    throw new TopicCreationException("Invalid id data from curator " + data);
+        String topicPath = config.getAdminTasksPath() + "/create_topic" + "/" + id;
+        return curatorService
+            .createNodeAndSetData(topicPath, CreateMode.PERSISTENT, ByteBufUtils.getBytes(topic.getByteBuffer()))
+            .handleAsync((data, exception) -> {
+                if (exception != null) {
+                    log.error("Exception in curator node create and set data stage {} ", exception);
+                    throw new TopicCreationException(exception.getMessage());
+                } else {
+                    String arr[] = data.split("/");
+                    if (!data.contains("/") || arr.length != 4) {
+                        log.error("Invalid id {}", data);
+                        throw new TopicCreationException("Invalid id data from curator " + data);
+                    }
+                    String topicId = arr[3];
+                    log.info("Created topic with id - " + topicId);
+                    return newTopicModelFromTopic(Short.valueOf(topicId), topic);
                 }
-                String topicId = arr[2];
-                log.info("Created topic with id - " + topicId);
-                return newTopicModelFromTopic(Short.valueOf(topicId), topic);
-            }
-        });
+            });
     }
 
     /**
@@ -87,6 +90,9 @@ public class TopicServiceImpl implements TopicService {
     public CompletionStage<Boolean> isTopicPresent(short topicId) {
         return this.getTopic(topicId).handleAsync((data, exception) -> {
             if (exception != null) {
+                if (exception.getCause() instanceof TopicNotFoundException) {
+                    return false;
+                }
                 log.error("Error while fetchig topic with id {} - {}", topicId, exception);
                 throw new VBrokerException(exception.getMessage());
             } else if (data != null) {
@@ -110,6 +116,11 @@ public class TopicServiceImpl implements TopicService {
     public CompletionStage<Topic> getTopic(short topicId) {
         return curatorService.getData(config.getTopicsPath() + "/" + topicId).handleAsync((data, exception) -> {
             if (exception != null) {
+                if (exception instanceof KeeperException) {
+                    if (KeeperException.Code.NONODE.equals(((KeeperException) exception).code())) {
+                        throw new TopicNotFoundException();
+                    }
+                }
                 log.error("Error while fethcing topic with id {} - {}", topicId, exception);
                 throw new VBrokerException(exception.getMessage());
             } else {
@@ -140,6 +151,7 @@ public class TopicServiceImpl implements TopicService {
                         return null;
                     }
                 }));
+
                 return topics;
             }
         });
@@ -147,5 +159,31 @@ public class TopicServiceImpl implements TopicService {
 
     private boolean checkIfPresent(List<Topic> topics, String name) {
         return topics.stream().anyMatch(topic -> topic.name().equals(name));
+    }
+
+    @Override
+    public CompletionStage<Topic> createTopicAdmin(Topic topic) throws TopicValidationException {
+        if (!validateCreateTopic(topic)) {
+            throw new TopicValidationException("Topic create validation failed");
+        }
+        short id = IdGenerator.randomId();
+        String topicPath = config.getTopicsPath() + "/" + id;
+        return curatorService
+            .createNodeAndSetData(topicPath, CreateMode.PERSISTENT, ByteBufUtils.getBytes(topic.getByteBuffer()))
+            .handleAsync((data, exception) -> {
+                if (exception != null) {
+                    log.error("Exception in curator node create and set data stage {} ", exception);
+                    throw new TopicCreationException(exception.getMessage());
+                } else {
+                    String arr[] = data.split("/");
+                    if (!data.contains("/") || arr.length != 3) {
+                        log.error("Invalid id {}", data);
+                        throw new TopicCreationException("Invalid id data from curator " + data);
+                    }
+                    String topicId = arr[2];
+                    log.info("Created topic with id - " + topicId);
+                    return newTopicModelFromTopic(Short.valueOf(topicId), topic);
+                }
+            });
     }
 }
