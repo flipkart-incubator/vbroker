@@ -2,7 +2,9 @@ package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.subscribers.IterableMessage;
 
+import java.util.concurrent.CompletionStage;
+
 public interface MessageProcessor {
 
-    void process(IterableMessage messageWithGroup) throws Exception;
+    CompletionStage<Void> process(IterableMessage messageWithGroup) throws Exception;
 }

@@ -52,6 +52,10 @@ public class SubscriberIterator implements PeekingIterator<IterableMessage> {
         return currIterator.hasNext();
     }
 
+    public PeekingIterator<IterableMessage> getCurrIterator() {
+        return currIterator;
+    }
+
     @Override
     public IterableMessage next() {
         return currIterator.next();

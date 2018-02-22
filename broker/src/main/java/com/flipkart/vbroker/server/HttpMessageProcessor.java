@@ -12,19 +12,19 @@ import com.flipkart.vbroker.services.ProducerService;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
 import com.flipkart.vbroker.subscribers.IterableMessage;
-import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.asynchttpclient.*;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.Request;
+import org.asynchttpclient.RequestBuilder;
+import org.asynchttpclient.Response;
 
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static java.util.Objects.nonNull;
@@ -41,11 +41,9 @@ public class HttpMessageProcessor implements MessageProcessor {
     private final SubPartDataManager subPartDataManager;
 
     @Override
-    public void process(IterableMessage iterableMessage) throws Exception {
+    public CompletionStage<Void> process(IterableMessage iterableMessage) {
         Message message = iterableMessage.getMessage();
-
         String httpUri = requireNonNull(message.httpUri());
-        URI uri = new URI(httpUri);
 
         RequestBuilder requestBuilder = new RequestBuilder()
             .setUrl(requireNonNull(message.httpUri()))
@@ -65,47 +63,43 @@ public class HttpMessageProcessor implements MessageProcessor {
         log.info("Making httpRequest to httpUri: {} and httpMethod: {}",
             httpUri,
             HttpMethod.name(message.httpMethod()));
-        ListenableFuture<Response> reqFuture = httpClient.executeRequest(request);
-        /*
-         * not passing a thread pool to the reqFuture here
-         * it will use the default IO thread where no one should block in our code
-         */
-        reqFuture.addListener(() -> {
-            try {
-                Response response = reqFuture.get(5, TimeUnit.SECONDS);
-                handleResponse(response, iterableMessage);
-            } catch (InterruptedException | ExecutionException e) {
-                log.error("Exception in executing request", e);
-                //subPartDataManager.sideline(iterableMessage)
-                sideline(iterableMessage);
-            } catch (TimeoutException e) {
-                log.error("Timed out while making the http request", e);
-                retry(iterableMessage);
-            } finally {
-                iterableMessage.unlock();
-            }
-        }, null);
+
+        CompletableFuture<Response> reqFuture = httpClient
+            .executeRequest(request)
+            .toCompletableFuture();
+
+        return reqFuture
+            .thenApply(response -> handleResponse(response, iterableMessage).toCompletableFuture())
+            .exceptionally(throwable -> {
+                if (throwable instanceof TimeoutException) {
+                    return retry(iterableMessage).toCompletableFuture();
+                } else {
+                    return sideline(iterableMessage).toCompletableFuture();
+                }
+            })
+            .thenCompose(voidCompletableFuture -> voidCompletableFuture);
     }
 
-    private void handleResponse(Response response, IterableMessage iterableMessage) {
+    private CompletionStage<Void> handleResponse(Response response, IterableMessage iterableMessage) {
         int statusCode = response.getStatusCode();
+        CompletionStage<Void> completionStage = CompletableFuture.completedFuture(null);
         if (statusCode >= 200 && statusCode < 300) {
             log.info("Response code is {}. Success in making httpRequest. Message processing now complete", statusCode);
         } else if (statusCode >= 400 && statusCode < 500) {
             log.info("Response is 4xx. Sidelining the message");
-            sideline(iterableMessage);
+            completionStage = sideline(iterableMessage);
         } else if (statusCode >= 500 && statusCode < 600) {
             log.info("Response is 5xx. Retrying the message");
-            retry(iterableMessage);
+            completionStage = retry(iterableMessage);
         }
 
-        handleCallback(response, iterableMessage, statusCode);
+        return completionStage.thenCompose(stage -> handleCallback(response, iterableMessage, statusCode));
     }
 
-    private void handleCallback(Response response, IterableMessage iterableMessage, int statusCode) {
+    private CompletionStage<Void> handleCallback(Response response, IterableMessage iterableMessage, int statusCode) {
         CompletionStage<Subscription> subscriptionStage = subscriptionService
             .getSubscription(iterableMessage.getTopicId(), iterableMessage.subscriptionId());
-        subscriptionStage.thenAcceptAsync(subscription -> {
+        return subscriptionStage.thenAcceptAsync(subscription -> {
             if (isCallbackRequired(statusCode, iterableMessage.getMessage(), subscription)) {
                 log.info("Callback is enabled for this message {}", iterableMessage.getMessage().messageId());
                 makeCallback(iterableMessage, response)
@@ -186,7 +180,7 @@ public class HttpMessageProcessor implements MessageProcessor {
                 TopicPartMessage topicPartMessage =
                     TopicPartMessage.newInstance(topicPartition, callbackMsg);
                 return producerService.produceMessage(topicPartMessage);
-            }).exceptionally((Function<Throwable, MessageMetadata>) input -> {
+            }).exceptionally(input -> {
                 if (input instanceof TopicNotFoundException) {
                     log.error("Topic with id {} not found to produce callback message. Dropping it");
                     return null;
