@@ -8,6 +8,7 @@ import com.flipkart.vbroker.entities.CodeRange;
 import com.flipkart.vbroker.entities.FilterKeyValues;
 import com.flipkart.vbroker.entities.Subscription;
 import com.flipkart.vbroker.exceptions.SubscriptionCreationException;
+import com.flipkart.vbroker.exceptions.SubscriptionException;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.subscribers.IPartSubscriber;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
@@ -24,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 
@@ -218,35 +220,50 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public CompletionStage<List<Subscription>> getSubscriptionsForTopic(short topicId) {
-
         String path = config.getTopicsPath() + "/" + topicId + "/subscriptions";
-        List<Subscription> subscriptions = new ArrayList<>();
 
-        return curatorService.getChildren(path).thenCompose((data) -> {
-            if (nonNull(data)) {
-                List<CompletableFuture> subStages = new ArrayList<CompletableFuture>();
-                for (String id : data) {
-                    CompletionStage<Object> stage = this.getSubscription(topicId, Short.valueOf(id))
-                        .handleAsync((subData, subException) -> {
-                            if (subException != null) {
-                                log.error("Exception while fetching subscription data for {}", id);
-                                throw new VBrokerException("Error while fetching subscription with id " + id);
-                            } else {
-                                subscriptions.add(subData);
-                                return null;
-                            }
-                        });
-                    subStages.add(stage.toCompletableFuture());
-                }
-                CompletableFuture<Void> combined = CompletableFuture
-                    .allOf(subStages.toArray(new CompletableFuture[subStages.size()]));
-                return combined.handleAsync((combinedData, combinedException) -> {
-                    return subscriptions;
-                });
-            } else {
-                return null;
-            }
+        return curatorService.getChildren(path).thenCompose((children) -> {
+            List<CompletionStage<Subscription>> subscriptionsStages = children.stream()
+                .map(child -> getSubscription(topicId, Short.valueOf(child)).exceptionally(throwable -> {
+                    log.error("Exception while fetching subscription data for {}", id);
+                    throw new SubscriptionException("Error while fetching subscription with id {}" + child);
+                }))
+                .collect(Collectors.toList());
+
+            @SuppressWarnings("SuspiciousToArrayCall")
+            CompletableFuture<Void> allStages = CompletableFuture
+                .allOf(subscriptionsStages.toArray(new CompletableFuture[subscriptionsStages.size()]));
+
+            return allStages.thenApply(aVoid -> subscriptionsStages.stream()
+                .map(stage -> stage.toCompletableFuture().join())
+                .collect(Collectors.toList()));
         });
+
+//            List<Subscription> subscriptions = new ArrayList<>();
+//            if (nonNull(children)) {
+//                List<CompletableFuture> subStages = new ArrayList<CompletableFuture>();
+//                for (String id : children) {
+//                    CompletionStage<Object> stage = this.getSubscription(topicId, Short.valueOf(id))
+//                        .handleAsync((subData, subException) -> {
+//                            if (subException != null) {
+//                                log.error("Exception while fetching subscription data for {}", id);
+//                                throw new VBrokerException("Error while fetching subscription with id " + id);
+//                            } else {
+//                                subscriptions.add(subData);
+//                                return null;
+//                            }
+//                        });
+//                    subStages.add(stage.toCompletableFuture());
+//                }
+//                CompletableFuture<Void> combined = CompletableFuture
+//                    .allOf(subStages.toArray(new CompletableFuture[subStages.size()]));
+//                return combined.handleAsync((combinedData, combinedException) -> {
+//                    return subscriptions;
+//                });
+//            } else {
+//                return null;
+//            }
+//        });
     }
 
     @Override
