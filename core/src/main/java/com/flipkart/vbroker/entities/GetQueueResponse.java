@@ -20,11 +20,11 @@ public final class GetQueueResponse extends Table {
     }
 
     public static int createGetQueueResponse(FlatBufferBuilder builder,
-                                             int statusOffset,
-                                             int queueOffset) {
+                                             int queueOffset,
+                                             int statusOffset) {
         builder.startObject(2);
-        GetQueueResponse.addQueue(builder, queueOffset);
         GetQueueResponse.addStatus(builder, statusOffset);
+        GetQueueResponse.addQueue(builder, queueOffset);
         return GetQueueResponse.endGetQueueResponse(builder);
     }
 
@@ -32,12 +32,12 @@ public final class GetQueueResponse extends Table {
         builder.startObject(2);
     }
 
-    public static void addStatus(FlatBufferBuilder builder, int statusOffset) {
-        builder.addOffset(0, statusOffset, 0);
+    public static void addQueue(FlatBufferBuilder builder, int queueOffset) {
+        builder.addOffset(0, queueOffset, 0);
     }
 
-    public static void addQueue(FlatBufferBuilder builder, int queueOffset) {
-        builder.addOffset(1, queueOffset, 0);
+    public static void addStatus(FlatBufferBuilder builder, int statusOffset) {
+        builder.addOffset(1, statusOffset, 0);
     }
 
     public static int endGetQueueResponse(FlatBufferBuilder builder) {
@@ -55,20 +55,20 @@ public final class GetQueueResponse extends Table {
         return this;
     }
 
-    public VStatus status() {
-        return status(new VStatus());
-    }
-
-    public VStatus status(VStatus obj) {
-        int o = __offset(4);
-        return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null;
-    }
-
     public Queue queue() {
         return queue(new Queue());
     }
 
     public Queue queue(Queue obj) {
+        int o = __offset(4);
+        return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null;
+    }
+
+    public VStatus status() {
+        return status(new VStatus());
+    }
+
+    public VStatus status(VStatus obj) {
         int o = __offset(6);
         return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null;
     }

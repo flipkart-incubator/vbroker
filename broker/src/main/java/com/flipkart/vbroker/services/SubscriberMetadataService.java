@@ -6,12 +6,16 @@ import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.entities.Subscription;
 import com.flipkart.vbroker.entities.Topic;
-import com.flipkart.vbroker.subscribers.PartSubscriber;
+import com.flipkart.vbroker.subscribers.IPartSubscriber;
+import com.flipkart.vbroker.subscribers.QType;
 import com.flipkart.vbroker.subscribers.SubscriberGroup;
 import com.flipkart.vbroker.utils.SubscriptionUtils;
 import lombok.AllArgsConstructor;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -28,25 +32,27 @@ public class SubscriberMetadataService {
         Topic topic = topicService.getTopic(subscription.topicId()).toCompletableFuture().join();
         //Save each group's file as : metadata/{topicID}/subs/{subID}/{partitionID}/{groupID}.txt
         for (PartSubscription partSubscription : SubscriptionUtils.getPartSubscriptions(subscription, topic.partitions())) {
-            PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription).toCompletableFuture().join();
+            IPartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription).toCompletableFuture().join();
             File dir = new File(getPartSubscriberPath(partSubscriber));
             dir.mkdirs();
-            for (SubscriberGroup subscriberGroup : partSubscriber.getSubscriberGroupsMap().values()) {
-                File tmp = new File(dir, subscriberGroup.getGroupId().concat(".txt"));
-                tmp.createNewFile();
-                BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(tmp));
-                bufferedWriter.write(subscriberGroup.getQType().toString());
-                bufferedWriter.newLine();
-                bufferedWriter.write(subscriberGroup.getCurrSeqNo().toString());
-                bufferedWriter.close();
-            }
+            //TODO: fix this! we cannot expose direct map data structure outside the partSubscriber class
+
+//            for (SubscriberGroup subscriberGroup : partSubscriber.getSubscriberGroupsMap().values()) {
+//                File tmp = new File(dir, subscriberGroup.getGroupId().concat(".txt"));
+//                tmp.createNewFile();
+//                BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(tmp));
+//                bufferedWriter.write(subscriberGroup.getQType().toString());
+//                bufferedWriter.newLine();
+//                bufferedWriter.write(subscriberGroup.getCurrSeqNo().toString());
+//                bufferedWriter.close();
+//            }
         }
     }
 
     public void loadSubscriptionMetadata(Subscription subscription) {
         Topic topic = topicService.getTopic(subscription.topicId()).toCompletableFuture().join();
         for (PartSubscription partSubscription : SubscriptionUtils.getPartSubscriptions(subscription, topic.partitions())) {
-            PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription).toCompletableFuture().join();
+            IPartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription).toCompletableFuture().join();
             TopicPartition partition = partSubscription.getTopicPartition();
             File dir = new File(getPartSubscriberPath(partSubscriber));
             topicPartDataManager.getUniqueGroups(partition).thenAccept(uniqueGroupIds -> {
@@ -56,13 +62,13 @@ public class SubscriberMetadataService {
                     SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, partSubscription, topicPartDataManager);
                     try {
                         BufferedReader reader = new BufferedReader(new FileReader(subscriberGroupFile));
-                        SubscriberGroup.QType qType = SubscriberGroup.QType.valueOf(reader.readLine());
+                        QType qType = QType.valueOf(reader.readLine());
                         AtomicInteger seqNo = new AtomicInteger(Integer.parseInt(reader.readLine()));
                         subscriberGroup.setCurrSeqNo(seqNo);
                         subscriberGroup.setQType(qType);
                     } catch (IOException ignored) {
                     } finally {
-                        partSubscriber.getSubscriberGroupsMap().put(groupId, subscriberGroup);
+                        //partSubscriber.getSubscriberGroupsMap().put(groupId, subscriberGroup);
                     }
                 }
             });
@@ -75,7 +81,7 @@ public class SubscriberMetadataService {
         }
     }
 
-    private String getPartSubscriberPath(PartSubscriber partSubscriber) {
+    private String getPartSubscriberPath(IPartSubscriber partSubscriber) {
         short topicId = partSubscriber.getPartSubscription().getTopicPartition().getTopicId();
         short partitionId = partSubscriber.getPartSubscription().getTopicPartition().getId();
         short subscriptionId = partSubscriber.getPartSubscription().getSubscriptionId();

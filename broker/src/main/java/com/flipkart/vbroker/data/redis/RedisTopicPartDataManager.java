@@ -30,8 +30,7 @@ public class RedisTopicPartDataManager implements TopicPartDataManager {
         this.client = client;
     }
 
-    @Override
-    public CompletionStage<TopicPartData> getTopicPartData(TopicPartition topicPartition) {
+    protected CompletionStage<TopicPartData> getTopicPartData(TopicPartition topicPartition) {
         return CompletableFuture.supplyAsync(() -> {
             allPartitionsDataMap.putIfAbsent(topicPartition, new RedisTopicPartDataLua(client, topicPartition));
             return allPartitionsDataMap.get(topicPartition);
@@ -75,5 +74,10 @@ public class RedisTopicPartDataManager implements TopicPartDataManager {
         return getTopicPartData(topicPartition)
             .thenApplyAsync(topicPartData -> topicPartData.iteratorFrom(group, seqNoFrom))
             .toCompletableFuture().join();
+    }
+
+    @Override
+    public PeekingIterator<Message> getIterator(TopicPartition topicPartition, int seqNoFrom) {
+        throw new UnsupportedOperationException("You cannot have a global iterator for partition for a grouped topic-partition");
     }
 }

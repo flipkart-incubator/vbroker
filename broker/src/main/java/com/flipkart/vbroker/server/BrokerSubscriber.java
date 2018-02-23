@@ -7,14 +7,15 @@ import com.flipkart.vbroker.iterators.SubscriberIterator;
 import com.flipkart.vbroker.services.SubscriberMetadataService;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicMetadataService;
-import com.flipkart.vbroker.subscribers.PartSubscriber;
+import com.flipkart.vbroker.subscribers.IPartSubscriber;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static java.util.Objects.nonNull;
 
 /**
  * This is the main subscriber which runs on the broker machine and consumes the messages
@@ -53,26 +54,25 @@ public class BrokerSubscriber implements Runnable {
                 log.info("Sleeping for {} milli secs before connecting to server", timeMs);
                 Thread.sleep(timeMs);
 
-                List<PartSubscriber> partSubscribers = getPartSubscribersForCurrentBroker();
+                List<IPartSubscriber> partSubscribers = getPartSubscribersForCurrentBroker();
                 syncer = new SubscriberGroupSyncer(partSubscribers, subscriberMetadataService, topicMetadataService);
                 new Thread(syncer).start();
 
                 log.info("No of partSubscribers are {}", partSubscribers.size());
+                log.info("PartSubscribers in the current broker are {}", partSubscribers);
                 SubscriberIterator subscriberIterator = new SubscriberIterator(partSubscribers);
                 MessageConsumer messageConsumer = MessageConsumer.newInstance(subscriberIterator, messageProcessor);
 
-                long pollTimeMs = config.getControllerQueuePollTimeMs();
+                long pollTimeMs = config.getSubscriberPollTimeMs();
                 while (running.get()) {
                     log.info("Polling for new messages");
-                    while (running.get() && subscriberIterator.hasNext()) {
-                        try {
-                            messageConsumer.consume();
-                        } catch (Exception e) {
-                            log.error("Exception in consuming the message", e);
-                            Thread.sleep(pollTimeMs);
-                        }
+                    try {
+                        messageConsumer.consume();
+                        Thread.sleep(pollTimeMs);
+                    } catch (Exception e) {
+                        log.error("Exception in consuming the message. Sleeping for {}ms", e, pollTimeMs);
+                        Thread.sleep(pollTimeMs);
                     }
-                    Thread.sleep(pollTimeMs);
                 }
             } catch (InterruptedException ignored) {
             }
@@ -80,19 +80,19 @@ public class BrokerSubscriber implements Runnable {
     }
 
     public void stop() {
-        if (Objects.nonNull(syncer)) {
+        if (nonNull(syncer)) {
             syncer.stop();
         }
         this.running.set(false);
     }
 
-    private List<PartSubscriber> getPartSubscribersForCurrentBroker() {
-        List<PartSubscriber> partSubscribers = new ArrayList<>();
+    private List<IPartSubscriber> getPartSubscribersForCurrentBroker() {
+        List<IPartSubscriber> partSubscribers = new ArrayList<>();
         Set<Subscription> subscriptions = subscriptionService.getAllSubscriptions().toCompletableFuture().join();
         for (Subscription subscription : subscriptions) {
             List<PartSubscription> partSubscriptions = subscriptionService.getPartSubscriptions(subscription).toCompletableFuture().join();
             for (PartSubscription partSubscription : partSubscriptions) {
-                PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription).toCompletableFuture().join();
+                IPartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription).toCompletableFuture().join();
                 partSubscribers.add(partSubscriber);
             }
         }

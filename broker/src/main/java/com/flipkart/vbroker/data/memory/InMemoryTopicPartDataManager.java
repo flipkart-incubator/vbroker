@@ -24,10 +24,18 @@ public class InMemoryTopicPartDataManager implements TopicPartDataManager {
 
     private final Map<TopicPartition, TopicPartData> allPartitionsDataMap = new LinkedHashMap<>();
 
-    @Override
-    public synchronized CompletionStage<TopicPartData> getTopicPartData(TopicPartition topicPartition) {
+    protected synchronized CompletionStage<TopicPartData> getTopicPartData(TopicPartition topicPartition) {
         return CompletableFuture.supplyAsync(() -> {
-            allPartitionsDataMap.computeIfAbsent(topicPartition, topicPartition1 -> new InMemoryTopicPartData());
+            allPartitionsDataMap.computeIfAbsent(topicPartition, topicPartition1 -> {
+                TopicPartData topicPartData;
+                if (topicPartition1.isGrouped()) {
+                    topicPartData = new InMemoryTopicPartData();
+                } else {
+                    topicPartData = new InMemoryUnGroupedTopicPartData();
+                }
+                log.info("TopicPartData: {} for TopicPartition: {}", topicPartData, topicPartition1);
+                return topicPartData;
+            });
             //allPartitionsDataMap.putIfAbsent(topicPartition, new InMemoryTopicPartData());
             return allPartitionsDataMap.get(topicPartition);
         });
@@ -69,6 +77,13 @@ public class InMemoryTopicPartDataManager implements TopicPartDataManager {
         //TODO: change this to make it non blocking
         return getTopicPartData(topicPartition)
             .thenApplyAsync(topicPartData -> topicPartData.iteratorFrom(group, seqNoFrom))
+            .toCompletableFuture().join();
+    }
+
+    @Override
+    public PeekingIterator<Message> getIterator(TopicPartition topicPartition, int seqNoFrom) {
+        return getTopicPartData(topicPartition)
+            .thenApplyAsync(topicPartData -> topicPartData.iteratorFrom(seqNoFrom))
             .toCompletableFuture().join();
     }
 }

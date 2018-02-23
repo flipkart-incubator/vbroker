@@ -20,34 +20,32 @@ public final class Topic extends Table {
     }
 
     public static int createTopic(FlatBufferBuilder builder,
-                                  short topicId,
-                                  int topicNameOffset,
+                                  short id,
+                                  int nameOffset,
                                   boolean grouped,
                                   short partitions,
                                   short replicationFactor,
-                                  byte topicType,
                                   byte topicCategory) {
-        builder.startObject(7);
-        Topic.addTopicName(builder, topicNameOffset);
+        builder.startObject(6);
+        Topic.addName(builder, nameOffset);
         Topic.addReplicationFactor(builder, replicationFactor);
         Topic.addPartitions(builder, partitions);
-        Topic.addTopicId(builder, topicId);
+        Topic.addId(builder, id);
         Topic.addTopicCategory(builder, topicCategory);
-        Topic.addTopicType(builder, topicType);
         Topic.addGrouped(builder, grouped);
         return Topic.endTopic(builder);
     }
 
     public static void startTopic(FlatBufferBuilder builder) {
-        builder.startObject(7);
+        builder.startObject(6);
     }
 
-    public static void addTopicId(FlatBufferBuilder builder, short topicId) {
-        builder.addShort(0, topicId, 0);
+    public static void addId(FlatBufferBuilder builder, short id) {
+        builder.addShort(0, id, 0);
     }
 
-    public static void addTopicName(FlatBufferBuilder builder, int topicNameOffset) {
-        builder.addOffset(1, topicNameOffset, 0);
+    public static void addName(FlatBufferBuilder builder, int nameOffset) {
+        builder.addOffset(1, nameOffset, 0);
     }
 
     public static void addGrouped(FlatBufferBuilder builder, boolean grouped) {
@@ -62,12 +60,8 @@ public final class Topic extends Table {
         builder.addShort(4, replicationFactor, 0);
     }
 
-    public static void addTopicType(FlatBufferBuilder builder, byte topicType) {
-        builder.addByte(5, topicType, 0);
-    }
-
     public static void addTopicCategory(FlatBufferBuilder builder, byte topicCategory) {
-        builder.addByte(6, topicCategory, 0);
+        builder.addByte(5, topicCategory, 0);
     }
 
     public static int endTopic(FlatBufferBuilder builder) {
@@ -85,17 +79,17 @@ public final class Topic extends Table {
         return this;
     }
 
-    public short topicId() {
+    public short id() {
         int o = __offset(4);
         return o != 0 ? bb.getShort(o + bb_pos) : 0;
     }
 
-    public String topicName() {
+    public String name() {
         int o = __offset(6);
         return o != 0 ? __string(o + bb_pos) : null;
     }
 
-    public ByteBuffer topicNameAsByteBuffer() {
+    public ByteBuffer nameAsByteBuffer() {
         return __vector_as_bytebuffer(6, 1);
     }
 
@@ -114,13 +108,8 @@ public final class Topic extends Table {
         return o != 0 ? bb.getShort(o + bb_pos) : 0;
     }
 
-    public byte topicType() {
-        int o = __offset(14);
-        return o != 0 ? bb.get(o + bb_pos) : 0;
-    }
-
     public byte topicCategory() {
-        int o = __offset(16);
+        int o = __offset(14);
         return o != 0 ? bb.get(o + bb_pos) : 0;
     }
 }

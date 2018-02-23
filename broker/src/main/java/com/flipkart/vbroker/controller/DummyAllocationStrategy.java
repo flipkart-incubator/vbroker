@@ -31,9 +31,9 @@ public class DummyAllocationStrategy implements AllocationStrategy {
         CompletionStage<List<Topic>> topicStage = topicService.getAllTopics();
         topicStage.thenAcceptAsync(topics -> {
             topics.forEach(topic -> {
-                subscriptionService.getSubscriptionsForTopic(topic.topicId()).thenAcceptAsync(subscriptions -> {
+                subscriptionService.getSubscriptionsForTopic(topic.id()).thenAcceptAsync(subscriptions -> {
                     subscriptions.forEach(subscription -> {
-                        String nodePath = path + topic.topicId() + "-" + subscription.subscriptionId();
+                        String nodePath = path + topic.id() + "-" + subscription.id();
                         curatorService.createNodeAndSetData(nodePath, CreateMode.PERSISTENT, "".getBytes());
                     });
                 });

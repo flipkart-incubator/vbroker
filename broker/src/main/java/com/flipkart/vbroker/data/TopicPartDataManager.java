@@ -13,8 +13,6 @@ import java.util.concurrent.CompletionStage;
 
 public interface TopicPartDataManager {
 
-    public CompletionStage<TopicPartData> getTopicPartData(TopicPartition topicPartition);
-
     public CompletionStage<MessageMetadata> addMessage(TopicPartition topicPartition, Message message);
 
     public CompletionStage<List<MessageMetadata>> addMessages(List<TopicPartMessage> topicPartMessages);
@@ -26,4 +24,6 @@ public interface TopicPartDataManager {
     public PeekingIterator<Message> getIterator(TopicPartition topicPartition, String group);
 
     public PeekingIterator<Message> getIterator(TopicPartition topicPartition, String group, int seqNoFrom);
+
+    public PeekingIterator<Message> getIterator(TopicPartition topicPartition, int seqNoFrom);
 }
