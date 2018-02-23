@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 @EqualsAndHashCode(exclude = {"qType", "currSeqNo", "topicPartDataManager", "locked"})
 //TODO: crude implementation of seqNo. Handle the concurrency here correctly
-public class SubscriberGroup implements Iterable<IMessageWithGroup> {
+public class SubscriberGroup implements Iterable<IterableMessage> {
     private final MessageGroup messageGroup;
     @Getter
     private final TopicPartition topicPartition;
@@ -84,7 +84,7 @@ public class SubscriberGroup implements Iterable<IMessageWithGroup> {
     }
 
     @Override
-    public PeekingIterator<IMessageWithGroup> iterator() {
+    public PeekingIterator<IterableMessage> iterator() {
         return new SubscriberGroupIterator(this);
     }
 
@@ -96,11 +96,7 @@ public class SubscriberGroup implements Iterable<IMessageWithGroup> {
         return this.partSubscription;
     }
 
-    public enum QType {
-        MAIN, SIDELINE, RETRY_1, RETRY_2, RETRY_3
-    }
-
-    private class SubscriberGroupIterator implements PeekingIterator<IMessageWithGroup> {
+    private class SubscriberGroupIterator implements PeekingIterator<IterableMessage> {
 
         SubscriberGroup subscriberGroup;
         PeekingIterator<Message> groupIterator = topicPartDataManager.getIterator(topicPartition, getGroupId(), currSeqNo.get());
@@ -110,13 +106,13 @@ public class SubscriberGroup implements Iterable<IMessageWithGroup> {
         }
 
         @Override
-        public synchronized GroupedMessageWithGroup peek() {
-            return GroupedMessageWithGroup.newInstance(groupIterator.peek(), subscriberGroup);
+        public synchronized GroupedIterableMessage peek() {
+            return GroupedIterableMessage.newInstance(groupIterator.peek(), subscriberGroup);
         }
 
         @Override
-        public synchronized GroupedMessageWithGroup next() {
-            GroupedMessageWithGroup messageWithGroup = GroupedMessageWithGroup.newInstance(groupIterator.next(), subscriberGroup);
+        public synchronized GroupedIterableMessage next() {
+            GroupedIterableMessage messageWithGroup = GroupedIterableMessage.newInstance(groupIterator.next(), subscriberGroup);
             currSeqNo.incrementAndGet();
             return messageWithGroup;
         }

@@ -2,6 +2,7 @@ package com.flipkart.vbroker.services;
 
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.PartSubscription;
+import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.entities.CallbackConfig;
 import com.flipkart.vbroker.entities.CodeRange;
@@ -37,6 +38,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private final VBrokerConfig config;
     private final CuratorService curatorService;
     private final TopicPartDataManager topicPartDataManager;
+    private final SubPartDataManager subPartDataManager;
     private final TopicService topicService;
 
     private final ConcurrentMap<Short, Subscription> subscriptionsMap = new ConcurrentHashMap<>();
@@ -123,8 +125,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             // subscriberMap.putIfAbsent(partSubscription, new
             // PartSubscriber(partSubscription));
 
-            subscriberMap.computeIfAbsent(partSubscription,
-                partSubscription1 -> new PartSubscriber(topicPartDataManager, partSubscription1));
+            subscriberMap.computeIfAbsent(partSubscription, partSubscription1 -> {
+                return new PartSubscriber(topicPartDataManager, subPartDataManager, partSubscription1);
+            });
             return subscriberMap.get(partSubscription);
         });
     }

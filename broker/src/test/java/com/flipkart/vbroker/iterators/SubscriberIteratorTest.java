@@ -1,14 +1,15 @@
 package com.flipkart.vbroker.iterators;
 
-import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.client.MessageStore;
 import com.flipkart.vbroker.core.PartSubscription;
+import com.flipkart.vbroker.data.InMemorySubPartDataManager;
+import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.subscribers.DummyEntities;
-import com.flipkart.vbroker.subscribers.IMessageWithGroup;
 import com.flipkart.vbroker.subscribers.IPartSubscriber;
+import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.flipkart.vbroker.subscribers.UnGroupedPartSubscriber;
 import com.flipkart.vbroker.utils.SubscriptionUtils;
 import com.google.common.collect.PeekingIterator;
@@ -28,13 +29,15 @@ public class SubscriberIteratorTest {
     private SubscriberIterator subscriberIterator;
     private TopicPartDataManager topicPartDataManager;
     private PartSubscription unGroupedPartSubscription;
+    private SubPartDataManager subPartDataManager;
 
     @BeforeMethod
     public void setUp() {
         topicPartDataManager = new InMemoryTopicPartDataManager();
         unGroupedPartSubscription = SubscriptionUtils.getPartSubscription(DummyEntities.unGroupedSubscription, (short) 0);
+        subPartDataManager = new InMemorySubPartDataManager(topicPartDataManager);
 
-        IPartSubscriber partSubscriber = new UnGroupedPartSubscriber(topicPartDataManager, unGroupedPartSubscription);
+        IPartSubscriber partSubscriber = new UnGroupedPartSubscriber(subPartDataManager, unGroupedPartSubscription);
         List<IPartSubscriber> partSubscribers = Lists.newArrayList(partSubscriber);
         subscriberIterator = new SubscriberIterator(partSubscribers);
     }
@@ -43,11 +46,11 @@ public class SubscriberIteratorTest {
     public void shouldIterate_OverUnGroupedMessages() throws InterruptedException {
         int noOfMessages = 10;
         List<Message> messages = generateMessages(noOfMessages);
-        List<MessageMetadata> messageMetadataList = addPartData(messages);
+        List<com.flipkart.vbroker.client.MessageMetadata> messageMetadataList = addPartData(messages);
         assertEquals(messageMetadataList.size(), noOfMessages);
 
         int count = 0;
-        PeekingIterator<IMessageWithGroup> iterator = subscriberIterator;
+        PeekingIterator<IterableMessage> iterator = subscriberIterator;
         while (iterator.hasNext()) {
             iterator.next();
             count++;
@@ -62,7 +65,7 @@ public class SubscriberIteratorTest {
          */
         new Thread(() -> {
             List<Message> moreMessages = generateMessages(moreNoOfMessages);
-            List<MessageMetadata> moreMetadataList = addPartData(moreMessages);
+            List<com.flipkart.vbroker.client.MessageMetadata> moreMetadataList = addPartData(moreMessages);
             assertEquals(moreMetadataList.size(), moreMessages.size());
 
             latch.countDown();
@@ -78,7 +81,7 @@ public class SubscriberIteratorTest {
         assertEquals(count, noOfMessages + moreNoOfMessages);
     }
 
-    private List<MessageMetadata> addPartData(List<Message> messages) {
+    private List<com.flipkart.vbroker.client.MessageMetadata> addPartData(List<Message> messages) {
         return messages.stream()
             .map(message -> topicPartDataManager.addMessage(unGroupedPartSubscription.getTopicPartition(), message)
                 .toCompletableFuture().join())

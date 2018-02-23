@@ -24,12 +24,15 @@ public class InMemoryTopicPartDataManager implements TopicPartDataManager {
 
     private final Map<TopicPartition, TopicPartData> allPartitionsDataMap = new LinkedHashMap<>();
 
-    @Override
-    public synchronized CompletionStage<TopicPartData> getTopicPartData(TopicPartition topicPartition) {
+    protected synchronized CompletionStage<TopicPartData> getTopicPartData(TopicPartition topicPartition) {
         return CompletableFuture.supplyAsync(() -> {
             allPartitionsDataMap.computeIfAbsent(topicPartition, topicPartition1 -> {
-                TopicPartData topicPartData = topicPartition.isGrouped() ?
-                    new InMemoryTopicPartData() : new InMemoryUnGroupedTopicPartData();
+                TopicPartData topicPartData;
+                if (topicPartition1.isGrouped()) {
+                    topicPartData = new InMemoryTopicPartData();
+                } else {
+                    topicPartData = new InMemoryUnGroupedTopicPartData();
+                }
                 log.info("TopicPartData: {} for TopicPartition: {}", topicPartData, topicPartition1);
                 return topicPartData;
             });

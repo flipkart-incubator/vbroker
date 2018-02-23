@@ -6,22 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
-public class UnGroupedMessageWithGroup implements IMessageWithGroup {
+public class UnGroupedIterableMessage implements IterableMessage {
     @Getter
     private final Message message;
     private final PartSubscription partSubscription;
 
     @Override
-    public void sideline() {
-    }
-
-    @Override
-    public void retry() {
-    }
-
-    @Override
-    public boolean isLocked() {
-        return false;
+    public boolean isUnlocked() {
+        return true;
     }
 
     @Override
@@ -34,6 +26,16 @@ public class UnGroupedMessageWithGroup implements IMessageWithGroup {
     }
 
     @Override
+    public String getGroupId() {
+        return message.groupId();
+    }
+
+    @Override
+    public PartSubscription getPartSubscription() {
+        return partSubscription;
+    }
+
+    @Override
     public short subscriptionId() {
         return partSubscription.getSubscriptionId();
     }
@@ -41,5 +43,10 @@ public class UnGroupedMessageWithGroup implements IMessageWithGroup {
     @Override
     public short getTopicId() {
         return partSubscription.getTopicPartition().getTopicId();
+    }
+
+    @Override
+    public QType getQType() {
+        return null;
     }
 }

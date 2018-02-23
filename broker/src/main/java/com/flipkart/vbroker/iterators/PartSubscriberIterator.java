@@ -1,6 +1,6 @@
 package com.flipkart.vbroker.iterators;
 
-import com.flipkart.vbroker.subscribers.IMessageWithGroup;
+import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.google.common.collect.PeekingIterator;
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,18 +9,18 @@ import java.util.Optional;
 import static java.util.Objects.nonNull;
 
 @Slf4j
-public abstract class PartSubscriberIterator implements PeekingIterator<IMessageWithGroup> {
-    private PeekingIterator<IMessageWithGroup> currIterator;
+public abstract class PartSubscriberIterator implements PeekingIterator<IterableMessage> {
+    private PeekingIterator<IterableMessage> currIterator;
 
-    protected abstract Optional<PeekingIterator<IMessageWithGroup>> nextIterator();
+    protected abstract Optional<PeekingIterator<IterableMessage>> nextIterator();
 
     @Override
-    public IMessageWithGroup peek() {
+    public IterableMessage peek() {
         return currIterator.peek();
     }
 
     @Override
-    public IMessageWithGroup next() {
+    public IterableMessage next() {
         return currIterator.next();
     }
 
@@ -34,7 +34,7 @@ public abstract class PartSubscriberIterator implements PeekingIterator<IMessage
         try {
             if (isCurrIteratorActive()) return true;
 
-            Optional<PeekingIterator<IMessageWithGroup>> iteratorOpt = nextIterator();
+            Optional<PeekingIterator<IterableMessage>> iteratorOpt = nextIterator();
             if (iteratorOpt.isPresent()) {
                 currIterator = iteratorOpt.get();
                 return currIterator.hasNext();
@@ -48,6 +48,6 @@ public abstract class PartSubscriberIterator implements PeekingIterator<IMessage
     private boolean isCurrIteratorActive() {
         return nonNull(currIterator)
             && currIterator.hasNext()
-            && !currIterator.peek().isLocked();
+            && currIterator.peek().isUnlocked();
     }
 }
