@@ -2,7 +2,7 @@ package com.flipkart.vbroker.data;
 
 import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.core.PartSubscription;
-import com.flipkart.vbroker.exceptions.VBrokerException;
+import com.flipkart.vbroker.server.MessageUtils;
 import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.flipkart.vbroker.subscribers.QType;
 import com.flipkart.vbroker.subscribers.SubscriberGroup;
@@ -14,8 +14,6 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
-
-import static com.flipkart.vbroker.subscribers.QType.*;
 
 @Slf4j
 public class InMemoryGroupedSubPartData implements SubPartData {
@@ -68,25 +66,9 @@ public class InMemoryGroupedSubPartData implements SubPartData {
 
     @Override
     public CompletionStage<Void> retry(IterableMessage iterableMessage) {
-        QType destinationQType;
-        switch (iterableMessage.getQType()) {
-            case MAIN:
-                destinationQType = RETRY_1;
-                break;
-            case RETRY_1:
-                destinationQType = RETRY_2;
-                break;
-            case RETRY_2:
-                destinationQType = RETRY_3;
-                break;
-            case RETRY_3:
-                destinationQType = QType.SIDELINE;
-                break;
-            default:
-                throw new VBrokerException("Unknown QType: " + iterableMessage.getQType());
-        }
-
-        return getFailedGroups(destinationQType).thenApplyAsync(groups -> {
+        QType destinationQType = MessageUtils.getNextRetryQType(iterableMessage.getQType());
+        iterableMessage.setQType(destinationQType);
+        return getFailedGroups(iterableMessage.getQType()).thenApplyAsync(groups -> {
             groups.add(iterableMessage.getGroupId());
             return null;
         });

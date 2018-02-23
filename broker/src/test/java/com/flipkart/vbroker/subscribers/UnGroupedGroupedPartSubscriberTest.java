@@ -39,7 +39,7 @@ public class UnGroupedGroupedPartSubscriberTest {
     }
 
     @Test
-    public void shouldIterateOverNewMessages() throws InterruptedException {
+    public void shouldIterateOver_NewMessages() throws InterruptedException {
         int noOfMessages = 10;
         List<Message> messages = generateMessages(noOfMessages);
         List<com.flipkart.vbroker.client.MessageMetadata> messageMetadataList = addPartData(messages);
@@ -63,7 +63,7 @@ public class UnGroupedGroupedPartSubscriberTest {
     }
 
     @Test
-    public void shouldIterateOverSidelinedMessages() throws InterruptedException {
+    public void shouldIterateOver_SidelinedMessages() throws InterruptedException {
         int count = 0;
         PeekingIterator<IterableMessage> iterator = partSubscriber.iterator();
         PeekingIterator<IterableMessage> sidelineIterator = partSubscriber.sidelineIterator();
@@ -85,6 +85,55 @@ public class UnGroupedGroupedPartSubscriberTest {
             log.info("Consuming sidelined message {}", currIterableMessage.getMessage().messageId());
             count++;
             sidelineIterator.next();
+        }
+        assertEquals(count, moreNoOfMessages);
+    }
+
+    @Test
+    public void shouldIterateOver_RetryMessages() throws InterruptedException {
+        shouldRetryMessagesToCorrespondingQType(1, QType.MAIN);
+        shouldRetryMessagesToCorrespondingQType(2, QType.RETRY_1);
+        shouldRetryMessagesToCorrespondingQType(3, QType.RETRY_2);
+    }
+
+    @Test
+    public void shouldIterateOver_MoveFromRQ3ToSQ() throws InterruptedException {
+        PeekingIterator<IterableMessage> iterator = partSubscriber.iterator();
+        PeekingIterator<IterableMessage> sidelineIterator = partSubscriber.sidelineIterator();
+
+        shouldRetryMessages(QType.RETRY_3, iterator, sidelineIterator);
+    }
+
+    private void shouldRetryMessagesToCorrespondingQType(int destRetryNo, QType currQType) throws InterruptedException {
+        PeekingIterator<IterableMessage> iterator = partSubscriber.iterator();
+        PeekingIterator<IterableMessage> retryIterator = partSubscriber.retryIterator(destRetryNo);
+
+        shouldRetryMessages(currQType, iterator, retryIterator);
+    }
+
+    private void shouldRetryMessages(QType srcQType,
+                                     PeekingIterator<IterableMessage> srcQTypeIterator,
+                                     PeekingIterator<IterableMessage> destQTypeIterator) throws InterruptedException {
+        int count = 0;
+        int moreNoOfMessages = 5;
+        addMessagesToPartData(moreNoOfMessages);
+
+        while (srcQTypeIterator.hasNext()) {
+            IterableMessage iterableMessage = srcQTypeIterator.peek();
+            iterableMessage.setQType(srcQType);
+
+            subPartDataManager.retry(partSubscription, iterableMessage).toCompletableFuture().join();
+            srcQTypeIterator.next();
+            count++;
+        }
+        assertEquals(count, moreNoOfMessages);
+
+        count = 0;
+        while (destQTypeIterator.hasNext()) {
+            IterableMessage currIterableMessage = destQTypeIterator.peek();
+            log.info("Consuming sidelined message {}", currIterableMessage.getMessage().messageId());
+            count++;
+            destQTypeIterator.next();
         }
         assertEquals(count, moreNoOfMessages);
     }
