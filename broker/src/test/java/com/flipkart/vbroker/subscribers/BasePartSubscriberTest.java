@@ -2,13 +2,11 @@ package com.flipkart.vbroker.subscribers;
 
 import com.flipkart.vbroker.client.MessageStore;
 import com.flipkart.vbroker.core.PartSubscription;
-import com.flipkart.vbroker.data.InMemorySubPartDataManager;
 import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
-import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
 import com.flipkart.vbroker.entities.Message;
-import com.flipkart.vbroker.utils.SubscriptionUtils;
 import com.google.common.collect.PeekingIterator;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -21,22 +19,16 @@ import java.util.stream.IntStream;
 import static org.testng.Assert.assertEquals;
 
 @Slf4j
-public class UnGroupedGroupedPartSubscriberTest {
+@Setter
+public abstract class BasePartSubscriberTest {
 
-    private UnGroupedPartSubscriber partSubscriber;
-
+    private PartSubscriber partSubscriber;
     private PartSubscription partSubscription;
     private SubPartDataManager subPartDataManager;
     private TopicPartDataManager topicPartDataManager;
 
     @BeforeMethod
-    public void setUp() {
-        partSubscription = SubscriptionUtils.getPartSubscription(DummyEntities.unGroupedSubscription, (short) 0);
-        topicPartDataManager = new InMemoryTopicPartDataManager();
-        subPartDataManager = new InMemorySubPartDataManager(topicPartDataManager);
-
-        partSubscriber = new UnGroupedPartSubscriber(subPartDataManager, partSubscription);
-    }
+    public abstract void setUp();
 
     @Test
     public void shouldIterateOver_NewMessages() throws InterruptedException {
