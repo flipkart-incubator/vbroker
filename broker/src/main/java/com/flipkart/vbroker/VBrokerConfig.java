@@ -28,7 +28,9 @@ public class VBrokerConfig {
     private int controllerQueuePollTimeMs;
     private String adminTasksPath;
 
-    private String redisUrl;
+    private String redisUrl = null;
+    private boolean isRedisCluster;
+    private String[] redisClusterNodes = null;
 
     public VBrokerConfig(Properties props) {
         this.properties = props;
@@ -56,6 +58,11 @@ public class VBrokerConfig {
         this.controllerQueueSize = Ints.tryParse(properties.getProperty("controller.queue.size"));
         this.controllerQueuePollTimeMs = Ints.tryParse(properties.getProperty("controller.queue.poll.time.ms"));
         this.adminTasksPath = properties.getProperty("admin.tasks.path");
-        this.redisUrl = properties.getProperty("redis.url");
+        this.isRedisCluster = Boolean.parseBoolean(properties.getProperty("redis.cluster"));
+        if (isRedisCluster) {
+            this.redisClusterNodes = properties.getProperty("redis.cluster.nodes").split(",");
+        } else {
+            this.redisUrl = properties.getProperty("redis.url");
+        }
     }
 }

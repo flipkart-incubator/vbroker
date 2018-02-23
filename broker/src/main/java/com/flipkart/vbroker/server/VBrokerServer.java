@@ -38,6 +38,7 @@ import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.redisson.Redisson;
+import org.redisson.config.ClusterServersConfig;
 import org.redisson.config.Config;
 
 import java.io.IOException;
@@ -80,7 +81,16 @@ public class VBrokerServer extends AbstractExecutionThreadService {
         TopicService topicService = new InMemoryTopicService();
 
         Config redissonConfig = new Config();
-        redissonConfig.useSingleServer().setAddress(config.getRedisUrl());
+        if (config.isRedisCluster() && config.getRedisClusterNodes() != null) {
+            ClusterServersConfig clusterServersConfig = redissonConfig.useClusterServers()
+                .setScanInterval(2000);
+            for (String node : config.getRedisClusterNodes()) {
+                clusterServersConfig.addNodeAddress(node);
+            }
+        } else if (!config.isRedisCluster() && config.getRedisUrl() != null) {
+            redissonConfig.useSingleServer().setAddress(config.getRedisUrl());
+        }
+
         redissonConfig.setCodec(new RedisMessageCodec());
         redissonConfig.setEventLoopGroup(workerGroup);
 

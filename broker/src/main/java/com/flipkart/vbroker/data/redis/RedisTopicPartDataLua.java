@@ -44,7 +44,7 @@ public class RedisTopicPartDataLua implements TopicPartData {
                 "return (redis.call('lpush', KEYS[2], ARGV[2]));" +
                 "end",
             RScript.ReturnType.INTEGER,
-            Arrays.asList(messageGroup.toString(), topicPartition.toString()), rObjMessage, rObjString)
+            Arrays.asList("{"+topicPartition.toString()+"}"+messageGroup.toString(), topicPartition.toString()), rObjMessage, rObjString)
             .thenApplyAsync(result -> {
                 if ((long) result > 0) {
                     return new MessageMetadata(message.topicId(), message.partitionId(), new Random().nextInt());
@@ -84,7 +84,7 @@ public class RedisTopicPartDataLua implements TopicPartData {
     public PeekingIterator<Message> iteratorFrom(String groupId, int seqNoFrom) {
         log.info("getting peeking iterator");
         MessageGroup messageGroup = new MessageGroup(groupId, topicPartition);
-        RList<RedisObject> rList = client.getList(messageGroup.toString());
+        RList<RedisObject> rList = client.getList("{"+topicPartition.toString()+"}"+messageGroup.toString());
         List l = (rList.stream().map(entry -> {
             return ((RedisMessageObject) entry).getMessage();
         }).collect(Collectors.toList()));
