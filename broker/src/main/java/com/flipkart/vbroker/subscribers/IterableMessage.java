@@ -20,11 +20,11 @@ public interface IterableMessage {
 
     QType getQType();
 
+    void setQType(QType qType);
+
     boolean isUnlocked();
 
     boolean lock();
 
     void unlock();
-
-
 }

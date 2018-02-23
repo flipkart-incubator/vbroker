@@ -14,7 +14,7 @@ import java.util.Optional;
 @Slf4j
 @EqualsAndHashCode(exclude = {"subPartDataManager"})
 @ToString(exclude = {"subPartDataManager"})
-public class UnGroupedPartSubscriber implements IPartSubscriber {
+public class UnGroupedPartSubscriber implements PartSubscriber {
 
     private final SubPartDataManager subPartDataManager;
     @Getter

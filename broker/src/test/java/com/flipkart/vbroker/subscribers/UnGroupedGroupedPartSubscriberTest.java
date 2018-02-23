@@ -9,6 +9,7 @@ import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.utils.SubscriptionUtils;
 import com.google.common.collect.PeekingIterator;
+import lombok.extern.slf4j.Slf4j;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -19,7 +20,8 @@ import java.util.stream.IntStream;
 
 import static org.testng.Assert.assertEquals;
 
-public class UnGroupedPartSubscriberTest {
+@Slf4j
+public class UnGroupedGroupedPartSubscriberTest {
 
     private UnGroupedPartSubscriber partSubscriber;
 
@@ -45,23 +47,12 @@ public class UnGroupedPartSubscriberTest {
 
         int count = 0;
         PeekingIterator<IterableMessage> iterator = partSubscriber.iterator();
-
-        CountDownLatch latch = new CountDownLatch(1);
-        int moreNoOfMessages = 5;
-
         /*
          * now add more messages to topicPartData after creating the iterator
          * the iterator should then traverse these messages as well
          */
-        new Thread(() -> {
-            List<Message> moreMessages = generateMessages(moreNoOfMessages);
-            List<com.flipkart.vbroker.client.MessageMetadata> moreMetadataList = addPartData(moreMessages);
-            assertEquals(moreMetadataList.size(), moreMessages.size());
-
-            latch.countDown();
-        }).start();
-
-        latch.await();
+        int moreNoOfMessages = 5;
+        addMessagesToPartData(moreNoOfMessages);
 
         while (iterator.hasNext()) {
             iterator.next();
@@ -70,6 +61,46 @@ public class UnGroupedPartSubscriberTest {
 
         assertEquals(count, noOfMessages + moreNoOfMessages);
     }
+
+    @Test
+    public void shouldIterateOverSidelinedMessages() throws InterruptedException {
+        int count = 0;
+        PeekingIterator<IterableMessage> iterator = partSubscriber.iterator();
+        PeekingIterator<IterableMessage> sidelineIterator = partSubscriber.sidelineIterator();
+
+        int moreNoOfMessages = 5;
+        addMessagesToPartData(moreNoOfMessages);
+
+        while (iterator.hasNext()) {
+            IterableMessage iterableMessage = iterator.peek();
+            subPartDataManager.sideline(partSubscription, iterableMessage).toCompletableFuture().join();
+            iterator.next();
+            count++;
+        }
+        assertEquals(count, moreNoOfMessages);
+
+        count = 0;
+        while (sidelineIterator.hasNext()) {
+            IterableMessage currIterableMessage = sidelineIterator.peek();
+            log.info("Consuming sidelined message {}", currIterableMessage.getMessage().messageId());
+            count++;
+            sidelineIterator.next();
+        }
+        assertEquals(count, moreNoOfMessages);
+    }
+
+    private void addMessagesToPartData(int moreNoOfMessages) throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        new Thread(() -> {
+            List<Message> moreMessages = generateMessages(moreNoOfMessages);
+            List<com.flipkart.vbroker.client.MessageMetadata> moreMetadataList = addPartData(moreMessages);
+            assertEquals(moreMetadataList.size(), moreMessages.size());
+
+            latch.countDown();
+        }).start();
+        latch.await();
+    }
+
 
     private List<com.flipkart.vbroker.client.MessageMetadata> addPartData(List<Message> messages) {
         return messages.stream()
