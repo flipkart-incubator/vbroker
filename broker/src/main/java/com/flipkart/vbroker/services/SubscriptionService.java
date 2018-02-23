@@ -12,6 +12,8 @@ public interface SubscriptionService {
 
     public CompletionStage<Subscription> createSubscription(Subscription subscription);
 
+    public CompletionStage<Subscription> createSubscriptionAdmin(short id, Subscription subscription);
+
     public CompletionStage<Subscription> getSubscription(short topicId, short subscriptionId);
 
     public CompletionStage<Set<Subscription>> getAllSubscriptions();

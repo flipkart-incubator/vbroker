@@ -30,13 +30,16 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public CompletionStage<Topic> createTopic(Topic topic) throws TopicValidationException {
+        log.info("creating topic with name {}, rf {}, grouped {}", topic.name(), topic.replicationFactor(),
+            topic.grouped());
         if (!validateCreateTopic(topic)) {
             throw new TopicValidationException("Topic create validation failed");
         }
         short id = IdGenerator.randomId();
         String topicPath = config.getAdminTasksPath() + "/create_topic" + "/" + id;
+        Topic topicWithId = newTopicModelFromTopic(id, topic);
         return curatorService
-            .createNodeAndSetData(topicPath, CreateMode.PERSISTENT, ByteBufUtils.getBytes(topic.getByteBuffer()))
+            .createNodeAndSetData(topicPath, CreateMode.PERSISTENT, ByteBufUtils.getBytes(topicWithId.getByteBuffer()))
             .handleAsync((data, exception) -> {
                 if (exception != null) {
                     log.error("Exception in curator node create and set data stage {} ", exception);
@@ -162,14 +165,16 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public CompletionStage<Topic> createTopicAdmin(Topic topic) throws TopicValidationException {
+    public CompletionStage<Topic> createTopicAdmin(short id, Topic topic) throws TopicValidationException {
+        log.info("creating topic with name {}, rf {}, grouped {}", topic.name(), topic.replicationFactor(),
+            topic.grouped());
         if (!validateCreateTopic(topic)) {
             throw new TopicValidationException("Topic create validation failed");
         }
-        short id = IdGenerator.randomId();
         String topicPath = config.getTopicsPath() + "/" + id;
+        Topic topicWithId = newTopicModelFromTopic(id, topic);
         return curatorService
-            .createNodeAndSetData(topicPath, CreateMode.PERSISTENT, ByteBufUtils.getBytes(topic.getByteBuffer()))
+            .createNodeAndSetData(topicPath, CreateMode.PERSISTENT, ByteBufUtils.getBytes(topicWithId.getByteBuffer()))
             .handleAsync((data, exception) -> {
                 if (exception != null) {
                     log.error("Exception in curator node create and set data stage {} ", exception);

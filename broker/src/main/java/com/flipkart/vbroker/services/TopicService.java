@@ -10,14 +10,22 @@ import java.util.concurrent.CompletionStage;
 public interface TopicService {
 
     /**
-     * Creates topic entity. Called by controller to create a valid topic.
+     * Creates topic request. Called to submit topic creation request, which will be handled by controller.
      *
      * @param topic
      * @return CompletionStage with created topic as result
      */
     public CompletionStage<Topic> createTopic(Topic topic) throws TopicValidationException;
 
-    public CompletionStage<Topic> createTopicAdmin(Topic topic) throws TopicValidationException;
+    /**
+     * Creates topic entity. This is invoked by the controller to create actual topic entity.
+     *
+     * @param id
+     * @param topic
+     * @return
+     * @throws TopicValidationException
+     */
+    public CompletionStage<Topic> createTopicAdmin(short id, Topic topic) throws TopicValidationException;
 
     // public void createTopicPartition(Topic topic, TopicPartition topicPartition);
 

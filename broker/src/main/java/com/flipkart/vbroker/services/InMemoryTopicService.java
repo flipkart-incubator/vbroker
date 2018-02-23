@@ -51,7 +51,7 @@ public class InMemoryTopicService implements TopicService {
     }
 
     @Override
-    public CompletionStage<Topic> createTopicAdmin(Topic topic) throws TopicValidationException {
+    public CompletionStage<Topic> createTopicAdmin(short id, Topic topic) throws TopicValidationException {
         // TODO Auto-generated method stub
         return null;
     }

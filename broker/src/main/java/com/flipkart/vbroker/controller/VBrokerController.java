@@ -2,13 +2,18 @@ package com.flipkart.vbroker.controller;
 
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.services.CuratorService;
+import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
+import com.flipkart.vbroker.utils.SubscriptionUtils;
 import com.flipkart.vbroker.utils.TopicUtils;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.WatchedEvent;
 
-import java.util.concurrent.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.Objects.nonNull;
@@ -21,21 +26,26 @@ public class VBrokerController extends AbstractExecutionThreadService {
 
     private final CuratorService curatorService;
     private final TopicService topicService;
+    private final SubscriptionService subscriptionService;
     private final VBrokerConfig config;
 
     private final String adminCreateTopicPath;
     private final String adminDeleteTopicPath;
+    private final String adminCreateSubscriptionPath;
     private final BlockingQueue<WatchedEvent> watchEventsQueue;
     private final CountDownLatch runningLatch = new CountDownLatch(1);
     private volatile AtomicBoolean running = new AtomicBoolean(false);
 
-    public VBrokerController(CuratorService curatorService, TopicService topicService, VBrokerConfig config) {
+    public VBrokerController(CuratorService curatorService, TopicService topicService,
+                             SubscriptionService subscriptionService, VBrokerConfig config) {
         this.curatorService = curatorService;
         this.topicService = topicService;
+        this.subscriptionService = subscriptionService;
         this.config = config;
 
         this.adminCreateTopicPath = config.getAdminTasksPath() + "/create_topic";
         this.adminDeleteTopicPath = config.getAdminTasksPath() + "/delete_topic";
+        this.adminCreateSubscriptionPath = config.getAdminTasksPath() + "/create_subscription";
 
         this.watchEventsQueue = new ArrayBlockingQueue<>(config.getControllerQueueSize());
     }
@@ -47,13 +57,19 @@ public class VBrokerController extends AbstractExecutionThreadService {
         watch();
     }
 
-    protected void watch() throws Exception {
-        // set watches on admin create_topic task
-        CompletionStage<Void> stage = curatorService.watchNodeChildren(adminCreateTopicPath)
-            .thenAcceptAsync(watchedEvent -> {
-                log.info("Handling {} event", watchedEvent.getType());
-                watchEventsQueue.offer(watchedEvent);
-            });
+    protected void watch() {
+        curatorService.watchNodeChildren(adminCreateTopicPath).thenAcceptAsync(watchedEvent -> {
+            handleWatchedEvent(adminCreateTopicPath, watchedEvent);
+        });
+        curatorService.watchNodeChildren(adminCreateSubscriptionPath).thenAcceptAsync(watchedEvent -> {
+            handleWatchedEvent(adminCreateSubscriptionPath, watchedEvent);
+        });
+    }
+
+    private void handleWatchedEvent(String path, WatchedEvent watchedEvent) {
+        log.info("Handling {} event", watchedEvent.getType());
+        watchEventsQueue.offer(watchedEvent);
+        watch();
     }
 
     @Override
@@ -94,11 +110,21 @@ public class VBrokerController extends AbstractExecutionThreadService {
 
     private void handleNodeChildrenChanged(String watchedEventPath) {
         curatorService.getChildren(watchedEventPath).thenAcceptAsync(children -> children.forEach(child -> {
+            String fullPath = watchedEventPath + "/" + child;
             if (adminCreateTopicPath.equalsIgnoreCase(watchedEventPath)) {
-                String fullPath = watchedEventPath + "/" + child;
                 handleTopicCreation(fullPath, child);
+            } else if (adminCreateSubscriptionPath.equalsIgnoreCase(watchedEventPath)) {
+                handleSubscriptionCreation(fullPath, child);
             }
         }));
+    }
+
+    private void handleSubscriptionCreation(String fullPath, String child) {
+        short subscriptionId = Short.valueOf(child);
+        curatorService.getData(fullPath).thenComposeAsync(bytes -> subscriptionService
+            .createSubscriptionAdmin(subscriptionId, SubscriptionUtils.getSubscription(bytes)))
+            .toCompletableFuture().join();
+
     }
 
     private void handleTopicCreation(String fullPath, String nodeName) {
@@ -108,7 +134,7 @@ public class VBrokerController extends AbstractExecutionThreadService {
                 log.error("Topic with id {} already present. Cannot create again. Ignoring", topicId);
             } else {
                 curatorService.getData(fullPath)
-                    .thenComposeAsync(bytes -> topicService.createTopicAdmin(TopicUtils.getTopic(bytes)));
+                    .thenComposeAsync(bytes -> topicService.createTopicAdmin(topicId, TopicUtils.getTopic(bytes)));
             }
         }).toCompletableFuture().join(); // make it blocking here
     }

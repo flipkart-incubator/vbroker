@@ -94,4 +94,10 @@ public class InMemorySubscriptionService implements SubscriptionService {
         return topicService.getTopic(subscription.topicId())
             .thenApplyAsync(topic -> SubscriptionUtils.getPartSubscriptions(subscription, topic.partitions()));
     }
+
+    @Override
+    public CompletionStage<Subscription> createSubscriptionAdmin(short id, Subscription subscription) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

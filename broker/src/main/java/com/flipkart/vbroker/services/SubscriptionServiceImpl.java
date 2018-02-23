@@ -12,6 +12,7 @@ import com.flipkart.vbroker.exceptions.SubscriptionException;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.subscribers.IPartSubscriber;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
+import com.flipkart.vbroker.utils.ByteBufUtils;
 import com.flipkart.vbroker.utils.IdGenerator;
 import com.flipkart.vbroker.utils.SubscriptionUtils;
 import com.google.flatbuffers.FlatBufferBuilder;
@@ -44,22 +45,17 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     @Override
     public CompletionStage<Subscription> createSubscription(Subscription subscription) {
         short id = IdGenerator.randomId();
-        String path = config.getTopicsPath() + "/" + subscription.topicId() + "/subscriptions/" + id;
-
-        return curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT, subscription.getByteBuffer().array())
+        String path = config.getAdminTasksPath() + "/create_subscription" + "/" + id;
+        Subscription subscriptionWithId = newSubscriptionFromSubscription(id, subscription);
+        log.info("Creating sub topicId {} with uri {}", subscription.topicId(), subscription.httpUri());
+        return curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT, ByteBufUtils.getBytes(subscriptionWithId.getByteBuffer()))
             .handleAsync((data, exception) -> {
                 if (exception != null) {
                     log.error("Exception in curator node create and set data stage {} ", exception);
                     throw new SubscriptionCreationException(exception.getMessage());
                 } else {
-                    String arr[] = data.split("/");
-                    if (!data.contains("/") || arr.length != 2) {
-                        log.error("Invalid id {}", data);
-                        throw new SubscriptionCreationException("Invalid id data from curator" + data);
-                    }
-                    String subscriptionId = arr[1];
-                    log.info("Created subscription with id - " + subscriptionId);
-                    return newSubscriptionFromSubscription(Short.valueOf(subscriptionId), subscription);
+                    log.info("Created subscription with id - " + id);
+                    return newSubscriptionFromSubscription(id, subscription);
                 }
             });
     }
@@ -91,7 +87,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         int subscriptionNameOffset = dataBuilder.createString(subscription.name());
         int subscriptionEndpointOffset = dataBuilder.createString(subscription.httpUri());
         int subscriptionHttpMethodOffset = dataBuilder.createString(subscription.httpMethod());
-        int subscriptionOffset = Subscription.createSubscription(dataBuilder, id, subscription.id(),
+        int subscriptionOffset = Subscription.createSubscription(dataBuilder, id, subscription.topicId(),
             subscriptionNameOffset, subscription.grouped(), subscription.parallelism(),
             subscription.requestTimeout(), subscription.subscriptionType(), subscription.subscriptionMechanism(),
             subscriptionEndpointOffset, subscriptionHttpMethodOffset, subscription.elastic(), filterOperatorOffset,
@@ -225,45 +221,46 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         return curatorService.getChildren(path).thenCompose((children) -> {
             List<CompletionStage<Subscription>> subscriptionsStages = children.stream()
                 .map(child -> getSubscription(topicId, Short.valueOf(child)).exceptionally(throwable -> {
-                    log.error("Exception while fetching subscription data for {}", id);
+                    log.error("Exception while fetching subscription data for {}", child);
                     throw new SubscriptionException("Error while fetching subscription with id {}" + child);
-                }))
-                .collect(Collectors.toList());
+                })).collect(Collectors.toList());
 
             @SuppressWarnings("SuspiciousToArrayCall")
             CompletableFuture<Void> allStages = CompletableFuture
                 .allOf(subscriptionsStages.toArray(new CompletableFuture[subscriptionsStages.size()]));
 
             return allStages.thenApply(aVoid -> subscriptionsStages.stream()
-                .map(stage -> stage.toCompletableFuture().join())
-                .collect(Collectors.toList()));
+                .map(stage -> stage.toCompletableFuture().join()).collect(Collectors.toList()));
         });
 
-//            List<Subscription> subscriptions = new ArrayList<>();
-//            if (nonNull(children)) {
-//                List<CompletableFuture> subStages = new ArrayList<CompletableFuture>();
-//                for (String id : children) {
-//                    CompletionStage<Object> stage = this.getSubscription(topicId, Short.valueOf(id))
-//                        .handleAsync((subData, subException) -> {
-//                            if (subException != null) {
-//                                log.error("Exception while fetching subscription data for {}", id);
-//                                throw new VBrokerException("Error while fetching subscription with id " + id);
-//                            } else {
-//                                subscriptions.add(subData);
-//                                return null;
-//                            }
-//                        });
-//                    subStages.add(stage.toCompletableFuture());
-//                }
-//                CompletableFuture<Void> combined = CompletableFuture
-//                    .allOf(subStages.toArray(new CompletableFuture[subStages.size()]));
-//                return combined.handleAsync((combinedData, combinedException) -> {
-//                    return subscriptions;
-//                });
-//            } else {
-//                return null;
-//            }
-//        });
+        // List<Subscription> subscriptions = new ArrayList<>();
+        // if (nonNull(children)) {
+        // List<CompletableFuture> subStages = new
+        // ArrayList<CompletableFuture>();
+        // for (String id : children) {
+        // CompletionStage<Object> stage = this.getSubscription(topicId,
+        // Short.valueOf(id))
+        // .handleAsync((subData, subException) -> {
+        // if (subException != null) {
+        // log.error("Exception while fetching subscription data for {}", id);
+        // throw new VBrokerException("Error while fetching subscription with id
+        // " + id);
+        // } else {
+        // subscriptions.add(subData);
+        // return null;
+        // }
+        // });
+        // subStages.add(stage.toCompletableFuture());
+        // }
+        // CompletableFuture<Void> combined = CompletableFuture
+        // .allOf(subStages.toArray(new CompletableFuture[subStages.size()]));
+        // return combined.handleAsync((combinedData, combinedException) -> {
+        // return subscriptions;
+        // });
+        // } else {
+        // return null;
+        // }
+        // });
     }
 
     @Override
@@ -277,5 +274,21 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 return SubscriptionUtils.getPartSubscriptions(subscription, data.partitions());
             }
         });
+    }
+
+    @Override
+    public CompletionStage<Subscription> createSubscriptionAdmin(short id, Subscription subscription) {
+        String path = config.getTopicsPath() + "/" + subscription.topicId() + "/subscriptions/" + id;
+        Subscription subscriptionWithId = newSubscriptionFromSubscription(id, subscription);
+        return curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT, ByteBufUtils.getBytes(subscriptionWithId.getByteBuffer()))
+            .handleAsync((data, exception) -> {
+                if (exception != null) {
+                    log.error("Exception in curator node create and set data stage {} ", exception);
+                    throw new SubscriptionCreationException(exception.getMessage());
+                } else {
+                    log.info("Created subscription with id - " + id);
+                    return newSubscriptionFromSubscription(id, subscription);
+                }
+            });
     }
 }
