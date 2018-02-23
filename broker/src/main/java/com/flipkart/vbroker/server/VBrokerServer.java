@@ -100,7 +100,7 @@ public class VBrokerServer extends AbstractExecutionThreadService {
         SubscriberMetadataService subscriberMetadataService = new SubscriberMetadataService(subscriptionService, topicService, topicPartDataManager);
 
         //global broker controller
-        brokerController = new VBrokerController(curatorService, topicService, config);
+        brokerController = new VBrokerController(curatorService, topicService, subscriptionService, config);
         log.info("Starting controller and awaiting it to be ready");
         brokerController.startAsync().awaitRunning();
 

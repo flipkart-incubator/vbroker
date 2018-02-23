@@ -13,6 +13,8 @@ import org.testng.annotations.Test;
 
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.client.VBrokerClientInitializer;
+import com.flipkart.vbroker.data.InMemorySubPartDataManager;
+import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
 import com.flipkart.vbroker.entities.CallbackConfig;
@@ -67,7 +69,8 @@ public class DummyServiceTests {
 
 		topicService = new TopicServiceImpl(config, curatorService);
 		topicPartDataManager = new InMemoryTopicPartDataManager();
-		subscriptionService = new SubscriptionServiceImpl(config, curatorService, topicPartDataManager, topicService);
+		SubPartDataManager subPartDataManager = new InMemorySubPartDataManager(topicPartDataManager);
+		subscriptionService = new SubscriptionServiceImpl(config, curatorService, topicPartDataManager, subPartDataManager, topicService);
 
 	}
 
