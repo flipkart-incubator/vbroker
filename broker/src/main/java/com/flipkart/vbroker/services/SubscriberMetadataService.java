@@ -6,7 +6,7 @@ import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.entities.Subscription;
 import com.flipkart.vbroker.entities.Topic;
-import com.flipkart.vbroker.subscribers.IPartSubscriber;
+import com.flipkart.vbroker.subscribers.PartSubscriber;
 import com.flipkart.vbroker.subscribers.QType;
 import com.flipkart.vbroker.subscribers.SubscriberGroup;
 import com.flipkart.vbroker.utils.SubscriptionUtils;
@@ -32,7 +32,7 @@ public class SubscriberMetadataService {
         Topic topic = topicService.getTopic(subscription.topicId()).toCompletableFuture().join();
         //Save each group's file as : metadata/{topicID}/subs/{subID}/{partitionID}/{groupID}.txt
         for (PartSubscription partSubscription : SubscriptionUtils.getPartSubscriptions(subscription, topic.partitions())) {
-            IPartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription).toCompletableFuture().join();
+            PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription).toCompletableFuture().join();
             File dir = new File(getPartSubscriberPath(partSubscriber));
             dir.mkdirs();
             //TODO: fix this! we cannot expose direct map data structure outside the partSubscriber class
@@ -52,7 +52,7 @@ public class SubscriberMetadataService {
     public void loadSubscriptionMetadata(Subscription subscription) {
         Topic topic = topicService.getTopic(subscription.topicId()).toCompletableFuture().join();
         for (PartSubscription partSubscription : SubscriptionUtils.getPartSubscriptions(subscription, topic.partitions())) {
-            IPartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription).toCompletableFuture().join();
+            PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription).toCompletableFuture().join();
             TopicPartition partition = partSubscription.getTopicPartition();
             File dir = new File(getPartSubscriberPath(partSubscriber));
             topicPartDataManager.getUniqueGroups(partition).thenAccept(uniqueGroupIds -> {
@@ -81,7 +81,7 @@ public class SubscriberMetadataService {
         }
     }
 
-    private String getPartSubscriberPath(IPartSubscriber partSubscriber) {
+    private String getPartSubscriberPath(PartSubscriber partSubscriber) {
         short topicId = partSubscriber.getPartSubscription().getTopicPartition().getTopicId();
         short partitionId = partSubscriber.getPartSubscription().getTopicPartition().getId();
         short subscriptionId = partSubscriber.getPartSubscription().getSubscriptionId();

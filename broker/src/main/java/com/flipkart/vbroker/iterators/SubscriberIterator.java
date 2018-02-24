@@ -1,8 +1,8 @@
 package com.flipkart.vbroker.iterators;
 
 import com.flipkart.vbroker.exceptions.VBrokerException;
-import com.flipkart.vbroker.subscribers.IPartSubscriber;
 import com.flipkart.vbroker.subscribers.IterableMessage;
+import com.flipkart.vbroker.subscribers.PartSubscriber;
 import com.google.common.collect.PeekingIterator;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,8 +16,8 @@ public class SubscriberIterator implements PeekingIterator<IterableMessage> {
     private final Queue<PeekingIterator<IterableMessage>> iteratorQueue = new ArrayDeque<>();
     private PeekingIterator<IterableMessage> currIterator;
 
-    public SubscriberIterator(List<IPartSubscriber> partSubscribers) {
-        for (IPartSubscriber partSubscriber : partSubscribers) {
+    public SubscriberIterator(List<PartSubscriber> partSubscribers) {
+        for (PartSubscriber partSubscriber : partSubscribers) {
             PeekingIterator<IterableMessage> iterator = partSubscriber.iterator();
             iteratorQueue.add(iterator);
         }

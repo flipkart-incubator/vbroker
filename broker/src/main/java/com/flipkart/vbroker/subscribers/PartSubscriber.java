@@ -1,89 +1,16 @@
 package com.flipkart.vbroker.subscribers;
 
-import com.flipkart.vbroker.core.MessageGroup;
 import com.flipkart.vbroker.core.PartSubscription;
-import com.flipkart.vbroker.core.TopicPartition;
-import com.flipkart.vbroker.data.SubPartDataManager;
-import com.flipkart.vbroker.data.TopicPartDataManager;
-import com.flipkart.vbroker.iterators.PartSubscriberIterator;
 import com.google.common.collect.PeekingIterator;
-import com.google.common.collect.Sets;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
-import java.util.Optional;
-import java.util.Set;
+public interface PartSubscriber extends Iterable<IterableMessage> {
+    PartSubscription getPartSubscription();
 
-@Slf4j
-@EqualsAndHashCode(exclude = {"topicPartDataManager", "subPartDataManager"})
-@ToString
-public class PartSubscriber implements IPartSubscriber {
+    void refreshSubscriberMetadata();
 
-    @Getter
-    private final PartSubscription partSubscription;
-    private final TopicPartDataManager topicPartDataManager;
-    private final SubPartDataManager subPartDataManager;
+    PeekingIterator<IterableMessage> iterator();
 
-    public PartSubscriber(TopicPartDataManager topicPartDataManager,
-                          SubPartDataManager subPartDataManager,
-                          PartSubscription partSubscription) {
-        this.topicPartDataManager = topicPartDataManager;
-        this.subPartDataManager = subPartDataManager;
-        log.trace("Creating new PartSubscriber for part-subscription {}", partSubscription);
-        this.partSubscription = partSubscription;
-    }
+    PeekingIterator<IterableMessage> sidelineIterator();
 
-    /**
-     * Call this method to keep subscriberGroups in sync with messageGroups at any point
-     */
-    public void refreshSubscriberMetadata() {
-        log.debug("Refreshing SubscriberGroups for part-subscriber {} for topic-partition {}",
-            partSubscription.getId(), partSubscription.getTopicPartition().getId());
-        TopicPartition topicPartition = partSubscription.getTopicPartition();
-
-        topicPartDataManager.getUniqueGroups(topicPartition).thenAccept(uniqueMsgGroups -> {
-            //Set<String> uniqueSubscriberGroups = subscriberGroupsMap.keySet();
-            Set<String> uniqueSubscriberGroups = subPartDataManager.getUniqueGroups(partSubscription).toCompletableFuture().join();
-            Sets.SetView<String> difference = Sets.difference(uniqueMsgGroups, uniqueSubscriberGroups);
-
-            difference.forEach(group -> {
-                MessageGroup messageGroup = new MessageGroup(group, topicPartition);
-                SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, partSubscription, topicPartDataManager);
-                //subscriberGroupsMap.put(group, subscriberGroup);
-                //subscriberGroupIteratorMap.put(subscriberGroup, subscriberGroup.iterator());
-                subPartDataManager.addGroup(partSubscription, subscriberGroup);
-            });
-        });
-    }
-
-    @Override
-    public PeekingIterator<IterableMessage> iterator() {
-        return getIterator(QType.MAIN);
-    }
-
-    @Override
-    public PeekingIterator<IterableMessage> sidelineIterator() {
-        return getPartSubscriberIterator(QType.SIDELINE);
-    }
-
-    @Override
-    public PeekingIterator<IterableMessage> retryIterator(int retryQNo) {
-        QType qType = QType.retryQType(retryQNo);
-        return getPartSubscriberIterator(qType);
-    }
-
-    private PeekingIterator<IterableMessage> getPartSubscriberIterator(QType qType) {
-        return getIterator(qType);
-    }
-
-    private PeekingIterator<IterableMessage> getIterator(QType qType) {
-        return new PartSubscriberIterator() {
-            @Override
-            protected Optional<PeekingIterator<IterableMessage>> nextIterator() {
-                return subPartDataManager.getIterator(partSubscription, qType);
-            }
-        };
-    }
+    PeekingIterator<IterableMessage> retryIterator(int retryQNo);
 }
