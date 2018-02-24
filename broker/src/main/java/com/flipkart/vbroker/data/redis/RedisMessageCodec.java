@@ -22,15 +22,20 @@ public class RedisMessageCodec implements Codec {
     private final Decoder decoder = new Decoder() {
         @Override
         public Object decode(ByteBuf buf, State state) throws IOException {
-            buf = Base64.decode(buf);
-            int objType = buf.readInt();
             RedisObject redisObj = null;
-            if (objType == RedisObject.ObjectType.MESSAGE.ordinal()) {
-                redisObj = new RedisMessageObject(Message.getRootAsMessage(buf.nioBuffer()));
-            } else if (objType == RedisObject.ObjectType.STRING.ordinal()) {
-                String str = buf.toString(charset);
-                buf.readerIndex(buf.readableBytes());
-                redisObj = new RedisStringObject(str);
+            try {
+                buf = Base64.decode(buf);
+                int objType = buf.readInt();
+                if (objType == RedisObject.ObjectType.MESSAGE.ordinal()) {
+                    redisObj = new RedisMessageObject(Message.getRootAsMessage(buf.nioBuffer()));
+                } else if (objType == RedisObject.ObjectType.STRING.ordinal()) {
+                    String str = buf.toString(charset);
+                    buf.readerIndex(buf.readableBytes());
+                    redisObj = new RedisStringObject(str);
+                }
+            }
+            finally {
+                buf.release();
             }
             return redisObj;
         }
