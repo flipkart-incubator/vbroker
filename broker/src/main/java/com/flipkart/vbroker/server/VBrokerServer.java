@@ -7,6 +7,7 @@ import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
 import com.flipkart.vbroker.data.redis.RedisMessageCodec;
+import com.flipkart.vbroker.data.redis.RedisTopicPartDataManager;
 import com.flipkart.vbroker.entities.Subscription;
 import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.handlers.HttpResponseHandler;
@@ -38,6 +39,7 @@ import org.apache.curator.x.async.AsyncCuratorFramework;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
+import org.redisson.Redisson;
 import org.redisson.config.ClusterServersConfig;
 import org.redisson.config.Config;
 
@@ -100,7 +102,7 @@ public class VBrokerServer extends AbstractExecutionThreadService {
          *  Keeping both of these for now, for in-mem and redis dev/test
          *  */
         TopicPartDataManager topicPartDataManager = new InMemoryTopicPartDataManager();
-        //TopicPartDataManager redisTopicPartDataManager = new RedisTopicPartDataManager(Redisson.create(redissonConfig));
+        TopicPartDataManager redisTopicPartDataManager = new RedisTopicPartDataManager(Redisson.create(redissonConfig));
 
         SubPartDataManager subPartDataManager = new InMemorySubPartDataManager(topicPartDataManager);
         //SubscriptionService subscriptionService = new SubscriptionServiceImpl(config, curatorService, topicPartDataManager, topicService);
