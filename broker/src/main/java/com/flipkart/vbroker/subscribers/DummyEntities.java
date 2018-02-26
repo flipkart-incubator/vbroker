@@ -55,7 +55,7 @@ public class DummyEntities {
 
         return Subscription.createSubscription(subBuilder,
             subscriptionId,
-            groupedTopic.id(),
+            topic.id(),
             subBuilder.createString("subscription_" + subscriptionId),
             topic.grouped(),
             (short) 1,
