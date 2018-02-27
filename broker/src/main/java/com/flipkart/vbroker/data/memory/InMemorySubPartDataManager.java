@@ -56,13 +56,14 @@ public class InMemorySubPartDataManager implements SubPartDataManager {
 
     @Override
     public CompletionStage<Void> sideline(PartSubscription partSubscription, IterableMessage iterableMessage) {
-        log.debug("Sidelining message {} for partSubscription {}", iterableMessage.getMessage().messageId(), partSubscription);
+        log.info("Sidelining message {} for partSubscription {}", iterableMessage.getMessage().messageId(), partSubscription);
         iterableMessage.setQType(QType.SIDELINE);
         return getSubPartDataAsync(partSubscription).thenCompose(subPartData -> subPartData.sideline(iterableMessage));
     }
 
     @Override
     public CompletionStage<Void> retry(PartSubscription partSubscription, IterableMessage iterableMessage) {
+        log.info("Retrying message with msg_id {} for part-subscription {}", iterableMessage.getMessage().messageId(), partSubscription);
         QType destinationQType = MessageUtils.getNextRetryQType(iterableMessage.getQType());
         iterableMessage.setQType(destinationQType); //TODO: find a better way instead of mutating an argument
         return getSubPartDataAsync(partSubscription).thenCompose(subPartData -> subPartData.retry(iterableMessage));
