@@ -2,12 +2,9 @@ package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.controller.VBrokerController;
+import com.flipkart.vbroker.data.DataManagerFactory;
 import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
-import com.flipkart.vbroker.data.memory.InMemorySubPartDataManager;
-import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
-import com.flipkart.vbroker.data.redis.RedisMessageCodec;
-import com.flipkart.vbroker.data.redis.RedisTopicPartDataManager;
 import com.flipkart.vbroker.handlers.HttpResponseHandler;
 import com.flipkart.vbroker.handlers.RequestHandlerFactory;
 import com.flipkart.vbroker.handlers.ResponseHandlerFactory;
@@ -37,9 +34,6 @@ import org.apache.curator.x.async.AsyncCuratorFramework;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
-import org.redisson.Redisson;
-import org.redisson.config.ClusterServersConfig;
-import org.redisson.config.Config;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
@@ -78,30 +72,16 @@ public class VBrokerServer extends AbstractExecutionThreadService {
         //TopicService topicService = new TopicServiceImpl(config, curatorService);
         TopicService topicService = new InMemoryTopicService();
 
-        Config redissonConfig = new Config();
-        if (config.isRedisCluster() && config.getRedisClusterNodes() != null) {
-            ClusterServersConfig clusterServersConfig = redissonConfig.useClusterServers()
-                .setScanInterval(2000);
-            for (String node : config.getRedisClusterNodes()) {
-                clusterServersConfig.addNodeAddress(node);
-            }
-        } else if (!config.isRedisCluster() && config.getRedisUrl() != null) {
-            redissonConfig.useSingleServer().setAddress(config.getRedisUrl());
-        }
-
-        redissonConfig.setCodec(new RedisMessageCodec());
-        redissonConfig.setEventLoopGroup(workerGroup);
 
         //TopicPartDataManager topicPartDataManager = new TopicPartitionDataManagerImpl();
 
         /* Ultimately, one of these 2 topicPartDataManager would be used.
          *  Keeping both of these for now, for in-mem and redis dev/test
          *  */
-        TopicPartDataManager topicPartDataManager = new InMemoryTopicPartDataManager();
-        TopicPartDataManager redisTopicPartDataManager = new RedisTopicPartDataManager(Redisson.create(redissonConfig));
+        DataManagerFactory dataManagerFactory = new DataManagerFactory(config, workerGroup);
+        TopicPartDataManager topicPartDataManager = dataManagerFactory.getTopicDataManager();
+        SubPartDataManager subPartDataManager = dataManagerFactory.getSubPartDataManager(topicPartDataManager);
 
-        SubPartDataManager subPartDataManager = new InMemorySubPartDataManager(topicPartDataManager);
-        //SubscriptionService subscriptionService = new SubscriptionServiceImpl(config, curatorService, topicPartDataManager, topicService);
         SubscriptionService subscriptionService = new InMemorySubscriptionService(topicService, topicPartDataManager, subPartDataManager);
 
         //global broker controller
@@ -112,8 +92,8 @@ public class VBrokerServer extends AbstractExecutionThreadService {
         //TODO: now that metadata is created, we need to add actual data to the metadata entries
         //=> populate message groups in topic partitions
 
-        topicService.createTopic(DummyEntities.groupedTopic);
-        subscriptionService.createSubscription(DummyEntities.groupedSubscription);
+        topicService.createTopic(DummyEntities.unGroupedTopic);
+        subscriptionService.createSubscription(DummyEntities.unGroupedSubscription);
 
         ProducerService producerService = new ProducerService(topicPartDataManager);
         RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactory(

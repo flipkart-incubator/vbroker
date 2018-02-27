@@ -44,7 +44,7 @@ public class VBrokerClient {
             FlatBufferBuilder builder = new FlatBufferBuilder();
 
             List<Topic> topics = new LinkedList<>();
-            topics.add(DummyEntities.groupedTopic);
+            topics.add(DummyEntities.unGroupedTopic);
 
             int[] topicRequests = new int[topics.size()];
             for (int tIdx = 0; tIdx < topics.size(); tIdx++) {

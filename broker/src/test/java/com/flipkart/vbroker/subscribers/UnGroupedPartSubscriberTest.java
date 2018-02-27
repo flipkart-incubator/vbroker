@@ -23,4 +23,34 @@ public class UnGroupedPartSubscriberTest extends BasePartSubscriberTest {
 
         setPartSubscriber(new UnGroupedPartSubscriber(subPartDataManager, partSubscription));
     }
+
+    @Override
+    public void shouldIterateOver_NewMessages() throws InterruptedException {
+        super.shouldIterateOver_NewMessages();
+    }
+
+    @Override
+    public void shouldIterateOver_SidelinedMessages() throws InterruptedException {
+        super.shouldIterateOver_SidelinedMessages();
+    }
+
+    @Override
+    public void shouldIterateOver_RetryMessages_MainQToRQ1() throws InterruptedException {
+        super.shouldIterateOver_RetryMessages_MainQToRQ1();
+    }
+
+    @Override
+    public void shouldIterateOver_RetryMessages_RQ1ToRQ2() throws InterruptedException {
+        super.shouldIterateOver_RetryMessages_RQ1ToRQ2();
+    }
+
+    @Override
+    public void shouldIterateOver_RetryMessages_RQ2ToRQ3() throws InterruptedException {
+        super.shouldIterateOver_RetryMessages_RQ2ToRQ3();
+    }
+
+    @Override
+    public void shouldIterateOver_MoveFromRQ3ToSQ() throws InterruptedException {
+        super.shouldIterateOver_MoveFromRQ3ToSQ();
+    }
 }
