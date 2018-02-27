@@ -10,6 +10,8 @@ import com.google.common.util.concurrent.AbstractExecutionThreadService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.WatchedEvent;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
@@ -34,6 +36,8 @@ public class VBrokerController extends AbstractExecutionThreadService {
     private final String adminCreateSubscriptionPath;
     private final BlockingQueue<WatchedEvent> watchEventsQueue;
     private final CountDownLatch runningLatch = new CountDownLatch(1);
+    private final ChildrenCache topics = new ChildrenCache(new ArrayList());
+    private final ChildrenCache subscriptions = new ChildrenCache(new ArrayList());
     private volatile AtomicBoolean running = new AtomicBoolean(false);
 
     public VBrokerController(CuratorService curatorService, TopicService topicService,
@@ -109,14 +113,23 @@ public class VBrokerController extends AbstractExecutionThreadService {
     }
 
     private void handleNodeChildrenChanged(String watchedEventPath) {
-        curatorService.getChildren(watchedEventPath).thenAcceptAsync(children -> children.forEach(child -> {
-            String fullPath = watchedEventPath + "/" + child;
+        curatorService.getChildren(watchedEventPath).thenAcceptAsync(children -> {
             if (adminCreateTopicPath.equalsIgnoreCase(watchedEventPath)) {
-                handleTopicCreation(fullPath, child);
+                List<String> newChildren = children;
+                List<String> newTopics = topics.diffAndSet(newChildren);
+                for (String topicId : newTopics) {
+                    String fullPath = watchedEventPath + "/" + topicId;
+                    handleTopicCreation(fullPath, topicId);
+                }
             } else if (adminCreateSubscriptionPath.equalsIgnoreCase(watchedEventPath)) {
-                handleSubscriptionCreation(fullPath, child);
+                List<String> newChildren = children;
+                List<String> newSubs = subscriptions.diffAndSet(newChildren);
+                for (String subId : newSubs) {
+                    String fullPath = watchedEventPath + "/" + subId;
+                    handleSubscriptionCreation(fullPath, subId);
+                }
             }
-        }));
+        });
     }
 
     private void handleSubscriptionCreation(String fullPath, String child) {
@@ -136,7 +149,7 @@ public class VBrokerController extends AbstractExecutionThreadService {
                 curatorService.getData(fullPath)
                     .thenComposeAsync(bytes -> topicService.createTopicAdmin(topicId, TopicUtils.getTopic(bytes)));
             }
-        }).toCompletableFuture().join(); // make it blocking here
+        }).toCompletableFuture().join(); 
     }
 
     @Override

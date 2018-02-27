@@ -4,15 +4,13 @@ import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
-import com.flipkart.vbroker.entities.CallbackConfig;
-import com.flipkart.vbroker.entities.CodeRange;
-import com.flipkart.vbroker.entities.FilterKeyValues;
-import com.flipkart.vbroker.entities.Subscription;
+import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.exceptions.SubscriptionCreationException;
 import com.flipkart.vbroker.exceptions.SubscriptionException;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.subscribers.IPartSubscriber;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
+import com.flipkart.vbroker.subscribers.UnGroupedPartSubscriber;
 import com.flipkart.vbroker.utils.ByteBufUtils;
 import com.flipkart.vbroker.utils.IdGenerator;
 import com.flipkart.vbroker.utils.SubscriptionUtils;
@@ -23,10 +21,10 @@ import org.apache.zookeeper.CreateMode;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
@@ -41,25 +39,23 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private final SubPartDataManager subPartDataManager;
     private final TopicService topicService;
 
-    private final ConcurrentMap<Short, Subscription> subscriptionsMap = new ConcurrentHashMap<>();
-    private final ConcurrentMap<PartSubscription, IPartSubscriber> subscriberMap = new ConcurrentHashMap<>();
-
     @Override
     public CompletionStage<Subscription> createSubscription(Subscription subscription) {
         short id = IdGenerator.randomId();
         String path = config.getAdminTasksPath() + "/create_subscription" + "/" + id;
         Subscription subscriptionWithId = newSubscriptionFromSubscription(id, subscription);
-        log.info("Creating sub topicId {} with uri {}", subscription.topicId(), subscription.httpUri());
-        return curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT, ByteBufUtils.getBytes(subscriptionWithId.getByteBuffer()))
-            .handleAsync((data, exception) -> {
-                if (exception != null) {
-                    log.error("Exception in curator node create and set data stage {} ", exception);
-                    throw new SubscriptionCreationException(exception.getMessage());
-                } else {
-                    log.info("Created subscription with id - " + id);
-                    return newSubscriptionFromSubscription(id, subscription);
-                }
-            });
+        log.info("Creating subscription with id {} for topicId {} with uri {}", id, subscription.topicId(),
+            subscription.httpUri());
+        return curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT,
+            ByteBufUtils.getBytes(subscriptionWithId.getByteBuffer())).handleAsync((data, exception) -> {
+            if (exception != null) {
+                log.error("Exception in curator node create and set data stage {} ", exception);
+                throw new SubscriptionCreationException(exception.getMessage());
+            } else {
+                log.info("Created subscription with id - " + id);
+                return newSubscriptionFromSubscription(id, subscription);
+            }
+        });
     }
 
     private Subscription newSubscriptionFromSubscription(short id, Subscription subscription) {
@@ -99,36 +95,71 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public CompletionStage<Set<Subscription>> getAllSubscriptions() {
-        return CompletableFuture.supplyAsync(() -> new HashSet<>(subscriptionsMap.values()));
-    }
+    public CompletionStage<List<Subscription>> getAllSubscriptions() {
+        List<Subscription> subs = new ArrayList<>();
+        CompletionStage<Object> com = topicService.getAllTopics().thenCompose((topics) -> {
+            List<CompletableFuture> subStages = new ArrayList<CompletableFuture>();
+            for (Topic topic : topics) {
+                CompletionStage<List<Subscription>> subStage = this.getSubscriptionsForTopic(topic.id());
+                CompletionStage<Object> subComStage = subStage.thenCompose((subData) -> {
+                    subs.addAll(subData);
+                    return null;
+                }).exceptionally((throwable) -> {
+                    log.error("Exception in combine stage", throwable);
+                    throw new SubscriptionException("Execption while fetching all subscriptions");
+                });
 
-    @Override
-    public CompletionStage<PartSubscription> getPartSubscription(Subscription subscription, short partSubscriptionId) {
-        return CompletableFuture.supplyAsync(() -> {
-            if (subscriptionsMap.containsKey(subscription.id())) {
-                Subscription existingSub = subscriptionsMap.get(subscription.id());
-                return SubscriptionUtils.getPartSubscription(existingSub, partSubscriptionId);
+                subStages.add(subComStage.toCompletableFuture());
             }
-            return null;
+            CompletableFuture<Void> combined = CompletableFuture
+                .allOf(subStages.toArray(new CompletableFuture[subStages.size()]));
+            return combined.handleAsync((dat, exc) -> {
+                return null;
+            }).exceptionally((throwable) -> {
+                log.error("Exception in combine stage", throwable);
+                throw new SubscriptionException("Execption while fetching all subscriptions");
+            });
+        });
+        return com.handleAsync((data, exc) -> {
+            return subs;
+        }).exceptionally((throwable) -> {
+            log.error("Exception in combine stage handling", throwable);
+            throw new SubscriptionException("Execption while fetching all subscriptions");
         });
     }
 
     @Override
-    public CompletionStage<IPartSubscriber> getPartSubscriber(PartSubscription partSubscription) {
-        return CompletableFuture.supplyAsync(() -> {
-            log.trace("SubscriberMap contents: {}", subscriberMap);
-            log.debug("SubscriberMap status of the part-subscription {} is {}", partSubscription,
-                subscriberMap.containsKey(partSubscription));
-            // wanted below to work but its creating a new PartSubscriber each
-            // time though key is already present
-            // subscriberMap.putIfAbsent(partSubscription, new
-            // PartSubscriber(partSubscription));
-
-            subscriberMap.computeIfAbsent(partSubscription, partSubscription1 -> {
-                return new PartSubscriber(topicPartDataManager, subPartDataManager, partSubscription1);
+    public CompletionStage<PartSubscription> getPartSubscription(Subscription subscription, short partSubscriptionId) {
+        return this.getSubscription(subscription.topicId(), subscription.id())
+            .handleAsync((existingSubscription, exception) -> {
+                if (exception != null) {
+                    log.error("Error while fetching subscription with topicId {} and subId {}",
+                        subscription.topicId(), subscription.id());
+                    throw new SubscriptionException("Error while fetching subscription");
+                }
+                return SubscriptionUtils.getPartSubscription(existingSubscription, partSubscriptionId);
             });
-            return subscriberMap.get(partSubscription);
+    }
+
+    @Override
+    public CompletionStage<IPartSubscriber> getPartSubscriber(PartSubscription partSubscription) {
+        return this.getSubscription(partSubscription.getTopicPartition().getTopicId(),
+            partSubscription.getSubscriptionId()).handleAsync((subscription, exception) -> {
+            if (exception != null) {
+                log.error("Error while fethcing sub with topicId {} and id {}",
+                    partSubscription.getTopicPartition().getTopicId(),
+                    partSubscription.getSubscriptionId());
+                throw new SubscriptionException("Error while fetching subscription");
+            } else {
+                IPartSubscriber partSubscriber;
+                if (partSubscription.isGrouped()) {
+                    partSubscriber = new PartSubscriber(topicPartDataManager, subPartDataManager,
+                        partSubscription);
+                } else {
+                    partSubscriber = new UnGroupedPartSubscriber(subPartDataManager, partSubscription);
+                }
+                return partSubscriber;
+            }
         });
     }
 
@@ -194,7 +225,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         });
     }
 
-    public CompletionStage<List<Subscription>> getSubscriptionsForIds(short topicId, List<String> ids) {
+    private CompletionStage<List<Subscription>> getSubscriptionsForIds(short topicId, List<String> ids) {
         CompletableFuture[] stages = new CompletableFuture[ids.size()];
         List<Subscription> subs = new ArrayList<>();
         int j = 0;
@@ -236,62 +267,35 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 .map(stage -> stage.toCompletableFuture().join()).collect(Collectors.toList()));
         });
 
-        // List<Subscription> subscriptions = new ArrayList<>();
-        // if (nonNull(children)) {
-        // List<CompletableFuture> subStages = new
-        // ArrayList<CompletableFuture>();
-        // for (String id : children) {
-        // CompletionStage<Object> stage = this.getSubscription(topicId,
-        // Short.valueOf(id))
-        // .handleAsync((subData, subException) -> {
-        // if (subException != null) {
-        // log.error("Exception while fetching subscription data for {}", id);
-        // throw new VBrokerException("Error while fetching subscription with id
-        // " + id);
-        // } else {
-        // subscriptions.add(subData);
-        // return null;
-        // }
-        // });
-        // subStages.add(stage.toCompletableFuture());
-        // }
-        // CompletableFuture<Void> combined = CompletableFuture
-        // .allOf(subStages.toArray(new CompletableFuture[subStages.size()]));
-        // return combined.handleAsync((combinedData, combinedException) -> {
-        // return subscriptions;
-        // });
-        // } else {
-        // return null;
-        // }
-        // });
     }
 
     @Override
     public CompletionStage<List<PartSubscription>> getPartSubscriptions(Subscription subscription) {
-        return topicService.getTopic(subscription.topicId()).handleAsync((data, exception) -> {
+        return topicService.getTopic(subscription.topicId()).handleAsync((topic, exception) -> {
             if (exception != null) {
                 log.error("Error in get topic stage {}", exception);
                 throw new VBrokerException(exception.getMessage());
             } else {
-                log.info("Got topic {} with no of partitions {}", data.name(), data.partitions());
-                return SubscriptionUtils.getPartSubscriptions(subscription, data.partitions());
+                log.info("Got topic {} with no of partitions {}", topic.name(), topic.partitions());
+                return SubscriptionUtils.getPartSubscriptions(subscription, topic.partitions());
             }
         });
     }
 
     @Override
     public CompletionStage<Subscription> createSubscriptionAdmin(short id, Subscription subscription) {
+        log.info("Call from controller to create subscription with id {} name {}", id, subscription.name());
         String path = config.getTopicsPath() + "/" + subscription.topicId() + "/subscriptions/" + id;
         Subscription subscriptionWithId = newSubscriptionFromSubscription(id, subscription);
-        return curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT, ByteBufUtils.getBytes(subscriptionWithId.getByteBuffer()))
-            .handleAsync((data, exception) -> {
-                if (exception != null) {
-                    log.error("Exception in curator node create and set data stage {} ", exception);
-                    throw new SubscriptionCreationException(exception.getMessage());
-                } else {
-                    log.info("Created subscription with id - " + id);
-                    return newSubscriptionFromSubscription(id, subscription);
-                }
-            });
+        return curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT,
+            ByteBufUtils.getBytes(subscriptionWithId.getByteBuffer())).handleAsync((data, exception) -> {
+            if (exception != null) {
+                log.error("Exception in curator node create and set data stage {} ", exception);
+                throw new SubscriptionCreationException(exception.getMessage());
+            } else {
+                log.info("Created subscription entity with id - " + id);
+                return newSubscriptionFromSubscription(id, subscription);
+            }
+        });
     }
 }

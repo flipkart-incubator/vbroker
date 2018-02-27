@@ -11,9 +11,7 @@ import com.flipkart.vbroker.utils.SubscriptionUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,8 +40,8 @@ public class InMemorySubscriptionService implements SubscriptionService {
     }
 
     @Override
-    public CompletionStage<Set<Subscription>> getAllSubscriptions() {
-        return CompletableFuture.supplyAsync(() -> new HashSet<>(subscriptionsMap.values()));
+    public CompletionStage<List<Subscription>> getAllSubscriptions() {
+        return CompletableFuture.supplyAsync(() -> new ArrayList<>(subscriptionsMap.values()));
     }
 
     @Override

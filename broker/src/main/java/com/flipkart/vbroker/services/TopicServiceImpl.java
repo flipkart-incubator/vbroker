@@ -3,10 +3,7 @@ package com.flipkart.vbroker.services;
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.Topic;
-import com.flipkart.vbroker.exceptions.TopicCreationException;
-import com.flipkart.vbroker.exceptions.TopicNotFoundException;
-import com.flipkart.vbroker.exceptions.TopicValidationException;
-import com.flipkart.vbroker.exceptions.VBrokerException;
+import com.flipkart.vbroker.exceptions.*;
 import com.flipkart.vbroker.utils.ByteBufUtils;
 import com.flipkart.vbroker.utils.IdGenerator;
 import com.flipkart.vbroker.utils.TopicUtils;
@@ -19,6 +16,7 @@ import org.apache.zookeeper.KeeperException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 @Slf4j
@@ -30,12 +28,12 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public CompletionStage<Topic> createTopic(Topic topic) throws TopicValidationException {
-        log.info("creating topic with name {}, rf {}, grouped {}", topic.name(), topic.replicationFactor(),
-            topic.grouped());
         if (!validateCreateTopic(topic)) {
             throw new TopicValidationException("Topic create validation failed");
         }
         short id = IdGenerator.randomId();
+        log.info("creating topic request with generated id {}, name {}, rf {}, grouped {}", id, topic.name(), topic.replicationFactor(),
+            topic.grouped());
         String topicPath = config.getAdminTasksPath() + "/create_topic" + "/" + id;
         Topic topicWithId = newTopicModelFromTopic(id, topic);
         return curatorService
@@ -45,14 +43,8 @@ public class TopicServiceImpl implements TopicService {
                     log.error("Exception in curator node create and set data stage {} ", exception);
                     throw new TopicCreationException(exception.getMessage());
                 } else {
-                    String arr[] = data.split("/");
-                    if (!data.contains("/") || arr.length != 4) {
-                        log.error("Invalid id {}", data);
-                        throw new TopicCreationException("Invalid id data from curator " + data);
-                    }
-                    String topicId = arr[3];
-                    log.info("Created topic with id - " + topicId);
-                    return newTopicModelFromTopic(Short.valueOf(topicId), topic);
+                    log.info("Created topic with id - " + id);
+                    return newTopicModelFromTopic(Short.valueOf(id), topic);
                 }
             });
     }
@@ -85,8 +77,13 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public CompletionStage<TopicPartition> getTopicPartition(Topic topic, short topicPartitionId) {
-        return getTopic(topic.id())
-            .thenApplyAsync(topic1 -> new TopicPartition(topicPartitionId, topic.id(), topic.grouped()));
+        return this.getTopic(topic.id()).handleAsync((topicData, exception) -> {
+            if (exception != null) {
+                log.error("Error while getting topic {}", exception);
+                throw new TopicException("Error while getting topic " + exception.getMessage());
+            }
+            return new TopicPartition(topicPartitionId, topic.id(), topic.grouped());
+        });
     }
 
     @Override
@@ -105,6 +102,7 @@ public class TopicServiceImpl implements TopicService {
         });
     }
 
+    @Override
     public CompletionStage<Boolean> isTopicPresent(String name) {
         return this.getAllTopics().handleAsync((topics, exception) -> {
             if (exception != null) {
@@ -121,6 +119,7 @@ public class TopicServiceImpl implements TopicService {
             if (exception != null) {
                 if (exception instanceof KeeperException) {
                     if (KeeperException.Code.NONODE.equals(((KeeperException) exception).code())) {
+                        log.error("Topic {} does not exist", topicId);
                         throw new TopicNotFoundException();
                     }
                 }
@@ -139,24 +138,25 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public CompletionStage<List<Topic>> getAllTopics() {
-        return curatorService.getChildren(config.getTopicsPath()).handleAsync((data, exception) -> {
-            if (exception != null) {
-                log.error("Error while fethcing topics {}", exception);
-                throw new VBrokerException(exception.getMessage());
-            } else {
-                List<Topic> topics = new ArrayList<Topic>();
-                data.forEach((id) -> this.getTopic(Short.valueOf(id)).handleAsync((topicData, topicException) -> {
-                    if (topicException != null) {
-                        log.error("Error while fethcing topics {}", topicException);
-                        throw new VBrokerException(topicException.getMessage());
-                    } else {
-                        topics.add(topicData);
-                        return null;
-                    }
-                }));
-
-                return topics;
+        List<Topic> topics = new ArrayList<Topic>();
+        CompletionStage<Object> combinedStage = curatorService.getChildren(config.getTopicsPath()).thenCompose((topicIds) -> {
+            List<CompletableFuture> topicStages = new ArrayList<CompletableFuture>();
+            for (String id : topicIds) {
+                CompletionStage<Topic> topicStage = this.getTopic(Short.valueOf(id));
+                topicStage.handleAsync((topicData, topicExc) -> {
+                    topics.add(topicData);
+                    return null;
+                });
+                topicStages.add(topicStage.toCompletableFuture());
             }
+            CompletableFuture<Void> combined = CompletableFuture
+                .allOf(topicStages.toArray(new CompletableFuture[topicStages.size()]));
+            return combined.handleAsync((dat, exc) -> {
+                return null;
+            });
+        });
+        return combinedStage.handleAsync((data, exc) -> {
+            return topics;
         });
     }
 
@@ -166,11 +166,8 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public CompletionStage<Topic> createTopicAdmin(short id, Topic topic) throws TopicValidationException {
-        log.info("creating topic with name {}, rf {}, grouped {}", topic.name(), topic.replicationFactor(),
+        log.info("creating topic entity in /topics with id {}, name {}, rf {}, grouped {}", id, topic.name(), topic.replicationFactor(),
             topic.grouped());
-        if (!validateCreateTopic(topic)) {
-            throw new TopicValidationException("Topic create validation failed");
-        }
         String topicPath = config.getTopicsPath() + "/" + id;
         Topic topicWithId = newTopicModelFromTopic(id, topic);
         return curatorService
@@ -180,14 +177,8 @@ public class TopicServiceImpl implements TopicService {
                     log.error("Exception in curator node create and set data stage {} ", exception);
                     throw new TopicCreationException(exception.getMessage());
                 } else {
-                    String arr[] = data.split("/");
-                    if (!data.contains("/") || arr.length != 3) {
-                        log.error("Invalid id {}", data);
-                        throw new TopicCreationException("Invalid id data from curator " + data);
-                    }
-                    String topicId = arr[2];
-                    log.info("Created topic with id - " + topicId);
-                    return newTopicModelFromTopic(Short.valueOf(topicId), topic);
+                    log.info("Created topic entity");
+                    return newTopicModelFromTopic(id, topic);
                 }
             });
     }

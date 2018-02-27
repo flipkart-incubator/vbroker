@@ -55,4 +55,10 @@ public class InMemoryTopicService implements TopicService {
         // TODO Auto-generated method stub
         return null;
     }
+
+    @Override
+    public CompletionStage<Boolean> isTopicPresent(String name) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

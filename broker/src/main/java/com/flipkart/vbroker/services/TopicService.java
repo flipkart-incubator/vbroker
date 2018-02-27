@@ -27,8 +27,6 @@ public interface TopicService {
      */
     public CompletionStage<Topic> createTopicAdmin(short id, Topic topic) throws TopicValidationException;
 
-    // public void createTopicPartition(Topic topic, TopicPartition topicPartition);
-
     /**
      * Gets topic partition.
      *
@@ -45,6 +43,14 @@ public interface TopicService {
      * @return async true if present and false otherwise
      */
     public CompletionStage<Boolean> isTopicPresent(short topicId);
+
+    /**
+     * check if the topic is present
+     *
+     * @param name of the topic to check
+     * @return async true if present and false otherwise
+     */
+    public CompletionStage<Boolean> isTopicPresent(String name);
 
     /**
      * Get topic with specified id.
