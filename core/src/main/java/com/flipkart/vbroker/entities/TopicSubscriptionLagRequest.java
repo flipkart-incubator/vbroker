@@ -21,11 +21,11 @@ public final class TopicSubscriptionLagRequest extends Table {
 
     public static int createTopicSubscriptionLagRequest(FlatBufferBuilder builder,
                                                         short subscriptionId,
-                                                        short topiId,
+                                                        short topicId,
                                                         int partitionLagsOffset) {
         builder.startObject(3);
         TopicSubscriptionLagRequest.addPartitionLags(builder, partitionLagsOffset);
-        TopicSubscriptionLagRequest.addTopiId(builder, topiId);
+        TopicSubscriptionLagRequest.addTopicId(builder, topicId);
         TopicSubscriptionLagRequest.addSubscriptionId(builder, subscriptionId);
         return TopicSubscriptionLagRequest.endTopicSubscriptionLagRequest(builder);
     }
@@ -38,8 +38,8 @@ public final class TopicSubscriptionLagRequest extends Table {
         builder.addShort(0, subscriptionId, 0);
     }
 
-    public static void addTopiId(FlatBufferBuilder builder, short topiId) {
-        builder.addShort(1, topiId, 0);
+    public static void addTopicId(FlatBufferBuilder builder, short topicId) {
+        builder.addShort(1, topicId, 0);
     }
 
     public static void addPartitionLags(FlatBufferBuilder builder, int partitionLagsOffset) {
@@ -76,7 +76,7 @@ public final class TopicSubscriptionLagRequest extends Table {
         return o != 0 ? bb.getShort(o + bb_pos) : 0;
     }
 
-    public short topiId() {
+    public short topicId() {
         int o = __offset(6);
         return o != 0 ? bb.getShort(o + bb_pos) : 0;
     }

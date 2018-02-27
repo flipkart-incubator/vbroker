@@ -4,6 +4,7 @@ import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.google.flatbuffers.FlatBufferBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -20,6 +22,7 @@ import static org.mockito.Mockito.when;
 /**
  * Created by kaushal.hooda on 19/02/18.
  */
+@Slf4j
 public class GetLagsRequestHandlerTest {
     private VRequest vRequest;
     private SubscriptionService subscriptionService;
@@ -32,7 +35,7 @@ public class GetLagsRequestHandlerTest {
     }
 
     @Test
-    public void shouldGetLagForOneSubscriptionWithOnePartition() throws ExecutionException, InterruptedException {
+    public void shouldGetLagForOneSubscriptionWithOnePartition(){
         vRequest = generateVRequest(lagsReqForOnePartition());
 
         Subscription subscription = mock(Subscription.class);
@@ -43,16 +46,76 @@ public class GetLagsRequestHandlerTest {
         when(subscriptionService.getPartSubscription(subscription, (short) 1))
             .thenReturn(CompletableFuture.completedFuture(partSubscription));
         when(subscriptionService.getPartSubscriptionLag(partSubscription))
-            .thenReturn(CompletableFuture.completedFuture(0));
+            .thenReturn(CompletableFuture.completedFuture(5));
         when(partSubscription.getId())
             .thenReturn((short) 1);
 
         CompletionStage<VResponse> responseCompletionStage = getLagsRequestHandler.handle(vRequest);
-        VResponse response = responseCompletionStage.toCompletableFuture().get();
+        VResponse response = responseCompletionStage.toCompletableFuture().join();
         GetLagsResponse getLagsResponse = (GetLagsResponse) response.responseMessage(new GetLagsResponse());
         int lag = getLagsResponse.subscriptionLags(0).partitionLags(0).lag();
-        Assert.assertEquals(lag, 0);
+        Assert.assertEquals(lag, 5);
     }
+
+    @Test
+    public void shouldCatchExceptionInGetPartSubscriptionLag(){
+        vRequest = generateVRequest(lagsReqForOnePartition());
+
+        Subscription subscription = mock(Subscription.class);
+        PartSubscription partSubscription = mock(PartSubscription.class);
+
+        when(subscriptionService.getSubscription((short) 1, (short) 1))
+            .thenReturn(CompletableFuture.completedFuture(subscription));
+        when(subscriptionService.getPartSubscription(subscription, (short) 1))
+            .thenReturn(CompletableFuture.completedFuture(partSubscription));
+        when(subscriptionService.getPartSubscriptionLag(partSubscription))
+            .thenReturn(CompletableFuture.supplyAsync(() -> {
+                throw new RuntimeException("Error in getting lag");
+            }));
+        when(partSubscription.getId())
+            .thenReturn((short) 1);
+
+        CompletionStage<VResponse> responseCompletionStage = getLagsRequestHandler.handle(vRequest);
+        VResponse response = responseCompletionStage.toCompletableFuture().join();
+        GetLagsResponse getLagsResponse = (GetLagsResponse) response.responseMessage(new GetLagsResponse());
+        int lag = getLagsResponse.subscriptionLags(0).partitionLags(0).lag();
+        Assert.assertEquals(lag, -1);
+    }
+
+    @Test
+    public void shouldCatchExceptionInGetPartSubscription(){
+        vRequest = generateVRequest(lagsReqForOnePartition());
+
+        Subscription subscription = mock(Subscription.class);
+        when(subscriptionService.getSubscription((short) 1, (short) 1))
+            .thenReturn(CompletableFuture.completedFuture(subscription));
+        when(subscriptionService.getPartSubscription(subscription, (short) 1))
+            .thenReturn(CompletableFuture.supplyAsync(() -> {
+                throw new RuntimeException("Error in getting PartSubscription");
+            }));
+
+        CompletionStage<VResponse> responseCompletionStage = getLagsRequestHandler.handle(vRequest);
+        VResponse response = responseCompletionStage.toCompletableFuture().join();
+        GetLagsResponse getLagsResponse = (GetLagsResponse) response.responseMessage(new GetLagsResponse());
+        int lag = getLagsResponse.subscriptionLags(0).partitionLags(0).lag();
+        Assert.assertEquals(lag, -1);
+    }
+
+    @Test void shouldCatchExceptionInGetSubscription(){
+        vRequest = generateVRequest(lagsReqForOnePartition());
+
+        when(subscriptionService.getSubscription((short) 1, (short) 1))
+            .thenReturn(CompletableFuture.supplyAsync(() -> {
+                throw new RuntimeException("Error in getting Subscription");
+            }));
+        CompletionStage<VResponse> responseCompletionStage = getLagsRequestHandler.handle(vRequest);
+        VResponse response = responseCompletionStage.toCompletableFuture().join();
+        GetLagsResponse getLagsResponse = (GetLagsResponse) response.responseMessage(new GetLagsResponse());
+        int lag = getLagsResponse.subscriptionLags(0).partitionLags(0).lag();
+        log.info(getLagsResponse.subscriptionLags(0).partitionLags(0).status().message());
+        Assert.assertEquals(lag, -1);
+    }
+
 
     private DummyGetLagsReq lagsReqForOnePartition() {
         DummyGetLagsReq dummyGetLagsReq = new DummyGetLagsReq();

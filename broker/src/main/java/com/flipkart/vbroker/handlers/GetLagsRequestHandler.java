@@ -3,13 +3,15 @@ package com.flipkart.vbroker.handlers;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.services.SubscriptionService;
+import com.flipkart.vbroker.utils.CompletionStageUtils;
+import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -29,23 +31,16 @@ public class GetLagsRequestHandler implements RequestHandler {
         //TODO messageGroups with no corresponding subscriberGroups? (e.g., in L3?)
 
         GetLagsRequest getLagsRequest = (GetLagsRequest) vRequest.requestMessage(new GetLagsRequest());
-        List<CompletableFuture<SubscriptionLag>> subscriptionLagFutures = IntStream.range(0, getLagsRequest.subscriptionLagsLength())
+        List<CompletionStage<SubscriptionLag>> subscriptionLagStages = IntStream.range(0, getLagsRequest.subscriptionLagsLength())
             .mapToObj(i -> {
                 TopicSubscriptionLagRequest subscriptionLagReq = getLagsRequest.subscriptionLags(i);
                 short subscriptionId = subscriptionLagReq.subscriptionId();
-                short topicId = subscriptionLagReq.topiId();
+                short topicId = subscriptionLagReq.topicId();
                 List<Short> partitionIds = getPartitionIds(subscriptionLagReq);
-
                 return getSubscriptionLag(subscriptionId, topicId, partitionIds);
             })
-            .map(CompletionStage::toCompletableFuture)
             .collect(Collectors.toList());
-
-        return CompletableFuture.allOf(subscriptionLagFutures.toArray(new CompletableFuture[subscriptionLagFutures.size()]))
-            .thenApply(aVoid -> subscriptionLagFutures.stream()
-                .map(CompletableFuture::join)
-                .collect(Collectors.toList())
-            ).thenApply(subscriptionLags -> generateVResponse(subscriptionLags, vRequest.correlationId()));
+        return CompletionStageUtils.listOfStagesToStageOfList(subscriptionLagStages).thenApply(subscriptionLags -> generateVResponse(subscriptionLags, vRequest.correlationId()));
     }
 
     private CompletionStage<SubscriptionLag> getSubscriptionLag(short subscriptionId,
@@ -54,38 +49,40 @@ public class GetLagsRequestHandler implements RequestHandler {
         //Get the subscription
         CompletionStage<Subscription> subscriptionStage = subscriptionService.getSubscription(topicId, subscriptionId);
 
-        //For each partition Id, get the corresponding partsubscription
+        //For each partition Id, get the corresponding partsubscription and its lag.
         //NOTE assumes that partitionId = partSubscritptionId.
-        List<CompletionStage<PartSubscription>> partSubListStage =
-            partitionIds.stream()
-                .map(partitionId -> subscriptionStage.thenCompose(subscription -> subscriptionService
-                    .getPartSubscription(subscription, partitionId)))
-                .collect(Collectors.toList());
+//        List<CompletionStage<PartitionLag>> partitionLagStages =
+//            partitionIds.stream()
+//                .map(partitionId ->
+//                    subscriptionStage.thenCompose(subscription -> getPartSubscriberLag(subscription, partitionId)))
+//                .collect(Collectors.toList());
 
-        //For each partSubscription, we calculate the lag
-        List<CompletableFuture<LagWithPartition>> lagWithPartitionFutures = partSubListStage.stream()
-            .map(partSubStage -> partSubStage.thenCompose(this::getPartSubscriberLag))
-            .map(CompletionStage::toCompletableFuture)
+        //Collect them in a list
+//        List<CompletionStage<PartitionLag>> partitionLagStages = partitionLagStages.stream()
+//            .map(partSubStage -> partSubStage.thenCompose(this::getPartSubscriberLag))
+//            .collect(Collectors.toList());
+
+
+        List<CompletionStage<PartitionLag>> partitionLagStages = partitionIds.stream()
+            .map(partitionId -> getPartSubscriberLag(subscriptionStage, partitionId))
             .collect(Collectors.toList());
+        return CompletionStageUtils.listOfStagesToStageOfList(partitionLagStages)
+            .thenApply(lagWithPartitions -> FlatbufUtils.createSubscriptionLag(topicId, subscriptionId, lagWithPartitions));
+        }
 
-
-        @SuppressWarnings("unchecked") CompletableFuture<LagWithPartition>[] lagWithPartitionsArray =
-            lagWithPartitionFutures.toArray(new CompletableFuture[lagWithPartitionFutures.size()]);
-
-        //Convert Array[Futures] to Future<Array>
-        return CompletableFuture.allOf(lagWithPartitionsArray)
-            .thenApply(aVoid -> lagWithPartitionFutures
-                .stream()
-                .map(lagWithPartitionCompletionStage ->
-                    lagWithPartitionCompletionStage.toCompletableFuture()
-                        .join()) //This is not blocking since it's in thenApply of the combined future
-                .collect(Collectors.toList())
-            ).thenApply(lagWithPartitions -> new SubscriptionLag(subscriptionId, topicId, lagWithPartitions));
-    }
-
-    private CompletionStage<LagWithPartition> getPartSubscriberLag(PartSubscription partSubscription) {
-        return subscriptionService.getPartSubscriptionLag(partSubscription)
-            .thenApply(lag -> new LagWithPartition(partSubscription.getId(), lag));
+    private CompletionStage<PartitionLag> getPartSubscriberLag(CompletionStage<Subscription> subscriptionStage, short partitionId) {
+        return subscriptionStage
+            .thenCompose(subscription -> subscriptionService.getPartSubscription(subscription, partitionId))
+            .thenCompose(subscriptionService::getPartSubscriptionLag)
+            .thenApply(lag -> {
+                VStatus vStatus = FlatbufUtils.createVStatus(StatusCode.Success, "");
+                return FlatbufUtils.createPartitionLag(partitionId, lag, vStatus);
+            })
+            .exceptionally(throwable -> {
+                log.debug("Catching an exception");
+                VStatus vStatus = FlatbufUtils.createVStatus(StatusCode.GetLagFailed, throwable.getMessage());
+                return FlatbufUtils.createPartitionLag(partitionId, -1, vStatus);
+            });
     }
 
     private VResponse generateVResponse(List<SubscriptionLag> subscriptionLags, int correlationId) {
@@ -101,22 +98,23 @@ public class GetLagsRequestHandler implements RequestHandler {
         int[] subscriptionLagOffsets = new int[subscriptionLags.size()];
         for (int i = 0; i < subscriptionLags.size(); i++) {
             SubscriptionLag subscriptionLag = subscriptionLags.get(i);
-            short subscriptionId = subscriptionLag.subscriptionId;
-            short topicId = subscriptionLag.topicId;
+            short subscriptionId = subscriptionLag.subscriptionId();
+            short topicId = subscriptionLag.topicId();
             int partitionLagsVector = buildPartitionLagsVector(builder, subscriptionLag);
-            subscriptionLagOffsets[i] = TopicSubscriptionLagRequest.createTopicSubscriptionLagRequest(builder, subscriptionId, topicId, partitionLagsVector);
+            subscriptionLagOffsets[i] = SubscriptionLag.createSubscriptionLag(builder, subscriptionId, topicId, partitionLagsVector);
         }
         return GetLagsResponse.createSubscriptionLagsVector(builder, subscriptionLagOffsets);
     }
 
     private int buildPartitionLagsVector(FlatBufferBuilder builder, SubscriptionLag subscriptionLag) {
-        int[] partitionLags = new int[subscriptionLag.lagWithPartitions.size()];
-        for (int i = 0; i < partitionLags.length; i++) {
-            short partitionId = subscriptionLag.lagWithPartitions.get(i).partitionId;
-            int partitionLag = subscriptionLag.lagWithPartitions.get(i).lag;
-            partitionLags[i] = PartitionLag.createPartitionLag(builder, partitionId, partitionLag);
+        int[] partitionLags = new int[subscriptionLag.partitionLagsLength()];
+        for (int i = 0; i < subscriptionLag.partitionLagsLength(); i++) {
+            short partitionId = subscriptionLag.partitionLags(i).partitionId();
+            int partitionLag = subscriptionLag.partitionLags(i).lag();
+            VStatus status = subscriptionLag.partitionLags(i).status();
+            partitionLags[i] = FlatbufUtils.buildPartitionLag(builder, partitionId, partitionLag, status);
         }
-        return TopicSubscriptionLagRequest.createPartitionLagsVector(builder, partitionLags);
+        return SubscriptionLag.createPartitionLagsVector(builder, partitionLags);
     }
 
     private List<Short> getPartitionIds(TopicSubscriptionLagRequest subscriptionLagRequest) {
@@ -125,23 +123,23 @@ public class GetLagsRequestHandler implements RequestHandler {
             .collect(Collectors.toList());
     }
 
-    @AllArgsConstructor
-    private class LagWithPartition {
-        private short partitionId;
-        private int lag;
-    }
-
-    private class SubscriptionLag {
-        private short subscriptionId;
-        private short topicId;
-        private List<LagWithPartition> lagWithPartitions;
-
-        public SubscriptionLag(short subscriptionId, short topicId, List<LagWithPartition> lagWithPartitions) {
-            this.subscriptionId = subscriptionId;
-            this.topicId = topicId;
-            this.lagWithPartitions = lagWithPartitions;
-        }
-    }
+//    @AllArgsConstructor
+//    private class LagWithPartition {
+//        private short partitionId;
+//        private int lag;
+//    }
+//
+//    private class SubscriptionLag {
+//        private short subscriptionId;
+//        private short topicId;
+//        private List<LagWithPartition> lagWithPartitions;
+//
+//        public SubscriptionLag(short subscriptionId, short topicId, List<LagWithPartition> lagWithPartitions) {
+//            this.subscriptionId = subscriptionId;
+//            this.topicId = topicId;
+//            this.lagWithPartitions = lagWithPartitions;
+//        }
+//    }
 
 
 }

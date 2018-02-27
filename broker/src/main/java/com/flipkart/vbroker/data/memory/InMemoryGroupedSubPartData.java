@@ -7,6 +7,7 @@ import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.subscribers.MessageWithMetadata;
 import com.flipkart.vbroker.subscribers.QType;
 import com.flipkart.vbroker.subscribers.SubscriberGroup;
+import com.flipkart.vbroker.utils.CompletionStageUtils;
 import com.google.common.collect.PeekingIterator;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -143,15 +144,13 @@ public class InMemoryGroupedSubPartData implements SubPartData {
     @Override
     public CompletionStage<Integer> getLag() {
         return getUniqueGroups().thenCompose(groups -> {
-            @SuppressWarnings("unchecked") CompletableFuture<Integer>[] lagFutures = groups.stream()
+            List<CompletionStage<Integer>> lagStages = groups.stream()
                 .map(subscriberGroupsMap::get)
                 .map(SubscriberGroup::getLag)
-                .map(CompletionStage::toCompletableFuture)
-                .toArray(CompletableFuture[]::new);
+                .collect(Collectors.toList());
 
-            return CompletableFuture.allOf(lagFutures).thenApply(aVoid ->
-                Arrays.stream(lagFutures)
-                    .map(CompletableFuture::join)
+            return CompletionStageUtils.listOfStagesToStageOfList(lagStages).thenApply(lags ->
+                lags.stream()
                     .reduce(0, (lag1, lag2) -> lag1 + lag2));
         });
     }

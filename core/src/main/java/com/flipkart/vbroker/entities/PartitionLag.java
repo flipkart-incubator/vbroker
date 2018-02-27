@@ -21,15 +21,17 @@ public final class PartitionLag extends Table {
 
     public static int createPartitionLag(FlatBufferBuilder builder,
                                          short partitionId,
-                                         int lag) {
-        builder.startObject(2);
+                                         int lag,
+                                         int statusOffset) {
+        builder.startObject(3);
+        PartitionLag.addStatus(builder, statusOffset);
         PartitionLag.addLag(builder, lag);
         PartitionLag.addPartitionId(builder, partitionId);
         return PartitionLag.endPartitionLag(builder);
     }
 
     public static void startPartitionLag(FlatBufferBuilder builder) {
-        builder.startObject(2);
+        builder.startObject(3);
     }
 
     public static void addPartitionId(FlatBufferBuilder builder, short partitionId) {
@@ -38,6 +40,10 @@ public final class PartitionLag extends Table {
 
     public static void addLag(FlatBufferBuilder builder, int lag) {
         builder.addInt(1, lag, 0);
+    }
+
+    public static void addStatus(FlatBufferBuilder builder, int statusOffset) {
+        builder.addOffset(2, statusOffset, 0);
     }
 
     public static int endPartitionLag(FlatBufferBuilder builder) {
@@ -63,6 +69,15 @@ public final class PartitionLag extends Table {
     public int lag() {
         int o = __offset(6);
         return o != 0 ? bb.getInt(o + bb_pos) : 0;
+    }
+
+    public VStatus status() {
+        return status(new VStatus());
+    }
+
+    public VStatus status(VStatus obj) {
+        int o = __offset(8);
+        return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null;
     }
 }
 

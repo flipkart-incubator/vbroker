@@ -17,6 +17,7 @@ public final class StatusCode {
     public static final short SubscriptionCreateFailed_Validation = 453;
     public static final short QueueCreateFailed_AlreadyExists = 461;
     public static final short QueueCreateFailed_Validation = 462;
+    public static final short GetLagFailed = 470;
     public static final short GetLagFailed_NoTopic = 471;
     public static final short GetLagFailed_NoSubscription = 472;
     public static final short GetLagFailed_NoPartition = 473;
@@ -27,7 +28,6 @@ public final class StatusCode {
     public static final short Controller_Not_Available = 504;
     public static final short Not_Leader_For_Partition = 505;
     public static final short Entity_Not_Exists = 506;
-
     private StatusCode() {
     }
 }

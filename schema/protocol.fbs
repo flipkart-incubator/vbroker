@@ -19,6 +19,7 @@ SubscriptionCreateFailed_AlreadyExists=452,
 SubscriptionCreateFailed_Validation=453,
 QueueCreateFailed_AlreadyExists=461,
 QueueCreateFailed_Validation=462,
+GetLagFailed=470,
 GetLagFailed_NoTopic=471,
 GetLagFailed_NoSubscription=472,
 GetLagFailed_NoPartition=473,
@@ -213,7 +214,7 @@ table PartitionLagRequest {
 }
 table TopicSubscriptionLagRequest {
 	subscriptionId:int16;
-	topiId:int16;
+	topicId:int16;
 	partitionLags:[PartitionLagRequest];
 }
 
@@ -350,6 +351,7 @@ table GetQueuesResponse {
 table PartitionLag {
 	partitionId:int16;
 	lag:int32;
+	status:VStatus;
 }
 
 table SubscriptionLag {
