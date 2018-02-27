@@ -23,4 +23,5 @@ public interface SubPartData {
     PeekingIterator<IterableMessage> getIterator(String groupId);
 
     Optional<PeekingIterator<IterableMessage>> getIterator(QType qType);
+
 }

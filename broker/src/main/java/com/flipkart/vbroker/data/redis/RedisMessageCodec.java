@@ -33,8 +33,7 @@ public class RedisMessageCodec implements Codec {
                     buf.readerIndex(buf.readableBytes());
                     redisObj = new RedisStringObject(str);
                 }
-            }
-            finally {
+            } finally {
                 buf.release();
             }
             return redisObj;

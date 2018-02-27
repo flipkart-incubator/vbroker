@@ -12,13 +12,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.testng.Assert.assertEquals;
 
 @Slf4j
-public class InMemoryTopicPartDataTest {
+public class InMemoryGroupedTopicPartDataTest {
 
-    private InMemoryTopicPartData topicPartData;
+    private InMemoryGroupedTopicPartData topicPartData;
 
     @BeforeMethod
     public void setUp() {
-        topicPartData = new InMemoryTopicPartData();
+        topicPartData = new InMemoryGroupedTopicPartData();
     }
 
     @Test

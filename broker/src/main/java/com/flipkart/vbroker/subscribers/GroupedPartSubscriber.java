@@ -53,9 +53,9 @@ public class GroupedPartSubscriber implements PartSubscriber {
                 SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, partSubscription, topicPartDataManager);
                 //subscriberGroupsMap.put(group, subscriberGroup);
                 //subscriberGroupIteratorMap.put(subscriberGroup, subscriberGroup.iterator());
-                subPartDataManager.addGroup(partSubscription, subscriberGroup);
+                subPartDataManager.addGroup(partSubscription, subscriberGroup).toCompletableFuture().join();
             });
-        });
+        }).toCompletableFuture().join();
     }
 
     @Override
@@ -78,7 +78,10 @@ public class GroupedPartSubscriber implements PartSubscriber {
         return new PartSubscriberIterator() {
             @Override
             protected Optional<PeekingIterator<IterableMessage>> nextIterator() {
-                return subPartDataManager.getIterator(partSubscription, qType);
+                log.info("Getting next iterator for QType {}", qType);
+                Optional<PeekingIterator<IterableMessage>> iterator = subPartDataManager.getIterator(partSubscription, qType);
+                log.info("Next iterator: {}", iterator);
+                return iterator;
             }
         };
     }

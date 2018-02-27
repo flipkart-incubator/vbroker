@@ -8,8 +8,6 @@ import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
 import com.flipkart.vbroker.data.redis.RedisMessageCodec;
 import com.flipkart.vbroker.data.redis.RedisTopicPartDataManager;
-import com.flipkart.vbroker.entities.Subscription;
-import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.handlers.HttpResponseHandler;
 import com.flipkart.vbroker.handlers.RequestHandlerFactory;
 import com.flipkart.vbroker.handlers.ResponseHandlerFactory;
@@ -44,8 +42,6 @@ import org.redisson.config.ClusterServersConfig;
 import org.redisson.config.Config;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -108,25 +104,10 @@ public class VBrokerServer extends AbstractExecutionThreadService {
         //SubscriptionService subscriptionService = new SubscriptionServiceImpl(config, curatorService, topicPartDataManager, topicService);
         SubscriptionService subscriptionService = new InMemorySubscriptionService(topicService, topicPartDataManager, subPartDataManager);
 
-        TopicMetadataService topicMetadataService = new TopicMetadataService(topicService, topicPartDataManager);
-        SubscriberMetadataService subscriberMetadataService = new SubscriberMetadataService(subscriptionService, topicService, topicPartDataManager);
-
         //global broker controller
         brokerController = new VBrokerController(curatorService, topicService, config);
         log.info("Starting controller and awaiting it to be ready");
         brokerController.startAsync().awaitRunning();
-
-        log.debug("Loading topicMetadata");
-        List<Topic> allTopics = topicService.getAllTopics().toCompletableFuture().join(); //we want to block here
-        for (Topic topic : allTopics) {
-            topicMetadataService.fetchTopicMetadata(topic);
-        }
-
-        log.debug("Loading subscriptionMetadata");
-        Set<Subscription> allSubscriptions = subscriptionService.getAllSubscriptions().toCompletableFuture().join();
-        for (Subscription subscription : allSubscriptions) {
-            subscriberMetadataService.loadSubscriptionMetadata(subscription);
-        }
 
         //TODO: now that metadata is created, we need to add actual data to the metadata entries
         //=> populate message groups in topic partitions
@@ -174,8 +155,6 @@ public class VBrokerServer extends AbstractExecutionThreadService {
 
             brokerSubscriber = new BrokerSubscriber(subscriptionService,
                 messageProcessor,
-                subscriberMetadataService,
-                topicMetadataService,
                 config);
             ExecutorService subscriberExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("subscriber"));
             subscriberExecutor.submit(brokerSubscriber);

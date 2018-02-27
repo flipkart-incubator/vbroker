@@ -27,7 +27,6 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
 
     private final Map<QType, AtomicInteger> currSeqNoMap = new ConcurrentHashMap<>();
     private final Map<QType, List<IterableMessage>> failedMessagesMap = new ConcurrentHashMap<>();
-    private final Map<QType, PartSubscriberIterator> qTypeIterators = new ConcurrentHashMap<>();
 
     public InMemoryUnGroupedSubPartData(PartSubscription partSubscription,
                                         TopicPartDataManager topicPartDataManager) {
@@ -44,11 +43,6 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
     @Override
     public CompletionStage<Set<String>> getUniqueGroups() {
         throw new UnsupportedOperationException("You cannot get unique groups to an un-grouped subscription");
-    }
-
-    private AtomicInteger getCurrSeqNoFor(QType qType) {
-        currSeqNoMap.computeIfAbsent(qType, qType1 -> new AtomicInteger(0));
-        return currSeqNoMap.get(qType);
     }
 
     private CompletionStage<List<IterableMessage>> getFailedMessages(QType qType) {
@@ -85,63 +79,79 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
                     case MAIN:
                         iterator = topicPartDataManager.getIterator(
                             partSubscription.getTopicPartition(),
-                            getCurrSeqNoFor(qType).get()
-                        );
+                            getCurrSeqNoFor(qType));
                         break;
                     default:
                         iterator = new UnGroupedFailedMsgIterator(qType);
                         break;
                 }
-                return getIterator(qType, iterator);
+                UnGroupedIterator unGroupedIterator =
+                    new UnGroupedIterator(qType, partSubscription, iterator);
+                return Optional.of(unGroupedIterator);
             }
         };
         return Optional.of(partSubscriberIterator);
     }
 
-    private Optional<PeekingIterator<IterableMessage>> getIterator(QType qType, PeekingIterator<Message> iterator) {
-        PeekingIterator<IterableMessage> peekingIterator = new PeekingIterator<IterableMessage>() {
-            @Override
-            public IterableMessage peek() {
-                return new UnGroupedIterableMessage(iterator.peek(), partSubscription);
-            }
+    private int getCurrSeqNoFor(QType qType) {
+        return currSeqNoMap.computeIfAbsent(qType, qType1 -> new AtomicInteger(0)).get();
+    }
 
-            @Override
-            public boolean hasNext() {
-                return iterator.hasNext();
-            }
+    private void incrementCurrSeqNo(QType qType) {
+        currSeqNoMap.computeIfAbsent(qType, qType1 -> new AtomicInteger(0)).incrementAndGet();
+    }
 
-            @Override
-            public synchronized IterableMessage next() {
-                IterableMessage iterableMessage = new UnGroupedIterableMessage(iterator.next(), partSubscription);
-                getCurrSeqNoFor(qType).incrementAndGet();
-                return iterableMessage;
-            }
-
-            @Override
-            public void remove() {
-                throw new NotImplementedException();
-            }
-        };
-
-        return Optional.of(peekingIterator);
+    private IterableMessage getMessage(QType qType, int seqNo) {
+        return getFailedMessages(qType).thenApply(iterableMessages -> iterableMessages.get(seqNo))
+            .toCompletableFuture().join();
     }
 
     @AllArgsConstructor
-    private class UnGroupedFailedMsgIterator implements PeekingIterator<Message> {
+    class UnGroupedIterator implements PeekingIterator<IterableMessage> {
+
+        private final QType qType;
+        private final PartSubscription partSubscription;
+        private final PeekingIterator<Message> iterator;
+
+        @Override
+        public IterableMessage peek() {
+            return new UnGroupedIterableMessage(iterator.peek(), partSubscription);
+        }
+
+        @Override
+        public boolean hasNext() {
+            return iterator.hasNext();
+        }
+
+        @Override
+        public synchronized IterableMessage next() {
+            IterableMessage iterableMessage = new UnGroupedIterableMessage(iterator.next(), partSubscription);
+            incrementCurrSeqNo(qType);
+            return iterableMessage;
+        }
+
+        @Override
+        public void remove() {
+            throw new NotImplementedException();
+        }
+    }
+
+    @AllArgsConstructor
+    class UnGroupedFailedMsgIterator implements PeekingIterator<Message> {
         private final QType qType;
 
         @Override
         public Message peek() {
-            return getIterableMessage(getCurrSeqNo().get()).getMessage();
+            return getIterableMessage(getCurrSeqNo()).getMessage();
         }
 
         private IterableMessage getIterableMessage(int indexNo) {
-            return getFailedMessages(qType).toCompletableFuture().join().get(indexNo);
+            return getMessage(qType, indexNo);
         }
 
         @Override
         public Message next() {
-            return getIterableMessage(getCurrSeqNo().get()).getMessage();
+            return getIterableMessage(getCurrSeqNo()).getMessage();
         }
 
         @Override
@@ -149,7 +159,7 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
             throw new NotImplementedException("Remove not supported for iterator");
         }
 
-        private AtomicInteger getCurrSeqNo() {
+        private int getCurrSeqNo() {
             return getCurrSeqNoFor(qType);
         }
 
@@ -160,8 +170,8 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
         @Override
         public boolean hasNext() {
             int totalSize = getTotalSize();
-            int currIndex = getCurrSeqNo().get();
-            log.debug("Total failed messages are {} and currIdx is {}", totalSize, currIndex);
+            int currIndex = getCurrSeqNo();
+            //log.debug("Total failed messages are {} and currIdx is {}", totalSize, currIndex);
             return currIndex < totalSize;
         }
     }

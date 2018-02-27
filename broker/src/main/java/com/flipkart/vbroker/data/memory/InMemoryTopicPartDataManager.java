@@ -29,14 +29,14 @@ public class InMemoryTopicPartDataManager implements TopicPartDataManager {
             allPartitionsDataMap.computeIfAbsent(topicPartition, topicPartition1 -> {
                 TopicPartData topicPartData;
                 if (topicPartition1.isGrouped()) {
-                    topicPartData = new InMemoryTopicPartData();
+                    topicPartData = new InMemoryGroupedTopicPartData();
                 } else {
                     topicPartData = new InMemoryUnGroupedTopicPartData();
                 }
                 log.info("TopicPartData: {} for TopicPartition: {}", topicPartData, topicPartition1);
                 return topicPartData;
             });
-            //allPartitionsDataMap.putIfAbsent(topicPartition, new InMemoryTopicPartData());
+            //allPartitionsDataMap.putIfAbsent(topicPartition, new InMemoryGroupedTopicPartData());
             return allPartitionsDataMap.get(topicPartition);
         });
     }

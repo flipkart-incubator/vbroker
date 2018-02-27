@@ -45,6 +45,7 @@ public abstract class BasePartSubscriberTest {
          */
         int moreNoOfMessages = 5;
         addMessagesToPartData(moreNoOfMessages);
+        partSubscriber.refreshSubscriberMetadata();
 
         while (iterator.hasNext()) {
             iterator.next();
@@ -62,6 +63,7 @@ public abstract class BasePartSubscriberTest {
 
         int moreNoOfMessages = 5;
         addMessagesToPartData(moreNoOfMessages);
+        partSubscriber.refreshSubscriberMetadata();
 
         while (iterator.hasNext()) {
             IterableMessage iterableMessage = iterator.peek();
@@ -70,6 +72,7 @@ public abstract class BasePartSubscriberTest {
             count++;
         }
         assertEquals(count, moreNoOfMessages);
+        log.info("Sidelined messages, now iterating over them");
 
         count = 0;
         while (sidelineIterator.hasNext()) {
@@ -109,6 +112,7 @@ public abstract class BasePartSubscriberTest {
         int count = 0;
         int moreNoOfMessages = 5;
         addMessagesToPartData(moreNoOfMessages);
+        partSubscriber.refreshSubscriberMetadata();
 
         while (srcQTypeIterator.hasNext()) {
             IterableMessage iterableMessage = srcQTypeIterator.peek();
