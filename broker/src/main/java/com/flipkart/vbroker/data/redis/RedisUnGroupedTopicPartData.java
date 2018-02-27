@@ -61,6 +61,11 @@ public class RedisUnGroupedTopicPartData implements TopicPartData {
     }
 
     @Override
+    public CompletionStage<Integer> getCurrentOffset(String group) {
+        throw new UnsupportedOperationException("Group level offset is not defined for ungrouped partition");
+    }
+
+    @Override
     public PeekingIterator<Message> iteratorFrom(int seqNoFrom) {
         log.info("getting peeking iterator");
         RList<RedisObject> rList = client.getList(topicPartition.toString());
@@ -89,6 +94,12 @@ public class RedisUnGroupedTopicPartData implements TopicPartData {
             }
 
         };
+    }
+
+    @Override
+    public CompletionStage<Integer> getCurrentOffset() {
+        RListAsync<RedisObject> rListAsync = client.getList(topicPartition.toString());
+        return rListAsync.sizeAsync();
     }
 
     private ByteBuffer buildMessage(Message message) {

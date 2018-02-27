@@ -97,10 +97,11 @@ public class SubscriberGroup implements Iterable<IterableMessage> {
     }
 
     /**
-     * @return (Offset of the underlying messageGroup) - (currSeqNo)
+     * @return (Offset of the underlying messageGroup) - (currSeqNo for Main QType)
      */
     public CompletionStage<Integer> getLag() {
-        return topicPartDataManager.getCurrentOffset(topicPartition, this.getGroupId()).thenApply(offset -> offset - getCurrSeqNo().get());
+        return topicPartDataManager.getCurrentOffset(topicPartition, this.getGroupId())
+            .thenApply(offset -> offset - getCurrSeqNo(QType.MAIN));
     }
 
     @Override

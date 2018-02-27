@@ -5,7 +5,6 @@ import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.data.SubPartData;
 import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
-import com.flipkart.vbroker.subscribers.MessageWithMetadata;
 import com.flipkart.vbroker.server.MessageUtils;
 import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.flipkart.vbroker.subscribers.QType;
@@ -79,11 +78,6 @@ public class InMemorySubPartDataManager implements SubPartDataManager {
     public Optional<PeekingIterator<IterableMessage>> getIterator(PartSubscription partSubscription, QType qType) {
         return getSubPartDataAsync(partSubscription).thenApplyAsync(subPartData -> subPartData.getIterator(qType))
             .toCompletableFuture().join(); //TODO: fix this!
-    }
-
-    @Override
-    public CompletionStage<Integer> getCurrSeqNo(PartSubscription partSubscription, String groupId) {
-        return getSubPartDataAsync(partSubscription).thenCompose(subPartData -> subPartData.getCurSeqNo(groupId));
     }
 
     @Override

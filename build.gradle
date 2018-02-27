@@ -42,6 +42,10 @@ subprojects {
         testCompile "org.mockito:mockito-core:${mockitoVersion}"
 
     }
+
+    test{
+        useTestNG()
+    }
 }
 
 allprojects {

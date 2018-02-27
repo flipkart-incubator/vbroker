@@ -3,8 +3,6 @@ package com.flipkart.vbroker.data.memory;
 import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.data.SubPartData;
-import com.flipkart.vbroker.exceptions.VBrokerException;
-import com.flipkart.vbroker.subscribers.MessageWithMetadata;
 import com.flipkart.vbroker.iterators.PartSubscriberIterator;
 import com.flipkart.vbroker.server.MessageUtils;
 import com.flipkart.vbroker.subscribers.IterableMessage;
@@ -148,11 +146,6 @@ public class InMemoryGroupedSubPartData implements SubPartData {
                 return iterator;
             }
         });
-    }
-
-    @Override
-    public CompletionStage<Integer> getCurSeqNo(String groupId) {
-        return CompletableFuture.completedFuture(subscriberGroupsMap.get(groupId).getCurrSeqNo().get());
     }
 
     @Override

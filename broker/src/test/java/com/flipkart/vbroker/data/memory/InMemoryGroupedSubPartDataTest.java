@@ -5,7 +5,9 @@ import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.SubPartData;
 import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.entities.TopicProduceRequest;
+import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.flipkart.vbroker.subscribers.SubscriberGroup;
+import com.google.common.collect.PeekingIterator;
 import org.asynchttpclient.ListenableFuture;
 import org.mockito.Mockito;
 import org.testng.Assert;
@@ -53,6 +55,7 @@ public class InMemoryGroupedSubPartDataTest {
         when(group.getGroupId()).thenReturn(groupId);
         when(group.getLag()).thenReturn(CompletableFuture.completedFuture(lag));
         when(group.getTopicPartition()).thenReturn(topicPartition);
+        when(group.iterator()).thenReturn(mock(PeekingIterator.class));
         return group;
     }
 

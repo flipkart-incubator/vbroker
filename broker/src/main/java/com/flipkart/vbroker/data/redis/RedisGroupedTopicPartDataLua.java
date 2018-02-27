@@ -11,10 +11,7 @@ import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.google.common.collect.PeekingIterator;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RList;
-import org.redisson.api.RScript;
-import org.redisson.api.RSetAsync;
-import org.redisson.api.RedissonClient;
+import org.redisson.api.*;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -115,7 +112,7 @@ public class RedisGroupedTopicPartDataLua implements TopicPartData {
     public CompletionStage<Integer> getCurrentOffset(String group) {
         log.info(String.format("Fetching offset for group {}", group));
         MessageGroup messageGroup = new MessageGroup(group, topicPartition);
-        RListAsync<RedisObject> rList = client.getList(messageGroup.toString());
+        RListAsync<RedisObject> rList = client.getList("{" + topicPartition.toString() + "}" + messageGroup.toString());
         return rList.sizeAsync();
     }
 
