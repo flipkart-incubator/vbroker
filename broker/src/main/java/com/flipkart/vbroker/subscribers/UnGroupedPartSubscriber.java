@@ -14,7 +14,7 @@ import java.util.Optional;
 @Slf4j
 @EqualsAndHashCode(exclude = {"subPartDataManager"})
 @ToString(exclude = {"subPartDataManager"})
-public class UnGroupedPartSubscriber implements IPartSubscriber {
+public class UnGroupedPartSubscriber implements PartSubscriber {
 
     private final SubPartDataManager subPartDataManager;
     @Getter
@@ -33,31 +33,31 @@ public class UnGroupedPartSubscriber implements IPartSubscriber {
     }
 
     @Override
-    public PeekingIterator<MessageWithMetadata> iterator() {
+    public PeekingIterator<IterableMessage> iterator() {
         log.info("Creating UnGroupedPartSubscriber iterator for partSub {}", partSubscription);
         return new PartSubscriberIterator() {
             @Override
-            protected Optional<PeekingIterator<MessageWithMetadata>> nextIterator() {
+            protected Optional<PeekingIterator<IterableMessage>> nextIterator() {
                 return subPartDataManager.getIterator(partSubscription, QType.MAIN);
             }
         };
     }
 
     @Override
-    public PeekingIterator<MessageWithMetadata> sidelineIterator() {
+    public PeekingIterator<IterableMessage> sidelineIterator() {
         return new PartSubscriberIterator() {
             @Override
-            protected Optional<PeekingIterator<MessageWithMetadata>> nextIterator() {
+            protected Optional<PeekingIterator<IterableMessage>> nextIterator() {
                 return subPartDataManager.getIterator(partSubscription, QType.SIDELINE);
             }
         };
     }
 
     @Override
-    public PeekingIterator<MessageWithMetadata> retryIterator(int retryQNo) {
+    public PeekingIterator<IterableMessage> retryIterator(int retryQNo) {
         return new PartSubscriberIterator() {
             @Override
-            protected Optional<PeekingIterator<MessageWithMetadata>> nextIterator() {
+            protected Optional<PeekingIterator<IterableMessage>> nextIterator() {
                 QType qType = QType.retryQType(retryQNo);
                 return subPartDataManager.getIterator(partSubscription, qType);
             }

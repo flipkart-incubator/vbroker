@@ -8,8 +8,8 @@ import com.flipkart.vbroker.data.memory.InMemorySubPartDataManager;
 import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.subscribers.DummyEntities;
-import com.flipkart.vbroker.subscribers.IPartSubscriber;
-import com.flipkart.vbroker.subscribers.MessageWithMetadata;
+import com.flipkart.vbroker.subscribers.IterableMessage;
+import com.flipkart.vbroker.subscribers.PartSubscriber;
 import com.flipkart.vbroker.subscribers.UnGroupedPartSubscriber;
 import com.flipkart.vbroker.utils.SubscriptionUtils;
 import com.google.common.collect.PeekingIterator;
@@ -37,8 +37,8 @@ public class SubscriberIteratorTest {
         unGroupedPartSubscription = SubscriptionUtils.getPartSubscription(DummyEntities.unGroupedSubscription, (short) 0);
         subPartDataManager = new InMemorySubPartDataManager(topicPartDataManager);
 
-        IPartSubscriber partSubscriber = new UnGroupedPartSubscriber(subPartDataManager, unGroupedPartSubscription);
-        List<IPartSubscriber> partSubscribers = Lists.newArrayList(partSubscriber);
+        PartSubscriber partSubscriber = new UnGroupedPartSubscriber(subPartDataManager, unGroupedPartSubscription);
+        List<PartSubscriber> partSubscribers = Lists.newArrayList(partSubscriber);
         subscriberIterator = new SubscriberIterator(partSubscribers);
     }
 
@@ -50,7 +50,7 @@ public class SubscriberIteratorTest {
         assertEquals(messageMetadataList.size(), noOfMessages);
 
         int count = 0;
-        PeekingIterator<MessageWithMetadata> iterator = subscriberIterator;
+        PeekingIterator<IterableMessage> iterator = subscriberIterator;
         while (iterator.hasNext()) {
             iterator.next();
             count++;

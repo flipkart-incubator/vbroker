@@ -10,13 +10,13 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @Slf4j
 @EqualsAndHashCode
-public class GroupedMessageWithMetadata implements MessageWithMetadata {
+public class GroupedIterableMessage implements IterableMessage {
     @Getter
     private final Message message;
     private final SubscriberGroup subscriberGroup;
 
-    public static GroupedMessageWithMetadata newInstance(Message message, SubscriberGroup subscriberGroup) {
-        return new GroupedMessageWithMetadata(message, subscriberGroup);
+    public static GroupedIterableMessage newInstance(Message message, SubscriberGroup subscriberGroup) {
+        return new GroupedIterableMessage(message, subscriberGroup);
     }
 
     @Override

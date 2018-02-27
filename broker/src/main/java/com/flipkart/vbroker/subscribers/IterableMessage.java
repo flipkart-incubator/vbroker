@@ -6,7 +6,7 @@ import com.flipkart.vbroker.entities.Message;
 /**
  * this is the model interface used by message iterators
  */
-public interface MessageWithMetadata {
+public interface IterableMessage {
 
     Message getMessage();
 
@@ -19,6 +19,8 @@ public interface MessageWithMetadata {
     short getTopicId();
 
     QType getQType();
+
+    void setQType(QType qType);
 
     boolean isUnlocked();
 

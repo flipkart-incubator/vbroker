@@ -14,7 +14,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
-public class InMemoryTopicPartData implements TopicPartData {
+public class InMemoryGroupedTopicPartData implements TopicPartData {
     private final Map<String, List<Message>> topicPartitionData = new LinkedHashMap<>();
 
     public synchronized CompletionStage<MessageMetadata> addMessage(Message message) {

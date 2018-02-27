@@ -6,9 +6,12 @@ import com.flipkart.vbroker.data.SubPartData;
 import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.subscribers.MessageWithMetadata;
+import com.flipkart.vbroker.server.MessageUtils;
+import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.flipkart.vbroker.subscribers.QType;
 import com.flipkart.vbroker.subscribers.SubscriberGroup;
 import com.google.common.collect.PeekingIterator;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -17,6 +20,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
+@Slf4j
 public class InMemorySubPartDataManager implements SubPartDataManager {
 
     private final TopicPartDataManager topicPartDataManager;
@@ -52,23 +56,27 @@ public class InMemorySubPartDataManager implements SubPartDataManager {
     }
 
     @Override
-    public CompletionStage<Void> sideline(PartSubscription partSubscription, MessageWithMetadata messageWithMetadata) {
-        return getSubPartDataAsync(partSubscription).thenCompose(subPartData -> subPartData.sideline(messageWithMetadata));
+    public CompletionStage<Void> sideline(PartSubscription partSubscription, IterableMessage iterableMessage) {
+        log.debug("Sidelining message {} for partSubscription {}", iterableMessage.getMessage().messageId(), partSubscription);
+        iterableMessage.setQType(QType.SIDELINE);
+        return getSubPartDataAsync(partSubscription).thenCompose(subPartData -> subPartData.sideline(iterableMessage));
     }
 
     @Override
-    public CompletionStage<Void> retry(PartSubscription partSubscription, MessageWithMetadata messageWithMetadata) {
-        return getSubPartDataAsync(partSubscription).thenCompose(subPartData -> subPartData.retry(messageWithMetadata));
+    public CompletionStage<Void> retry(PartSubscription partSubscription, IterableMessage iterableMessage) {
+        QType destinationQType = MessageUtils.getNextRetryQType(iterableMessage.getQType());
+        iterableMessage.setQType(destinationQType); //TODO: find a better way instead of mutating an argument
+        return getSubPartDataAsync(partSubscription).thenCompose(subPartData -> subPartData.retry(iterableMessage));
     }
 
     @Override
-    public PeekingIterator<MessageWithMetadata> getIterator(PartSubscription partSubscription, String groupId) {
+    public PeekingIterator<IterableMessage> getIterator(PartSubscription partSubscription, String groupId) {
         return getSubPartDataAsync(partSubscription).thenApplyAsync(subPartData -> subPartData.getIterator(groupId))
             .toCompletableFuture().join(); //TODO: fix this!
     }
 
     @Override
-    public Optional<PeekingIterator<MessageWithMetadata>> getIterator(PartSubscription partSubscription, QType qType) {
+    public Optional<PeekingIterator<IterableMessage>> getIterator(PartSubscription partSubscription, QType qType) {
         return getSubPartDataAsync(partSubscription).thenApplyAsync(subPartData -> subPartData.getIterator(qType))
             .toCompletableFuture().join(); //TODO: fix this!
     }

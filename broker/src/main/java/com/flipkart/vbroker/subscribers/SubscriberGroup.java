@@ -13,6 +13,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.CompletionStage;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -20,20 +22,18 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by hooda on 19/1/18
  */
 @Slf4j
-@EqualsAndHashCode(exclude = {"qType", "currSeqNo", "topicPartDataManager", "locked"})
+@EqualsAndHashCode(exclude = {"qType", "currSeqNoMap", "topicPartDataManager", "locked"})
 //TODO: crude implementation of seqNo. Handle the concurrency here correctly
-public class SubscriberGroup implements Iterable<MessageWithMetadata> {
+public class SubscriberGroup implements Iterable<IterableMessage> {
     private final MessageGroup messageGroup;
     @Getter
     private final TopicPartition topicPartition;
     private final PartSubscription partSubscription;
     private final TopicPartDataManager topicPartDataManager;
+    private final Map<QType, AtomicInteger> currSeqNoMap = new ConcurrentHashMap<>();
     @Getter
     @Setter
     private QType qType = QType.MAIN;
-    @Getter
-    @Setter
-    private AtomicInteger currSeqNo = new AtomicInteger(0);
     @Getter
     private volatile AtomicBoolean locked = new AtomicBoolean(false);
 
@@ -84,6 +84,18 @@ public class SubscriberGroup implements Iterable<MessageWithMetadata> {
         return locked.get();
     }
 
+    private int getCurrSeqNo(QType qType) {
+        currSeqNoMap.putIfAbsent(qType, new AtomicInteger(0));
+        //currSeqNoMap.computeIfAbsent(qType, qType1 -> new AtomicInteger(0));
+        return currSeqNoMap.get(qType).get();
+    }
+
+    private void incrementCurrSeqNo(QType qType) {
+        currSeqNoMap.putIfAbsent(qType, new AtomicInteger(0));
+        //currSeqNoMap.computeIfAbsent(qType, qType1 -> new AtomicInteger(0));
+        currSeqNoMap.get(qType).incrementAndGet();
+    }
+
     /**
      * @return (Offset of the underlying messageGroup) - (currSeqNo)
      */
@@ -92,8 +104,21 @@ public class SubscriberGroup implements Iterable<MessageWithMetadata> {
     }
 
     @Override
-    public PeekingIterator<MessageWithMetadata> iterator() {
-        return new SubscriberGroupIterator(this);
+    public PeekingIterator<IterableMessage> iterator() {
+        return new SubscriberGroupIterator(QType.MAIN, this);
+    }
+
+    public PeekingIterator<IterableMessage> sidelineIterator() {
+        return new SubscriberGroupIterator(QType.SIDELINE, this);
+    }
+
+    public PeekingIterator<IterableMessage> retryIterator(int retryNo) {
+        QType qType = QType.retryQType(retryNo);
+        return new SubscriberGroupIterator(qType, this);
+    }
+
+    public PeekingIterator<IterableMessage> iterator(QType qType) {
+        return new SubscriberGroupIterator(qType, this);
     }
 
     public String getGroupId() {
@@ -104,24 +129,26 @@ public class SubscriberGroup implements Iterable<MessageWithMetadata> {
         return this.partSubscription;
     }
 
-    private class SubscriberGroupIterator implements PeekingIterator<MessageWithMetadata> {
+    private class SubscriberGroupIterator implements PeekingIterator<IterableMessage> {
+        private QType qType;
+        private SubscriberGroup subscriberGroup;
+        private PeekingIterator<Message> groupIterator;
 
-        SubscriberGroup subscriberGroup;
-        PeekingIterator<Message> groupIterator = topicPartDataManager.getIterator(topicPartition, getGroupId(), currSeqNo.get());
-
-        public SubscriberGroupIterator(SubscriberGroup subscriberGroup) {
+        public SubscriberGroupIterator(QType qType, SubscriberGroup subscriberGroup) {
+            this.qType = qType;
             this.subscriberGroup = subscriberGroup;
+            this.groupIterator = topicPartDataManager.getIterator(topicPartition, getGroupId(), getCurrSeqNo(qType));
         }
 
         @Override
-        public synchronized GroupedMessageWithMetadata peek() {
-            return GroupedMessageWithMetadata.newInstance(groupIterator.peek(), subscriberGroup);
+        public synchronized GroupedIterableMessage peek() {
+            return GroupedIterableMessage.newInstance(groupIterator.peek(), subscriberGroup);
         }
 
         @Override
-        public synchronized GroupedMessageWithMetadata next() {
-            GroupedMessageWithMetadata messageWithGroup = GroupedMessageWithMetadata.newInstance(groupIterator.next(), subscriberGroup);
-            currSeqNo.incrementAndGet();
+        public synchronized GroupedIterableMessage next() {
+            GroupedIterableMessage messageWithGroup = GroupedIterableMessage.newInstance(groupIterator.next(), subscriberGroup);
+            incrementCurrSeqNo(qType);
             return messageWithGroup;
         }
 

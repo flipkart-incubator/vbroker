@@ -1,6 +1,6 @@
 package com.flipkart.vbroker.iterators;
 
-import com.flipkart.vbroker.subscribers.MessageWithMetadata;
+import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.google.common.collect.PeekingIterator;
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,18 +9,18 @@ import java.util.Optional;
 import static java.util.Objects.nonNull;
 
 @Slf4j
-public abstract class PartSubscriberIterator implements PeekingIterator<MessageWithMetadata> {
-    private PeekingIterator<MessageWithMetadata> currIterator;
+public abstract class PartSubscriberIterator implements PeekingIterator<IterableMessage> {
+    private PeekingIterator<IterableMessage> currIterator;
 
-    protected abstract Optional<PeekingIterator<MessageWithMetadata>> nextIterator();
+    protected abstract Optional<PeekingIterator<IterableMessage>> nextIterator();
 
     @Override
-    public MessageWithMetadata peek() {
+    public IterableMessage peek() {
         return currIterator.peek();
     }
 
     @Override
-    public MessageWithMetadata next() {
+    public IterableMessage next() {
         return currIterator.next();
     }
 
@@ -34,7 +34,7 @@ public abstract class PartSubscriberIterator implements PeekingIterator<MessageW
         try {
             if (isCurrIteratorActive()) return true;
 
-            Optional<PeekingIterator<MessageWithMetadata>> iteratorOpt = nextIterator();
+            Optional<PeekingIterator<IterableMessage>> iteratorOpt = nextIterator();
             if (iteratorOpt.isPresent()) {
                 currIterator = iteratorOpt.get();
                 return currIterator.hasNext();

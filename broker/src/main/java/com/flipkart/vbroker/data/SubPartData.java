@@ -1,7 +1,7 @@
 package com.flipkart.vbroker.data;
 
 import com.flipkart.vbroker.client.MessageMetadata;
-import com.flipkart.vbroker.subscribers.MessageWithMetadata;
+import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.flipkart.vbroker.subscribers.QType;
 import com.flipkart.vbroker.subscribers.SubscriberGroup;
 import com.google.common.collect.PeekingIterator;
@@ -16,11 +16,13 @@ public interface SubPartData {
 
     CompletionStage<Set<String>> getUniqueGroups();
 
-    CompletionStage<Void> sideline(MessageWithMetadata messageWithMetadata);
+    CompletionStage<Void> sideline(IterableMessage iterableMessage);
 
-    CompletionStage<Void> retry(MessageWithMetadata messageWithMetadata);
+    CompletionStage<Void> retry(IterableMessage iterableMessage);
 
-    PeekingIterator<MessageWithMetadata> getIterator(String groupId);
+    PeekingIterator<IterableMessage> getIterator(String groupId);
+
+    Optional<PeekingIterator<IterableMessage>> getIterator(QType qType);
 
     Optional<PeekingIterator<MessageWithMetadata>> getIterator(QType qType);
 

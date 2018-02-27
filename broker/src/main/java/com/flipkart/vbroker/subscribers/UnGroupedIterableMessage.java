@@ -2,14 +2,19 @@ package com.flipkart.vbroker.subscribers;
 
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.entities.Message;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor
-public class UnGroupedMessageWithMetadata implements MessageWithMetadata {
+public class UnGroupedIterableMessage implements IterableMessage {
     @Getter
     private final Message message;
     private final PartSubscription partSubscription;
+    private QType qType;
+
+    public UnGroupedIterableMessage(Message message, PartSubscription partSubscription) {
+        this.message = message;
+        this.partSubscription = partSubscription;
+        this.qType = QType.MAIN;
+    }
 
     @Override
     public boolean isUnlocked() {
@@ -47,6 +52,11 @@ public class UnGroupedMessageWithMetadata implements MessageWithMetadata {
 
     @Override
     public QType getQType() {
-        return null;
+        return qType;
+    }
+
+    @Override
+    public void setQType(QType qType) {
+        this.qType = qType;
     }
 }
