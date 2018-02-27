@@ -18,8 +18,18 @@ public class GroupedPartSubscriberTest extends BasePartSubscriberTest {
     }
 
     @Override
-    public void shouldIterateOver_RetryMessages() throws InterruptedException {
-        super.shouldIterateOver_RetryMessages();
+    public void shouldIterateOver_RetryMessages_MainQToRQ1() throws InterruptedException {
+        super.shouldIterateOver_RetryMessages_MainQToRQ1();
+    }
+
+    @Override
+    public void shouldIterateOver_RetryMessages_RQ1ToRQ2() throws InterruptedException {
+        super.shouldIterateOver_RetryMessages_RQ1ToRQ2();
+    }
+
+    @Override
+    public void shouldIterateOver_RetryMessages_RQ2ToRQ3() throws InterruptedException {
+        super.shouldIterateOver_RetryMessages_RQ2ToRQ3();
     }
 
     @Override

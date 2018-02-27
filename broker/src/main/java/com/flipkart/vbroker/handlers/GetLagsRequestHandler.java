@@ -1,6 +1,5 @@
 package com.flipkart.vbroker.handlers;
 
-import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.utils.CompletionStageUtils;
@@ -11,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -68,7 +66,7 @@ public class GetLagsRequestHandler implements RequestHandler {
             .collect(Collectors.toList());
         return CompletionStageUtils.listOfStagesToStageOfList(partitionLagStages)
             .thenApply(lagWithPartitions -> FlatbufUtils.createSubscriptionLag(topicId, subscriptionId, lagWithPartitions));
-        }
+    }
 
     private CompletionStage<PartitionLag> getPartSubscriberLag(CompletionStage<Subscription> subscriptionStage, short partitionId) {
         return subscriptionStage

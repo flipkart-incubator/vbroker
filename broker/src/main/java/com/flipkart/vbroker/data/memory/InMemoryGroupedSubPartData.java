@@ -4,7 +4,6 @@ import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.data.SubPartData;
 import com.flipkart.vbroker.iterators.PartSubscriberIterator;
-import com.flipkart.vbroker.server.MessageUtils;
 import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.flipkart.vbroker.subscribers.QType;
 import com.flipkart.vbroker.subscribers.SubscriberGroup;
@@ -28,9 +27,6 @@ public class InMemoryGroupedSubPartData implements SubPartData {
     private final Map<String, SubscriberGroup> subscriberGroupsMap = new LinkedHashMap<>();
     private final Map<QType, List<String>> failedGroups = new LinkedHashMap<>();
     private final Table<SubscriberGroup, QType, PeekingIterator<IterableMessage>> groupQTypeIteratorTable = HashBasedTable.create();
-
-    //private final Map<SubscriberGroup, PeekingIterator<IterableMessage>> subscriberGroupIteratorMap = new LinkedHashMap<>();
-    //private final Map<QType, PartSubscriberIterator> qTypeIterators = new ConcurrentHashMap<>();
 
     public InMemoryGroupedSubPartData(PartSubscription partSubscription) {
         this.partSubscription = partSubscription;
@@ -60,31 +56,20 @@ public class InMemoryGroupedSubPartData implements SubPartData {
         });
     }
 
-    private CompletionStage<List<String>> computeListIfAbsent(QType qType) {
-        return CompletableFuture.supplyAsync(() -> failedGroups.computeIfAbsent(qType, qType1 -> new LinkedList<>()));
-    }
-
-    private List<String> getFailedGroupsByBlocking(IterableMessage iterableMessage) {
-        failedGroups.computeIfAbsent(iterableMessage.getQType(), qType1 -> new LinkedList<>());
-        return failedGroups.get(iterableMessage.getQType());
-    }
-
     @Override
     public CompletionStage<Void> sideline(IterableMessage iterableMessage) {
-        iterableMessage.setQType(QType.SIDELINE);
         return appendFailedGroup(iterableMessage);
     }
 
     @Override
     public CompletionStage<Void> retry(IterableMessage iterableMessage) {
-        QType destinationQType = MessageUtils.getNextRetryQType(iterableMessage.getQType());
-        iterableMessage.setQType(destinationQType);
-
         return appendFailedGroup(iterableMessage);
     }
 
     private synchronized CompletionStage<Void> appendFailedGroup(IterableMessage iterableMessage) {
         QType qType = iterableMessage.getQType();
+        log.debug("Appending failed group {} to QType {}", iterableMessage.getGroupId(), iterableMessage.getQType());
+
         return getFailedGroups(qType).thenAccept(groups -> {
             List<String> fGroups = failedGroups.get(qType);
             fGroups.add(iterableMessage.getGroupId());

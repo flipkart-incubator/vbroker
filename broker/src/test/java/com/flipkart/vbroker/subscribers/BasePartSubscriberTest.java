@@ -85,9 +85,17 @@ public abstract class BasePartSubscriberTest {
     }
 
     @Test
-    public void shouldIterateOver_RetryMessages() throws InterruptedException {
+    public void shouldIterateOver_RetryMessages_MainQToRQ1() throws InterruptedException {
         shouldRetryMessagesToCorrespondingQType(1, QType.MAIN);
+    }
+
+    @Test
+    public void shouldIterateOver_RetryMessages_RQ1ToRQ2() throws InterruptedException {
         shouldRetryMessagesToCorrespondingQType(2, QType.RETRY_1);
+    }
+
+    @Test
+    public void shouldIterateOver_RetryMessages_RQ2ToRQ3() throws InterruptedException {
         shouldRetryMessagesToCorrespondingQType(3, QType.RETRY_2);
     }
 
@@ -127,7 +135,7 @@ public abstract class BasePartSubscriberTest {
         count = 0;
         while (destQTypeIterator.hasNext()) {
             IterableMessage currIterableMessage = destQTypeIterator.peek();
-            log.info("Consuming sidelined message {}", currIterableMessage.getMessage().messageId());
+            log.info("Consuming QType {} message {}", currIterableMessage.getQType(), currIterableMessage.getMessage().messageId());
             count++;
             destQTypeIterator.next();
         }
