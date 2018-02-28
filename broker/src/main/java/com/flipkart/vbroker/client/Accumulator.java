@@ -8,11 +8,15 @@ import java.util.Optional;
 
 public class Accumulator {
 
+    private final long lingerTimeMs;
     private Multimap<Node, RecordBatch> nodeRecordBatchMap = HashMultimap.create();
-    private Metadata metadata;
 
-    public Accumulator() {
-        //metadata = new
+    public Accumulator(long lingerTimeMs) {
+        this.lingerTimeMs = lingerTimeMs;
+    }
+
+    public Metadata fetchMetadata() {
+        return null;
     }
 
     /**
@@ -29,7 +33,7 @@ public class Accumulator {
 
         RecordBatch batch;
         if (!batchOpt.isPresent()) {
-            batch = RecordBatch.newInstance(node);
+            batch = RecordBatch.newInstance(node, lingerTimeMs);
             nodeRecordBatchMap.put(node, batch);
         } else {
             batch = batchOpt.get();
@@ -39,6 +43,7 @@ public class Accumulator {
     }
 
     public void addRecord(ProducerRecord record) {
+        Metadata metadata = fetchMetadata();
         TopicPartition topicPartition = metadata.getTopicPartition(record.getTopicId(), record.getPartitionId());
         Node leaderNode = metadata.getLeaderNode(topicPartition);
 

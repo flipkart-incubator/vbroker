@@ -3,6 +3,7 @@ package com.flipkart.vbroker.client;
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.protocol.Request;
+import com.flipkart.vbroker.utils.FlatBuffers;
 import com.google.common.primitives.Ints;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.bootstrap.Bootstrap;
@@ -15,9 +16,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.asynchttpclient.netty.SimpleChannelFutureListener;
 
-import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class Sender implements Runnable {
@@ -50,36 +51,39 @@ public class Sender implements Runnable {
          * 2. find the RecordBatch-es which are queued up in accumulator
          * 3. sum up all the records into a MessageSet within a RecordBatch for a particular topic partition
          * 5. aggregate the requests at a topic level
-         * 5. prepare the ProduceRequest
+         * 6. prepare the ProduceRequest
+         * 7. map the request to the response and assign the corresponding status code
          */
         List<Node> clusterNodes = metadata.getClusterNodes();
         clusterNodes.stream()
             .map(node -> {
                 RecordBatch recordBatch = accumulator.getRecordBatch(node);
 
-                FlatBufferBuilder builder = new FlatBufferBuilder();
-                ByteBuf byteBuf = getVRequestByteBuf(builder, recordBatch);
-                Request request = new Request(byteBuf.readableBytes(), byteBuf);
+                VRequest vRequest = getVRequest(recordBatch);
+                int correlationId = vRequest.correlationId();
 
                 return getChannelFuture(node).addListener((ChannelFutureListener) future -> {
                     Channel channel = future.channel();
 
+                    ByteBuf byteBuf = Unpooled.wrappedBuffer(vRequest.getByteBuffer());
+                    Request request = new Request(byteBuf.readableBytes(), byteBuf);
+
                     channel.writeAndFlush(request).addListener(new SimpleChannelFutureListener() {
                         @Override
                         public void onSuccess(Channel channel) {
-
                         }
 
                         @Override
                         public void onFailure(Channel channel, Throwable cause) {
-
                         }
                     });
                 });
             });
     }
 
-    private ByteBuf getVRequestByteBuf(FlatBufferBuilder builder, RecordBatch recordBatch) {
+    private VRequest getVRequest(RecordBatch recordBatch) {
+        FlatBufferBuilder builder = FlatBuffers.newBuilder();
+
         List<TopicPartReq> topicPartReqs =
             recordBatch.getTopicPartitionsWithRecords()
                 .stream()
@@ -119,14 +123,15 @@ public class Sender implements Runnable {
         int[] topicRequests = Ints.toArray(topicOffsetList);
         int topicRequestsVector = ProduceRequest.createTopicRequestsVector(builder, topicRequests);
         int produceRequest = ProduceRequest.createProduceRequest(builder, topicRequestsVector);
+        int correlationId = new Random(10000).nextInt();
         int vRequest = VRequest.createVRequest(builder,
             (byte) 1,
-            1001,
+            correlationId,
             RequestMessage.ProduceRequest,
             produceRequest);
         builder.finish(vRequest);
-        ByteBuffer byteBuffer = builder.dataBuffer();
-        return Unpooled.wrappedBuffer(byteBuffer);
+
+        return VRequest.getRootAsVRequest(builder.dataBuffer());
     }
 
     @AllArgsConstructor
