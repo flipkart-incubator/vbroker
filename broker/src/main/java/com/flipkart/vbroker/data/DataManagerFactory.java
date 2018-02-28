@@ -20,7 +20,7 @@ public class DataManagerFactory {
 
     public TopicPartDataManager getTopicDataManager() {
         TopicPartDataManager topicPartDataManager;
-        switch (config.getDataManager()) {
+        switch (config.getTopicDataManager()) {
             case redis:
                 Config redissonConfig = getRedissonConfig();
                 topicPartDataManager = new RedisTopicPartDataManager(Redisson.create(redissonConfig));
@@ -29,7 +29,7 @@ public class DataManagerFactory {
                 topicPartDataManager = new InMemoryTopicPartDataManager();
                 break;
             default:
-                throw new VBrokerException("Unknown dataManager: " + config.getDataManager());
+                throw new VBrokerException("Unknown dataManager: " + config.getTopicDataManager());
         }
 
         return topicPartDataManager;
@@ -37,12 +37,13 @@ public class DataManagerFactory {
 
     public SubPartDataManager getSubPartDataManager(TopicPartDataManager topicPartDataManager) {
         SubPartDataManager subPartDataManager;
-        switch (config.getDataManager()) {
+        switch (config.getSubscriptionDataManager()) {
             case in_memory:
                 subPartDataManager = new InMemorySubPartDataManager(topicPartDataManager);
                 break;
+            //TODO: fill this when redisSubPartDataManager is implemented
             default:
-                throw new VBrokerException("Unknown dataManager: " + config.getDataManager());
+                throw new VBrokerException("Unknown dataManager: " + config.getSubscriptionDataManager());
         }
         return subPartDataManager;
     }

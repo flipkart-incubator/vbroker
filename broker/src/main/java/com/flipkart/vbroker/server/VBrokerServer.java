@@ -75,9 +75,6 @@ public class VBrokerServer extends AbstractExecutionThreadService {
 
         //TopicPartDataManager topicPartDataManager = new TopicPartitionDataManagerImpl();
 
-        /* Ultimately, one of these 2 topicPartDataManager would be used.
-         *  Keeping both of these for now, for in-mem and redis dev/test
-         *  */
         DataManagerFactory dataManagerFactory = new DataManagerFactory(config, workerGroup);
         TopicPartDataManager topicPartDataManager = dataManagerFactory.getTopicDataManager();
         SubPartDataManager subPartDataManager = dataManagerFactory.getSubPartDataManager(topicPartDataManager);

@@ -19,7 +19,8 @@ public class VBrokerConfig {
     private String zookeeperUrl;
     private int consumerPort;
     private int subscriberPollTimeMs;
-    private DataManager dataManager;
+    private DataManager topicDataManager;
+    private DataManager subscriptionDataManager;
     private String topicsPath;
     private String queuesPath;
     private String controllerPath;
@@ -50,7 +51,8 @@ public class VBrokerConfig {
         this.consumerPort = Ints.tryParse(properties.getProperty("consumer.port"));
         this.subscriberPollTimeMs = Ints.tryParse(properties.getProperty("subscriber.poll.time.ms"));
         //default dataManager to in_memory
-        this.dataManager = DataManager.valueOf(properties.getProperty("data.manager", DataManager.in_memory.name()));
+        this.topicDataManager = DataManager.valueOf(properties.getProperty("data.topic.manager", DataManager.in_memory.name()));
+        this.subscriptionDataManager = DataManager.valueOf(properties.getProperty("data.subscription.manager", DataManager.in_memory.name()));
         this.topicsPath = properties.getProperty("topics.path");
         this.queuesPath = properties.getProperty("queues.path");
         this.controllerPath = properties.getProperty("controller.path");
