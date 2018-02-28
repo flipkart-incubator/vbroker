@@ -2,6 +2,7 @@ package com.flipkart.vbroker.handlers;
 
 import com.flipkart.vbroker.entities.RequestMessage;
 import com.flipkart.vbroker.entities.VRequest;
+import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.services.ProducerService;
 import com.flipkart.vbroker.services.SubscriptionService;
@@ -62,6 +63,18 @@ public class RequestHandlerFactory {
             case RequestMessage.GetLagsRequest:
                 requestHandler = getLagsRequestHandler;
                 break;
+            case RequestMessage.CreateQueuesRequest:
+                throw new NotImplementedException();
+//                break;
+            case RequestMessage.GetQueuesRequest:
+                throw new NotImplementedException();
+//                break;
+            case RequestMessage.GetSubscriptionsRequest:
+                throw new NotImplementedException();
+//                break;
+            case RequestMessage.GetTopicsRequest:
+                throw new NotImplementedException();
+//                break;
             default:
                 throw new VBrokerException("Unknown RequestMessageType: " + request.requestMessageType());
         }

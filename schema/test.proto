@@ -1,0 +1,124 @@
+syntax = "proto3";
+
+package test;
+
+option java_package = "com.flipkart";
+option java_outer_classname = "TestProtos";
+
+enum TopicCategory {
+    QUEUE = 0;
+    TOPIC = 1;
+}
+
+message Topic {
+    string name = 1;
+    int32 id = 2;
+    bool grouped = 3;
+    int32 partitions = 4;
+    int32 replicationFactor = 5;
+    TopicCategory topicCategory = 6;
+}
+
+message FilterKeyValue {
+    string key = 1;
+    string values = 2;
+}
+
+message CodeRange {
+    int32 from = 1;
+    int32 to = 2;
+}
+
+message CallbackConfig {
+    repeated CodeRange codeRanges = 1;
+}
+
+enum SubscriptionType {
+    STATIC = 0;
+    DYNAMIC = 1;
+}
+
+enum SubscriptionMechanism {
+    PUSH = 0;
+    PULL = 1;
+}
+
+message Subscription {
+    int32 id = 1;
+    int32 topicId = 2;
+    string name = 3;
+    bool grouped = 4;
+    int32 parallelism = 5;
+    int32 requestTimeout = 6;
+    SubscriptionType subscriptionType = 7;
+    SubscriptionMechanism subscriptionMechanism = 8;
+    string httpUri = 9;
+    string httpMethod = 10;
+    bool elastic = 11;
+    string filterOperator = 12;
+    repeated FilterKeyValue filterKeyValues = 13;
+    CallbackConfig callbackConfig = 14;
+}
+
+
+message GetTopicsRequest {
+    repeated int32 topicIds = 1;
+}
+
+message TopicSubscription {
+    int32 subscriptionId = 1;
+    int32 topicID = 2;
+}
+
+message GetSubscriptionsRequest {
+    repeated TopicSubscription subscriptions = 1;
+}
+
+message VStatus {
+    int32 statusCode = 1;
+    string message = 2;
+}
+
+message GetTopicResponse {
+    VStatus status = 1;
+    Topic topic = 2;
+}
+
+message GetTopicsResponse {
+    repeated GetTopicResponse responses = 1;
+}
+
+message GetSubscriptionResponse {
+    int32 subscriptionId = 1;
+    int32 topicId = 2;
+    VStatus status = 3;
+    Subscription subscription = 4;
+}
+
+message GetSubscriptionsResponse {
+    repeated GetSubscriptionResponse responses = 1;
+}
+
+message RequestMessage {
+    oneof requestMessage {
+        GetSubscriptionsRequest getSubscriptionsRequest = 1;
+        GetTopicsRequest getTopicsRequest = 2;
+    }
+}
+
+message VRequest {
+    string correlationId = 1;
+    RequestMessage requestMessage = 2;
+}
+
+message ResponseMessage {
+    oneof requestMessage {
+        GetSubscriptionsResponse getSubscriptionsResponse = 1;
+        GetTopicsResponse getTopicsResponse = 2;
+    }
+}
+
+message VResponse{
+    string correlationId = 1;
+    ResponseMessage responseMessage = 2;
+}

@@ -4,10 +4,8 @@ package com.flipkart.vbroker.utils;
  * Created by kaushal.hooda on 23/02/18.
  */
 
-import com.flipkart.vbroker.entities.PartitionLag;
-import com.flipkart.vbroker.entities.Subscription;
-import com.flipkart.vbroker.entities.SubscriptionLag;
-import com.flipkart.vbroker.entities.VStatus;
+import com.flipkart.vbroker.core.TopicPartition;
+import com.flipkart.vbroker.entities.*;
 import com.google.flatbuffers.FlatBufferBuilder;
 
 import java.util.List;
@@ -16,8 +14,8 @@ import java.util.function.ToIntFunction;
 
 /**
  * Utility methods to generate flatbufs properly
- * given a builder and all of an entities' fields.
- * Returns the int offset after building.
+ * build methods take a builder and build the object and return the offset.
+ * create methods use their own builder and return the final created object itself, not the offset.
  */
 public class FlatbufUtils {
 
@@ -64,4 +62,33 @@ public class FlatbufUtils {
         builder.finish(vStatusOffset);
         return VStatus.getRootAsVStatus(builder.dataBuffer());
     }
+
+    public static int buildTopicSubscription(FlatBufferBuilder builder, short topicId, short subscriptionId){
+        return TopicSubscription.createTopicSubscription(builder, topicId, subscriptionId);
+    }
+
+    public static TopicSubscription createTopicSubscription(short topicId, short subscriptionId){
+        FlatBufferBuilder builder = new FlatBufferBuilder();
+        int topicSubOffset = buildTopicSubscription(builder, topicId, subscriptionId);
+        builder.finish(topicSubOffset);
+        return TopicSubscription.getRootAsTopicSubscription(builder.dataBuffer());
+    }
+
+    public static int buildGetSubscriptionsRequest(FlatBufferBuilder builder, List<TopicSubscription> subscriptions){
+        int[] subscriptionOffsets = subscriptions.stream()
+            .map(topicSub -> FlatbufUtils.buildTopicSubscription(builder, topicSub.topicId(), topicSub.subscriptionId()))
+            .mapToInt(value -> value)
+            .toArray();
+
+        int topicSubsVectorOffset = GetSubscriptionsRequest.createSubscriptionsVector(builder, subscriptionOffsets);
+        return GetSubscriptionsRequest.createGetSubscriptionsRequest(builder, topicSubsVectorOffset);
+    }
+
+    public static GetSubscriptionsRequest createGetSubscriptionsRequest(List<TopicSubscription> topicSubscriptions){
+        FlatBufferBuilder builder = new FlatBufferBuilder();
+        int getSubscriptionsRequestOffset = buildGetSubscriptionsRequest(builder, topicSubscriptions);
+        builder.finish(getSubscriptionsRequestOffset);
+        return GetSubscriptionsRequest.getRootAsGetSubscriptionsRequest(builder.dataBuffer());
+    }
+
 }

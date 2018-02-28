@@ -17,6 +17,7 @@ subprojects {
     //def jUnitVersion = "4.12"
     def testngVersion = "6.14.2"
     def mockitoVersion = "2.15.0"
+    def protobufVersion = "3.5.1"
 
     dependencies {
         //logging
@@ -40,6 +41,11 @@ subprojects {
         //testCompile "junit:junit:${jUnitVersion}"
         testCompile "org.testng:testng:${testngVersion}"
         testCompile "org.mockito:mockito-core:${mockitoVersion}"
+
+        //protobuf
+        testCompile "com.google.protobuf:protobuf-java:${protobufVersion}"
+        testCompile "com.google.protobuf:protobuf-java-util:${protobufVersion}"
+
 
     }
 
