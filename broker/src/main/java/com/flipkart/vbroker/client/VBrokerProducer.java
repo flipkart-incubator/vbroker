@@ -5,6 +5,7 @@ import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.handlers.ResponseHandlerFactory;
 import com.flipkart.vbroker.protocol.Request;
+import com.flipkart.vbroker.subscribers.DummyEntities;
 import com.google.common.collect.Lists;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.bootstrap.Bootstrap;
@@ -53,9 +54,20 @@ public class VBrokerProducer implements Producer {
     }
 
     @Override
-    public CompletionStage<MessageMetadata> produce(Message message, Topic topic) throws InterruptedException {
-        FlatBufferBuilder builder = new FlatBufferBuilder();
+    public CompletionStage<MessageMetadata> produce(ProducerRecord producerRecord) throws InterruptedException {
 
+        ProducerRecord record = ProducerRecord.builder()
+            .messageId("msg_123")
+            .groupId("group_123")
+            .build();
+
+        FlatBufferBuilder builder = new FlatBufferBuilder();
+        int messageOffset = RecordUtils.flatBuffMsgOffset(builder, record);
+
+        TopicPartition topicPartition = partitioner.partition(record);
+
+
+        Topic topic = DummyEntities.groupedTopic;
         List<Topic> topics = Lists.newArrayList(topic);
         topics.add(topic);
 
@@ -63,7 +75,6 @@ public class VBrokerProducer implements Producer {
         for (int tIdx = 0; tIdx < topics.size(); tIdx++) {
             Topic currTopic = topics.get(tIdx);
 
-            TopicPartition topicPartition = partitioner.partition(message, topic);
             List<TopicPartition> partitions = Lists.newArrayList(topicPartition);
 
             int[] partitionRequests = new int[partitions.size()];
