@@ -5,7 +5,7 @@ import java.util.concurrent.CompletionStage;
 
 public interface Producer extends Closeable {
 
-    CompletionStage<MessageMetadata> produce(ProducerRecord producerRecord) throws InterruptedException;
+    CompletionStage<MessageMetadata> produce(ProducerRecord producerRecord);
 
     void close();
 }

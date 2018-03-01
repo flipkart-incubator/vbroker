@@ -2,11 +2,13 @@ package com.flipkart.vbroker.client;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.Map;
 
 @Builder
 @Getter
+@ToString
 public class ProducerRecord {
     private String messageId;
     private String groupId;

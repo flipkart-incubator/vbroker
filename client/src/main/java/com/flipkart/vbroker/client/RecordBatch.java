@@ -4,6 +4,8 @@ import com.flipkart.vbroker.core.TopicPartition;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Set;
@@ -13,6 +15,8 @@ import java.util.Set;
  * records can belong to multiple topic-partitions within the broker
  * each topic partition can have multiple messages
  */
+@Slf4j
+@ToString
 public class RecordBatch {
     private final Node node;
     private final long lingerTimeMs;
@@ -26,10 +30,12 @@ public class RecordBatch {
     }
 
     public static RecordBatch newInstance(Node node, long lingerTimeMs) {
+        log.info("Creating new RecordBatch for node {}", node);
         return new RecordBatch(node, lingerTimeMs);
     }
 
     public void addRecord(TopicPartition topicPartition, ProducerRecord record) {
+        log.info("Adding record {} into topic partition {}", record.getMessageId(), topicPartition);
         partRecordsMap.put(topicPartition, record);
     }
 
@@ -50,6 +56,10 @@ public class RecordBatch {
 
     private boolean hasExpired() {
         return (System.currentTimeMillis() - createdTimeMs) > lingerTimeMs;
+    }
+
+    public int getTotalNoOfRecords() {
+        return partRecordsMap.values().size();
     }
 
     public List<ProducerRecord> getRecords(TopicPartition topicPartition) {

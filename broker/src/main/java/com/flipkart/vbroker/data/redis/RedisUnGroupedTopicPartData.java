@@ -35,7 +35,11 @@ public class RedisUnGroupedTopicPartData extends RedisTopicPartData implements T
         RFuture<Boolean> topicPartitionAddFuture = topicPartitionList.addAsync(rObjMessage);
         return topicPartitionAddFuture.thenApplyAsync(result -> {
             if (result) {
-                return new MessageMetadata(message.topicId(), message.partitionId(), new Random().nextInt());
+                return new MessageMetadata(
+                    message.messageId(),
+                    message.topicId(),
+                    message.partitionId(),
+                    new Random().nextInt());
             } else {
                 throw new VBrokerException("Unable to add message to redis : adding to topicPartitionList or messageGroupList failed");
             }

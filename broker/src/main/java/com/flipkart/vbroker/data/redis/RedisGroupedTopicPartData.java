@@ -44,7 +44,11 @@ public class RedisGroupedTopicPartData extends RedisTopicPartData implements Top
             RScript.ReturnType.INTEGER,
             Arrays.asList("{" + topicPartition.toString() + "}" + messageGroup.toString(), topicPartition.toString()), rObjMessage, rObjString)
             .thenApplyAsync(result -> {
-                return new MessageMetadata(message.topicId(), message.partitionId(), new Random().nextInt());
+                return new MessageMetadata(
+                    message.messageId(),
+                    message.topicId(),
+                    message.partitionId(),
+                    new Random().nextInt());
             })
             .exceptionally(exception -> {
                 throw new VBrokerException("Unable to add message to redis : " + exception.getMessage());

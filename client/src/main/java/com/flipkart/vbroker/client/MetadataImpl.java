@@ -28,15 +28,13 @@ public class MetadataImpl implements Metadata {
         topics.add(DummyEntities.groupedTopic);
         topics.add(DummyEntities.unGroupedTopic);
 
-        topics.stream()
-            .map(topic -> topicsMap.putIfAbsent(topic.id(), topic));
+        topics.forEach(topic -> topicsMap.put(topic.id(), topic));
 
         Node node = new Node(0, config.getBrokerHost(), config.getBrokerPort());
         nodes.add(node);
 
         TopicUtils.getTopicPartitions(DummyEntities.groupedTopic)
-            .stream()
-            .map(topicPartition -> nodeTopicPartMap.put(node, topicPartition));
+            .forEach(topicPartition -> nodeTopicPartMap.put(node, topicPartition));
     }
 
     @Override
@@ -50,7 +48,7 @@ public class MetadataImpl implements Metadata {
     }
 
     private Topic getTopic(short topicId) {
-        return topics.get(topicId);
+        return topicsMap.get(topicId);
     }
 
     @Override

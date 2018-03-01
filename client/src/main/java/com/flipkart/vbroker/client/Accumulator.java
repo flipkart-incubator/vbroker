@@ -45,10 +45,10 @@ public class Accumulator {
      * @param node to get batch for
      * @return the batch
      */
-    public RecordBatch getRecordBatch(Node node) {
+    public synchronized RecordBatch getRecordBatch(Node node) {
         Optional<RecordBatch> batchOpt = nodeRecordBatchMap.get(node)
             .stream()
-            .filter(recordBatch -> !recordBatch.isFull())
+            //.filter(RecordBatch::isFull)
             .findFirst();
 
         RecordBatch batch;
@@ -62,7 +62,8 @@ public class Accumulator {
         return batch;
     }
 
-    public void addRecord(ProducerRecord record) {
+    public synchronized void addRecord(ProducerRecord record) {
+        log.info("Adding record {} to accumulator", record.getMessageId());
         Metadata metadata = fetchMetadata();
         TopicPartition topicPartition = metadata.getTopicPartition(record.getTopicId(), record.getPartitionId());
         Node leaderNode = metadata.getLeaderNode(topicPartition);
