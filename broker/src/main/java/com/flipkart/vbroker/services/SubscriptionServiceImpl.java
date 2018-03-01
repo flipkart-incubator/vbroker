@@ -103,11 +103,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             List<CompletableFuture> subStages = new ArrayList<CompletableFuture>();
             for (Topic topic : topics) {
                 CompletionStage<List<Subscription>> subStage = this.getSubscriptionsForTopic(topic.id());
-                CompletionStage<Object> subComStage = subStage.thenCompose((subData) -> {
+                 CompletionStage<List<Subscription>> subComStage = subStage.thenCompose((subData) -> {
                     subs.addAll(subData);
-                    return null;
+                    return CompletableFuture.completedFuture(subData);
                 }).exceptionally((throwable) -> {
-                    log.error("Exception in combine stage", throwable);
+                    log.error("Exception in fetching subs stage", throwable);
                     throw new SubscriptionException("Execption while fetching all subscriptions");
                 });
 
