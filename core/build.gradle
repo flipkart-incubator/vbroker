@@ -4,6 +4,13 @@ repositories {
     mavenCentral()
 }
 
+//src dependencies
+def nettyVersion = "4.1.21.Final"
+
 dependencies {
+    //networking
+    compile "io.netty:netty-common:${nettyVersion}"
+    compile "io.netty:netty-codec:${nettyVersion}"
+
     testCompile "junit:junit:4.12"
 }

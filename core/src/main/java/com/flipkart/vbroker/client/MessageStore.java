@@ -4,6 +4,7 @@ import com.flipkart.vbroker.entities.HttpHeader;
 import com.flipkart.vbroker.entities.HttpMethod;
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.entities.MessageConstants;
+import com.flipkart.vbroker.utils.ByteBufUtils;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,9 +40,11 @@ public class MessageStore {
 
     public static Message getRandomMsg(String groupId) {
         FlatBufferBuilder builder = new FlatBufferBuilder();
+        ByteBuffer sampleByteBuffer = getSampleByteBuffer();
         int sampleMsg = getSampleMsg(builder,
             builder.createString(UUID.randomUUID().toString()),
-            builder.createString(groupId));
+            builder.createString(groupId),
+            sampleByteBuffer);
         builder.finish(sampleMsg);
 
         return Message.getRootAsMessage(builder.dataBuffer());
@@ -52,10 +55,17 @@ public class MessageStore {
         String msgId = UUID.randomUUID().toString();
         int messageId = builder.createString(msgId);
         int groupId = builder.createString(msgId);
-        return getSampleMsg(builder, messageId, groupId);
+
+        ByteBuffer byteBuffer = getSampleByteBuffer();
+        return getSampleMsg(builder, messageId, groupId, byteBuffer);
     }
 
-    private static int getSampleMsg(FlatBufferBuilder builder, int messageId, int groupId) {
+    private static ByteBuffer getSampleByteBuffer() {
+        byte[] bytes = "{\"text\": \"hello\", \"id\": 131}".getBytes();
+        return ByteBuffer.wrap(bytes);
+    }
+
+    public static int getSampleMsg(FlatBufferBuilder builder, int messageId, int groupId, ByteBuffer byteBuffer) {
         byte crc = '1';
         byte version = '1';
         short seqNo = 1;
@@ -75,7 +85,10 @@ public class MessageStore {
         int[] headers = new int[1];
         headers[0] = httpHeader;
         int headersVector = Message.createHeadersVector(builder, headers);
-        byte[] payload = "{\"text\": \"hello\", \"id\": 131}".getBytes();
+
+        byte[] payload = ByteBufUtils.getBytes(byteBuffer);
+        //byte[] payload = byteBuffer.array();
+        //byte[] payload = "{\"text\": \"hello\", \"id\": 131}".getBytes();
 
         return Message.createMessage(
             builder,

@@ -44,6 +44,7 @@ public class InMemoryGroupedSubPartDataTest {
         Assert.assertEquals(lag, 5);
     }
 
+    @SuppressWarnings("unchecked")
     private SubscriberGroup setupMockGroup(String groupId, TopicPartition topicPartition, int lag) {
         SubscriberGroup group = mock(SubscriberGroup.class);
         when(group.getGroupId()).thenReturn(groupId);
