@@ -111,7 +111,7 @@ public class VBrokerServer extends AbstractExecutionThreadService {
         }
 
         log.debug("Loading subscriptionMetadata");
-        Set<Subscription> allSubscriptions = subscriptionService.getAllSubscriptions().toCompletableFuture().join();
+        List<Subscription> allSubscriptions = subscriptionService.getAllSubscriptions().toCompletableFuture().join();
         for (Subscription subscription : allSubscriptions) {
             subscriberMetadataService.loadSubscriptionMetadata(subscription);
         }

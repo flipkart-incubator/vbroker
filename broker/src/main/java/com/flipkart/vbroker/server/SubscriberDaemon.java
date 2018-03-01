@@ -55,7 +55,7 @@ public class SubscriberDaemon implements Runnable {
 
                     FlatBufferBuilder builder = new FlatBufferBuilder();
 
-                    Set<Subscription> subscriptionSet = subscriptionService.getAllSubscriptions().toCompletableFuture().join();
+                    List<Subscription> subscriptionSet = subscriptionService.getAllSubscriptions().toCompletableFuture().join();
                     List<Subscription> subscriptions = new ArrayList<>(subscriptionSet);
                     short reqNoOfMessages = 1;
 
