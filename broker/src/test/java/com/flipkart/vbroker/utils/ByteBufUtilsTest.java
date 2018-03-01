@@ -1,7 +1,6 @@
 package com.flipkart.vbroker.utils;
 
 import com.flipkart.vbroker.entities.Topic;
-import com.flipkart.vbroker.subscribers.DummyEntities;
 import org.testng.annotations.Test;
 
 import java.nio.ByteBuffer;

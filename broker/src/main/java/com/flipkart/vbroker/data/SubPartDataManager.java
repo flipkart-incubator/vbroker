@@ -24,4 +24,6 @@ public interface SubPartDataManager {
     PeekingIterator<IterableMessage> getIterator(PartSubscription partSubscription, String groupId);
 
     Optional<PeekingIterator<IterableMessage>> getIterator(PartSubscription partSubscription, QType qType);
+
+    CompletionStage<Integer> getLag(PartSubscription partSubscription);
 }

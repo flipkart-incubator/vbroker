@@ -1,86 +1,57 @@
 package com.flipkart.vbroker.subscribers;
 
-import com.flipkart.vbroker.client.MessageStore;
 import com.flipkart.vbroker.core.PartSubscription;
-import com.flipkart.vbroker.data.InMemorySubPartDataManager;
-import com.flipkart.vbroker.data.SubPartDataManager;
-import com.flipkart.vbroker.data.TopicPartDataManager;
+import com.flipkart.vbroker.data.memory.InMemorySubPartDataManager;
 import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
-import com.flipkart.vbroker.entities.Message;
+import com.flipkart.vbroker.utils.DummyEntities;
 import com.flipkart.vbroker.utils.SubscriptionUtils;
-import com.google.common.collect.PeekingIterator;
+import lombok.extern.slf4j.Slf4j;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import static org.testng.Assert.assertEquals;
-
-public class UnGroupedPartSubscriberTest {
-
-    private UnGroupedPartSubscriber partSubscriber;
-
-    private PartSubscription partSubscription;
-    private SubPartDataManager subPartDataManager;
-    private TopicPartDataManager topicPartDataManager;
+@Slf4j
+public class UnGroupedPartSubscriberTest extends BasePartSubscriberTest {
 
     @BeforeMethod
+    @Override
     public void setUp() {
-        partSubscription = SubscriptionUtils.getPartSubscription(DummyEntities.unGroupedSubscription, (short) 0);
-        topicPartDataManager = new InMemoryTopicPartDataManager();
-        subPartDataManager = new InMemorySubPartDataManager(topicPartDataManager);
+        PartSubscription partSubscription = SubscriptionUtils.getPartSubscription(DummyEntities.unGroupedSubscription, (short) 0);
+        InMemoryTopicPartDataManager topicPartDataManager = new InMemoryTopicPartDataManager();
+        InMemorySubPartDataManager subPartDataManager = new InMemorySubPartDataManager(topicPartDataManager);
 
-        partSubscriber = new UnGroupedPartSubscriber(subPartDataManager, partSubscription);
+        setPartSubscription(partSubscription);
+        setTopicPartDataManager(topicPartDataManager);
+        setSubPartDataManager(subPartDataManager);
+
+        setPartSubscriber(new UnGroupedPartSubscriber(subPartDataManager, partSubscription));
     }
 
-    @Test
-    public void shouldIterateOverNewMessages() throws InterruptedException {
-        int noOfMessages = 10;
-        List<Message> messages = generateMessages(noOfMessages);
-        List<com.flipkart.vbroker.client.MessageMetadata> messageMetadataList = addPartData(messages);
-        assertEquals(messageMetadataList.size(), noOfMessages);
-
-        int count = 0;
-        PeekingIterator<IterableMessage> iterator = partSubscriber.iterator();
-
-        CountDownLatch latch = new CountDownLatch(1);
-        int moreNoOfMessages = 5;
-
-        /*
-         * now add more messages to topicPartData after creating the iterator
-         * the iterator should then traverse these messages as well
-         */
-        new Thread(() -> {
-            List<Message> moreMessages = generateMessages(moreNoOfMessages);
-            List<com.flipkart.vbroker.client.MessageMetadata> moreMetadataList = addPartData(moreMessages);
-            assertEquals(moreMetadataList.size(), moreMessages.size());
-
-            latch.countDown();
-        }).start();
-
-        latch.await();
-
-        while (iterator.hasNext()) {
-            iterator.next();
-            count++;
-        }
-
-        assertEquals(count, noOfMessages + moreNoOfMessages);
+    @Override
+    public void shouldIterateOver_NewMessages() throws InterruptedException {
+        super.shouldIterateOver_NewMessages();
     }
 
-    private List<com.flipkart.vbroker.client.MessageMetadata> addPartData(List<Message> messages) {
-        return messages.stream()
-            .map(message -> topicPartDataManager.addMessage(partSubscription.getTopicPartition(), message)
-                .toCompletableFuture().join())
-            .collect(Collectors.toList());
+    @Override
+    public void shouldIterateOver_SidelinedMessages() throws InterruptedException {
+        super.shouldIterateOver_SidelinedMessages();
     }
 
-    private List<Message> generateMessages(int noOfMessages) {
-        return IntStream.range(0, noOfMessages)
-            .mapToObj(i -> MessageStore.getRandomMsg("group_" + i))
-            .collect(Collectors.toList());
+    @Override
+    public void shouldIterateOver_RetryMessages_MainQToRQ1() throws InterruptedException {
+        super.shouldIterateOver_RetryMessages_MainQToRQ1();
+    }
+
+    @Override
+    public void shouldIterateOver_RetryMessages_RQ1ToRQ2() throws InterruptedException {
+        super.shouldIterateOver_RetryMessages_RQ1ToRQ2();
+    }
+
+    @Override
+    public void shouldIterateOver_RetryMessages_RQ2ToRQ3() throws InterruptedException {
+        super.shouldIterateOver_RetryMessages_RQ2ToRQ3();
+    }
+
+    @Override
+    public void shouldIterateOver_MoveFromRQ3ToSQ() throws InterruptedException {
+        super.shouldIterateOver_MoveFromRQ3ToSQ();
     }
 }

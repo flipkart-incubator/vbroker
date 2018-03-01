@@ -29,14 +29,14 @@ public class InMemoryTopicPartDataManager implements TopicPartDataManager {
             allPartitionsDataMap.computeIfAbsent(topicPartition, topicPartition1 -> {
                 TopicPartData topicPartData;
                 if (topicPartition1.isGrouped()) {
-                    topicPartData = new InMemoryTopicPartData();
+                    topicPartData = new InMemoryGroupedTopicPartData();
                 } else {
                     topicPartData = new InMemoryUnGroupedTopicPartData();
                 }
                 log.info("TopicPartData: {} for TopicPartition: {}", topicPartData, topicPartition1);
                 return topicPartData;
             });
-            //allPartitionsDataMap.putIfAbsent(topicPartition, new InMemoryTopicPartData());
+            //allPartitionsDataMap.putIfAbsent(topicPartition, new InMemoryGroupedTopicPartData());
             return allPartitionsDataMap.get(topicPartition);
         });
     }
@@ -81,9 +81,19 @@ public class InMemoryTopicPartDataManager implements TopicPartDataManager {
     }
 
     @Override
+    public CompletionStage<Integer> getCurrentOffset(TopicPartition topicPartition, String group) {
+        return getTopicPartData(topicPartition).thenCompose((topicPartitionData) -> topicPartitionData.getCurrentOffset(group));
+    }
+
+    @Override
     public PeekingIterator<Message> getIterator(TopicPartition topicPartition, int seqNoFrom) {
         return getTopicPartData(topicPartition)
             .thenApplyAsync(topicPartData -> topicPartData.iteratorFrom(seqNoFrom))
             .toCompletableFuture().join();
+    }
+
+    @Override
+    public CompletionStage<Integer> getCurrentOffset(TopicPartition topicPartition) {
+        return getTopicPartData(topicPartition).thenCompose(data -> data.getCurrentOffset());
     }
 }

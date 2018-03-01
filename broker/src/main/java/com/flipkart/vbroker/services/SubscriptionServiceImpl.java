@@ -8,7 +8,9 @@ import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.exceptions.SubscriptionCreationException;
 import com.flipkart.vbroker.exceptions.SubscriptionException;
 import com.flipkart.vbroker.exceptions.VBrokerException;
-import com.flipkart.vbroker.subscribers.IPartSubscriber;
+import com.flipkart.vbroker.entities.Subscription;
+import com.flipkart.vbroker.entities.Topic;
+import com.flipkart.vbroker.subscribers.GroupedPartSubscriber;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
 import com.flipkart.vbroker.subscribers.UnGroupedPartSubscriber;
 import com.flipkart.vbroker.utils.ByteBufUtils;
@@ -142,7 +144,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public CompletionStage<IPartSubscriber> getPartSubscriber(PartSubscription partSubscription) {
+    public CompletionStage<PartSubscriber> getPartSubscriber(PartSubscription partSubscription) {
         return this.getSubscription(partSubscription.getTopicPartition().getTopicId(),
             partSubscription.getSubscriptionId()).handleAsync((subscription, exception) -> {
             if (exception != null) {
@@ -151,9 +153,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                     partSubscription.getSubscriptionId());
                 throw new SubscriptionException("Error while fetching subscription");
             } else {
-                IPartSubscriber partSubscriber;
+                PartSubscriber partSubscriber;
                 if (partSubscription.isGrouped()) {
-                    partSubscriber = new PartSubscriber(topicPartDataManager, subPartDataManager,
+                    partSubscriber = new GroupedPartSubscriber(topicPartDataManager, subPartDataManager,
                         partSubscription);
                 } else {
                     partSubscriber = new UnGroupedPartSubscriber(subPartDataManager, partSubscription);
@@ -297,5 +299,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 return newSubscriptionFromSubscription(id, subscription);
             }
         });
+    }
+
+    @Override
+    public CompletionStage<Integer> getPartSubscriptionLag(PartSubscription partSubscription) {
+        return subPartDataManager.getLag(partSubscription);
     }
 }

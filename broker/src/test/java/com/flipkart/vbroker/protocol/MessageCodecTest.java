@@ -42,7 +42,7 @@ public class MessageCodecTest {
     }
 
     @Test
-    private void shouldEncodeDecodeMessageTest() {
+    public void shouldEncodeDecodeMessageTest() {
         ByteBuffer byteBuffer = encodeSampleMsg();
         Message decodedMsg = Message.getRootAsMessage(byteBuffer);
         RList<Message> rList = redisCodecClient.getList("test");

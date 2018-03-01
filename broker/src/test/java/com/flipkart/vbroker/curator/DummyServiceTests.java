@@ -1,13 +1,11 @@
 package com.flipkart.vbroker.curator;
 
 import com.flipkart.vbroker.VBrokerConfig;
-import com.flipkart.vbroker.client.VBrokerClientInitializer;
-import com.flipkart.vbroker.data.InMemorySubPartDataManager;
 import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
+import com.flipkart.vbroker.data.memory.InMemorySubPartDataManager;
 import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
 import com.flipkart.vbroker.entities.*;
-import com.flipkart.vbroker.handlers.ResponseHandlerFactory;
 import com.flipkart.vbroker.protocol.Request;
 import com.flipkart.vbroker.protocol.codecs.VBrokerClientCodec;
 import com.flipkart.vbroker.services.CuratorService;
@@ -152,8 +150,8 @@ public class DummyServiceTests {
         protected void initChannel(SocketChannel ch) throws Exception {
             ChannelPipeline pipeline = ch.pipeline();
             pipeline.addLast(new VBrokerClientCodec());
-            ResponseHandlerFactory responseHandlerFactory = new ResponseHandlerFactory(null);
-            pipeline.addLast(new VBrokerClientInitializer(responseHandlerFactory));
+          //  ResponseHandlerFactory responseHandlerFactory = new ResponseHandlerFactory(null);
+          //  pipeline.addLast(new VBrokerClientInitializer(responseHandlerFactory));
 
         }
     }

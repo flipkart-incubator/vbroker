@@ -19,6 +19,7 @@ public class RequestHandlerFactory {
     private final RequestHandler fetchRequestHandler;
     private final RequestHandler topicCreateRequestHandler;
     private final RequestHandler subscriptionCreateRequestHandler;
+    private final GetLagsRequestHandler getLagsRequestHandler;
 
     public RequestHandlerFactory(ProducerService producerService,
                                  TopicService topicService,
@@ -37,6 +38,7 @@ public class RequestHandlerFactory {
             directExecutorService);
         this.topicCreateRequestHandler = new TopicCreateRequestHandler(topicService, adminReqExecutorService);
         this.subscriptionCreateRequestHandler = new SubscriptionCreateRequestHandler(subscriptionService, adminReqExecutorService);
+        this.getLagsRequestHandler = new GetLagsRequestHandler(subscriptionService);
     }
 
     public RequestHandler getRequestHandler(VRequest request) {
@@ -56,6 +58,9 @@ public class RequestHandlerFactory {
                 break;
             case RequestMessage.CreateSubscriptionsRequest:
                 requestHandler = subscriptionCreateRequestHandler;
+                break;
+            case RequestMessage.GetLagsRequest:
+                requestHandler = getLagsRequestHandler;
                 break;
             default:
                 throw new VBrokerException("Unknown RequestMessageType: " + request.requestMessageType());

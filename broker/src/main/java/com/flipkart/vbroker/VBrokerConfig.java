@@ -14,23 +14,24 @@ import java.util.Properties;
 @ToString
 public class VBrokerConfig {
     private final Properties properties;
-
     private String brokerHost;
     private int brokerPort;
     private String zookeeperUrl;
     private int consumerPort;
     private int subscriberPollTimeMs;
-
+    private DataManager topicDataManager;
+    private DataManager subscriptionDataManager;
     private String topicsPath;
     private String queuesPath;
     private String controllerPath;
     private int controllerQueueSize;
     private int controllerQueuePollTimeMs;
     private String adminTasksPath;
+    private String redisUrl = null;
+    private boolean isRedisCluster;
+    private String[] redisClusterNodes = null;
 
-    private String redisUrl;
-
-    public VBrokerConfig(Properties props) {
+    private VBrokerConfig(Properties props) {
         this.properties = props;
         reloadConfigs();
     }
@@ -50,12 +51,24 @@ public class VBrokerConfig {
         this.zookeeperUrl = properties.getProperty("zookeeper.url");
         this.consumerPort = Ints.tryParse(properties.getProperty("consumer.port"));
         this.subscriberPollTimeMs = Ints.tryParse(properties.getProperty("subscriber.poll.time.ms"));
+        //default dataManager to in_memory
+        this.topicDataManager = DataManager.valueOf(properties.getProperty("data.topic.manager", DataManager.in_memory.name()));
+        this.subscriptionDataManager = DataManager.valueOf(properties.getProperty("data.subscription.manager", DataManager.in_memory.name()));
         this.topicsPath = properties.getProperty("topics.path");
         this.queuesPath = properties.getProperty("queues.path");
         this.controllerPath = properties.getProperty("controller.path");
         this.controllerQueueSize = Ints.tryParse(properties.getProperty("controller.queue.size"));
         this.controllerQueuePollTimeMs = Ints.tryParse(properties.getProperty("controller.queue.poll.time.ms"));
         this.adminTasksPath = properties.getProperty("admin.tasks.path");
-        this.redisUrl = properties.getProperty("redis.url");
+        this.isRedisCluster = Boolean.parseBoolean(properties.getProperty("redis.cluster"));
+        if (isRedisCluster) {
+            this.redisClusterNodes = properties.getProperty("redis.cluster.nodes").split(",");
+        } else {
+            this.redisUrl = properties.getProperty("redis.url");
+        }
+    }
+
+    public enum DataManager {
+        redis, in_memory
     }
 }

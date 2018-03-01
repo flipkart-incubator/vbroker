@@ -40,6 +40,11 @@ public class InMemoryUnGroupedTopicPartData implements TopicPartData {
     }
 
     @Override
+    public CompletionStage<Integer> getCurrentOffset(String group) {
+        throw new UnsupportedOperationException("For an un-grouped queue, you cannot get group level offset");
+    }
+
+    @Override
     public PeekingIterator<Message> iteratorFrom(int seqNoFrom) {
         return new PeekingIterator<Message>() {
             AtomicInteger index = new AtomicInteger(seqNoFrom);
@@ -68,5 +73,10 @@ public class InMemoryUnGroupedTopicPartData implements TopicPartData {
                 return index.get() < messages.size();
             }
         };
+    }
+
+    @Override
+    public CompletionStage<Integer> getCurrentOffset() {
+        return CompletableFuture.supplyAsync(() -> messages.size());
     }
 }

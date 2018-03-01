@@ -17,6 +17,7 @@ public final class StatusCode {
     public static final short SubscriptionCreateFailed_Validation = 453;
     public static final short QueueCreateFailed_AlreadyExists = 461;
     public static final short QueueCreateFailed_Validation = 462;
+    public static final short GetLagFailed = 470;
     public static final short GetLagFailed_NoTopic = 471;
     public static final short GetLagFailed_NoSubscription = 472;
     public static final short GetLagFailed_NoPartition = 473;

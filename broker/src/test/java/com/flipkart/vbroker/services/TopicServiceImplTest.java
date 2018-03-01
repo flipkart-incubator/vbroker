@@ -4,7 +4,8 @@ import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.exceptions.TopicCreationException;
 import com.flipkart.vbroker.exceptions.VBrokerException;
-import com.flipkart.vbroker.subscribers.DummyEntities;
+import com.flipkart.vbroker.utils.DummyEntities;
+
 import org.apache.zookeeper.CreateMode;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;

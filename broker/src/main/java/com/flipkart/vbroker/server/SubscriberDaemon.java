@@ -37,7 +37,7 @@ public class SubscriberDaemon implements Runnable {
     @Override
     public void run() {
         this.running.set(true);
-        log.info("PartSubscriber now running");
+        log.info("GroupedPartSubscriber now running");
 
         while (running.get()) {
             try {
@@ -109,7 +109,7 @@ public class SubscriberDaemon implements Runnable {
                 }
             }
         }
-        log.info("== PartSubscriber shutdown ==");
+        log.info("== GroupedPartSubscriber shutdown ==");
     }
 
     public void stop() {

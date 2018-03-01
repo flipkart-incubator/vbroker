@@ -1,108 +1,48 @@
 package com.flipkart.vbroker.data.redis;
 
-import com.flipkart.vbroker.client.MessageMetadata;
-import com.flipkart.vbroker.core.MessageGroup;
-import com.flipkart.vbroker.core.TopicPartition;
-import com.flipkart.vbroker.data.TopicPartData;
 import com.flipkart.vbroker.entities.HttpHeader;
 import com.flipkart.vbroker.entities.Message;
-import com.flipkart.vbroker.exceptions.VBrokerException;
-import com.google.common.collect.Iterators;
+import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.google.common.collect.PeekingIterator;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RFuture;
 import org.redisson.api.RList;
-import org.redisson.api.RListAsync;
-import org.redisson.api.RedissonClient;
 
 import java.nio.ByteBuffer;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.CompletionStage;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
-public class RedisTopicPartData implements TopicPartData {
+public class RedisTopicPartData {
 
-    private static RedissonClient client;
-    private TopicPartition topicPartition;
+    public PeekingIterator<Message> iteratorFrom(RList rList, int seqNoFrom) {
+        return new PeekingIterator<Message>() {
+            AtomicInteger index = new AtomicInteger(seqNoFrom);
 
-    public RedisTopicPartData(RedissonClient client,
-                              TopicPartition topicPartition) {
-        this.client = client;
-        this.topicPartition = topicPartition;
-    }
-
-    @Override
-    public CompletionStage<MessageMetadata> addMessage(Message message) {
-
-        Message messageBuffer = Message.getRootAsMessage(buildMessage(message));
-        MessageGroup messageGroup = new MessageGroup(messageBuffer.groupId(), topicPartition);
-
-        RListAsync<RedisObject> messageGroupList = client.getList(messageGroup.toString());
-        RListAsync<RedisObject> topicPartitionList = client.getList(topicPartition.toString());
-
-        RedisObject rObjMessage = new RedisMessageObject(messageBuffer);
-        RedisObject rObjString = new RedisStringObject(messageBuffer.groupId());
-
-        RFuture<Boolean> topicPartitionAddFuture = topicPartitionList.addAsync(rObjString);
-        RFuture<Boolean> messageGroupAddFuture = messageGroupList.addAsync(rObjMessage);
-
-        return topicPartitionAddFuture.thenCombineAsync(messageGroupAddFuture, (topicPartitionResult, messageGroupResult) -> {
-            if (topicPartitionResult && messageGroupResult) {
-                return new MessageMetadata(message.topicId(), message.partitionId(), new Random().nextInt());
-            } else {
-                throw new VBrokerException("Unable to add message to redis : adding to topicPartitionList or messageGroupList failed");
+            @Override
+            public boolean hasNext() {
+                return index.get() < rList.size();
             }
-        }).exceptionally(exception -> {
-            throw new VBrokerException("Unable to add message to redis : " + exception.getMessage());
-        });
-    }
 
-    @Override
-    public CompletionStage<Set<String>> getUniqueGroups() {
-        RListAsync<RedisObject> topicPartitionList = client.getList(topicPartition.toString());
-
-        RFuture<Integer> topicPartitionListSizeFuture = topicPartitionList.sizeAsync();
-        RFuture<List<RedisObject>> topicPartitionReadFuture = topicPartitionList.readAllAsync();
-
-        return topicPartitionListSizeFuture.thenCombineAsync(topicPartitionReadFuture, (sizeResult, readResult) -> {
-            if (sizeResult > 0 && readResult.size() > 0) {
-                List l = readResult
-                    .stream()
-                    .map(entry -> ((RedisStringObject) entry).getStringData())
-                    .collect(Collectors.toList());
-                return ((Set<String>) new HashSet<>(l));
-            } else if (sizeResult == 0 && readResult.size() == 0) {
-                return null;
-            } else {
-                throw new VBrokerException("Unable to get Unique Groups : inconsistent results from topicPartitionList");
+            @Override
+            public Message peek() {
+                return ((RedisMessageObject) rList.get(index.get())).getMessage();
             }
-        }).exceptionally(exception -> {
-            throw new VBrokerException("Unable to get Unique Groups : " + exception.getMessage());
-        });
+
+            @Override
+            public Message next() {
+                return ((RedisMessageObject) rList.get(index.getAndIncrement())).getMessage();
+            }
+
+            @Override
+            public void remove() {
+                throw new NotImplementedException();
+            }
+
+        };
+
     }
 
-    @Override
-    public PeekingIterator<Message> iteratorFrom(String groupId, int seqNoFrom) {
-        log.info("getting peeking iterator");
-        MessageGroup messageGroup = new MessageGroup(groupId, topicPartition);
-        RList<RedisObject> rList = client.getList(messageGroup.toString());
-        List l = (rList.stream().map(entry -> {
-            return ((RedisMessageObject) entry).getMessage();
-        }).collect(Collectors.toList()));
-        return Iterators.peekingIterator(l.listIterator(seqNoFrom));
-    }
-
-    @Override
-    public PeekingIterator<Message> iteratorFrom(int seqNoFrom) {
-        throw new UnsupportedOperationException("You cannot have a global iterator for partition for a grouped topic-partition");
-    }
-
-    private ByteBuffer buildMessage(Message message) {
+    ByteBuffer buildMessage(Message message) {
         FlatBufferBuilder builder = new FlatBufferBuilder();
         int httpHeader = HttpHeader.createHttpHeader(builder,
             builder.createString(message.headers(0).key()),
@@ -134,4 +74,6 @@ public class RedisTopicPartData implements TopicPartData {
         builder.finish(i);
         return builder.dataBuffer();
     }
+
+
 }

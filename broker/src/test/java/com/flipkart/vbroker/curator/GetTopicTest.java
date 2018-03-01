@@ -3,8 +3,9 @@ package com.flipkart.vbroker.curator;
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.services.CuratorService;
-import com.flipkart.vbroker.subscribers.DummyEntities;
 import com.flipkart.vbroker.utils.ByteBufUtils;
+import com.flipkart.vbroker.utils.DummyEntities;
+
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;

@@ -2,7 +2,7 @@ package com.flipkart.vbroker.services;
 
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.entities.Subscription;
-import com.flipkart.vbroker.subscribers.IPartSubscriber;
+import com.flipkart.vbroker.subscribers.PartSubscriber;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
@@ -66,12 +66,12 @@ public interface SubscriptionService {
     public CompletionStage<PartSubscription> getPartSubscription(Subscription subscription, short partSubscriptionId);
 
     /**
-     * Gets IPartSubscriber for the given PartSubscription.
+     * Gets PartSubscriber for the given PartSubscription.
      *
      * @param subscription
      * @return
      */
-    public CompletionStage<IPartSubscriber> getPartSubscriber(PartSubscription subscription);
+    public CompletionStage<PartSubscriber> getPartSubscriber(PartSubscription subscription);
 
     /**
      * Gets list of PartSubscriptions for given subscription.
@@ -80,4 +80,6 @@ public interface SubscriptionService {
      * @return
      */
     public CompletionStage<List<PartSubscription>> getPartSubscriptions(Subscription subscription);
+
+    public CompletionStage<Integer> getPartSubscriptionLag(PartSubscription partSubscription);
 }
