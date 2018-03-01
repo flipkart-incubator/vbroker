@@ -1,7 +1,6 @@
 package com.flipkart.integration;
 
 import com.flipkart.vbroker.VBrokerConfig;
-import com.flipkart.vbroker.client.VBrokerProducerClient;
 import com.flipkart.vbroker.server.VBrokerServer;
 import com.xebialabs.restito.semantics.Condition;
 import com.xebialabs.restito.server.StubServer;
@@ -49,7 +48,7 @@ public class ProduceMessageTest {
         whenHttp(stubServer).match(Condition.post("/messages")).then(status(HttpStatus.OK_200));
 
         //Send produce request
-        VBrokerProducerClient.main(new String[0]);
+        //VBrokerProducerClient.main(new String[0]);
 
         //Verify the message is consumed
         verifyHttp(stubServer).once(method(Method.POST),

@@ -1,6 +1,5 @@
 package com.flipkart.vbroker.client;
 
-import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.protocol.Request;
 import com.flipkart.vbroker.utils.FlatBuffers;
@@ -14,7 +13,6 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.asynchttpclient.netty.SimpleChannelFutureListener;
 
 import java.util.List;
 import java.util.Map;
@@ -26,12 +24,12 @@ public class Sender implements Runnable {
     private final Accumulator accumulator;
     private final Metadata metadata;
     private final Bootstrap bootstrap;
-    private final VBrokerConfig config;
+    private final VBClientConfig config;
 
     public Sender(Accumulator accumulator,
                   Metadata metadata,
                   Bootstrap bootstrap,
-                  VBrokerConfig config) {
+                  VBClientConfig config) {
         this.accumulator = accumulator;
         this.metadata = metadata;
         this.bootstrap = bootstrap;
@@ -68,14 +66,8 @@ public class Sender implements Runnable {
                     ByteBuf byteBuf = Unpooled.wrappedBuffer(vRequest.getByteBuffer());
                     Request request = new Request(byteBuf.readableBytes(), byteBuf);
 
-                    channel.writeAndFlush(request).addListener(new SimpleChannelFutureListener() {
-                        @Override
-                        public void onSuccess(Channel channel) {
-                        }
+                    channel.writeAndFlush(request).addListener((ChannelFutureListener) future1 -> {
 
-                        @Override
-                        public void onFailure(Channel channel, Throwable cause) {
-                        }
                     });
                 });
             });

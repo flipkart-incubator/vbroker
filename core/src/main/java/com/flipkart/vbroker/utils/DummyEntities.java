@@ -1,4 +1,4 @@
-package com.flipkart.vbroker.subscribers;
+package com.flipkart.vbroker.utils;
 
 import com.flipkart.vbroker.entities.*;
 import com.google.flatbuffers.FlatBufferBuilder;

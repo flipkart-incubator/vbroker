@@ -56,6 +56,7 @@ public class VBrokerProducer implements Producer {
 
         accumulator.addRecord(record);
 
+        assert false;
         return getResponse(record);
     }
 

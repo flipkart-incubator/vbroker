@@ -3,6 +3,7 @@ package com.flipkart.vbroker.subscribers;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.data.memory.InMemorySubPartDataManager;
 import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
+import com.flipkart.vbroker.utils.DummyEntities;
 import com.flipkart.vbroker.utils.SubscriptionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.annotations.BeforeMethod;

@@ -16,10 +16,8 @@ import java.util.Set;
 public class RecordBatch {
     private final Node node;
     private final long lingerTimeMs;
-
-    private long createdTimeMs;
-
     private final Multimap<TopicPartition, ProducerRecord> partRecordsMap = HashMultimap.create();
+    private long createdTimeMs;
 
     public RecordBatch(Node node, long lingerTimeMs) {
         this.node = node;

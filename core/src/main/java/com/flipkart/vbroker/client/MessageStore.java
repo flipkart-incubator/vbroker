@@ -6,7 +6,6 @@ import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.entities.MessageConstants;
 import com.flipkart.vbroker.utils.ByteBufUtils;
 import com.google.flatbuffers.FlatBufferBuilder;
-import io.netty.buffer.Unpooled;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.ByteBuffer;
@@ -63,7 +62,7 @@ public class MessageStore {
 
     private static ByteBuffer getSampleByteBuffer() {
         byte[] bytes = "{\"text\": \"hello\", \"id\": 131}".getBytes();
-        return Unpooled.wrappedBuffer(bytes).nioBuffer();
+        return ByteBuffer.wrap(bytes);
     }
 
     public static int getSampleMsg(FlatBufferBuilder builder, int messageId, int groupId, ByteBuffer byteBuffer) {

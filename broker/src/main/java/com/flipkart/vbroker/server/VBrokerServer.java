@@ -5,24 +5,16 @@ import com.flipkart.vbroker.controller.VBrokerController;
 import com.flipkart.vbroker.data.DataManagerFactory;
 import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
-import com.flipkart.vbroker.handlers.HttpResponseHandler;
 import com.flipkart.vbroker.handlers.RequestHandlerFactory;
-import com.flipkart.vbroker.handlers.ResponseHandlerFactory;
-import com.flipkart.vbroker.handlers.VBrokerResponseHandler;
-import com.flipkart.vbroker.protocol.codecs.VBrokerClientCodec;
 import com.flipkart.vbroker.services.*;
-import com.flipkart.vbroker.subscribers.DummyEntities;
+import com.flipkart.vbroker.utils.DummyEntities;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
-import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
-import io.netty.channel.local.LocalAddress;
-import io.netty.channel.local.LocalChannel;
+import io.netty.channel.Channel;
+import io.netty.channel.DefaultEventLoopGroup;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.http.HttpClientCodec;
-import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
@@ -207,43 +199,43 @@ public class VBrokerServer extends AbstractExecutionThreadService {
         log.info("Yay! Clean stop of VBrokerServer is successful");
     }
 
-    private void setupLocalSubscribers(EventLoopGroup localGroup,
-                                       EventLoopGroup workerGroup,
-                                       LocalAddress address,
-                                       SubscriptionService subscriptionService) {
-        Bootstrap httpClientBootstrap = new Bootstrap()
-            .group(workerGroup)
-            .channel(NioSocketChannel.class)
-            .handler(new ChannelInitializer<Channel>() {
-                @Override
-                protected void initChannel(Channel ch) {
-                    ChannelPipeline pipeline = ch.pipeline();
-                    pipeline.addLast(new HttpClientCodec());
-                    pipeline.addLast(new HttpObjectAggregator(1024 * 1024)); //1MB max
-                    pipeline.addLast(new HttpResponseHandler());
-                }
-            });
-        ResponseHandlerFactory responseHandlerFactory = new ResponseHandlerFactory(httpClientBootstrap);
-        Bootstrap consumerBootstrap = new Bootstrap()
-            .group(localGroup)
-            .channel(LocalChannel.class)
-            .handler(new ChannelInitializer<Channel>() {
-                @Override
-                protected void initChannel(Channel ch) {
-                    ChannelPipeline pipeline = ch.pipeline();
-                    pipeline.addLast(new ChannelInitializer<Channel>() {
-                        @Override
-                        protected void initChannel(Channel ch) {
-                            pipeline.addLast(new VBrokerClientCodec());
-                            pipeline.addLast(new VBrokerResponseHandler(responseHandlerFactory));
-                        }
-                    });
-                }
-            });
-        SubscriberDaemon subscriber = new SubscriberDaemon(address, consumerBootstrap, subscriptionService);
-        ExecutorService subscriberExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("subscriber"));
-        subscriberExecutor.submit(subscriber);
-    }
+//    private void setupLocalSubscribers(EventLoopGroup localGroup,
+//                                       EventLoopGroup workerGroup,
+//                                       LocalAddress address,
+//                                       SubscriptionService subscriptionService) {
+//        Bootstrap httpClientBootstrap = new Bootstrap()
+//            .group(workerGroup)
+//            .channel(NioSocketChannel.class)
+//            .handler(new ChannelInitializer<Channel>() {
+//                @Override
+//                protected void initChannel(Channel ch) {
+//                    ChannelPipeline pipeline = ch.pipeline();
+//                    pipeline.addLast(new HttpClientCodec());
+//                    pipeline.addLast(new HttpObjectAggregator(1024 * 1024)); //1MB max
+//                    pipeline.addLast(new HttpResponseHandler());
+//                }
+//            });
+//        ResponseHandlerFactory responseHandlerFactory = new ResponseHandlerFactory(httpClientBootstrap);
+//        Bootstrap consumerBootstrap = new Bootstrap()
+//            .group(localGroup)
+//            .channel(LocalChannel.class)
+//            .handler(new ChannelInitializer<Channel>() {
+//                @Override
+//                protected void initChannel(Channel ch) {
+//                    ChannelPipeline pipeline = ch.pipeline();
+//                    pipeline.addLast(new ChannelInitializer<Channel>() {
+//                        @Override
+//                        protected void initChannel(Channel ch) {
+//                            pipeline.addLast(new VBrokerClientCodec());
+//                            pipeline.addLast(new VBrokerResponseHandler(responseHandlerFactory));
+//                        }
+//                    });
+//                }
+//            });
+//        SubscriberDaemon subscriber = new SubscriberDaemon(address, consumerBootstrap, subscriptionService);
+//        ExecutorService subscriberExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("subscriber"));
+//        subscriberExecutor.submit(subscriber);
+//    }
 
     @Override
     protected void run() {

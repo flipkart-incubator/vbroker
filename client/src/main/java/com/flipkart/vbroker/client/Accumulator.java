@@ -12,9 +12,8 @@ public class Accumulator {
 
     private final long lingerTimeMs;
     private final VBClientConfig config;
-
-    private Metadata metadata;
     private final Multimap<Node, RecordBatch> nodeRecordBatchMap = HashMultimap.create();
+    private Metadata metadata;
 
     public Accumulator(VBClientConfig config) {
         this.config = config;

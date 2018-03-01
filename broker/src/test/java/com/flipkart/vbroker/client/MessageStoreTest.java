@@ -2,7 +2,6 @@ package com.flipkart.vbroker.client;
 
 import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.entities.MessageSet;
-import com.flipkart.vbroker.utils.ByteBufUtils;
 import com.google.common.io.Files;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.buffer.Unpooled;

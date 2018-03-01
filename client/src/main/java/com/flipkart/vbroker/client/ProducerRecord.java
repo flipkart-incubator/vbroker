@@ -8,20 +8,6 @@ import java.util.Map;
 @Builder
 @Getter
 public class ProducerRecord {
-    public enum HttpMethod {
-        POST(0), PUT(1), DELETE(2), PATCH(3);
-
-        private final int idx;
-
-        HttpMethod(int idx) {
-            this.idx = idx;
-        }
-
-        public byte idx() {
-            return (byte) idx;
-        }
-    }
-
     private String messageId;
     private String groupId;
     private byte crc;
@@ -37,4 +23,18 @@ public class ProducerRecord {
     private HttpMethod callbackHttpMethod;
     private Map<String, String> headers;
     private byte[] payload;
+
+    public enum HttpMethod {
+        POST(0), PUT(1), DELETE(2), PATCH(3);
+
+        private final int idx;
+
+        HttpMethod(int idx) {
+            this.idx = idx;
+        }
+
+        public byte idx() {
+            return (byte) idx;
+        }
+    }
 }

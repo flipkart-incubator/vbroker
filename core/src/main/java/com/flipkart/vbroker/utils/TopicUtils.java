@@ -3,9 +3,8 @@ package com.flipkart.vbroker.utils;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.exceptions.VBrokerException;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -27,7 +26,6 @@ public class TopicUtils {
     }
 
     public static Topic getTopic(byte[] bytes) {
-        ByteBuf byteBuf = Unpooled.wrappedBuffer(bytes);
-        return Topic.getRootAsTopic(byteBuf.nioBuffer());
+        return Topic.getRootAsTopic(ByteBuffer.wrap(bytes));
     }
 }
