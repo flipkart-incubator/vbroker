@@ -33,10 +33,10 @@ public class RecordUtils {
             record.getPartitionId(),
             record.getAttributes(),
             fbuilder.createString(record.getHttpUri()),
-            record.getHttpMethod(),
+            record.getHttpMethod().idx(),
             record.getCallbackTopicId(),
             fbuilder.createString(record.getCallbackHttpUri()),
-            record.getCallbackHttpMethod(),
+            record.getCallbackHttpMethod().idx(),
             headersVector,
             payload.length,
             fbuilder.createByteVector(payload)

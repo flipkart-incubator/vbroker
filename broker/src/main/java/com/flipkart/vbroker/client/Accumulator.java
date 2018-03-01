@@ -3,20 +3,41 @@ package com.flipkart.vbroker.client;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
+@Slf4j
 public class Accumulator {
 
     private final long lingerTimeMs;
-    private Multimap<Node, RecordBatch> nodeRecordBatchMap = HashMultimap.create();
+    private final VBClientConfig config;
 
-    public Accumulator(long lingerTimeMs) {
-        this.lingerTimeMs = lingerTimeMs;
+    private Metadata metadata;
+    private final Multimap<Node, RecordBatch> nodeRecordBatchMap = HashMultimap.create();
+
+    public Accumulator(VBClientConfig config) {
+        this.config = config;
+        this.lingerTimeMs = 4000;
+
+        forceRefreshMetadata();
     }
 
     public Metadata fetchMetadata() {
-        return null;
+        if (metadata.aliveTimeMs() > config.getMetadataExpiryTimeMs()) {
+            log.info("Metadata alive since {}ms and is greater than expiry time {}ms",
+                metadata.aliveTimeMs(), config.getMetadataExpiryTimeMs());
+            forceRefreshMetadata();
+        }
+        return metadata;
+    }
+
+    /**
+     * this call blocks to fetch metadata
+     */
+    private void forceRefreshMetadata() {
+        log.info("Force populating Metadata");
+        metadata = new MetadataImpl(config);
     }
 
     /**

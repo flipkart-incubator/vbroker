@@ -1,6 +1,5 @@
 package com.flipkart.vbroker.client;
 
-import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.subscribers.DummyEntities;
@@ -21,7 +20,11 @@ public class MetadataImpl implements Metadata {
     private final List<Node> nodes = Lists.newArrayList();
     private final Multimap<Node, TopicPartition> nodeTopicPartMap = HashMultimap.create();
 
-    public MetadataImpl(VBrokerConfig config) {
+    private final long createTimeMs;
+
+    public MetadataImpl(VBClientConfig config) {
+        this.createTimeMs = System.currentTimeMillis();
+
         topics.add(DummyEntities.groupedTopic);
         topics.add(DummyEntities.unGroupedTopic);
 
@@ -34,6 +37,11 @@ public class MetadataImpl implements Metadata {
         TopicUtils.getTopicPartitions(DummyEntities.groupedTopic)
             .stream()
             .map(topicPartition -> nodeTopicPartMap.put(node, topicPartition));
+    }
+
+    @Override
+    public long aliveTimeMs() {
+        return (System.currentTimeMillis() - createTimeMs);
     }
 
     @Override

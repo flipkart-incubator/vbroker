@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface Metadata {
 
+    public long aliveTimeMs();
+
     public List<Topic> getTopics();
 
     public TopicPartition getTopicPartition(short topicId, short partitionId);

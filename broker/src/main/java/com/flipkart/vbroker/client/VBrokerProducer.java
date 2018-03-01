@@ -1,6 +1,5 @@
 package com.flipkart.vbroker.client;
 
-import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.handlers.ResponseHandlerFactory;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -20,7 +19,7 @@ import static java.util.Objects.nonNull;
 @Slf4j
 public class VBrokerProducer implements Producer {
 
-    private final VBrokerConfig config;
+    private final VBClientConfig config;
     private final Partitioner partitioner;
     private final Accumulator accumulator;
     private final EventLoopGroup group;
@@ -28,21 +27,24 @@ public class VBrokerProducer implements Producer {
 
     private Channel channel;
 
-    public VBrokerProducer(VBrokerConfig config,
+    public VBrokerProducer(VBClientConfig config,
                            Partitioner partitioner,
                            Accumulator accumulator) {
-        this.config = config;
         this.partitioner = partitioner;
         this.accumulator = accumulator;
+
+        this.config = config;
         log.info("Configs: ", config);
-
         group = new NioEventLoopGroup();
-
         ResponseHandlerFactory responseHandlerFactory = new ResponseHandlerFactory(null);
         bootstrap = new Bootstrap();
         bootstrap.group(group)
             .channel(NioSocketChannel.class)
             .handler(new VBrokerClientInitializer(responseHandlerFactory));
+    }
+
+    public VBrokerProducer(VBClientConfig config) {
+        this(config, new DefaultPartitioner(), new Accumulator(config));
     }
 
     @Override

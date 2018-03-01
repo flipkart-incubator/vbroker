@@ -29,7 +29,8 @@ public class VBrokerConfig {
     private String redisUrl = null;
     private boolean isRedisCluster;
     private String[] redisClusterNodes = null;
-    public VBrokerConfig(Properties props) {
+
+    private VBrokerConfig(Properties props) {
         this.properties = props;
         reloadConfigs();
     }
