@@ -4,7 +4,7 @@ import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.data.SubPartData;
 import com.flipkart.vbroker.data.TopicPartDataManager;
-import com.flipkart.vbroker.entities.Message;
+import com.flipkart.vbroker.flatbuf.Message;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.iterators.PartSubscriberIterator;
 import com.flipkart.vbroker.subscribers.IterableMessage;

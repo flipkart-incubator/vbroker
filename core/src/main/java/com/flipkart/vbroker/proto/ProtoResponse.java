@@ -138,14 +138,14 @@ private static final long serialVersionUID = 0L;
             break;
           }
           case 58: {
-            com.flipkart.vbroker.proto.GetLagsResponse.Builder subBuilder = null;
+            com.flipkart.vbroker.proto.GetSubscriptionLagsResponse.Builder subBuilder = null;
             if (protoResponseCase_ == 7) {
-              subBuilder = ((com.flipkart.vbroker.proto.GetLagsResponse) protoResponse_).toBuilder();
+              subBuilder = ((com.flipkart.vbroker.proto.GetSubscriptionLagsResponse) protoResponse_).toBuilder();
             }
             protoResponse_ =
-                input.readMessage(com.flipkart.vbroker.proto.GetLagsResponse.parser(), extensionRegistry);
+                input.readMessage(com.flipkart.vbroker.proto.GetSubscriptionLagsResponse.parser(), extensionRegistry);
             if (subBuilder != null) {
-              subBuilder.mergeFrom((com.flipkart.vbroker.proto.GetLagsResponse) protoResponse_);
+              subBuilder.mergeFrom((com.flipkart.vbroker.proto.GetSubscriptionLagsResponse) protoResponse_);
               protoResponse_ = subBuilder.buildPartial();
             }
             protoResponseCase_ = 7;
@@ -185,7 +185,7 @@ private static final long serialVersionUID = 0L;
     GETTOPICSRESPONSE(4),
     GETQUEUESRESPONSE(5),
     GETSUBSCRIPTIONSRESPONSE(6),
-    GETLAGSRESPONSE(7),
+    GETSUBSCRIPTIONLAGSRESPONSE(7),
     PROTORESPONSE_NOT_SET(0);
     private final int value;
     private ProtoResponseCase(int value) {
@@ -207,7 +207,7 @@ private static final long serialVersionUID = 0L;
         case 4: return GETTOPICSRESPONSE;
         case 5: return GETQUEUESRESPONSE;
         case 6: return GETSUBSCRIPTIONSRESPONSE;
-        case 7: return GETLAGSRESPONSE;
+        case 7: return GETSUBSCRIPTIONLAGSRESPONSE;
         case 0: return PROTORESPONSE_NOT_SET;
         default: return null;
       }
@@ -379,30 +379,30 @@ private static final long serialVersionUID = 0L;
     return com.flipkart.vbroker.proto.GetSubscriptionsResponse.getDefaultInstance();
   }
 
-  public static final int GETLAGSRESPONSE_FIELD_NUMBER = 7;
+  public static final int GETSUBSCRIPTIONLAGSRESPONSE_FIELD_NUMBER = 7;
   /**
-   * <code>.proto.GetLagsResponse getLagsResponse = 7;</code>
+   * <code>.proto.GetSubscriptionLagsResponse getSubscriptionLagsResponse = 7;</code>
    */
-  public boolean hasGetLagsResponse() {
+  public boolean hasGetSubscriptionLagsResponse() {
     return protoResponseCase_ == 7;
   }
   /**
-   * <code>.proto.GetLagsResponse getLagsResponse = 7;</code>
+   * <code>.proto.GetSubscriptionLagsResponse getSubscriptionLagsResponse = 7;</code>
    */
-  public com.flipkart.vbroker.proto.GetLagsResponse getGetLagsResponse() {
+  public com.flipkart.vbroker.proto.GetSubscriptionLagsResponse getGetSubscriptionLagsResponse() {
     if (protoResponseCase_ == 7) {
-       return (com.flipkart.vbroker.proto.GetLagsResponse) protoResponse_;
+       return (com.flipkart.vbroker.proto.GetSubscriptionLagsResponse) protoResponse_;
     }
-    return com.flipkart.vbroker.proto.GetLagsResponse.getDefaultInstance();
+    return com.flipkart.vbroker.proto.GetSubscriptionLagsResponse.getDefaultInstance();
   }
   /**
-   * <code>.proto.GetLagsResponse getLagsResponse = 7;</code>
+   * <code>.proto.GetSubscriptionLagsResponse getSubscriptionLagsResponse = 7;</code>
    */
-  public com.flipkart.vbroker.proto.GetLagsResponseOrBuilder getGetLagsResponseOrBuilder() {
+  public com.flipkart.vbroker.proto.GetSubscriptionLagsResponseOrBuilder getGetSubscriptionLagsResponseOrBuilder() {
     if (protoResponseCase_ == 7) {
-       return (com.flipkart.vbroker.proto.GetLagsResponse) protoResponse_;
+       return (com.flipkart.vbroker.proto.GetSubscriptionLagsResponse) protoResponse_;
     }
-    return com.flipkart.vbroker.proto.GetLagsResponse.getDefaultInstance();
+    return com.flipkart.vbroker.proto.GetSubscriptionLagsResponse.getDefaultInstance();
   }
 
   private byte memoizedIsInitialized = -1;
@@ -436,7 +436,7 @@ private static final long serialVersionUID = 0L;
       output.writeMessage(6, (com.flipkart.vbroker.proto.GetSubscriptionsResponse) protoResponse_);
     }
     if (protoResponseCase_ == 7) {
-      output.writeMessage(7, (com.flipkart.vbroker.proto.GetLagsResponse) protoResponse_);
+      output.writeMessage(7, (com.flipkart.vbroker.proto.GetSubscriptionLagsResponse) protoResponse_);
     }
     unknownFields.writeTo(output);
   }
@@ -472,7 +472,7 @@ private static final long serialVersionUID = 0L;
     }
     if (protoResponseCase_ == 7) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(7, (com.flipkart.vbroker.proto.GetLagsResponse) protoResponse_);
+        .computeMessageSize(7, (com.flipkart.vbroker.proto.GetSubscriptionLagsResponse) protoResponse_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -519,8 +519,8 @@ private static final long serialVersionUID = 0L;
             .equals(other.getGetSubscriptionsResponse());
         break;
       case 7:
-        result = result && getGetLagsResponse()
-            .equals(other.getGetLagsResponse());
+        result = result && getGetSubscriptionLagsResponse()
+            .equals(other.getGetSubscriptionLagsResponse());
         break;
       case 0:
       default:
@@ -562,8 +562,8 @@ private static final long serialVersionUID = 0L;
         hash = (53 * hash) + getGetSubscriptionsResponse().hashCode();
         break;
       case 7:
-        hash = (37 * hash) + GETLAGSRESPONSE_FIELD_NUMBER;
-        hash = (53 * hash) + getGetLagsResponse().hashCode();
+        hash = (37 * hash) + GETSUBSCRIPTIONLAGSRESPONSE_FIELD_NUMBER;
+        hash = (53 * hash) + getGetSubscriptionLagsResponse().hashCode();
         break;
       case 0:
       default:
@@ -768,10 +768,10 @@ private static final long serialVersionUID = 0L;
         }
       }
       if (protoResponseCase_ == 7) {
-        if (getLagsResponseBuilder_ == null) {
+        if (getSubscriptionLagsResponseBuilder_ == null) {
           result.protoResponse_ = protoResponse_;
         } else {
-          result.protoResponse_ = getLagsResponseBuilder_.build();
+          result.protoResponse_ = getSubscriptionLagsResponseBuilder_.build();
         }
       }
       result.protoResponseCase_ = protoResponseCase_;
@@ -841,8 +841,8 @@ private static final long serialVersionUID = 0L;
           mergeGetSubscriptionsResponse(other.getGetSubscriptionsResponse());
           break;
         }
-        case GETLAGSRESPONSE: {
-          mergeGetLagsResponse(other.getGetLagsResponse());
+        case GETSUBSCRIPTIONLAGSRESPONSE: {
+          mergeGetSubscriptionLagsResponse(other.getGetSubscriptionLagsResponse());
           break;
         }
         case PROTORESPONSE_NOT_SET: {
@@ -1708,67 +1708,67 @@ private static final long serialVersionUID = 0L;
     }
 
     private com.google.protobuf.SingleFieldBuilderV3<
-        com.flipkart.vbroker.proto.GetLagsResponse, com.flipkart.vbroker.proto.GetLagsResponse.Builder, com.flipkart.vbroker.proto.GetLagsResponseOrBuilder> getLagsResponseBuilder_;
+        com.flipkart.vbroker.proto.GetSubscriptionLagsResponse, com.flipkart.vbroker.proto.GetSubscriptionLagsResponse.Builder, com.flipkart.vbroker.proto.GetSubscriptionLagsResponseOrBuilder> getSubscriptionLagsResponseBuilder_;
     /**
-     * <code>.proto.GetLagsResponse getLagsResponse = 7;</code>
+     * <code>.proto.GetSubscriptionLagsResponse getSubscriptionLagsResponse = 7;</code>
      */
-    public boolean hasGetLagsResponse() {
+    public boolean hasGetSubscriptionLagsResponse() {
       return protoResponseCase_ == 7;
     }
     /**
-     * <code>.proto.GetLagsResponse getLagsResponse = 7;</code>
+     * <code>.proto.GetSubscriptionLagsResponse getSubscriptionLagsResponse = 7;</code>
      */
-    public com.flipkart.vbroker.proto.GetLagsResponse getGetLagsResponse() {
-      if (getLagsResponseBuilder_ == null) {
+    public com.flipkart.vbroker.proto.GetSubscriptionLagsResponse getGetSubscriptionLagsResponse() {
+      if (getSubscriptionLagsResponseBuilder_ == null) {
         if (protoResponseCase_ == 7) {
-          return (com.flipkart.vbroker.proto.GetLagsResponse) protoResponse_;
+          return (com.flipkart.vbroker.proto.GetSubscriptionLagsResponse) protoResponse_;
         }
-        return com.flipkart.vbroker.proto.GetLagsResponse.getDefaultInstance();
+        return com.flipkart.vbroker.proto.GetSubscriptionLagsResponse.getDefaultInstance();
       } else {
         if (protoResponseCase_ == 7) {
-          return getLagsResponseBuilder_.getMessage();
+          return getSubscriptionLagsResponseBuilder_.getMessage();
         }
-        return com.flipkart.vbroker.proto.GetLagsResponse.getDefaultInstance();
+        return com.flipkart.vbroker.proto.GetSubscriptionLagsResponse.getDefaultInstance();
       }
     }
     /**
-     * <code>.proto.GetLagsResponse getLagsResponse = 7;</code>
+     * <code>.proto.GetSubscriptionLagsResponse getSubscriptionLagsResponse = 7;</code>
      */
-    public Builder setGetLagsResponse(com.flipkart.vbroker.proto.GetLagsResponse value) {
-      if (getLagsResponseBuilder_ == null) {
+    public Builder setGetSubscriptionLagsResponse(com.flipkart.vbroker.proto.GetSubscriptionLagsResponse value) {
+      if (getSubscriptionLagsResponseBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
         protoResponse_ = value;
         onChanged();
       } else {
-        getLagsResponseBuilder_.setMessage(value);
+        getSubscriptionLagsResponseBuilder_.setMessage(value);
       }
       protoResponseCase_ = 7;
       return this;
     }
     /**
-     * <code>.proto.GetLagsResponse getLagsResponse = 7;</code>
+     * <code>.proto.GetSubscriptionLagsResponse getSubscriptionLagsResponse = 7;</code>
      */
-    public Builder setGetLagsResponse(
-        com.flipkart.vbroker.proto.GetLagsResponse.Builder builderForValue) {
-      if (getLagsResponseBuilder_ == null) {
+    public Builder setGetSubscriptionLagsResponse(
+        com.flipkart.vbroker.proto.GetSubscriptionLagsResponse.Builder builderForValue) {
+      if (getSubscriptionLagsResponseBuilder_ == null) {
         protoResponse_ = builderForValue.build();
         onChanged();
       } else {
-        getLagsResponseBuilder_.setMessage(builderForValue.build());
+        getSubscriptionLagsResponseBuilder_.setMessage(builderForValue.build());
       }
       protoResponseCase_ = 7;
       return this;
     }
     /**
-     * <code>.proto.GetLagsResponse getLagsResponse = 7;</code>
+     * <code>.proto.GetSubscriptionLagsResponse getSubscriptionLagsResponse = 7;</code>
      */
-    public Builder mergeGetLagsResponse(com.flipkart.vbroker.proto.GetLagsResponse value) {
-      if (getLagsResponseBuilder_ == null) {
+    public Builder mergeGetSubscriptionLagsResponse(com.flipkart.vbroker.proto.GetSubscriptionLagsResponse value) {
+      if (getSubscriptionLagsResponseBuilder_ == null) {
         if (protoResponseCase_ == 7 &&
-            protoResponse_ != com.flipkart.vbroker.proto.GetLagsResponse.getDefaultInstance()) {
-          protoResponse_ = com.flipkart.vbroker.proto.GetLagsResponse.newBuilder((com.flipkart.vbroker.proto.GetLagsResponse) protoResponse_)
+            protoResponse_ != com.flipkart.vbroker.proto.GetSubscriptionLagsResponse.getDefaultInstance()) {
+          protoResponse_ = com.flipkart.vbroker.proto.GetSubscriptionLagsResponse.newBuilder((com.flipkart.vbroker.proto.GetSubscriptionLagsResponse) protoResponse_)
               .mergeFrom(value).buildPartial();
         } else {
           protoResponse_ = value;
@@ -1776,18 +1776,18 @@ private static final long serialVersionUID = 0L;
         onChanged();
       } else {
         if (protoResponseCase_ == 7) {
-          getLagsResponseBuilder_.mergeFrom(value);
+          getSubscriptionLagsResponseBuilder_.mergeFrom(value);
         }
-        getLagsResponseBuilder_.setMessage(value);
+        getSubscriptionLagsResponseBuilder_.setMessage(value);
       }
       protoResponseCase_ = 7;
       return this;
     }
     /**
-     * <code>.proto.GetLagsResponse getLagsResponse = 7;</code>
+     * <code>.proto.GetSubscriptionLagsResponse getSubscriptionLagsResponse = 7;</code>
      */
-    public Builder clearGetLagsResponse() {
-      if (getLagsResponseBuilder_ == null) {
+    public Builder clearGetSubscriptionLagsResponse() {
+      if (getSubscriptionLagsResponseBuilder_ == null) {
         if (protoResponseCase_ == 7) {
           protoResponseCase_ = 0;
           protoResponse_ = null;
@@ -1798,49 +1798,49 @@ private static final long serialVersionUID = 0L;
           protoResponseCase_ = 0;
           protoResponse_ = null;
         }
-        getLagsResponseBuilder_.clear();
+        getSubscriptionLagsResponseBuilder_.clear();
       }
       return this;
     }
     /**
-     * <code>.proto.GetLagsResponse getLagsResponse = 7;</code>
+     * <code>.proto.GetSubscriptionLagsResponse getSubscriptionLagsResponse = 7;</code>
      */
-    public com.flipkart.vbroker.proto.GetLagsResponse.Builder getGetLagsResponseBuilder() {
-      return getGetLagsResponseFieldBuilder().getBuilder();
+    public com.flipkart.vbroker.proto.GetSubscriptionLagsResponse.Builder getGetSubscriptionLagsResponseBuilder() {
+      return getGetSubscriptionLagsResponseFieldBuilder().getBuilder();
     }
     /**
-     * <code>.proto.GetLagsResponse getLagsResponse = 7;</code>
+     * <code>.proto.GetSubscriptionLagsResponse getSubscriptionLagsResponse = 7;</code>
      */
-    public com.flipkart.vbroker.proto.GetLagsResponseOrBuilder getGetLagsResponseOrBuilder() {
-      if ((protoResponseCase_ == 7) && (getLagsResponseBuilder_ != null)) {
-        return getLagsResponseBuilder_.getMessageOrBuilder();
+    public com.flipkart.vbroker.proto.GetSubscriptionLagsResponseOrBuilder getGetSubscriptionLagsResponseOrBuilder() {
+      if ((protoResponseCase_ == 7) && (getSubscriptionLagsResponseBuilder_ != null)) {
+        return getSubscriptionLagsResponseBuilder_.getMessageOrBuilder();
       } else {
         if (protoResponseCase_ == 7) {
-          return (com.flipkart.vbroker.proto.GetLagsResponse) protoResponse_;
+          return (com.flipkart.vbroker.proto.GetSubscriptionLagsResponse) protoResponse_;
         }
-        return com.flipkart.vbroker.proto.GetLagsResponse.getDefaultInstance();
+        return com.flipkart.vbroker.proto.GetSubscriptionLagsResponse.getDefaultInstance();
       }
     }
     /**
-     * <code>.proto.GetLagsResponse getLagsResponse = 7;</code>
+     * <code>.proto.GetSubscriptionLagsResponse getSubscriptionLagsResponse = 7;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
-        com.flipkart.vbroker.proto.GetLagsResponse, com.flipkart.vbroker.proto.GetLagsResponse.Builder, com.flipkart.vbroker.proto.GetLagsResponseOrBuilder> 
-        getGetLagsResponseFieldBuilder() {
-      if (getLagsResponseBuilder_ == null) {
+        com.flipkart.vbroker.proto.GetSubscriptionLagsResponse, com.flipkart.vbroker.proto.GetSubscriptionLagsResponse.Builder, com.flipkart.vbroker.proto.GetSubscriptionLagsResponseOrBuilder> 
+        getGetSubscriptionLagsResponseFieldBuilder() {
+      if (getSubscriptionLagsResponseBuilder_ == null) {
         if (!(protoResponseCase_ == 7)) {
-          protoResponse_ = com.flipkart.vbroker.proto.GetLagsResponse.getDefaultInstance();
+          protoResponse_ = com.flipkart.vbroker.proto.GetSubscriptionLagsResponse.getDefaultInstance();
         }
-        getLagsResponseBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-            com.flipkart.vbroker.proto.GetLagsResponse, com.flipkart.vbroker.proto.GetLagsResponse.Builder, com.flipkart.vbroker.proto.GetLagsResponseOrBuilder>(
-                (com.flipkart.vbroker.proto.GetLagsResponse) protoResponse_,
+        getSubscriptionLagsResponseBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            com.flipkart.vbroker.proto.GetSubscriptionLagsResponse, com.flipkart.vbroker.proto.GetSubscriptionLagsResponse.Builder, com.flipkart.vbroker.proto.GetSubscriptionLagsResponseOrBuilder>(
+                (com.flipkart.vbroker.proto.GetSubscriptionLagsResponse) protoResponse_,
                 getParentForChildren(),
                 isClean());
         protoResponse_ = null;
       }
       protoResponseCase_ = 7;
       onChanged();;
-      return getLagsResponseBuilder_;
+      return getSubscriptionLagsResponseBuilder_;
     }
     public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {

@@ -4,9 +4,9 @@ import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.core.TopicPartMessage;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.TopicPartDataManager;
-import com.flipkart.vbroker.entities.Message;
-import com.flipkart.vbroker.entities.Topic;
+import com.flipkart.vbroker.flatbuf.Message;
 import com.flipkart.vbroker.utils.TopicUtils;
+import com.flipkart.vbroker.wrappers.Topic;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

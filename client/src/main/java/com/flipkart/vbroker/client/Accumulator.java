@@ -1,7 +1,7 @@
 package com.flipkart.vbroker.client;
 
 import com.flipkart.vbroker.core.TopicPartition;
-import com.flipkart.vbroker.entities.VResponse;
+import com.flipkart.vbroker.flatbuf.VResponse;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import lombok.extern.slf4j.Slf4j;

@@ -1,7 +1,7 @@
 package com.flipkart.vbroker.client;
 
-import com.flipkart.vbroker.entities.VRequest;
-import com.flipkart.vbroker.entities.VResponse;
+import com.flipkart.vbroker.flatbuf.VRequest;
+import com.flipkart.vbroker.flatbuf.VResponse;
 import com.flipkart.vbroker.protocol.Request;
 import com.flipkart.vbroker.protocol.codecs.VBrokerClientCodec;
 import io.netty.bootstrap.Bootstrap;

@@ -2,10 +2,10 @@ package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.PartSubscription;
-import com.flipkart.vbroker.entities.Subscription;
 import com.flipkart.vbroker.iterators.SubscriberIterator;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
+import com.flipkart.vbroker.wrappers.Subscription;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;

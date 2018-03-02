@@ -2,7 +2,7 @@ package com.flipkart.vbroker.data.memory;
 
 import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.data.TopicPartData;
-import com.flipkart.vbroker.entities.Message;
+import com.flipkart.vbroker.flatbuf.Message;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.google.common.collect.PeekingIterator;
 import lombok.extern.slf4j.Slf4j;

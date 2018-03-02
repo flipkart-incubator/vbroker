@@ -1,8 +1,8 @@
 package com.flipkart.vbroker.handlers;
 
-import com.flipkart.vbroker.entities.ResponseMessage;
-import com.flipkart.vbroker.entities.VRequest;
-import com.flipkart.vbroker.entities.VResponse;
+import com.flipkart.vbroker.flatbuf.ResponseMessage;
+import com.flipkart.vbroker.flatbuf.VRequest;
+import com.flipkart.vbroker.flatbuf.VResponse;
 import com.flipkart.vbroker.protocol.Response;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

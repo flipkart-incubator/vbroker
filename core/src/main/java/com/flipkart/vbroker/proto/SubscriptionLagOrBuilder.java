@@ -18,15 +18,26 @@ public interface SubscriptionLagOrBuilder extends
   int getTopicId();
 
   /**
-   * <code>.proto.PartitionLag partitionLags = 3;</code>
+   * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
    */
-  boolean hasPartitionLags();
+  java.util.List<com.flipkart.vbroker.proto.PartitionLag> 
+      getPartitionLagsList();
   /**
-   * <code>.proto.PartitionLag partitionLags = 3;</code>
+   * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
    */
-  com.flipkart.vbroker.proto.PartitionLag getPartitionLags();
+  com.flipkart.vbroker.proto.PartitionLag getPartitionLags(int index);
   /**
-   * <code>.proto.PartitionLag partitionLags = 3;</code>
+   * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
    */
-  com.flipkart.vbroker.proto.PartitionLagOrBuilder getPartitionLagsOrBuilder();
+  int getPartitionLagsCount();
+  /**
+   * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
+   */
+  java.util.List<? extends com.flipkart.vbroker.proto.PartitionLagOrBuilder> 
+      getPartitionLagsOrBuilderList();
+  /**
+   * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
+   */
+  com.flipkart.vbroker.proto.PartitionLagOrBuilder getPartitionLagsOrBuilder(
+      int index);
 }

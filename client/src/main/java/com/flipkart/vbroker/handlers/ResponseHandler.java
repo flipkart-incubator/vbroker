@@ -1,6 +1,6 @@
 package com.flipkart.vbroker.handlers;
 
-import com.flipkart.vbroker.entities.VResponse;
+import com.flipkart.vbroker.flatbuf.VResponse;
 
 public interface ResponseHandler {
 

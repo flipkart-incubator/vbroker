@@ -1,8 +1,8 @@
 package com.flipkart.vbroker.services;
 
 import com.flipkart.vbroker.core.TopicPartition;
-import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.utils.TopicUtils;
+import com.flipkart.vbroker.wrappers.Topic;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentMap;
 
 public class InMemoryTopicService implements TopicService {
 
-    private final ConcurrentMap<Short, Topic> topicsMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Integer, Topic> topicsMap = new ConcurrentHashMap<>();
 
     @Override
     public synchronized CompletionStage<Topic> createTopic(Topic topic) {
@@ -24,7 +24,7 @@ public class InMemoryTopicService implements TopicService {
     }
 
     @Override
-    public CompletionStage<TopicPartition> getTopicPartition(Topic topic, short topicPartitionId) {
+    public CompletionStage<TopicPartition> getTopicPartition(Topic topic, int topicPartitionId) {
         return getTopic(topic.id())
             .thenApplyAsync(topic1 -> new TopicPartition(topicPartitionId, topic.id(), topic.grouped()));
     }
@@ -35,7 +35,7 @@ public class InMemoryTopicService implements TopicService {
     }
 
     @Override
-    public CompletionStage<Topic> getTopic(short topicId) {
+    public CompletionStage<Topic> getTopic(int topicId) {
         return CompletableFuture.supplyAsync(() -> topicsMap.get(topicId));
     }
 

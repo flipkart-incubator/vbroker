@@ -5,12 +5,12 @@ import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
-import com.flipkart.vbroker.entities.Subscription;
-import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.subscribers.GroupedPartSubscriber;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
 import com.flipkart.vbroker.utils.JsonUtils;
 import com.flipkart.vbroker.utils.SubscriptionUtils;
+import com.flipkart.vbroker.wrappers.Subscription;
+import com.flipkart.vbroker.wrappers.Topic;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.CreateMode;
@@ -36,7 +36,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private final SubPartDataManager subPartDataManager;
     private final TopicService topicService;
 
-    private final ConcurrentMap<Short, Subscription> subscriptionsMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Integer, Subscription> subscriptionsMap = new ConcurrentHashMap<>();
     private final ConcurrentMap<PartSubscription, PartSubscriber> subscriberMap = new ConcurrentHashMap<>();
 
     @Override
@@ -44,7 +44,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         subscriptionsMap.putIfAbsent(subscription.id(), subscription);
         String path = config.getTopicsPath() + "/" + subscription.topicId() + "/subscriptions/" + subscription.id();
 
-        return curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT, subscription.getByteBuffer().array())
+        return curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT, subscription.toBytes())
             .event().thenApplyAsync(watchedEvent -> subscription);
     }
 
@@ -54,7 +54,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public CompletionStage<PartSubscription> getPartSubscription(Subscription subscription, short partSubscriptionId) {
+    public CompletionStage<PartSubscription> getPartSubscription(Subscription subscription, int partSubscriptionId) {
         return CompletableFuture.supplyAsync(() -> {
             if (subscriptionsMap.containsKey(subscription.id())) {
                 Subscription existingSub = subscriptionsMap.get(subscription.id());
@@ -81,7 +81,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public CompletionStage<Subscription> getSubscription(short topicId, short subscriptionId) {
+    public CompletionStage<Subscription> getSubscription(int topicId, int subscriptionId) {
         String subscriptionPath = config.getTopicsPath() + "/" + topicId + "/subscriptions/" + subscriptionId;
         return curatorService.getData(subscriptionPath).handle((data, exception) -> {
             try {
@@ -109,7 +109,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public CompletionStage<List<Subscription>> getSubscriptionsForTopic(short topicId) {
+    public CompletionStage<List<Subscription>> getSubscriptionsForTopic(int topicId) {
         String path = config.getTopicsPath() + "/" + topicId + "/subscriptions";
         List<Subscription> subscriptions = new ArrayList<>();
         List<String> subscriptionIds = curatorService.getChildren(path).handle((data, exception) -> data).toCompletableFuture().join();

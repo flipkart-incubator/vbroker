@@ -1,8 +1,9 @@
 package com.flipkart.vbroker.handlers;
 
-import com.flipkart.vbroker.entities.RequestMessage;
-import com.flipkart.vbroker.entities.VRequest;
-import com.flipkart.vbroker.entities.VResponse;
+import com.flipkart.vbroker.flatbuf.RequestMessage;
+import com.flipkart.vbroker.flatbuf.VRequest;
+import com.flipkart.vbroker.flatbuf.VResponse;
+import com.flipkart.vbroker.proto.*;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.google.flatbuffers.FlatBufferBuilder;
@@ -12,6 +13,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,22 +35,26 @@ public class GetSubscriptionsRequestHandlerTest {
     public void shouldReturnExistingSubscription() {
 //        Mockito.when(subscriptionService.getSubscription((short) 1, (short) 1))
 //            .thenReturn(DummyEntities.groupedSubscription)
-        VRequest vRequest = generateVRequeset(Arrays.asList(new Pair<>((short) 1, (short) 1)));
+        VRequest vRequest = generateVRequeset(Collections.singletonList(new Pair<>(1, 1)));
         VResponse response = getSubscriptionsRequestHandler.handle(vRequest).toCompletableFuture().join();
-        GetSubscriptionsResponse subscriptionsResponse = (GetSubscriptionsResponse) response.responseMessage(new GetSubscriptionsResponse());
+        GetSubscriptionsResponse subscriptionsResponse = FlatbufUtils.getProtoResponse(response).getGetSubscriptionsResponse();
     }
 
-    private VRequest generateVRequeset(List<Pair<Short, Short>> topicSubscriptions) {
+    private VRequest generateVRequeset(List<Pair<Integer, Integer>> topicSubscriptions) {
         FlatBufferBuilder builder = new FlatBufferBuilder();
-        List<TopicSubscription> subscriptions = topicSubscriptions.stream()
-            .map(pair -> FlatbufUtils.createTopicSubscription(pair.getKey(), pair.getValue())).collect(Collectors.toList());
-        int getSubscriptionsRequestOffset = FlatbufUtils.buildGetSubscriptionsRequest(builder, subscriptions);
-        int vRequest = VRequest.createVRequest(builder,
-            (byte) 1,
-            1001,
-            RequestMessage.GetSubscriptionsRequest,
-            getSubscriptionsRequestOffset);
-        builder.finish(vRequest);
-        return VRequest.getRootAsVRequest(builder.dataBuffer());
-    }
+        List<TopicSubscription> topicSubscriptionList = topicSubscriptions.stream()
+            .map(pair ->
+                TopicSubscription.newBuilder()
+                    .setTopicId(pair.getKey())
+                    .setSubscriptionId(pair.getValue())
+                    .build())
+            .collect(Collectors.toList());
+
+        GetSubscriptionsRequest getSubscriptionsRequest = GetSubscriptionsRequest
+            .newBuilder()
+            .addAllSubscriptions(topicSubscriptionList)
+            .build();
+        ProtoRequest protoRequest = ProtoRequest.newBuilder().setGetSubscriptionsRequest(getSubscriptionsRequest).build();
+        return FlatbufUtils.createVRequest((byte) 1, 1001, protoRequest);
+        }
 }

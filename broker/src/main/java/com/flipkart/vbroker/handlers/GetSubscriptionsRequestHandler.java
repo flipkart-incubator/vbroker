@@ -1,7 +1,7 @@
 package com.flipkart.vbroker.handlers;
 
-import com.flipkart.vbroker.entities.VRequest;
-import com.flipkart.vbroker.entities.VResponse;
+import com.flipkart.vbroker.flatbuf.VRequest;
+import com.flipkart.vbroker.flatbuf.VResponse;
 
 import java.util.concurrent.CompletionStage;
 

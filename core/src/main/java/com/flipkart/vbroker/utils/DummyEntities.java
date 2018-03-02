@@ -43,9 +43,9 @@ public class DummyEntities {
 
         return new Subscription(ProtoSubscription.newBuilder()
             .setId(subscriptionId)
-            .setTopicId(topic.getProtoTopic().getId())
+            .setTopicId(topic.id())
             .setName("subscription_" + subscriptionId)
-            .setGrouped(topic.getProtoTopic().getGrouped())
+            .setGrouped(topic.grouped())
             .setSubscriptionType(SubscriptionType.DYNAMIC)
             .setSubscriptionMechanism(SubscriptionMechanism.PUSH)
             .setCallbackConfig(callbackConfig)

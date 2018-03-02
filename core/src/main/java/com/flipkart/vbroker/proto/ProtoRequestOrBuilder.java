@@ -86,17 +86,17 @@ public interface ProtoRequestOrBuilder extends
   com.flipkart.vbroker.proto.GetQueuesRequestOrBuilder getGetQueuesRequestOrBuilder();
 
   /**
-   * <code>.proto.GetSubscriptionLagsRequest getLagsRequest = 7;</code>
+   * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 7;</code>
    */
-  boolean hasGetLagsRequest();
+  boolean hasGetSubscriptionLagsRequest();
   /**
-   * <code>.proto.GetSubscriptionLagsRequest getLagsRequest = 7;</code>
+   * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 7;</code>
    */
-  com.flipkart.vbroker.proto.GetSubscriptionLagsRequest getGetLagsRequest();
+  com.flipkart.vbroker.proto.GetSubscriptionLagsRequest getGetSubscriptionLagsRequest();
   /**
-   * <code>.proto.GetSubscriptionLagsRequest getLagsRequest = 7;</code>
+   * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 7;</code>
    */
-  com.flipkart.vbroker.proto.GetSubscriptionLagsRequestOrBuilder getGetLagsRequestOrBuilder();
+  com.flipkart.vbroker.proto.GetSubscriptionLagsRequestOrBuilder getGetSubscriptionLagsRequestOrBuilder();
 
   public com.flipkart.vbroker.proto.ProtoRequest.ProtoRequestCase getProtoRequestCase();
 }

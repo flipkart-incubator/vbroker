@@ -86,17 +86,17 @@ public interface ProtoResponseOrBuilder extends
   com.flipkart.vbroker.proto.GetSubscriptionsResponseOrBuilder getGetSubscriptionsResponseOrBuilder();
 
   /**
-   * <code>.proto.GetLagsResponse getLagsResponse = 7;</code>
+   * <code>.proto.GetSubscriptionLagsResponse getSubscriptionLagsResponse = 7;</code>
    */
-  boolean hasGetLagsResponse();
+  boolean hasGetSubscriptionLagsResponse();
   /**
-   * <code>.proto.GetLagsResponse getLagsResponse = 7;</code>
+   * <code>.proto.GetSubscriptionLagsResponse getSubscriptionLagsResponse = 7;</code>
    */
-  com.flipkart.vbroker.proto.GetLagsResponse getGetLagsResponse();
+  com.flipkart.vbroker.proto.GetSubscriptionLagsResponse getGetSubscriptionLagsResponse();
   /**
-   * <code>.proto.GetLagsResponse getLagsResponse = 7;</code>
+   * <code>.proto.GetSubscriptionLagsResponse getSubscriptionLagsResponse = 7;</code>
    */
-  com.flipkart.vbroker.proto.GetLagsResponseOrBuilder getGetLagsResponseOrBuilder();
+  com.flipkart.vbroker.proto.GetSubscriptionLagsResponseOrBuilder getGetSubscriptionLagsResponseOrBuilder();
 
   public com.flipkart.vbroker.proto.ProtoResponse.ProtoResponseCase getProtoResponseCase();
 }

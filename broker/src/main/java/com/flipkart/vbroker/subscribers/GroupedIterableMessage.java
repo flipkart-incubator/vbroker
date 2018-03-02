@@ -1,7 +1,7 @@
 package com.flipkart.vbroker.subscribers;
 
 import com.flipkart.vbroker.core.PartSubscription;
-import com.flipkart.vbroker.entities.Message;
+import com.flipkart.vbroker.flatbuf.Message;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -47,12 +47,12 @@ public class GroupedIterableMessage implements IterableMessage {
     }
 
     @Override
-    public short subscriptionId() {
+    public int subscriptionId() {
         return subscriberGroup.getPartSubscription().getSubscriptionId();
     }
 
     @Override
-    public short getTopicId() {
+    public int getTopicId() {
         return subscriberGroup.getTopicPartition().getTopicId();
     }
 

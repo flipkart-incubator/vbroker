@@ -1,9 +1,9 @@
 package com.flipkart.vbroker.client;
 
-import com.flipkart.vbroker.entities.HttpHeader;
-import com.flipkart.vbroker.entities.HttpMethod;
-import com.flipkart.vbroker.entities.Message;
-import com.flipkart.vbroker.entities.MessageConstants;
+import com.flipkart.vbroker.MessageConstants;
+import com.flipkart.vbroker.flatbuf.HttpHeader;
+import com.flipkart.vbroker.flatbuf.HttpMethod;
+import com.flipkart.vbroker.flatbuf.Message;
 import com.flipkart.vbroker.utils.ByteBufUtils;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.extern.slf4j.Slf4j;

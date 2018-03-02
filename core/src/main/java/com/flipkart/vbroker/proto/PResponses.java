@@ -95,10 +95,10 @@ public final class PResponses {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_proto_SubscriptionLag_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_GetLagsResponse_descriptor;
+    internal_static_proto_GetSubscriptionLagsResponse_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_GetLagsResponse_fieldAccessorTable;
+      internal_static_proto_GetSubscriptionLagsResponse_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_proto_GetClusterMetadataResponse_descriptor;
   static final 
@@ -115,7 +115,7 @@ public final class PResponses {
     java.lang.String[] descriptorData = {
       "\n\017responses.proto\022\005proto\032\016entities.proto" +
       "\".\n\007VStatus\022\022\n\nstatusCode\030\001 \001(\005\022\017\n\007messa" +
-      "ge\030\002 \001(\t\"\313\003\n\rProtoResponse\022;\n\024createTopi" +
+      "ge\030\002 \001(\t\"\343\003\n\rProtoResponse\022;\n\024createTopi" +
       "csResponse\030\001 \001(\0132\033.proto.CreateTopicsRes" +
       "ponseH\000\022I\n\033createSubscriptionsResponse\030\002" +
       " \001(\0132\".proto.CreateSubscriptionsResponse" +
@@ -125,43 +125,44 @@ public final class PResponses {
       "\n\021getQueuesResponse\030\005 \001(\0132\030.proto.GetQue" +
       "uesResponseH\000\022C\n\030getSubscriptionsRespons" +
       "e\030\006 \001(\0132\037.proto.GetSubscriptionsResponse" +
-      "H\000\0221\n\017getLagsResponse\030\007 \001(\0132\026.proto.GetL" +
-      "agsResponseH\000B\017\n\rprotoResponse\"C\n\023Create" +
-      "TopicResponse\022\014\n\004name\030\002 \001(\t\022\036\n\006status\030\003 " +
-      "\001(\0132\016.proto.VStatus\"P\n\024CreateTopicsRespo" +
-      "nse\0228\n\024createTopicsResponse\030\001 \003(\0132\032.prot" +
-      "o.CreateTopicResponse\"[\n\032CreateSubscript" +
-      "ionResponse\022\017\n\007topicId\030\002 \001(\005\022\014\n\004name\030\003 \001" +
-      "(\t\022\036\n\006status\030\004 \001(\0132\016.proto.VStatus\"e\n\033Cr" +
-      "eateSubscriptionsResponse\022F\n\033createSubsc" +
-      "riptionResponses\030\001 \003(\0132!.proto.CreateSub" +
-      "scriptionResponse\"H\n\023CreateQueueResponse" +
-      "\022\021\n\tqueueName\030\001 \001(\t\022\036\n\006status\030\002 \001(\0132\016.pr" +
-      "oto.VStatus\"P\n\024CreateQueuesResponse\0228\n\024c" +
-      "reateQueueResponses\030\001 \003(\0132\032.proto.Create" +
-      "QueueResponse\"T\n\020GetTopicResponse\022 \n\005top" +
-      "ic\030\001 \001(\0132\021.proto.ProtoTopic\022\036\n\006status\030\002 " +
-      "\001(\0132\016.proto.VStatus\"<\n\021GetTopicsResponse" +
-      "\022\'\n\006topics\030\001 \003(\0132\027.proto.GetTopicRespons" +
-      "e\"i\n\027GetSubscriptionResponse\022.\n\014subscrip" +
-      "tion\030\001 \001(\0132\030.proto.ProtoSubscription\022\036\n\006" +
-      "status\030\002 \001(\0132\016.proto.VStatus\"Q\n\030GetSubsc" +
-      "riptionsResponse\0225\n\rsubscriptions\030\001 \003(\0132" +
-      "\036.proto.GetSubscriptionResponse\"T\n\020GetQu" +
-      "eueResponse\022 \n\005queue\030\001 \001(\0132\021.proto.Proto" +
-      "Queue\022\036\n\006status\030\002 \001(\0132\016.proto.VStatus\"<\n" +
-      "\021GetQueuesResponse\022\'\n\006queues\030\001 \003(\0132\027.pro" +
-      "to.GetQueueResponse\"P\n\014PartitionLag\022\023\n\013p" +
-      "artitionId\030\001 \001(\005\022\013\n\003lag\030\002 \001(\005\022\036\n\006status\030" +
-      "\003 \001(\0132\016.proto.VStatus\"f\n\017SubscriptionLag" +
-      "\022\026\n\016subscriptionId\030\001 \001(\005\022\017\n\007topicId\030\002 \001(" +
-      "\005\022*\n\rpartitionLags\030\003 \001(\0132\023.proto.Partiti" +
-      "onLag\"C\n\017GetLagsResponse\0220\n\020subscription" +
-      "Lags\030\001 \001(\0132\026.proto.SubscriptionLag\"m\n\032Ge" +
-      "tClusterMetadataResponse\022/\n\017clusterMetad" +
-      "ata\030\001 \001(\0132\026.proto.ClusterMetadata\022\036\n\006sta" +
-      "tus\030\002 \001(\0132\016.proto.VStatusB*\n\032com.flipkar" +
-      "t.vbroker.protoB\nPResponsesP\001b\006proto3"
+      "H\000\022I\n\033getSubscriptionLagsResponse\030\007 \001(\0132" +
+      "\".proto.GetSubscriptionLagsResponseH\000B\017\n" +
+      "\rprotoResponse\"C\n\023CreateTopicResponse\022\014\n" +
+      "\004name\030\002 \001(\t\022\036\n\006status\030\003 \001(\0132\016.proto.VSta" +
+      "tus\"P\n\024CreateTopicsResponse\0228\n\024createTop" +
+      "icsResponse\030\001 \003(\0132\032.proto.CreateTopicRes" +
+      "ponse\"[\n\032CreateSubscriptionResponse\022\017\n\007t" +
+      "opicId\030\002 \001(\005\022\014\n\004name\030\003 \001(\t\022\036\n\006status\030\004 \001" +
+      "(\0132\016.proto.VStatus\"e\n\033CreateSubscription" +
+      "sResponse\022F\n\033createSubscriptionResponses" +
+      "\030\001 \003(\0132!.proto.CreateSubscriptionRespons" +
+      "e\"H\n\023CreateQueueResponse\022\021\n\tqueueName\030\001 " +
+      "\001(\t\022\036\n\006status\030\002 \001(\0132\016.proto.VStatus\"P\n\024C" +
+      "reateQueuesResponse\0228\n\024createQueueRespon" +
+      "ses\030\001 \003(\0132\032.proto.CreateQueueResponse\"T\n" +
+      "\020GetTopicResponse\022 \n\005topic\030\001 \001(\0132\021.proto" +
+      ".ProtoTopic\022\036\n\006status\030\002 \001(\0132\016.proto.VSta" +
+      "tus\"<\n\021GetTopicsResponse\022\'\n\006topics\030\001 \003(\013" +
+      "2\027.proto.GetTopicResponse\"i\n\027GetSubscrip" +
+      "tionResponse\022.\n\014subscription\030\001 \001(\0132\030.pro" +
+      "to.ProtoSubscription\022\036\n\006status\030\002 \001(\0132\016.p" +
+      "roto.VStatus\"Q\n\030GetSubscriptionsResponse" +
+      "\0225\n\rsubscriptions\030\001 \003(\0132\036.proto.GetSubsc" +
+      "riptionResponse\"T\n\020GetQueueResponse\022 \n\005q" +
+      "ueue\030\001 \001(\0132\021.proto.ProtoQueue\022\036\n\006status\030" +
+      "\002 \001(\0132\016.proto.VStatus\"<\n\021GetQueuesRespon" +
+      "se\022\'\n\006queues\030\001 \003(\0132\027.proto.GetQueueRespo" +
+      "nse\"P\n\014PartitionLag\022\023\n\013partitionId\030\001 \001(\005" +
+      "\022\013\n\003lag\030\002 \001(\005\022\036\n\006status\030\003 \001(\0132\016.proto.VS" +
+      "tatus\"f\n\017SubscriptionLag\022\026\n\016subscription" +
+      "Id\030\001 \001(\005\022\017\n\007topicId\030\002 \001(\005\022*\n\rpartitionLa" +
+      "gs\030\003 \003(\0132\023.proto.PartitionLag\"O\n\033GetSubs" +
+      "criptionLagsResponse\0220\n\020subscriptionLags" +
+      "\030\001 \003(\0132\026.proto.SubscriptionLag\"m\n\032GetClu" +
+      "sterMetadataResponse\022/\n\017clusterMetadata\030" +
+      "\001 \001(\0132\026.proto.ClusterMetadata\022\036\n\006status\030" +
+      "\002 \001(\0132\016.proto.VStatusB*\n\032com.flipkart.vb" +
+      "roker.protoB\nPResponsesP\001b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -187,7 +188,7 @@ public final class PResponses {
     internal_static_proto_ProtoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_proto_ProtoResponse_descriptor,
-        new java.lang.String[] { "CreateTopicsResponse", "CreateSubscriptionsResponse", "CreateQueuesResponse", "GetTopicsResponse", "GetQueuesResponse", "GetSubscriptionsResponse", "GetLagsResponse", "ProtoResponse", });
+        new java.lang.String[] { "CreateTopicsResponse", "CreateSubscriptionsResponse", "CreateQueuesResponse", "GetTopicsResponse", "GetQueuesResponse", "GetSubscriptionsResponse", "GetSubscriptionLagsResponse", "ProtoResponse", });
     internal_static_proto_CreateTopicResponse_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_proto_CreateTopicResponse_fieldAccessorTable = new
@@ -272,11 +273,11 @@ public final class PResponses {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_proto_SubscriptionLag_descriptor,
         new java.lang.String[] { "SubscriptionId", "TopicId", "PartitionLags", });
-    internal_static_proto_GetLagsResponse_descriptor =
+    internal_static_proto_GetSubscriptionLagsResponse_descriptor =
       getDescriptor().getMessageTypes().get(16);
-    internal_static_proto_GetLagsResponse_fieldAccessorTable = new
+    internal_static_proto_GetSubscriptionLagsResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_GetLagsResponse_descriptor,
+        internal_static_proto_GetSubscriptionLagsResponse_descriptor,
         new java.lang.String[] { "SubscriptionLags", });
     internal_static_proto_GetClusterMetadataResponse_descriptor =
       getDescriptor().getMessageTypes().get(17);

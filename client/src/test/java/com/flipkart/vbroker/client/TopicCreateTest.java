@@ -1,10 +1,12 @@
 package com.flipkart.vbroker.client;
 
-import com.flipkart.vbroker.entities.RequestMessage;
-import com.flipkart.vbroker.entities.VRequest;
+import com.flipkart.vbroker.flatbuf.RequestMessage;
+import com.flipkart.vbroker.flatbuf.VRequest;
 import com.flipkart.vbroker.handlers.ResponseHandlerFactory;
+import com.flipkart.vbroker.proto.*;
 import com.flipkart.vbroker.protocol.Request;
 import com.flipkart.vbroker.protocol.codecs.VBrokerClientCodec;
+import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -33,18 +35,12 @@ public class TopicCreateTest {
 
         Channel channel = bootstrap.connect(config.getBrokerHost(), config.getBrokerPort()).sync().channel();
 
-        FlatBufferBuilder builder = new FlatBufferBuilder();
+        ProtoTopic topic201 = ProtoTopic.newBuilder().setName("topic201").setGrouped(true).setPartitions(1).setReplicationFactor(3).setTopicCategory(TopicCategory.TOPIC).build();
+        CreateTopicsRequest createTopicsRequest = CreateTopicsRequest.newBuilder().addTopics(topic201).build();
+        ProtoRequest protoRequest = ProtoRequest.newBuilder().setCreateTopicsRequest(createTopicsRequest).build();
+        VRequest vRequest = FlatbufUtils.createVRequest((byte) 1, 1002, protoRequest);
 
-        int topicName = builder.createString("topic201");
-
-        int topic = Topic.createTopic(builder, (short) 201, topicName, true, (short) 1, (short) 3, TopicCategory.TOPIC);
-        int topicCreateRequest = TopicCreateRequest.createTopicCreateRequest(builder, topic);
-        int vRequest = VRequest.createVRequest(builder, (byte) 1, 1002, RequestMessage.CreateTopicsRequest,
-            topicCreateRequest);
-        builder.finish(vRequest);
-
-        ByteBuffer byteBuffer = builder.dataBuffer();
-        ByteBuf byteBuf = Unpooled.wrappedBuffer(byteBuffer);
+        ByteBuf byteBuf = Unpooled.wrappedBuffer(vRequest.getByteBuffer());
         Request request = new Request(byteBuf.readableBytes(), byteBuf);
         channel.writeAndFlush(request);
         channel.closeFuture().sync();

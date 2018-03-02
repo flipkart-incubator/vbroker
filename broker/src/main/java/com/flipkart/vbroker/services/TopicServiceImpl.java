@@ -3,15 +3,15 @@ package com.flipkart.vbroker.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.TopicPartition;
-import com.flipkart.vbroker.entities.Topic;
-import com.flipkart.vbroker.utils.ByteBufUtils;
+import com.flipkart.vbroker.proto.ProtoTopic;
 import com.flipkart.vbroker.utils.JsonUtils;
 import com.flipkart.vbroker.utils.TopicUtils;
+import com.flipkart.vbroker.wrappers.Topic;
+import com.google.protobuf.InvalidProtocolBufferException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.CreateMode;
 
-import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -33,7 +33,7 @@ public class TopicServiceImpl implements TopicService {
     public synchronized CompletionStage<Topic> createTopic(Topic topic) {
         return CompletableFuture.supplyAsync(() -> {
             curatorService
-                .createNodeAndSetData(config.getTopicsPath() + "/" + topic.id(), CreateMode.PERSISTENT, ByteBufUtils.getBytes(topic.getByteBuffer()))
+                .createNodeAndSetData(config.getTopicsPath() + "/" + topic.id(), CreateMode.PERSISTENT, topic.toBytes())
                 .handle((data, exception) -> {
                     if (exception != null) {
                         log.error("Failure in creating topic!");
@@ -45,7 +45,7 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public CompletionStage<TopicPartition> getTopicPartition(Topic topic, short topicPartitionId) {
+    public CompletionStage<TopicPartition> getTopicPartition(Topic topic, int topicPartitionId) {
         return getTopic(topic.id())
             .thenApplyAsync(topic1 -> new TopicPartition(topicPartitionId, topic.id(), topic.grouped()));
     }
@@ -56,14 +56,18 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public CompletionStage<Topic> getTopic(short topicId) {
+    public CompletionStage<Topic> getTopic(int topicId) {
         return CompletableFuture.supplyAsync(() -> getTopicByBlocking(topicId));
     }
 
-    private Topic getTopicByBlocking(short topicId) {
+    private Topic getTopicByBlocking(int topicId) {
         try {
             return curatorService.getData(config.getTopicsPath() + "/" + topicId).handle((data, exception) -> {
-                return Topic.getRootAsTopic(ByteBuffer.wrap(data));
+                try {
+                    return new Topic(ProtoTopic.parseFrom(data));
+                } catch (InvalidProtocolBufferException e) {
+                    throw new RuntimeException(e);
+                }
                 // return MAPPER.readValue(data, Topic.class);
             }).toCompletableFuture().get();
         } catch (InterruptedException | ExecutionException e) {

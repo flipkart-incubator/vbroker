@@ -1,17 +1,16 @@
 package com.flipkart.vbroker.wrappers;
 
-import com.flipkart.vbroker.proto.ProtoSubscription;
-import com.flipkart.vbroker.proto.ProtoTopic;
+import com.flipkart.vbroker.proto.*;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+
+import java.util.List;
 
 /**
  * Created by kaushal.hooda on 02/03/18.
  */
 @AllArgsConstructor
-@Getter
 public class Subscription {
     private final ProtoSubscription protoSubscription;
 
@@ -31,6 +30,62 @@ public class Subscription {
         } catch (InvalidProtocolBufferException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public int id(){
+        return protoSubscription.getId();
+    }
+
+    public int topicId(){
+        return protoSubscription.getTopicId();
+    }
+
+    public String name(){
+        return protoSubscription.getName();
+    }
+
+    public boolean grouped(){
+        return protoSubscription.getGrouped();
+    }
+
+    public int parallelism(){
+        return protoSubscription.getParallelism();
+    }
+
+    public int requestTimeout(){
+        return protoSubscription.getRequestTimeout();
+    }
+
+    public SubscriptionType subscriptionType(){
+        return protoSubscription.getSubscriptionType();
+    }
+
+    public SubscriptionMechanism subscriptionMechanism(){
+        return protoSubscription.getSubscriptionMechanism();
+    }
+
+    public String httpUri(){
+        return protoSubscription.getHttpUri();
+    }
+
+    public HttpMethod httpMethod(){
+        return protoSubscription.getHttpMethod();
+    }
+
+    public boolean elastic(){
+        return protoSubscription.getElastic();
+    }
+
+    public FilterOperator filterOperator(){
+        return protoSubscription.getFilterOperator();
+    }
+
+    public List<FilterKeyValues> filterKeyValuesList(){
+        return protoSubscription.getFilterKeyValuesListList();
+    }
+
+    public CallbackConfig callbackConfig(){
+        return protoSubscription.getCallbackConfig();
     }
 
     @Override

@@ -1,19 +1,21 @@
 package com.flipkart.vbroker.server;
 
+import com.flipkart.vbroker.MessageConstants;
 import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.core.CallbackConfig;
 import com.flipkart.vbroker.core.TopicPartMessage;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.SubPartDataManager;
-import com.flipkart.vbroker.entities.HttpHeader;
-import com.flipkart.vbroker.entities.HttpMethod;
-import com.flipkart.vbroker.entities.Message;
+import com.flipkart.vbroker.flatbuf.HttpHeader;
+import com.flipkart.vbroker.flatbuf.HttpMethod;
+import com.flipkart.vbroker.flatbuf.Message;
 import com.flipkart.vbroker.exceptions.CallbackProducingFailedException;
 import com.flipkart.vbroker.exceptions.TopicNotFoundException;
 import com.flipkart.vbroker.services.ProducerService;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
 import com.flipkart.vbroker.subscribers.IterableMessage;
+import com.flipkart.vbroker.wrappers.Subscription;
 import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

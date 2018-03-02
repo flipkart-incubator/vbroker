@@ -18,6 +18,7 @@ private static final long serialVersionUID = 0L;
   private SubscriptionLag() {
     subscriptionId_ = 0;
     topicId_ = 0;
+    partitionLags_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -62,16 +63,12 @@ private static final long serialVersionUID = 0L;
             break;
           }
           case 26: {
-            com.flipkart.vbroker.proto.PartitionLag.Builder subBuilder = null;
-            if (partitionLags_ != null) {
-              subBuilder = partitionLags_.toBuilder();
+            if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+              partitionLags_ = new java.util.ArrayList<com.flipkart.vbroker.proto.PartitionLag>();
+              mutable_bitField0_ |= 0x00000004;
             }
-            partitionLags_ = input.readMessage(com.flipkart.vbroker.proto.PartitionLag.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(partitionLags_);
-              partitionLags_ = subBuilder.buildPartial();
-            }
-
+            partitionLags_.add(
+                input.readMessage(com.flipkart.vbroker.proto.PartitionLag.parser(), extensionRegistry));
             break;
           }
         }
@@ -82,6 +79,9 @@ private static final long serialVersionUID = 0L;
       throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
     } finally {
+      if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+        partitionLags_ = java.util.Collections.unmodifiableList(partitionLags_);
+      }
       this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
     }
@@ -98,6 +98,7 @@ private static final long serialVersionUID = 0L;
             com.flipkart.vbroker.proto.SubscriptionLag.class, com.flipkart.vbroker.proto.SubscriptionLag.Builder.class);
   }
 
+  private int bitField0_;
   public static final int SUBSCRIPTIONID_FIELD_NUMBER = 1;
   private int subscriptionId_;
   /**
@@ -117,24 +118,38 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int PARTITIONLAGS_FIELD_NUMBER = 3;
-  private com.flipkart.vbroker.proto.PartitionLag partitionLags_;
+  private java.util.List<com.flipkart.vbroker.proto.PartitionLag> partitionLags_;
   /**
-   * <code>.proto.PartitionLag partitionLags = 3;</code>
+   * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
    */
-  public boolean hasPartitionLags() {
-    return partitionLags_ != null;
+  public java.util.List<com.flipkart.vbroker.proto.PartitionLag> getPartitionLagsList() {
+    return partitionLags_;
   }
   /**
-   * <code>.proto.PartitionLag partitionLags = 3;</code>
+   * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
    */
-  public com.flipkart.vbroker.proto.PartitionLag getPartitionLags() {
-    return partitionLags_ == null ? com.flipkart.vbroker.proto.PartitionLag.getDefaultInstance() : partitionLags_;
+  public java.util.List<? extends com.flipkart.vbroker.proto.PartitionLagOrBuilder> 
+      getPartitionLagsOrBuilderList() {
+    return partitionLags_;
   }
   /**
-   * <code>.proto.PartitionLag partitionLags = 3;</code>
+   * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
    */
-  public com.flipkart.vbroker.proto.PartitionLagOrBuilder getPartitionLagsOrBuilder() {
-    return getPartitionLags();
+  public int getPartitionLagsCount() {
+    return partitionLags_.size();
+  }
+  /**
+   * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
+   */
+  public com.flipkart.vbroker.proto.PartitionLag getPartitionLags(int index) {
+    return partitionLags_.get(index);
+  }
+  /**
+   * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
+   */
+  public com.flipkart.vbroker.proto.PartitionLagOrBuilder getPartitionLagsOrBuilder(
+      int index) {
+    return partitionLags_.get(index);
   }
 
   private byte memoizedIsInitialized = -1;
@@ -155,8 +170,8 @@ private static final long serialVersionUID = 0L;
     if (topicId_ != 0) {
       output.writeInt32(2, topicId_);
     }
-    if (partitionLags_ != null) {
-      output.writeMessage(3, getPartitionLags());
+    for (int i = 0; i < partitionLags_.size(); i++) {
+      output.writeMessage(3, partitionLags_.get(i));
     }
     unknownFields.writeTo(output);
   }
@@ -174,9 +189,9 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeInt32Size(2, topicId_);
     }
-    if (partitionLags_ != null) {
+    for (int i = 0; i < partitionLags_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(3, getPartitionLags());
+        .computeMessageSize(3, partitionLags_.get(i));
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -198,11 +213,8 @@ private static final long serialVersionUID = 0L;
         == other.getSubscriptionId());
     result = result && (getTopicId()
         == other.getTopicId());
-    result = result && (hasPartitionLags() == other.hasPartitionLags());
-    if (hasPartitionLags()) {
-      result = result && getPartitionLags()
-          .equals(other.getPartitionLags());
-    }
+    result = result && getPartitionLagsList()
+        .equals(other.getPartitionLagsList());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -218,9 +230,9 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getSubscriptionId();
     hash = (37 * hash) + TOPICID_FIELD_NUMBER;
     hash = (53 * hash) + getTopicId();
-    if (hasPartitionLags()) {
+    if (getPartitionLagsCount() > 0) {
       hash = (37 * hash) + PARTITIONLAGS_FIELD_NUMBER;
-      hash = (53 * hash) + getPartitionLags().hashCode();
+      hash = (53 * hash) + getPartitionLagsList().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -347,6 +359,7 @@ private static final long serialVersionUID = 0L;
     private void maybeForceBuilderInitialization() {
       if (com.google.protobuf.GeneratedMessageV3
               .alwaysUseFieldBuilders) {
+        getPartitionLagsFieldBuilder();
       }
     }
     public Builder clear() {
@@ -356,10 +369,10 @@ private static final long serialVersionUID = 0L;
       topicId_ = 0;
 
       if (partitionLagsBuilder_ == null) {
-        partitionLags_ = null;
+        partitionLags_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000004);
       } else {
-        partitionLags_ = null;
-        partitionLagsBuilder_ = null;
+        partitionLagsBuilder_.clear();
       }
       return this;
     }
@@ -383,13 +396,20 @@ private static final long serialVersionUID = 0L;
 
     public com.flipkart.vbroker.proto.SubscriptionLag buildPartial() {
       com.flipkart.vbroker.proto.SubscriptionLag result = new com.flipkart.vbroker.proto.SubscriptionLag(this);
+      int from_bitField0_ = bitField0_;
+      int to_bitField0_ = 0;
       result.subscriptionId_ = subscriptionId_;
       result.topicId_ = topicId_;
       if (partitionLagsBuilder_ == null) {
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          partitionLags_ = java.util.Collections.unmodifiableList(partitionLags_);
+          bitField0_ = (bitField0_ & ~0x00000004);
+        }
         result.partitionLags_ = partitionLags_;
       } else {
         result.partitionLags_ = partitionLagsBuilder_.build();
       }
+      result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
     }
@@ -437,8 +457,31 @@ private static final long serialVersionUID = 0L;
       if (other.getTopicId() != 0) {
         setTopicId(other.getTopicId());
       }
-      if (other.hasPartitionLags()) {
-        mergePartitionLags(other.getPartitionLags());
+      if (partitionLagsBuilder_ == null) {
+        if (!other.partitionLags_.isEmpty()) {
+          if (partitionLags_.isEmpty()) {
+            partitionLags_ = other.partitionLags_;
+            bitField0_ = (bitField0_ & ~0x00000004);
+          } else {
+            ensurePartitionLagsIsMutable();
+            partitionLags_.addAll(other.partitionLags_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.partitionLags_.isEmpty()) {
+          if (partitionLagsBuilder_.isEmpty()) {
+            partitionLagsBuilder_.dispose();
+            partitionLagsBuilder_ = null;
+            partitionLags_ = other.partitionLags_;
+            bitField0_ = (bitField0_ & ~0x00000004);
+            partitionLagsBuilder_ = 
+              com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                 getPartitionLagsFieldBuilder() : null;
+          } else {
+            partitionLagsBuilder_.addAllMessages(other.partitionLags_);
+          }
+        }
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -466,6 +509,7 @@ private static final long serialVersionUID = 0L;
       }
       return this;
     }
+    private int bitField0_;
 
     private int subscriptionId_ ;
     /**
@@ -519,116 +563,239 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private com.flipkart.vbroker.proto.PartitionLag partitionLags_ = null;
-    private com.google.protobuf.SingleFieldBuilderV3<
-        com.flipkart.vbroker.proto.PartitionLag, com.flipkart.vbroker.proto.PartitionLag.Builder, com.flipkart.vbroker.proto.PartitionLagOrBuilder> partitionLagsBuilder_;
-    /**
-     * <code>.proto.PartitionLag partitionLags = 3;</code>
-     */
-    public boolean hasPartitionLags() {
-      return partitionLagsBuilder_ != null || partitionLags_ != null;
+    private java.util.List<com.flipkart.vbroker.proto.PartitionLag> partitionLags_ =
+      java.util.Collections.emptyList();
+    private void ensurePartitionLagsIsMutable() {
+      if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+        partitionLags_ = new java.util.ArrayList<com.flipkart.vbroker.proto.PartitionLag>(partitionLags_);
+        bitField0_ |= 0x00000004;
+       }
     }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        com.flipkart.vbroker.proto.PartitionLag, com.flipkart.vbroker.proto.PartitionLag.Builder, com.flipkart.vbroker.proto.PartitionLagOrBuilder> partitionLagsBuilder_;
+
     /**
-     * <code>.proto.PartitionLag partitionLags = 3;</code>
+     * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
      */
-    public com.flipkart.vbroker.proto.PartitionLag getPartitionLags() {
+    public java.util.List<com.flipkart.vbroker.proto.PartitionLag> getPartitionLagsList() {
       if (partitionLagsBuilder_ == null) {
-        return partitionLags_ == null ? com.flipkart.vbroker.proto.PartitionLag.getDefaultInstance() : partitionLags_;
+        return java.util.Collections.unmodifiableList(partitionLags_);
       } else {
-        return partitionLagsBuilder_.getMessage();
+        return partitionLagsBuilder_.getMessageList();
       }
     }
     /**
-     * <code>.proto.PartitionLag partitionLags = 3;</code>
+     * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
      */
-    public Builder setPartitionLags(com.flipkart.vbroker.proto.PartitionLag value) {
+    public int getPartitionLagsCount() {
+      if (partitionLagsBuilder_ == null) {
+        return partitionLags_.size();
+      } else {
+        return partitionLagsBuilder_.getCount();
+      }
+    }
+    /**
+     * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
+     */
+    public com.flipkart.vbroker.proto.PartitionLag getPartitionLags(int index) {
+      if (partitionLagsBuilder_ == null) {
+        return partitionLags_.get(index);
+      } else {
+        return partitionLagsBuilder_.getMessage(index);
+      }
+    }
+    /**
+     * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
+     */
+    public Builder setPartitionLags(
+        int index, com.flipkart.vbroker.proto.PartitionLag value) {
       if (partitionLagsBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
-        partitionLags_ = value;
+        ensurePartitionLagsIsMutable();
+        partitionLags_.set(index, value);
         onChanged();
       } else {
-        partitionLagsBuilder_.setMessage(value);
+        partitionLagsBuilder_.setMessage(index, value);
       }
-
       return this;
     }
     /**
-     * <code>.proto.PartitionLag partitionLags = 3;</code>
+     * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
      */
     public Builder setPartitionLags(
+        int index, com.flipkart.vbroker.proto.PartitionLag.Builder builderForValue) {
+      if (partitionLagsBuilder_ == null) {
+        ensurePartitionLagsIsMutable();
+        partitionLags_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        partitionLagsBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
+     */
+    public Builder addPartitionLags(com.flipkart.vbroker.proto.PartitionLag value) {
+      if (partitionLagsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensurePartitionLagsIsMutable();
+        partitionLags_.add(value);
+        onChanged();
+      } else {
+        partitionLagsBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
+     */
+    public Builder addPartitionLags(
+        int index, com.flipkart.vbroker.proto.PartitionLag value) {
+      if (partitionLagsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensurePartitionLagsIsMutable();
+        partitionLags_.add(index, value);
+        onChanged();
+      } else {
+        partitionLagsBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
+     */
+    public Builder addPartitionLags(
         com.flipkart.vbroker.proto.PartitionLag.Builder builderForValue) {
       if (partitionLagsBuilder_ == null) {
-        partitionLags_ = builderForValue.build();
+        ensurePartitionLagsIsMutable();
+        partitionLags_.add(builderForValue.build());
         onChanged();
       } else {
-        partitionLagsBuilder_.setMessage(builderForValue.build());
+        partitionLagsBuilder_.addMessage(builderForValue.build());
       }
-
       return this;
     }
     /**
-     * <code>.proto.PartitionLag partitionLags = 3;</code>
+     * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
      */
-    public Builder mergePartitionLags(com.flipkart.vbroker.proto.PartitionLag value) {
+    public Builder addPartitionLags(
+        int index, com.flipkart.vbroker.proto.PartitionLag.Builder builderForValue) {
       if (partitionLagsBuilder_ == null) {
-        if (partitionLags_ != null) {
-          partitionLags_ =
-            com.flipkart.vbroker.proto.PartitionLag.newBuilder(partitionLags_).mergeFrom(value).buildPartial();
-        } else {
-          partitionLags_ = value;
-        }
+        ensurePartitionLagsIsMutable();
+        partitionLags_.add(index, builderForValue.build());
         onChanged();
       } else {
-        partitionLagsBuilder_.mergeFrom(value);
+        partitionLagsBuilder_.addMessage(index, builderForValue.build());
       }
-
       return this;
     }
     /**
-     * <code>.proto.PartitionLag partitionLags = 3;</code>
+     * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
+     */
+    public Builder addAllPartitionLags(
+        java.lang.Iterable<? extends com.flipkart.vbroker.proto.PartitionLag> values) {
+      if (partitionLagsBuilder_ == null) {
+        ensurePartitionLagsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, partitionLags_);
+        onChanged();
+      } else {
+        partitionLagsBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /**
+     * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
      */
     public Builder clearPartitionLags() {
       if (partitionLagsBuilder_ == null) {
-        partitionLags_ = null;
+        partitionLags_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000004);
         onChanged();
       } else {
-        partitionLags_ = null;
-        partitionLagsBuilder_ = null;
+        partitionLagsBuilder_.clear();
       }
-
       return this;
     }
     /**
-     * <code>.proto.PartitionLag partitionLags = 3;</code>
+     * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
      */
-    public com.flipkart.vbroker.proto.PartitionLag.Builder getPartitionLagsBuilder() {
-      
-      onChanged();
-      return getPartitionLagsFieldBuilder().getBuilder();
+    public Builder removePartitionLags(int index) {
+      if (partitionLagsBuilder_ == null) {
+        ensurePartitionLagsIsMutable();
+        partitionLags_.remove(index);
+        onChanged();
+      } else {
+        partitionLagsBuilder_.remove(index);
+      }
+      return this;
     }
     /**
-     * <code>.proto.PartitionLag partitionLags = 3;</code>
+     * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
      */
-    public com.flipkart.vbroker.proto.PartitionLagOrBuilder getPartitionLagsOrBuilder() {
-      if (partitionLagsBuilder_ != null) {
-        return partitionLagsBuilder_.getMessageOrBuilder();
-      } else {
-        return partitionLags_ == null ?
-            com.flipkart.vbroker.proto.PartitionLag.getDefaultInstance() : partitionLags_;
+    public com.flipkart.vbroker.proto.PartitionLag.Builder getPartitionLagsBuilder(
+        int index) {
+      return getPartitionLagsFieldBuilder().getBuilder(index);
+    }
+    /**
+     * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
+     */
+    public com.flipkart.vbroker.proto.PartitionLagOrBuilder getPartitionLagsOrBuilder(
+        int index) {
+      if (partitionLagsBuilder_ == null) {
+        return partitionLags_.get(index);  } else {
+        return partitionLagsBuilder_.getMessageOrBuilder(index);
       }
     }
     /**
-     * <code>.proto.PartitionLag partitionLags = 3;</code>
+     * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
      */
-    private com.google.protobuf.SingleFieldBuilderV3<
+    public java.util.List<? extends com.flipkart.vbroker.proto.PartitionLagOrBuilder> 
+         getPartitionLagsOrBuilderList() {
+      if (partitionLagsBuilder_ != null) {
+        return partitionLagsBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(partitionLags_);
+      }
+    }
+    /**
+     * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
+     */
+    public com.flipkart.vbroker.proto.PartitionLag.Builder addPartitionLagsBuilder() {
+      return getPartitionLagsFieldBuilder().addBuilder(
+          com.flipkart.vbroker.proto.PartitionLag.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
+     */
+    public com.flipkart.vbroker.proto.PartitionLag.Builder addPartitionLagsBuilder(
+        int index) {
+      return getPartitionLagsFieldBuilder().addBuilder(
+          index, com.flipkart.vbroker.proto.PartitionLag.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .proto.PartitionLag partitionLags = 3;</code>
+     */
+    public java.util.List<com.flipkart.vbroker.proto.PartitionLag.Builder> 
+         getPartitionLagsBuilderList() {
+      return getPartitionLagsFieldBuilder().getBuilderList();
+    }
+    private com.google.protobuf.RepeatedFieldBuilderV3<
         com.flipkart.vbroker.proto.PartitionLag, com.flipkart.vbroker.proto.PartitionLag.Builder, com.flipkart.vbroker.proto.PartitionLagOrBuilder> 
         getPartitionLagsFieldBuilder() {
       if (partitionLagsBuilder_ == null) {
-        partitionLagsBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+        partitionLagsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             com.flipkart.vbroker.proto.PartitionLag, com.flipkart.vbroker.proto.PartitionLag.Builder, com.flipkart.vbroker.proto.PartitionLagOrBuilder>(
-                getPartitionLags(),
+                partitionLags_,
+                ((bitField0_ & 0x00000004) == 0x00000004),
                 getParentForChildren(),
                 isClean());
         partitionLags_ = null;

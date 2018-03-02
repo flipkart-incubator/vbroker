@@ -5,13 +5,11 @@ import com.flipkart.vbroker.proto.TopicCategory;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * Created by kaushal.hooda on 02/03/18.
  */
 @AllArgsConstructor
-@Getter
 public class Topic {
     private final ProtoTopic protoTopic;
 

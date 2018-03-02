@@ -23,7 +23,7 @@ message ProtoResponse {
         GetTopicsResponse getTopicsResponse = 4;
         GetQueuesResponse getQueuesResponse = 5;
         GetSubscriptionsResponse getSubscriptionsResponse = 6;
-        GetLagsResponse getLagsResponse = 7;
+        GetSubscriptionLagsResponse getSubscriptionLagsResponse = 7;
     }
 }
 
@@ -98,11 +98,11 @@ message PartitionLag {
 message SubscriptionLag {
     int32 subscriptionId = 1;
     int32 topicId = 2;
-    PartitionLag partitionLags = 3;
+    repeated PartitionLag partitionLags = 3;
 }
 
-message GetLagsResponse {
-    SubscriptionLag subscriptionLags = 1;
+message GetSubscriptionLagsResponse {
+    repeated SubscriptionLag subscriptionLags = 1;
 }
 
 message GetClusterMetadataResponse {

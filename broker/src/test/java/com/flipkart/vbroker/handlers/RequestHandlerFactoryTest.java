@@ -1,7 +1,7 @@
 package com.flipkart.vbroker.handlers;
 
-import com.flipkart.vbroker.entities.RequestMessage;
-import com.flipkart.vbroker.entities.VRequest;
+import com.flipkart.vbroker.flatbuf.RequestMessage;
+import com.flipkart.vbroker.flatbuf.VRequest;
 import com.flipkart.vbroker.services.ProducerService;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
@@ -35,8 +35,10 @@ public class RequestHandlerFactoryTest {
 
     @Test
     public void shouldReturnGetLagsRequestHandlerForGetLagsRequest() {
-        when(vRequest.requestMessageType()).thenReturn(RequestMessage.GetLagsRequest);
+        when(vRequest.requestMessageType()).thenReturn(RequestMessage.ControlRequest);
+        //TODO
+        //Will fail. Don't know how to mock FlatbufUtils since it's not passed anywhere.
         RequestHandler handler = requestHandlerFactory.getRequestHandler(vRequest);
-        assertTrue(handler instanceof GetLagsRequestHandler);
+        assertTrue(handler instanceof GetSubscriptionLagsRequestHandler);
     }
 }

@@ -1,6 +1,6 @@
 package com.flipkart.vbroker.data.redis;
 
-import com.flipkart.vbroker.entities.Message;
+import com.flipkart.vbroker.flatbuf.Message;
 
 public class RedisMessageObject extends RedisObject {
     private Message message;

@@ -4,15 +4,20 @@ import com.flipkart.vbroker.proto.ProtoQueue;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * Created by kaushal.hooda on 02/03/18.
  */
-@AllArgsConstructor
-@Getter
 public class Queue {
     private final ProtoQueue protoQueue;
+    private final Topic topic;
+    private final Subscription subscription;
+
+    public Queue(ProtoQueue protoQueue){
+        this.protoQueue = protoQueue;
+        this.topic = new Topic(protoQueue.getTopic());
+        this.subscription = new Subscription(protoQueue.getSubscription());
+    }
 
     public static Queue fromJson(String protoQueueJson){
         ProtoQueue.Builder builder = ProtoQueue.newBuilder();
@@ -22,6 +27,26 @@ public class Queue {
             throw new RuntimeException();
         }
         return new Queue(builder.build());
+    }
+
+    public static Queue fromBytes(byte[] bytes){
+        try {
+            return new Queue(ProtoQueue.parseFrom(bytes));
+        } catch (InvalidProtocolBufferException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int id(){
+        return protoQueue.getId();
+    }
+
+    public Topic topic(){
+        return new Topic(protoQueue.getTopic());
+    }
+
+    public Subscription subscription(){
+        return new Subscription(protoQueue.getSubscription());
     }
 
     @Override
@@ -48,6 +73,10 @@ public class Queue {
         } catch (InvalidProtocolBufferException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public byte[] toBytes(){
+        return protoQueue.toByteArray();
     }
 
 }

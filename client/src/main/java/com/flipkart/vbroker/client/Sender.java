@@ -1,7 +1,7 @@
 package com.flipkart.vbroker.client;
 
 import com.flipkart.vbroker.core.TopicPartition;
-import com.flipkart.vbroker.entities.*;
+import com.flipkart.vbroker.flatbuf.*;
 import com.flipkart.vbroker.utils.FlatBuffers;
 import com.google.common.primitives.Ints;
 import com.google.flatbuffers.FlatBufferBuilder;
@@ -103,7 +103,7 @@ public class Sender implements Runnable {
 
         for (int i = 0; i < produceResponse.topicResponsesLength(); i++) {
             TopicProduceResponse topicProduceResponse = produceResponse.topicResponses(i);
-            short topicId = topicProduceResponse.topicId();
+            int topicId = topicProduceResponse.topicId();
             log.info("Handling ProduceResponse for topic {} with {} partition responses", topicId, topicProduceResponse.partitionResponsesLength());
             for (int j = 0; j < topicProduceResponse.partitionResponsesLength(); j++) {
                 TopicPartitionProduceResponse partitionProduceResponse = topicProduceResponse.partitionResponses(j);
@@ -154,7 +154,7 @@ public class Sender implements Runnable {
                     return new TopicPartReq(topicPartition.getTopicId(), topicPartitionProduceRequest);
                 }).collect(Collectors.toList());
 
-        Map<Short, List<TopicPartReq>> perTopicReqs = topicPartReqs.stream()
+        Map<Integer, List<TopicPartReq>> perTopicReqs = topicPartReqs.stream()
             .collect(Collectors.groupingBy(TopicPartReq::getTopicId));
         List<Integer> topicOffsetList = perTopicReqs.entrySet()
             .stream()
@@ -183,7 +183,7 @@ public class Sender implements Runnable {
     @AllArgsConstructor
     @Getter
     private class TopicPartReq {
-        private final short topicId;
+        private final int topicId;
         private final int topicPartProduceReqOffset;
     }
 }

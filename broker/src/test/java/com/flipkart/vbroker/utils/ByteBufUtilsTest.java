@@ -1,6 +1,6 @@
 package com.flipkart.vbroker.utils;
 
-import com.flipkart.vbroker.entities.Topic;
+import com.flipkart.vbroker.wrappers.Topic;
 import org.testng.annotations.Test;
 
 import java.nio.ByteBuffer;
@@ -19,18 +19,5 @@ public class ByteBufUtilsTest {
         IntStream.range(0, array.length).forEach(i -> {
             assertEquals(array[i], bytes[i]);
         });
-    }
-
-    @Test
-    public void shouldConvertRightlyForTopicEntity() {
-
-        Topic topic1 = DummyEntities.groupedTopic;
-        byte[] bytes = ByteBufUtils.getBytes(topic1.getByteBuffer());
-
-        ByteBuffer buffer = ByteBuffer.wrap(bytes);
-        Topic topic2 = Topic.getRootAsTopic(buffer);
-        assertEquals(topic1.name(), topic2.name());
-        assertEquals(topic1.id(), topic2.id());
-
     }
 }
