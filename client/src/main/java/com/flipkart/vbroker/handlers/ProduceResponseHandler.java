@@ -11,6 +11,12 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class ProduceResponseHandler implements ResponseHandler {
 
+    public static ProduceResponse parse(VResponse vResponse) {
+        ProduceResponse produceResponse = (ProduceResponse) vResponse.responseMessage(new ProduceResponse());
+        assert produceResponse != null;
+        return produceResponse;
+    }
+
     @Override
     public void handle(VResponse vResponse) {
         ProduceResponse produceResponse = parse(vResponse);
@@ -26,11 +32,5 @@ public class ProduceResponseHandler implements ResponseHandler {
                     topicId, partitionProduceResponse.partitionId(), partitionProduceResponse.status().statusCode());
             }
         }
-    }
-
-    public static ProduceResponse parse(VResponse vResponse) {
-        ProduceResponse produceResponse = (ProduceResponse) vResponse.responseMessage(new ProduceResponse());
-        assert produceResponse != null;
-        return produceResponse;
     }
 }

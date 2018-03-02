@@ -28,26 +28,13 @@ public class RecordBatch {
     private final Node node;
     private final long lingerTimeMs;
     private final long createdTimeMs;
+    private final Multimap<TopicPartition, ProducerRecord> partRecordsMap = HashMultimap.create();
+    private final Map<TopicPartition, CompletableFuture<TopicPartMetadata>> topicPartResponseFutureMap = new HashMap<>();
+    //map which stores the responses for the batch sent
+    private final Map<TopicPartition, VStatus> statusMap = new HashMap<>();
     @Setter
     @Getter
     private BatchState state;
-
-    @AllArgsConstructor
-    @Getter
-    public class TopicPartMetadata {
-        short partitionId;
-        short statusCode;
-    }
-
-    private final Multimap<TopicPartition, ProducerRecord> partRecordsMap = HashMultimap.create();
-    private final Map<TopicPartition, CompletableFuture<TopicPartMetadata>> topicPartResponseFutureMap = new HashMap<>();
-
-    public enum BatchState {
-        QUEUED, SENT, DONE_SUCCESS, DONE_FAILURE
-    }
-
-    //map which stores the responses for the batch sent
-    private final Map<TopicPartition, VStatus> statusMap = new HashMap<>();
 
     public RecordBatch(Node node, long lingerTimeMs) {
         this.node = node;
@@ -101,6 +88,9 @@ public class RecordBatch {
     }
 
     public void setResponse(TopicPartition topicPartition, VStatus status) {
+//        if (status.statusCode() >= 0) {
+//            throw new VBrokerException("dummy exception");
+//        }
         statusMap.put(topicPartition, status);
         TopicPartMetadata topicPartMetadata =
             new TopicPartMetadata(topicPartition.getId(), status.statusCode());
@@ -109,5 +99,16 @@ public class RecordBatch {
 
     public VStatus getStatus(TopicPartition topicPartition) {
         return statusMap.get(topicPartition);
+    }
+
+    public enum BatchState {
+        QUEUED, SENT, DONE_SUCCESS, DONE_FAILURE
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public class TopicPartMetadata {
+        short partitionId;
+        short statusCode;
     }
 }

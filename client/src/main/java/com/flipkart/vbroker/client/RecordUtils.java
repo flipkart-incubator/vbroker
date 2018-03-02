@@ -10,36 +10,38 @@ import java.util.stream.Collectors;
 
 public class RecordUtils {
 
-    public static int flatBuffMsgOffset(FlatBufferBuilder fbuilder, ProducerRecord record) {
+    public static int flatBuffMsgOffset(FlatBufferBuilder builder,
+                                        ProducerRecord record,
+                                        short partitionId) {
         List<Integer> collect = record.getHeaders()
             .entrySet()
             .stream()
-            .map(entry -> HttpHeader.createHttpHeader(fbuilder,
-                fbuilder.createString(entry.getKey()),
-                fbuilder.createString(entry.getValue())))
+            .map(entry -> HttpHeader.createHttpHeader(builder,
+                builder.createString(entry.getKey()),
+                builder.createString(entry.getValue())))
             .collect(Collectors.toList());
         int[] headersOffset = Ints.toArray(collect);
-        int headersVector = Message.createHeadersVector(fbuilder, headersOffset);
+        int headersVector = Message.createHeadersVector(builder, headersOffset);
         byte[] payload = record.getPayload();
 
         return Message.createMessage(
-            fbuilder,
-            fbuilder.createString(record.getMessageId()),
-            fbuilder.createString(record.getGroupId()),
+            builder,
+            builder.createString(record.getMessageId()),
+            builder.createString(record.getGroupId()),
             record.getCrc(),
             record.getVersion(),
             record.getSeqNo(),
             record.getTopicId(),
-            record.getPartitionId(),
+            partitionId,
             record.getAttributes(),
-            fbuilder.createString(record.getHttpUri()),
+            builder.createString(record.getHttpUri()),
             record.getHttpMethod().idx(),
             record.getCallbackTopicId(),
-            fbuilder.createString(record.getCallbackHttpUri()),
+            builder.createString(record.getCallbackHttpUri()),
             record.getCallbackHttpMethod().idx(),
             headersVector,
             payload.length,
-            fbuilder.createByteVector(payload)
+            builder.createByteVector(payload)
         );
     }
 }

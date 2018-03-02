@@ -19,10 +19,9 @@ public class Accumulator {
     private final long lingerTimeMs;
     private final VBClientConfig config;
     private final Partitioner partitioner;
-    private Metadata metadata;
-
     private final Multimap<Node, RecordBatch> nodeRecordBatchMap = HashMultimap.create();
     private final Map<RecordBatch, CompletionStage<VResponse>> batchResponseStageMap = new HashMap<>();
+    private Metadata metadata;
 
     public Accumulator(VBClientConfig config,
                        Partitioner partitioner) {

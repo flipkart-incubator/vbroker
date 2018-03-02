@@ -56,9 +56,10 @@ public class NetworkClientImpl implements NetworkClient {
                             try {
                                 respFuture.complete(vResponse);
                             } catch (Throwable ex) {
-                                log.error("Error in completing future {}", respFuture);
+                                log.error("Error in completing future {}", ex.getMessage());
                                 respFuture.completeExceptionally(ex);
                             }
+                            log.info("RespFuture completion status {}", respFuture);
                         }
                     });
                 }
@@ -75,16 +76,6 @@ public class NetworkClientImpl implements NetworkClient {
 
         //checkout an existing/new channel
         Channel channel = checkoutChannel(node);
-//        //add handler to pipeline to attach a response to the request
-//        channel.pipeline().addLast("ResponsePreHandler", new SimpleChannelInboundHandler<Response>() {
-//            @Override
-//            protected void channelRead0(ChannelHandlerContext ctx, Response msg) throws Exception {
-//                ctx.pipeline().remove(this);
-//                VResponse vResponse = VResponse.getRootAsVResponse(msg.getVResponse().nioBuffer());
-//                log.info("Received response for correlationId {}", vResponse.correlationId());
-//                responseFuture.complete(vResponse);
-//            }
-//        });
         channel.writeAndFlush(request).addListener((ChannelFutureListener) future1 -> {
             log.info("Finished writing request {} to channel", vRequest.correlationId());
         });

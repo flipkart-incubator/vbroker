@@ -72,25 +72,29 @@ public class Sender implements Runnable {
         clusterNodes.forEach(node -> {
             RecordBatch recordBatch = accumulator.getRecordBatch(node);
             int totalNoOfRecords = recordBatch.getTotalNoOfRecords();
+            //if (totalNoOfRecords > 0) {
             log.info("Total no of records in batch for Node {} are {}", node.getBrokerId(), totalNoOfRecords);
-
-            VRequest vRequest = newVRequest(recordBatch);
-
-            CompletionStage<VResponse> responseStage = client.send(node, vRequest);
-            responseStage
-                .thenAccept(vResponse -> {
-                    recordBatch.setState(RecordBatch.BatchState.DONE_SUCCESS);
-                    log.info("Received vResponse with correlationId {}", vResponse.correlationId());
-
-                    parseProduceResponse(vResponse, recordBatch);
-                    log.info("Done parsing VResponse with correlationId {}", vResponse.correlationId());
-                })
-                .exceptionally(throwable -> {
-                    log.error("Failure in executing request {}", vRequest.correlationId(), throwable);
-                    recordBatch.setState(RecordBatch.BatchState.DONE_SUCCESS);
-                    return null;
-                });
+            sendRecordBatch(node, recordBatch);
+            //}
         });
+    }
+
+    private void sendRecordBatch(Node node, RecordBatch recordBatch) {
+        VRequest vRequest = newVRequest(recordBatch);
+        CompletionStage<VResponse> responseStage = client.send(node, vRequest);
+        responseStage
+            .thenAccept(vResponse -> {
+                recordBatch.setState(RecordBatch.BatchState.DONE_SUCCESS);
+                log.info("Received vResponse with correlationId {}", vResponse.correlationId());
+
+                parseProduceResponse(vResponse, recordBatch);
+                log.info("Done parsing VResponse with correlationId {}", vResponse.correlationId());
+            })
+            .exceptionally(throwable -> {
+                log.error("Exception in executing request {}: {}", vRequest.correlationId(), throwable.getMessage());
+                recordBatch.setState(RecordBatch.BatchState.DONE_FAILURE);
+                return null;
+            });
     }
 
     private void parseProduceResponse(VResponse vResponse, RecordBatch recordBatch) {
@@ -106,6 +110,7 @@ public class Sender implements Runnable {
                 //log.info("ProduceResponse for topic {} at partition {}", topicId, partitionProduceResponse);
                 log.info("Response code for handling produceRequest for topic {} and partition {} is {}",
                     topicId, partitionProduceResponse.partitionId(), partitionProduceResponse.status().statusCode());
+
 
                 TopicPartition topicPartition = metadata.getTopicPartition(topicProduceResponse.topicId(), partitionProduceResponse.partitionId());
                 recordBatch.setResponse(topicPartition, partitionProduceResponse.status());
@@ -134,7 +139,7 @@ public class Sender implements Runnable {
                         recordBatch.getRecords(topicPartition)
                             .stream()
                             .filter(record -> recordBatch.isReady())
-                            .map(record -> RecordUtils.flatBuffMsgOffset(builder, record))
+                            .map(record -> RecordUtils.flatBuffMsgOffset(builder, record, topicPartition.getId()))
                             .collect(Collectors.toList());
                     int[] messages = Ints.toArray(msgOffsets);
 
