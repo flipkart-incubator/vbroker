@@ -1,14 +1,21 @@
 package com.flipkart.vbroker.client;
 
 import com.flipkart.vbroker.core.TopicPartition;
+import com.flipkart.vbroker.entities.VStatus;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * A set of records going to a particular node in the cluster
@@ -20,13 +27,21 @@ import java.util.Set;
 public class RecordBatch {
     private final Node node;
     private final long lingerTimeMs;
+    private final long createdTimeMs;
     private final Multimap<TopicPartition, ProducerRecord> partRecordsMap = HashMultimap.create();
-    private long createdTimeMs;
+    private final Map<TopicPartition, CompletableFuture<TopicPartMetadata>> topicPartResponseFutureMap = new HashMap<>();
+    //map which stores the responses for the batch sent
+    private final Map<TopicPartition, VStatus> statusMap = new HashMap<>();
+    @Setter
+    @Getter
+    private BatchState state;
 
     public RecordBatch(Node node, long lingerTimeMs) {
         this.node = node;
         this.lingerTimeMs = lingerTimeMs;
         this.createdTimeMs = System.currentTimeMillis();
+
+        this.state = BatchState.QUEUED;
     }
 
     public static RecordBatch newInstance(Node node, long lingerTimeMs) {
@@ -34,9 +49,11 @@ public class RecordBatch {
         return new RecordBatch(node, lingerTimeMs);
     }
 
-    public void addRecord(TopicPartition topicPartition, ProducerRecord record) {
+    public CompletableFuture<TopicPartMetadata> addRecord(TopicPartition topicPartition, ProducerRecord record) {
         log.info("Adding record {} into topic partition {}", record.getMessageId(), topicPartition);
         partRecordsMap.put(topicPartition, record);
+        topicPartResponseFutureMap.putIfAbsent(topicPartition, new CompletableFuture<>());
+        return topicPartResponseFutureMap.get(topicPartition);
     }
 
     public boolean isFull() {
@@ -68,5 +85,30 @@ public class RecordBatch {
 
     public Set<TopicPartition> getTopicPartitionsWithRecords() {
         return partRecordsMap.keySet();
+    }
+
+    public void setResponse(TopicPartition topicPartition, VStatus status) {
+//        if (status.statusCode() >= 0) {
+//            throw new VBrokerException("dummy exception");
+//        }
+        statusMap.put(topicPartition, status);
+        TopicPartMetadata topicPartMetadata =
+            new TopicPartMetadata(topicPartition.getId(), status.statusCode());
+        topicPartResponseFutureMap.get(topicPartition).complete(topicPartMetadata);
+    }
+
+    public VStatus getStatus(TopicPartition topicPartition) {
+        return statusMap.get(topicPartition);
+    }
+
+    public enum BatchState {
+        QUEUED, SENT, DONE_SUCCESS, DONE_FAILURE
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public class TopicPartMetadata {
+        short partitionId;
+        short statusCode;
     }
 }

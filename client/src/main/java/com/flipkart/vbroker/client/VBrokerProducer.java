@@ -1,50 +1,32 @@
 package com.flipkart.vbroker.client;
 
-import com.flipkart.vbroker.handlers.ResponseHandlerFactory;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
-import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Random;
-import java.util.concurrent.*;
+import java.io.IOException;
+import java.util.concurrent.CompletionStage;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class VBrokerProducer implements Producer {
 
     private final VBClientConfig config;
-    //private final Partitioner partitioner;
     private final Accumulator accumulator;
-    private final EventLoopGroup group;
-    private final Bootstrap bootstrap;
+    private final NetworkClient networkClient;
     private final Sender sender;
     private final ListeningExecutorService senderExecutor;
     private final ListeningExecutorService senderCallbackExecutor;
 
     public VBrokerProducer(VBClientConfig config,
-                           Partitioner partitioner,
                            Accumulator accumulator) {
-        //this.partitioner = partitioner;
         this.accumulator = accumulator;
-
         this.config = config;
         log.info("Configs: ", config);
-        group = new NioEventLoopGroup();
-        ResponseHandlerFactory responseHandlerFactory = new ResponseHandlerFactory(null);
-
-        bootstrap = new Bootstrap();
-        bootstrap.group(group)
-            .channel(NioSocketChannel.class)
-            .handler(new VBrokerClientInitializer(responseHandlerFactory));
-
-        sender = new Sender(accumulator, accumulator.fetchMetadata(), bootstrap, config);
+        networkClient = new NetworkClientImpl();
+        sender = new Sender(accumulator, accumulator.fetchMetadata(), networkClient, config);
         senderExecutor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1));
         senderCallbackExecutor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1));
         ListenableFuture<?> senderFuture = senderExecutor.submit(sender);
@@ -54,22 +36,12 @@ public class VBrokerProducer implements Producer {
     }
 
     public VBrokerProducer(VBClientConfig config) {
-        this(config, new DefaultPartitioner(), new Accumulator(config));
+        this(config, new Accumulator(config, new DefaultPartitioner()));
     }
 
     @Override
     public CompletionStage<MessageMetadata> produce(ProducerRecord record) {
-        accumulator.addRecord(record);
-        return getResponse(record);
-    }
-
-    private CompletionStage<MessageMetadata> getResponse(ProducerRecord record) {
-        //TODO: fill this up correctly
-        return CompletableFuture.supplyAsync(() ->
-            new MessageMetadata(record.getMessageId(),
-                record.getTopicId(),
-                record.getPartitionId(),
-                new Random().nextInt()));
+        return accumulator.accumulateRecord(record);
     }
 
     @Override
@@ -78,9 +50,9 @@ public class VBrokerProducer implements Producer {
         sender.stop();
 
         try {
-            group.shutdownGracefully().get();
-        } catch (InterruptedException | ExecutionException e) {
-            log.error("Exception in shutting down the event loop group", e);
+            networkClient.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         MoreExecutors.shutdownAndAwaitTermination(senderExecutor,
@@ -89,19 +61,5 @@ public class VBrokerProducer implements Producer {
             config.getLingerTimeMs() * 5, TimeUnit.MILLISECONDS);
 
         log.info("VBrokerProducer closed");
-    }
-
-    private CompletableFuture<Channel> convert(ChannelFuture channelFuture) {
-        CompletableFuture<Channel> future = new CompletableFuture<>();
-        channelFuture.addListener((ChannelFutureListener) f -> {
-            if (f.isCancelled()) {
-                future.cancel(false);
-            } else if (f.cause() != null) {
-                future.completeExceptionally(f.cause());
-            } else {
-                future.complete(f.channel());
-            }
-        });
-        return future;
     }
 }

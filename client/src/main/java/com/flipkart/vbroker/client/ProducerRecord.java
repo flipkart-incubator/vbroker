@@ -16,7 +16,6 @@ public class ProducerRecord {
     private byte version;
     private int seqNo;
     private short topicId;
-    private short partitionId;
     private int attributes;
     private String httpUri;
     private HttpMethod httpMethod;

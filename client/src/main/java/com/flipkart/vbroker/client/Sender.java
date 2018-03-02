@@ -1,15 +1,10 @@
 package com.flipkart.vbroker.client;
 
+import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.*;
-import com.flipkart.vbroker.protocol.Request;
 import com.flipkart.vbroker.utils.FlatBuffers;
 import com.google.common.primitives.Ints;
 import com.google.flatbuffers.FlatBufferBuilder;
-import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFutureListener;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -17,48 +12,32 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
-import static java.util.Objects.nonNull;
 
 @Slf4j
 public class Sender implements Runnable {
 
     private final Accumulator accumulator;
     private final Metadata metadata;
-    private final Bootstrap bootstrap;
+    private final NetworkClient client;
     private final VBClientConfig config;
-    private final Map<Node, Channel> nodeChannelMap = new ConcurrentHashMap<>();
     private final CountDownLatch runningLatch;
     private volatile boolean running;
 
     public Sender(Accumulator accumulator,
                   Metadata metadata,
-                  Bootstrap bootstrap,
+                  NetworkClient client,
                   VBClientConfig config) {
         this.accumulator = accumulator;
         this.metadata = metadata;
-        this.bootstrap = bootstrap;
+        this.client = client;
         this.config = config;
 
         running = true;
         runningLatch = new CountDownLatch(1);
-    }
-
-    public Channel checkoutChannel(Node node) {
-        nodeChannelMap.computeIfAbsent(node, node1 -> {
-            try {
-                return bootstrap.connect(node.getHostIp(), node.getHostPort()).sync().channel();
-            } catch (InterruptedException e) {
-                log.error("Error in creating a new Channel to node {}", node1);
-                return null;
-            }
-        });
-        return nodeChannelMap.get(node);
     }
 
     @Override
@@ -90,21 +69,52 @@ public class Sender implements Runnable {
         List<Node> clusterNodes = metadata.getClusterNodes();
         log.info("ClusterNodes: {}", clusterNodes);
 
-        for (Node node : clusterNodes) {
+        clusterNodes.forEach(node -> {
             RecordBatch recordBatch = accumulator.getRecordBatch(node);
             int totalNoOfRecords = recordBatch.getTotalNoOfRecords();
+            //if (totalNoOfRecords > 0) {
             log.info("Total no of records in batch for Node {} are {}", node.getBrokerId(), totalNoOfRecords);
+            sendRecordBatch(node, recordBatch);
+            //}
+        });
+    }
 
-            VRequest vRequest = getVRequest(recordBatch);
-            //int correlationId = vRequest.correlationId();
+    private void sendRecordBatch(Node node, RecordBatch recordBatch) {
+        VRequest vRequest = newVRequest(recordBatch);
+        CompletionStage<VResponse> responseStage = client.send(node, vRequest);
+        responseStage
+            .thenAccept(vResponse -> {
+                recordBatch.setState(RecordBatch.BatchState.DONE_SUCCESS);
+                log.info("Received vResponse with correlationId {}", vResponse.correlationId());
 
-            Channel channel = checkoutChannel(node);
-            ByteBuf byteBuf = Unpooled.wrappedBuffer(vRequest.getByteBuffer());
-            Request request = new Request(byteBuf.readableBytes(), byteBuf);
-
-            channel.writeAndFlush(request).addListener((ChannelFutureListener) future1 -> {
-                log.info("Finished writing request {} to channel", vRequest.correlationId());
+                parseProduceResponse(vResponse, recordBatch);
+                log.info("Done parsing VResponse with correlationId {}", vResponse.correlationId());
+            })
+            .exceptionally(throwable -> {
+                log.error("Exception in executing request {}: {}", vRequest.correlationId(), throwable.getMessage());
+                recordBatch.setState(RecordBatch.BatchState.DONE_FAILURE);
+                return null;
             });
+    }
+
+    private void parseProduceResponse(VResponse vResponse, RecordBatch recordBatch) {
+        ProduceResponse produceResponse = (ProduceResponse) vResponse.responseMessage(new ProduceResponse());
+        assert produceResponse != null;
+
+        for (int i = 0; i < produceResponse.topicResponsesLength(); i++) {
+            TopicProduceResponse topicProduceResponse = produceResponse.topicResponses(i);
+            short topicId = topicProduceResponse.topicId();
+            log.info("Handling ProduceResponse for topic {} with {} partition responses", topicId, topicProduceResponse.partitionResponsesLength());
+            for (int j = 0; j < topicProduceResponse.partitionResponsesLength(); j++) {
+                TopicPartitionProduceResponse partitionProduceResponse = topicProduceResponse.partitionResponses(j);
+                //log.info("ProduceResponse for topic {} at partition {}", topicId, partitionProduceResponse);
+                log.info("Response code for handling produceRequest for topic {} and partition {} is {}",
+                    topicId, partitionProduceResponse.partitionId(), partitionProduceResponse.status().statusCode());
+
+
+                TopicPartition topicPartition = metadata.getTopicPartition(topicProduceResponse.topicId(), partitionProduceResponse.partitionId());
+                recordBatch.setResponse(topicPartition, partitionProduceResponse.status());
+            }
         }
     }
 
@@ -116,20 +126,9 @@ public class Sender implements Runnable {
         } catch (InterruptedException e) {
             log.error("Killing Sender as time elapsed");
         }
-
-        nodeChannelMap.forEach((node, channel) -> {
-            if (nonNull(channel)) {
-                try {
-                    channel.close().get();
-                    log.info("Closed channel to node {}", node);
-                } catch (InterruptedException | ExecutionException e) {
-                    log.error("Error in closing channel", e);
-                }
-            }
-        });
     }
 
-    private VRequest getVRequest(RecordBatch recordBatch) {
+    private VRequest newVRequest(RecordBatch recordBatch) {
         FlatBufferBuilder builder = FlatBuffers.newBuilder();
 
         List<TopicPartReq> topicPartReqs =
@@ -140,7 +139,7 @@ public class Sender implements Runnable {
                         recordBatch.getRecords(topicPartition)
                             .stream()
                             .filter(record -> recordBatch.isReady())
-                            .map(record -> RecordUtils.flatBuffMsgOffset(builder, record))
+                            .map(record -> RecordUtils.flatBuffMsgOffset(builder, record, topicPartition.getId()))
                             .collect(Collectors.toList());
                     int[] messages = Ints.toArray(msgOffsets);
 

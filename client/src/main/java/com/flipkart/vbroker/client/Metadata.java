@@ -9,6 +9,8 @@ public interface Metadata {
 
     public long aliveTimeMs();
 
+    public Topic getTopic(short topicId);
+
     public List<Topic> getTopics();
 
     public TopicPartition getTopicPartition(short topicId, short partitionId);
