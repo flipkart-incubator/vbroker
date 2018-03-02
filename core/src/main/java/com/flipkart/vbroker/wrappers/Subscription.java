@@ -25,6 +25,14 @@ public class Subscription {
         return new Subscription(builder.build());
     }
 
+    public static Subscription fromBytes(byte[] bytes){
+        try {
+            return new Subscription(ProtoSubscription.parseFrom(bytes));
+        } catch (InvalidProtocolBufferException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == this) {
@@ -49,5 +57,9 @@ public class Subscription {
         } catch (InvalidProtocolBufferException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public byte[] toBytes(){
+        return protoSubscription.toByteArray();
     }
 }

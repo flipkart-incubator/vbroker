@@ -1,6 +1,7 @@
 package com.flipkart.vbroker.handlers;
 
 import com.flipkart.vbroker.entities.*;
+import com.flipkart.vbroker.proto.SubscriptionLag;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.utils.CompletionStageUtils;
 import com.flipkart.vbroker.utils.FlatbufUtils;
