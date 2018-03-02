@@ -32,17 +32,6 @@ Not_Leader_For_Partition=505,
 Entity_Not_Exists=506
 }
 
-// common enums
-
-enum HttpMethod:byte {POST=0, PUT=1, DELETE=2, PATCH=3}
-
-enum TopicCategory:byte {QUEUE=0, TOPIC=1}
-
-enum SubscriptionType:byte {STATIC=0, DYNAMIC=1}
-
-enum SubscriptionMechanism:byte {PUSH=0, PULL=1}
-
-
 // common entities
 
 table HttpHeader {
@@ -73,60 +62,9 @@ table MessageSet {
 	messages:[Message];
 }
 
-table Topic {
-	id:int16;
-	name:string;
-	grouped:bool;
-	partitions:int16;
-	replicationFactor:int16;
-	topicCategory:TopicCategory;
-}
-
-table FilterKeyValues {
-	key:string;
-	values:string;
-}
-
-table CodeRange {
-	from:int16;
-	to:int16;
-}
-
-table CallbackConfig {
-	codeRanges:[CodeRange];
-}
-
-table Subscription {
-	id:int16;
-	topicId:int16;
-	name:string;
-	grouped:bool;
-	parallelism:int16;
-	requestTimeout:int16;
-	subscriptionType:SubscriptionType;
-	subscriptionMechanism:SubscriptionMechanism;
-	httpUri:string;
-	httpMethod:string;
-	elastic:bool;
-	filterOperator:string;
-	filterKeyValuesList:[FilterKeyValues];
-	callbackConfig:CallbackConfig;
-}
-
-table Queue {
-	topic:Topic;
-	subscription:Subscription;
-}
-
-table TopicSubscription{
-	topicId:int16;
-	subscriptionId:int16;
-}
-
 // request message types
 
-union RequestMessage { ProduceRequest, FetchRequest, CreateTopicsRequest, CreateSubscriptionsRequest, CreateQueuesRequest,
- GetTopicsRequest, GetSubscriptionsRequest, GetQueuesRequest, GetLagsRequest }
+union RequestMessage { ProduceRequest, FetchRequest, ControlRequest }
 	
 // requests
 	
@@ -170,56 +108,9 @@ table FetchRequest {
 	topicRequests:[TopicFetchRequest];
 }
 
-
-// create topics request
-
-table CreateTopicsRequest {
-	topics:[Topic];
-}
-
-// create subscriptions request
-
-table CreateSubscriptionsRequest {
-	subscriptions:[Subscription];
-}
-
-// create queues request
-
-table CreateQueuesRequest {
-	queues:[Queue];
-}
-
-// get queues request
-
-table GetQueuesRequest {
-	ids:[int16];
-}
-
-// get topics request
-
-table GetTopicsRequest {
-	ids:[int16];
-}
-
-// get subscriptions request
-
-table GetSubscriptionsRequest {
-	subscriptions:[TopicSubscription];
-}
-
-// get lags request
-
-table PartitionLagRequest {
-	partitionId:int16;
-}
-table TopicSubscriptionLagRequest {
-	subscriptionId:int16;
-	topicId:int16;
-	partitionLags:[PartitionLagRequest];
-}
-
-table GetLagsRequest{
-	subscriptionLags:[TopicSubscriptionLagRequest];
+//control path request (get/create stuff)
+table ControlRequest {
+    payload:[byte];
 }
 
 root_type VRequest;
@@ -234,8 +125,7 @@ table VStatus {
 
 // response message types
 
-union ResponseMessage { ProduceResponse, FetchResponse, CreateTopicsResponse, CreateSubscriptionsResponse, CreateQueuesResponse,
- GetTopicsResponse, GetQueuesResponse, GetSubscriptionsResponse, GetLagsResponse }
+union ResponseMessage { ProduceResponse, FetchResponse, ControlResponse }
 
 table VResponse {
 	correlationId:int32;
@@ -276,92 +166,9 @@ table FetchResponse {
 	topicResponses:[TopicFetchResponse];
 }
 
-// create topics response
-
-table CreateTopicResponse {
-	id:int16;
-	name:string;
-	status:VStatus;
-}
-
-table CreateTopicsResponse {
-	createTopicsResponse:[CreateTopicResponse];	
-}
-
-// subscription create response
-
-table CreateSubscriptionResponse{
-	id:int16;
-	topicId:int16;
-	name:string;
-	status:VStatus;
-}
-
-table CreateSubscriptionsResponse {
-	createSubscriptionResponse:[CreateSubscriptionResponse];
-}
-
-// create queues response
-
-table CreateQueueResponse {
-	id:int16;
-	topicId:int16;
-	subscriptionId:int16;
-	status:VStatus;
-}
-
-table CreateQueuesResponse {
-	createQueueResponse:[CreateQueueResponse];
-}
-
-// get topics response
-
-table GetTopicResponse {
-	topic:Topic;
-	status:VStatus;
-}
-
-table GetTopicsResponse {
-	topics:[GetTopicResponse];	
-}
-
-// get subscriptions response
-
-table GetSubscriptionResponse {
-	subscription:Subscription;
-	status:VStatus;
-}
-table GetSubscriptionsResponse {
-	subscriptions:[GetSubscriptionResponse];	
-}
-
-// get queues response
-
-table GetQueueResponse {
-	queue:Queue;
-	status:VStatus;
-}
-
-table GetQueuesResponse {
-	queues:[GetQueueResponse];
-}
-
-// get lags response
-
-table PartitionLag {
-	partitionId:int16;
-	lag:int32;
-	status:VStatus;
-}
-
-table SubscriptionLag {
-	subscriptionId:int16;
-	topicId:int16;
-	partitionLags:[PartitionLag];
-}
-
-table GetLagsResponse {
-	subscriptionLags:[SubscriptionLag];
+//control path response
+table ControlResponse {
+    payload:[byte];
 }
 
 root_type VResponse;
