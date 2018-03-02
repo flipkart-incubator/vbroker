@@ -5,6 +5,7 @@ import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.services.ProducerService;
 import com.flipkart.vbroker.services.TopicService;
+import com.google.common.primitives.Ints;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.AllArgsConstructor;
@@ -43,7 +44,7 @@ public class ProduceRequestHandler implements RequestHandler {
 
                 for (int j = 0; j < topicProduceRequest.partitionRequestsLength(); j++) {
                     TopicPartitionProduceRequest topicPartitionProduceRequest = topicProduceRequest.partitionRequests(j);
-                    log.info("Getting messageSet for topic {} and partition {}", topicProduceRequest.topicId(), topicPartitionProduceRequest.partitionId());
+                    log.info("Getting messageSet for topic {} and partition {}", topic.id(), topicPartitionProduceRequest.partitionId());
                     TopicPartition topicPartition = topicService
                         .getTopicPartition(topic, topicPartitionProduceRequest.partitionId())
                         .toCompletableFuture().join();
@@ -65,7 +66,7 @@ public class ProduceRequestHandler implements RequestHandler {
                     builder,
                     topicPartMessage.getTopicPartition().getId(),
                     vStatus);
-                topicPartitionResponseMap.computeIfAbsent(topicPartMessage.getTopicPartition().getId(),
+                topicPartitionResponseMap.computeIfAbsent(topicPartMessage.getTopicPartition().getTopicId(),
                     o -> new LinkedList<>())
                     .add(topicPartitionProduceResponse);
             }
@@ -76,10 +77,7 @@ public class ProduceRequestHandler implements RequestHandler {
             for (Map.Entry<Short, List<Integer>> entry : topicPartitionResponseMap.entrySet()) {
                 Short topicId = entry.getKey();
                 List<Integer> partitionResponsesList = entry.getValue();
-                int[] partitionResponses = new int[partitionResponsesList.size()];
-                for (int j = 0; j < partitionResponses.length; j++) {
-                    partitionResponses[j] = partitionResponsesList.get(j);
-                }
+                int[] partitionResponses = Ints.toArray(partitionResponsesList);
 
                 int partitionResponsesVector = TopicProduceResponse.createPartitionResponsesVector(builder, partitionResponses);
                 int topicProduceResponse = TopicProduceResponse.createTopicProduceResponse(

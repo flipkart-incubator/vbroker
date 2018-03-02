@@ -13,8 +13,7 @@ public class ProduceResponseHandler implements ResponseHandler {
 
     @Override
     public void handle(VResponse vResponse) {
-        ProduceResponse produceResponse = (ProduceResponse) vResponse.responseMessage(new ProduceResponse());
-        assert produceResponse != null;
+        ProduceResponse produceResponse = parse(vResponse);
 
         for (int i = 0; i < produceResponse.topicResponsesLength(); i++) {
             TopicProduceResponse topicProduceResponse = produceResponse.topicResponses(i);
@@ -27,5 +26,11 @@ public class ProduceResponseHandler implements ResponseHandler {
                     topicId, partitionProduceResponse.partitionId(), partitionProduceResponse.status().statusCode());
             }
         }
+    }
+
+    public static ProduceResponse parse(VResponse vResponse) {
+        ProduceResponse produceResponse = (ProduceResponse) vResponse.responseMessage(new ProduceResponse());
+        assert produceResponse != null;
+        return produceResponse;
     }
 }

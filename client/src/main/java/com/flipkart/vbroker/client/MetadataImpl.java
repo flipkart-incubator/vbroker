@@ -47,7 +47,8 @@ public class MetadataImpl implements Metadata {
         return topics;
     }
 
-    private Topic getTopic(short topicId) {
+    @Override
+    public Topic getTopic(short topicId) {
         return topicsMap.get(topicId);
     }
 
