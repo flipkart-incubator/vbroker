@@ -85,7 +85,7 @@ public final class PEntities {
       "TopicCategory\".\n\017FilterKeyValues\022\013\n\003key\030" +
       "\001 \001(\t\022\016\n\006values\030\002 \001(\t\"%\n\tCodeRange\022\014\n\004fr" +
       "om\030\001 \001(\005\022\n\n\002to\030\002 \001(\005\"6\n\016CallbackConfig\022$" +
-      "\n\ncodeRanges\030\001 \003(\0132\020.proto.CodeRange\"\261\003\n" +
+      "\n\ncodeRanges\030\001 \003(\0132\020.proto.CodeRange\"\310\003\n" +
       "\021ProtoSubscription\022\n\n\002id\030\001 \001(\005\022\017\n\007topicI" +
       "d\030\002 \001(\005\022\014\n\004name\030\003 \001(\t\022\017\n\007grouped\030\004 \001(\010\022\023" +
       "\n\013parallelism\030\005 \001(\005\022\026\n\016requestTimeout\030\006 " +
@@ -93,30 +93,31 @@ public final class PEntities {
       "bscriptionType\022;\n\025subscriptionMechanism\030" +
       "\010 \001(\0162\034.proto.SubscriptionMechanism\022\017\n\007h" +
       "ttpUri\030\t \001(\t\022%\n\nhttpMethod\030\n \001(\0162\021.proto" +
-      ".HttpMethod\022\017\n\007elastic\030\013 \001(\010\022\026\n\016filterOp" +
-      "erator\030\014 \001(\t\0223\n\023filterKeyValuesList\030\r \003(" +
-      "\0132\026.proto.FilterKeyValues\022-\n\016callbackCon" +
-      "fig\030\016 \001(\0132\025.proto.CallbackConfig\"j\n\nProt" +
-      "oQueue\022\n\n\002id\030\001 \001(\005\022 \n\005topic\030\002 \001(\0132\021.prot" +
-      "o.ProtoTopic\022.\n\014subscription\030\003 \001(\0132\030.pro" +
-      "to.ProtoSubscription\"<\n\021TopicSubscriptio" +
-      "n\022\026\n\016subscriptionId\030\001 \001(\005\022\017\n\007topicId\030\002 \001" +
-      "(\005\":\n\004Node\022\020\n\010brokerId\030\001 \001(\005\022\016\n\006hostIp\030\002" +
-      " \001(\t\022\020\n\010hostPort\030\003 \001(\005\"T\n\021PartitionMetad" +
-      "ata\022\n\n\002id\030\001 \001(\005\022\017\n\007topicId\030\002 \001(\005\022\020\n\010lead" +
-      "erId\030\003 \001(\005\022\020\n\010replicas\030\004 \003(\005\"g\n\rTopicMet" +
-      "adata\022 \n\005topic\030\001 \001(\0132\021.proto.ProtoTopic\022" +
-      "4\n\022partitionMetadatas\030\002 \003(\0132\030.proto.Part" +
-      "itionMetadata\"[\n\017ClusterMetadata\022,\n\016topi" +
-      "cMetadatas\030\001 \003(\0132\024.proto.TopicMetadata\022\032" +
-      "\n\005nodes\030\002 \003(\0132\013.proto.Node*%\n\rTopicCateg" +
-      "ory\022\t\n\005QUEUE\020\000\022\t\n\005TOPIC\020\001*6\n\nHttpMethod\022" +
-      "\010\n\004POST\020\000\022\007\n\003PUT\020\001\022\n\n\006DELETE\020\002\022\t\n\005PATCH\020" +
-      "\003*+\n\020SubscriptionType\022\n\n\006STATIC\020\000\022\013\n\007DYN" +
-      "AMIC\020\001*+\n\025SubscriptionMechanism\022\010\n\004PUSH\020" +
-      "\000\022\010\n\004PULL\020\001*+\n\016FilterOperator\022\006\n\002OR\020\000\022\007\n" +
-      "\003NOR\020\001\022\010\n\004NAND\020\002B)\n\032com.flipkart.vbroker" +
-      ".protoB\tPEntitiesP\001b\006proto3"
+      ".HttpMethod\022\017\n\007elastic\030\013 \001(\010\022-\n\016filterOp" +
+      "erator\030\014 \001(\0162\025.proto.FilterOperator\0223\n\023f" +
+      "ilterKeyValuesList\030\r \003(\0132\026.proto.FilterK" +
+      "eyValues\022-\n\016callbackConfig\030\016 \001(\0132\025.proto" +
+      ".CallbackConfig\"j\n\nProtoQueue\022\n\n\002id\030\001 \001(" +
+      "\005\022 \n\005topic\030\002 \001(\0132\021.proto.ProtoTopic\022.\n\014s" +
+      "ubscription\030\003 \001(\0132\030.proto.ProtoSubscript" +
+      "ion\"<\n\021TopicSubscription\022\026\n\016subscription" +
+      "Id\030\001 \001(\005\022\017\n\007topicId\030\002 \001(\005\":\n\004Node\022\020\n\010bro" +
+      "kerId\030\001 \001(\005\022\016\n\006hostIp\030\002 \001(\t\022\020\n\010hostPort\030" +
+      "\003 \001(\005\"T\n\021PartitionMetadata\022\n\n\002id\030\001 \001(\005\022\017" +
+      "\n\007topicId\030\002 \001(\005\022\020\n\010leaderId\030\003 \001(\005\022\020\n\010rep" +
+      "licas\030\004 \003(\005\"g\n\rTopicMetadata\022 \n\005topic\030\001 " +
+      "\001(\0132\021.proto.ProtoTopic\0224\n\022partitionMetad" +
+      "atas\030\002 \003(\0132\030.proto.PartitionMetadata\"[\n\017" +
+      "ClusterMetadata\022,\n\016topicMetadatas\030\001 \003(\0132" +
+      "\024.proto.TopicMetadata\022\032\n\005nodes\030\002 \003(\0132\013.p" +
+      "roto.Node*%\n\rTopicCategory\022\t\n\005QUEUE\020\000\022\t\n" +
+      "\005TOPIC\020\001*6\n\nHttpMethod\022\010\n\004POST\020\000\022\007\n\003PUT\020" +
+      "\001\022\n\n\006DELETE\020\002\022\t\n\005PATCH\020\003*+\n\020Subscription" +
+      "Type\022\n\n\006STATIC\020\000\022\013\n\007DYNAMIC\020\001*+\n\025Subscri" +
+      "ptionMechanism\022\010\n\004PUSH\020\000\022\010\n\004PULL\020\001*+\n\016Fi" +
+      "lterOperator\022\006\n\002OR\020\000\022\007\n\003NOR\020\001\022\010\n\004NAND\020\002B" +
+      ")\n\032com.flipkart.vbroker.protoB\tPEntities" +
+      "P\001b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

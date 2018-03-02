@@ -27,7 +27,7 @@ private static final long serialVersionUID = 0L;
     httpUri_ = "";
     httpMethod_ = 0;
     elastic_ = false;
-    filterOperator_ = "";
+    filterOperator_ = 0;
     filterKeyValuesList_ = java.util.Collections.emptyList();
   }
 
@@ -122,10 +122,10 @@ private static final long serialVersionUID = 0L;
             elastic_ = input.readBool();
             break;
           }
-          case 98: {
-            java.lang.String s = input.readStringRequireUtf8();
+          case 96: {
+            int rawValue = input.readEnum();
 
-            filterOperator_ = s;
+            filterOperator_ = rawValue;
             break;
           }
           case 106: {
@@ -349,37 +349,19 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int FILTEROPERATOR_FIELD_NUMBER = 12;
-  private volatile java.lang.Object filterOperator_;
+  private int filterOperator_;
   /**
-   * <code>string filterOperator = 12;</code>
+   * <code>.proto.FilterOperator filterOperator = 12;</code>
    */
-  public java.lang.String getFilterOperator() {
-    java.lang.Object ref = filterOperator_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      filterOperator_ = s;
-      return s;
-    }
+  public int getFilterOperatorValue() {
+    return filterOperator_;
   }
   /**
-   * <code>string filterOperator = 12;</code>
+   * <code>.proto.FilterOperator filterOperator = 12;</code>
    */
-  public com.google.protobuf.ByteString
-      getFilterOperatorBytes() {
-    java.lang.Object ref = filterOperator_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      filterOperator_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+  public com.flipkart.vbroker.proto.FilterOperator getFilterOperator() {
+    com.flipkart.vbroker.proto.FilterOperator result = com.flipkart.vbroker.proto.FilterOperator.valueOf(filterOperator_);
+    return result == null ? com.flipkart.vbroker.proto.FilterOperator.UNRECOGNIZED : result;
   }
 
   public static final int FILTERKEYVALUESLIST_FIELD_NUMBER = 13;
@@ -483,8 +465,8 @@ private static final long serialVersionUID = 0L;
     if (elastic_ != false) {
       output.writeBool(11, elastic_);
     }
-    if (!getFilterOperatorBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 12, filterOperator_);
+    if (filterOperator_ != com.flipkart.vbroker.proto.FilterOperator.OR.getNumber()) {
+      output.writeEnum(12, filterOperator_);
     }
     for (int i = 0; i < filterKeyValuesList_.size(); i++) {
       output.writeMessage(13, filterKeyValuesList_.get(i));
@@ -542,8 +524,9 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeBoolSize(11, elastic_);
     }
-    if (!getFilterOperatorBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, filterOperator_);
+    if (filterOperator_ != com.flipkart.vbroker.proto.FilterOperator.OR.getNumber()) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeEnumSize(12, filterOperator_);
     }
     for (int i = 0; i < filterKeyValuesList_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
@@ -588,8 +571,7 @@ private static final long serialVersionUID = 0L;
     result = result && httpMethod_ == other.httpMethod_;
     result = result && (getElastic()
         == other.getElastic());
-    result = result && getFilterOperator()
-        .equals(other.getFilterOperator());
+    result = result && filterOperator_ == other.filterOperator_;
     result = result && getFilterKeyValuesListList()
         .equals(other.getFilterKeyValuesListList());
     result = result && (hasCallbackConfig() == other.hasCallbackConfig());
@@ -633,7 +615,7 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
         getElastic());
     hash = (37 * hash) + FILTEROPERATOR_FIELD_NUMBER;
-    hash = (53 * hash) + getFilterOperator().hashCode();
+    hash = (53 * hash) + filterOperator_;
     if (getFilterKeyValuesListCount() > 0) {
       hash = (37 * hash) + FILTERKEYVALUESLIST_FIELD_NUMBER;
       hash = (53 * hash) + getFilterKeyValuesListList().hashCode();
@@ -794,7 +776,7 @@ private static final long serialVersionUID = 0L;
 
       elastic_ = false;
 
-      filterOperator_ = "";
+      filterOperator_ = 0;
 
       if (filterKeyValuesListBuilder_ == null) {
         filterKeyValuesList_ = java.util.Collections.emptyList();
@@ -935,9 +917,8 @@ private static final long serialVersionUID = 0L;
       if (other.getElastic() != false) {
         setElastic(other.getElastic());
       }
-      if (!other.getFilterOperator().isEmpty()) {
-        filterOperator_ = other.filterOperator_;
-        onChanged();
+      if (other.filterOperator_ != 0) {
+        setFilterOperatorValue(other.getFilterOperatorValue());
       }
       if (filterKeyValuesListBuilder_ == null) {
         if (!other.filterKeyValuesList_.isEmpty()) {
@@ -1422,71 +1403,46 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object filterOperator_ = "";
+    private int filterOperator_ = 0;
     /**
-     * <code>string filterOperator = 12;</code>
+     * <code>.proto.FilterOperator filterOperator = 12;</code>
      */
-    public java.lang.String getFilterOperator() {
-      java.lang.Object ref = filterOperator_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        filterOperator_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
+    public int getFilterOperatorValue() {
+      return filterOperator_;
     }
     /**
-     * <code>string filterOperator = 12;</code>
+     * <code>.proto.FilterOperator filterOperator = 12;</code>
      */
-    public com.google.protobuf.ByteString
-        getFilterOperatorBytes() {
-      java.lang.Object ref = filterOperator_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        filterOperator_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string filterOperator = 12;</code>
-     */
-    public Builder setFilterOperator(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
+    public Builder setFilterOperatorValue(int value) {
       filterOperator_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string filterOperator = 12;</code>
+     * <code>.proto.FilterOperator filterOperator = 12;</code>
+     */
+    public com.flipkart.vbroker.proto.FilterOperator getFilterOperator() {
+      com.flipkart.vbroker.proto.FilterOperator result = com.flipkart.vbroker.proto.FilterOperator.valueOf(filterOperator_);
+      return result == null ? com.flipkart.vbroker.proto.FilterOperator.UNRECOGNIZED : result;
+    }
+    /**
+     * <code>.proto.FilterOperator filterOperator = 12;</code>
+     */
+    public Builder setFilterOperator(com.flipkart.vbroker.proto.FilterOperator value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      
+      filterOperator_ = value.getNumber();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>.proto.FilterOperator filterOperator = 12;</code>
      */
     public Builder clearFilterOperator() {
       
-      filterOperator_ = getDefaultInstance().getFilterOperator();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string filterOperator = 12;</code>
-     */
-    public Builder setFilterOperatorBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
-      filterOperator_ = value;
+      filterOperator_ = 0;
       onChanged();
       return this;
     }

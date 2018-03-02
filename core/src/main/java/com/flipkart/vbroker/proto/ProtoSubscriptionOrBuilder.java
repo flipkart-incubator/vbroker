@@ -85,14 +85,13 @@ public interface ProtoSubscriptionOrBuilder extends
   boolean getElastic();
 
   /**
-   * <code>string filterOperator = 12;</code>
+   * <code>.proto.FilterOperator filterOperator = 12;</code>
    */
-  java.lang.String getFilterOperator();
+  int getFilterOperatorValue();
   /**
-   * <code>string filterOperator = 12;</code>
+   * <code>.proto.FilterOperator filterOperator = 12;</code>
    */
-  com.google.protobuf.ByteString
-      getFilterOperatorBytes();
+  com.flipkart.vbroker.proto.FilterOperator getFilterOperator();
 
   /**
    * <code>repeated .proto.FilterKeyValues filterKeyValuesList = 13;</code>

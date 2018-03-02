@@ -1,6 +1,6 @@
 package com.flipkart.vbroker.utils;
 
-import com.flipkart.vbroker.proto.TopicCategory;
+import com.flipkart.vbroker.proto.*;
 import com.flipkart.vbroker.wrappers.Subscription;
 import com.flipkart.vbroker.wrappers.Topic;
 import com.google.flatbuffers.FlatBufferBuilder;
@@ -15,61 +15,46 @@ public class DummyEntities {
 
     static {
         FlatBufferBuilder topicBuilder = new FlatBufferBuilder();
-        int topicOffset = Topic.createTopic(topicBuilder,
-            (short) 101,
-            topicBuilder.createString("grouped_topic_1"),
-            true,
-            (short) 1,
-            (short) 1,
-            TopicCategory.QUEUE);
-        topicBuilder.finish(topicOffset);
-        groupedTopic = Topic.getRootAsTopic(topicBuilder.dataBuffer());
+        groupedTopic = new Topic(ProtoTopic.newBuilder()
+            .setId(101)
+            .setName("grouped_topic_1")
+            .setGrouped(true)
+            .setPartitions(1)
+            .setReplicationFactor(1)
+            .setTopicCategory(TopicCategory.QUEUE)
+            .build());
 
-        topicBuilder = new FlatBufferBuilder();
-        topicOffset = Topic.createTopic(topicBuilder,
-            (short) 151,
-            topicBuilder.createString("un_grouped_topic_1"),
-            false,
-            (short) 1,
-            (short) 1,
-            TopicCategory.QUEUE
-        );
-        topicBuilder.finish(topicOffset);
-        unGroupedTopic = Topic.getRootAsTopic(topicBuilder.dataBuffer());
+        unGroupedTopic = new Topic(ProtoTopic.newBuilder()
+            .setId(151)
+            .setName("un_grouped_topic_1")
+            .setGrouped(false)
+            .setPartitions(1)
+            .setReplicationFactor(1)
+            .setTopicCategory(TopicCategory.QUEUE)
+            .build());
 
-        FlatBufferBuilder subBuilder = new FlatBufferBuilder();
-        int subscriptionOffset = getSubscriptionOffset(subBuilder, (short) 201, groupedTopic);
-        subBuilder.finish(subscriptionOffset);
-        groupedSubscription = Subscription.getRootAsSubscription(subBuilder.dataBuffer());
-
-        subBuilder = new FlatBufferBuilder();
-        subscriptionOffset = getSubscriptionOffset(subBuilder, (short) 251, unGroupedTopic);
-        subBuilder.finish(subscriptionOffset);
-        unGroupedSubscription = Subscription.getRootAsSubscription(subBuilder.dataBuffer());
+        groupedSubscription = getSubscription(201, groupedTopic);
+        unGroupedSubscription = getSubscription(251, unGroupedTopic);
     }
 
-    private static int getSubscriptionOffset(FlatBufferBuilder subBuilder,
-                                             short subscriptionId,
-                                             Topic topic) {
-        int codeRangeOffset = CodeRange.createCodeRange(subBuilder, (short) 200, (short) 299);
-        int codeRangesVectorOffset = CallbackConfig.createCodeRangesVector(subBuilder, new int[]{codeRangeOffset});
-        int callbackConfigOffset = CallbackConfig.createCallbackConfig(subBuilder, codeRangesVectorOffset);
+    private static Subscription getSubscription(int subscriptionId, Topic topic) {
+        CodeRange codeRange = CodeRange.newBuilder().setFrom(200).setTo(299).build();
+        CallbackConfig callbackConfig = CallbackConfig.newBuilder().addCodeRanges(codeRange).build();
 
-        return Subscription.createSubscription(subBuilder,
-            subscriptionId,
-            topic.id(),
-            subBuilder.createString("subscription_" + subscriptionId),
-            topic.grouped(),
-            (short) 1,
-            (short) 60000,
-            SubscriptionType.DYNAMIC,
-            SubscriptionMechanism.PUSH,
-            subBuilder.createString("http://localhost:13000/messages"),
-            subBuilder.createString("POST"),
-            true,
-            subBuilder.createString("NOR"),
-            subBuilder.createString(""),
-            callbackConfigOffset
+        return new Subscription(ProtoSubscription.newBuilder()
+            .setId(subscriptionId)
+            .setTopicId(topic.getProtoTopic().getId())
+            .setName("subscription_" + subscriptionId)
+            .setGrouped(topic.getProtoTopic().getGrouped())
+            .setSubscriptionType(SubscriptionType.DYNAMIC)
+            .setSubscriptionMechanism(SubscriptionMechanism.PUSH)
+            .setCallbackConfig(callbackConfig)
+            .setHttpUri("http://localhost:13000/messages")
+            .setHttpMethod(HttpMethod.POST)
+            .setFilterOperator(FilterOperator.NOR)
+            .setParallelism(1)
+            .setRequestTimeout(60000)
+            .setElastic(false).build()
         );
     }
 }

@@ -6,6 +6,11 @@
       /code/src/oss/flatbuffers/flatc -o ./core/src/main/java/ --java schema/message.fbs
     - The above should put the Message.java file under the project src/main/java directory
 
+*** Generating Protobuf classes
+    - From root directory run:
+     protoc -I schema --java_out=core/src/main/java/ schema/entities.proto schema/requests.proto schema/responses.proto
+    - This will generate all protocol classes.
+
 *** Building the project
     ./gradlew build
 
