@@ -1,7 +1,9 @@
 package com.flipkart.vbroker.handlers;
 
 import com.flipkart.vbroker.core.PartSubscription;
-import com.flipkart.vbroker.entities.*;
+import com.flipkart.vbroker.entities.RequestMessage;
+import com.flipkart.vbroker.entities.VRequest;
+import com.flipkart.vbroker.entities.VResponse;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.extern.slf4j.Slf4j;

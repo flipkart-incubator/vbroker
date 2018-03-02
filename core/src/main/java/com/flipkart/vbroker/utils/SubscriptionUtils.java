@@ -2,7 +2,6 @@ package com.flipkart.vbroker.utils;
 
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.core.TopicPartition;
-import com.flipkart.vbroker.entities.Subscription;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -5,7 +5,6 @@ import com.google.protobuf.util.JsonFormat;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import com.flipkart.TestProtos;
 
 import java.util.Arrays;
 
@@ -18,7 +17,7 @@ import static com.flipkart.TestProtos.*;
 public class ProtobufTest {
 
     @Test
-    public void shouldEncodeDecodeSimpleObject(){
+    public void shouldEncodeDecodeSimpleObject() {
         Topic topic = getSampleTopic(1);
         log.info(topic.toString());
         byte[] topicBytes = topic.toByteArray();
@@ -73,11 +72,11 @@ public class ProtobufTest {
         VRequest vRequest1 = VRequest.parseFrom(requestBytes);
         RequestMessage requestMessage1 = vRequest1.getRequestMessage();
         RequestMessage.RequestMessageCase requestMessageCase = requestMessage1.getRequestMessageCase();
-        switch (requestMessageCase){
+        switch (requestMessageCase) {
             case GETSUBSCRIPTIONSREQUEST:
                 throw new IllegalArgumentException();
             case GETTOPICSREQUEST:
-                Assert.assertTrue(requestMessage.getGetTopicsRequest().getTopicIdsList().equals(Arrays.asList(1,2)));
+                Assert.assertTrue(requestMessage.getGetTopicsRequest().getTopicIdsList().equals(Arrays.asList(1, 2)));
                 break;
             case REQUESTMESSAGE_NOT_SET:
                 throw new IllegalArgumentException();
@@ -86,7 +85,7 @@ public class ProtobufTest {
 
     //reuse object
     @Test
-    public void shouldBeAbleToReuseObjectsAndRepeatedTypes(){
+    public void shouldBeAbleToReuseObjectsAndRepeatedTypes() {
         Topic topic = getSampleTopic(1);
         VStatus.Builder statusBuilder = VStatus.newBuilder();
         VStatus vStatus = statusBuilder.setStatusCode(200).setMessage("OK").build();
@@ -108,12 +107,12 @@ public class ProtobufTest {
     }
 
     @Test
-    public void buildObjectShouldBeFinal(){
+    public void buildObjectShouldBeFinal() {
         Topic topic = getSampleTopic(1);
         //? No setters in topic, only getters
     }
 
-    private Topic getSampleTopic(int id){
+    private Topic getSampleTopic(int id) {
         Topic.Builder topicBuilder = Topic.newBuilder();
         topicBuilder.setId(id);
         topicBuilder.setName("topic-1");

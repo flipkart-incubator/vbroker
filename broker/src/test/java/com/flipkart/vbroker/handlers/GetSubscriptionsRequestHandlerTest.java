@@ -1,6 +1,8 @@
 package com.flipkart.vbroker.handlers;
 
-import com.flipkart.vbroker.entities.*;
+import com.flipkart.vbroker.entities.RequestMessage;
+import com.flipkart.vbroker.entities.VRequest;
+import com.flipkart.vbroker.entities.VResponse;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.google.flatbuffers.FlatBufferBuilder;
@@ -11,10 +13,7 @@ import org.testng.annotations.Test;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static org.testng.Assert.*;
 
 /**
  * Created by kaushal.hooda on 27/02/18.
@@ -31,7 +30,7 @@ public class GetSubscriptionsRequestHandlerTest {
     }
 
     @Test
-    public void shouldReturnExistingSubscription(){
+    public void shouldReturnExistingSubscription() {
 //        Mockito.when(subscriptionService.getSubscription((short) 1, (short) 1))
 //            .thenReturn(DummyEntities.groupedSubscription)
         VRequest vRequest = generateVRequeset(Arrays.asList(new Pair<>((short) 1, (short) 1)));
@@ -39,7 +38,7 @@ public class GetSubscriptionsRequestHandlerTest {
         GetSubscriptionsResponse subscriptionsResponse = (GetSubscriptionsResponse) response.responseMessage(new GetSubscriptionsResponse());
     }
 
-    private VRequest generateVRequeset(List<Pair<Short, Short>> topicSubscriptions){
+    private VRequest generateVRequeset(List<Pair<Short, Short>> topicSubscriptions) {
         FlatBufferBuilder builder = new FlatBufferBuilder();
         List<TopicSubscription> subscriptions = topicSubscriptions.stream()
             .map(pair -> FlatbufUtils.createTopicSubscription(pair.getKey(), pair.getValue())).collect(Collectors.toList());

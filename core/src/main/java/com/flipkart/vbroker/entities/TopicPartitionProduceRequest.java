@@ -20,8 +20,8 @@ public final class TopicPartitionProduceRequest extends Table {
     }
 
     public static int createTopicPartitionProduceRequest(FlatBufferBuilder builder,
-                                                         short partitionId,
-                                                         short requiredAcks,
+                                                         int partitionId,
+                                                         int requiredAcks,
                                                          int messageSetOffset) {
         builder.startObject(3);
         TopicPartitionProduceRequest.addMessageSet(builder, messageSetOffset);
@@ -34,12 +34,12 @@ public final class TopicPartitionProduceRequest extends Table {
         builder.startObject(3);
     }
 
-    public static void addPartitionId(FlatBufferBuilder builder, short partitionId) {
-        builder.addShort(0, partitionId, 0);
+    public static void addPartitionId(FlatBufferBuilder builder, int partitionId) {
+        builder.addInt(0, partitionId, 0);
     }
 
-    public static void addRequiredAcks(FlatBufferBuilder builder, short requiredAcks) {
-        builder.addShort(1, requiredAcks, 0);
+    public static void addRequiredAcks(FlatBufferBuilder builder, int requiredAcks) {
+        builder.addInt(1, requiredAcks, 0);
     }
 
     public static void addMessageSet(FlatBufferBuilder builder, int messageSetOffset) {
@@ -61,14 +61,14 @@ public final class TopicPartitionProduceRequest extends Table {
         return this;
     }
 
-    public short partitionId() {
+    public int partitionId() {
         int o = __offset(4);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
     }
 
-    public short requiredAcks() {
+    public int requiredAcks() {
         int o = __offset(6);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
     }
 
     public MessageSet messageSet() {

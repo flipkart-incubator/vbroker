@@ -25,14 +25,14 @@ public final class Message extends Table {
                                     byte crc,
                                     byte version,
                                     int seqNo,
-                                    short topicId,
-                                    short partitionId,
+                                    int topicId,
+                                    int partitionId,
                                     int attributes,
                                     int httpUriOffset,
-                                    byte httpMethod,
-                                    short callbackTopicId,
+                                    int httpMethod,
+                                    int callbackTopicId,
                                     int callbackHttpUriOffset,
-                                    byte callbackHttpMethod,
+                                    int callbackHttpMethod,
                                     int headersOffset,
                                     int bodyLength,
                                     int bodyPayloadOffset) {
@@ -40,17 +40,17 @@ public final class Message extends Table {
         Message.addBodyPayload(builder, bodyPayloadOffset);
         Message.addBodyLength(builder, bodyLength);
         Message.addHeaders(builder, headersOffset);
+        Message.addCallbackHttpMethod(builder, callbackHttpMethod);
         Message.addCallbackHttpUri(builder, callbackHttpUriOffset);
+        Message.addCallbackTopicId(builder, callbackTopicId);
+        Message.addHttpMethod(builder, httpMethod);
         Message.addHttpUri(builder, httpUriOffset);
         Message.addAttributes(builder, attributes);
+        Message.addPartitionId(builder, partitionId);
+        Message.addTopicId(builder, topicId);
         Message.addSeqNo(builder, seqNo);
         Message.addGroupId(builder, groupIdOffset);
         Message.addMessageId(builder, messageIdOffset);
-        Message.addCallbackTopicId(builder, callbackTopicId);
-        Message.addPartitionId(builder, partitionId);
-        Message.addTopicId(builder, topicId);
-        Message.addCallbackHttpMethod(builder, callbackHttpMethod);
-        Message.addHttpMethod(builder, httpMethod);
         Message.addVersion(builder, version);
         Message.addCrc(builder, crc);
         return Message.endMessage(builder);
@@ -80,12 +80,12 @@ public final class Message extends Table {
         builder.addInt(4, seqNo, 0);
     }
 
-    public static void addTopicId(FlatBufferBuilder builder, short topicId) {
-        builder.addShort(5, topicId, 0);
+    public static void addTopicId(FlatBufferBuilder builder, int topicId) {
+        builder.addInt(5, topicId, 0);
     }
 
-    public static void addPartitionId(FlatBufferBuilder builder, short partitionId) {
-        builder.addShort(6, partitionId, 0);
+    public static void addPartitionId(FlatBufferBuilder builder, int partitionId) {
+        builder.addInt(6, partitionId, 0);
     }
 
     public static void addAttributes(FlatBufferBuilder builder, int attributes) {
@@ -96,20 +96,20 @@ public final class Message extends Table {
         builder.addOffset(8, httpUriOffset, 0);
     }
 
-    public static void addHttpMethod(FlatBufferBuilder builder, byte httpMethod) {
-        builder.addByte(9, httpMethod, 0);
+    public static void addHttpMethod(FlatBufferBuilder builder, int httpMethod) {
+        builder.addInt(9, httpMethod, 0);
     }
 
-    public static void addCallbackTopicId(FlatBufferBuilder builder, short callbackTopicId) {
-        builder.addShort(10, callbackTopicId, 0);
+    public static void addCallbackTopicId(FlatBufferBuilder builder, int callbackTopicId) {
+        builder.addInt(10, callbackTopicId, 0);
     }
 
     public static void addCallbackHttpUri(FlatBufferBuilder builder, int callbackHttpUriOffset) {
         builder.addOffset(11, callbackHttpUriOffset, 0);
     }
 
-    public static void addCallbackHttpMethod(FlatBufferBuilder builder, byte callbackHttpMethod) {
-        builder.addByte(12, callbackHttpMethod, 0);
+    public static void addCallbackHttpMethod(FlatBufferBuilder builder, int callbackHttpMethod) {
+        builder.addInt(12, callbackHttpMethod, 0);
     }
 
     public static void addHeaders(FlatBufferBuilder builder, int headersOffset) {
@@ -192,14 +192,14 @@ public final class Message extends Table {
         return o != 0 ? bb.getInt(o + bb_pos) : 0;
     }
 
-    public short topicId() {
+    public int topicId() {
         int o = __offset(14);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
     }
 
-    public short partitionId() {
+    public int partitionId() {
         int o = __offset(16);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
     }
 
     public int attributes() {
@@ -216,14 +216,14 @@ public final class Message extends Table {
         return __vector_as_bytebuffer(20, 1);
     }
 
-    public byte httpMethod() {
+    public int httpMethod() {
         int o = __offset(22);
-        return o != 0 ? bb.get(o + bb_pos) : 0;
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
     }
 
-    public short callbackTopicId() {
+    public int callbackTopicId() {
         int o = __offset(24);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
     }
 
     public String callbackHttpUri() {
@@ -235,9 +235,9 @@ public final class Message extends Table {
         return __vector_as_bytebuffer(26, 1);
     }
 
-    public byte callbackHttpMethod() {
+    public int callbackHttpMethod() {
         int o = __offset(28);
-        return o != 0 ? bb.get(o + bb_pos) : 0;
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
     }
 
     public HttpHeader headers(int j) {

@@ -1,6 +1,8 @@
 package com.flipkart.vbroker.utils;
 
-import com.flipkart.vbroker.entities.*;
+import com.flipkart.vbroker.proto.TopicCategory;
+import com.flipkart.vbroker.wrappers.Subscription;
+import com.flipkart.vbroker.wrappers.Topic;
 import com.google.flatbuffers.FlatBufferBuilder;
 
 public class DummyEntities {

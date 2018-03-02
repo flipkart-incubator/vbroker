@@ -4,7 +4,7 @@ enum ApiKey:byte {ProduceRequest=0, ProduceResponse=1}
 
 // status codes
 
-enum StatusCode:int16 {
+enum StatusCode:int32 {
 None=0,
 ProduceSuccess_NoError=101,
 ProduceFailed_NoLeader=151,
@@ -34,6 +34,13 @@ Entity_Not_Exists=506
 
 // common entities
 
+enum HttpMethod:int32 {
+    POST = 0,
+    PUT = 1,
+    DELETE = 2,
+    PATCH = 3
+}
+
 table HttpHeader {
 	key:string;
 	value:string;
@@ -45,12 +52,12 @@ table Message {
 	crc:int8;
 	version:int8;
 	seqNo:int32;
-	topicId:int16;
-	partitionId:int16;
+	topicId:int32;
+	partitionId:int32;
 	attributes:int32;
 	httpUri:string;
 	httpMethod:HttpMethod;
-	callbackTopicId:int16;
+	callbackTopicId:int32;
 	callbackHttpUri:string;
 	callbackHttpMethod:HttpMethod;
 	headers:[HttpHeader];
@@ -77,13 +84,13 @@ table VRequest {
 // produce request
 
 table TopicPartitionProduceRequest {
-	partitionId:int16;
-	requiredAcks:int16;
+	partitionId:int32;
+	requiredAcks:int32;
 	messageSet:MessageSet;
 }
 
 table TopicProduceRequest {
-	topicId:int16;
+	topicId:int32;
 	partitionRequests:[TopicPartitionProduceRequest];
 }
 
@@ -94,13 +101,13 @@ table ProduceRequest {
 // fetch request
 
 table TopicPartitionFetchRequest {
-	partitionId:int16;
-	noOfMessages:int16;
+	partitionId:int32;
+	noOfMessages:int32;
 }
 
 table TopicFetchRequest {
-	subscriptionId:int16;
-	topicId:int16;
+	subscriptionId:int32;
+	topicId:int32;
 	partitionRequests:[TopicPartitionFetchRequest];
 }
 
@@ -135,12 +142,12 @@ table VResponse {
 //ProduceResponse
 
 table TopicPartitionProduceResponse {
-	partitionId:int16;
+	partitionId:int32;
 	status:VStatus;
 }
 
 table TopicProduceResponse {
-	topicId:int16;
+	topicId:int32;
 	partitionResponses:[TopicPartitionProduceResponse];
 }
 
@@ -151,14 +158,14 @@ table ProduceResponse {
 //FetchResponse
 
 table TopicPartitionFetchResponse {
-	partitionId:int16;
+	partitionId:int32;
 	status:VStatus;
 	messageSet:MessageSet;
 }
 
 table TopicFetchResponse {
-	subscriptionId:int16;
-	topicId:int16;
+	subscriptionId:int32;
+	topicId:int32;
 	partitionResponses:[TopicPartitionFetchResponse];
 }
 

@@ -6,14 +6,8 @@ public final class RequestMessage {
     public static final byte NONE = 0;
     public static final byte ProduceRequest = 1;
     public static final byte FetchRequest = 2;
-    public static final byte CreateTopicsRequest = 3;
-    public static final byte CreateSubscriptionsRequest = 4;
-    public static final byte CreateQueuesRequest = 5;
-    public static final byte GetTopicsRequest = 6;
-    public static final byte GetSubscriptionsRequest = 7;
-    public static final byte GetQueuesRequest = 8;
-    public static final byte GetLagsRequest = 9;
-    public static final String[] names = {"NONE", "ProduceRequest", "FetchRequest", "CreateTopicsRequest", "CreateSubscriptionsRequest", "CreateQueuesRequest", "GetTopicsRequest", "GetSubscriptionsRequest", "GetQueuesRequest", "GetLagsRequest",};
+    public static final byte ControlRequest = 3;
+    public static final String[] names = {"NONE", "ProduceRequest", "FetchRequest", "ControlRequest",};
 
     private RequestMessage() {
     }

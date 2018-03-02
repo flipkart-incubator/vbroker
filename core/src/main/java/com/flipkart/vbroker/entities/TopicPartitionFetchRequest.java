@@ -20,8 +20,8 @@ public final class TopicPartitionFetchRequest extends Table {
     }
 
     public static int createTopicPartitionFetchRequest(FlatBufferBuilder builder,
-                                                       short partitionId,
-                                                       short noOfMessages) {
+                                                       int partitionId,
+                                                       int noOfMessages) {
         builder.startObject(2);
         TopicPartitionFetchRequest.addNoOfMessages(builder, noOfMessages);
         TopicPartitionFetchRequest.addPartitionId(builder, partitionId);
@@ -32,12 +32,12 @@ public final class TopicPartitionFetchRequest extends Table {
         builder.startObject(2);
     }
 
-    public static void addPartitionId(FlatBufferBuilder builder, short partitionId) {
-        builder.addShort(0, partitionId, 0);
+    public static void addPartitionId(FlatBufferBuilder builder, int partitionId) {
+        builder.addInt(0, partitionId, 0);
     }
 
-    public static void addNoOfMessages(FlatBufferBuilder builder, short noOfMessages) {
-        builder.addShort(1, noOfMessages, 0);
+    public static void addNoOfMessages(FlatBufferBuilder builder, int noOfMessages) {
+        builder.addInt(1, noOfMessages, 0);
     }
 
     public static int endTopicPartitionFetchRequest(FlatBufferBuilder builder) {
@@ -55,14 +55,14 @@ public final class TopicPartitionFetchRequest extends Table {
         return this;
     }
 
-    public short partitionId() {
+    public int partitionId() {
         int o = __offset(4);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
     }
 
-    public short noOfMessages() {
+    public int noOfMessages() {
         int o = __offset(6);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
     }
 }
 

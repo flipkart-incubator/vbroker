@@ -20,8 +20,8 @@ public final class TopicFetchRequest extends Table {
     }
 
     public static int createTopicFetchRequest(FlatBufferBuilder builder,
-                                              short subscriptionId,
-                                              short topicId,
+                                              int subscriptionId,
+                                              int topicId,
                                               int partitionRequestsOffset) {
         builder.startObject(3);
         TopicFetchRequest.addPartitionRequests(builder, partitionRequestsOffset);
@@ -34,12 +34,12 @@ public final class TopicFetchRequest extends Table {
         builder.startObject(3);
     }
 
-    public static void addSubscriptionId(FlatBufferBuilder builder, short subscriptionId) {
-        builder.addShort(0, subscriptionId, 0);
+    public static void addSubscriptionId(FlatBufferBuilder builder, int subscriptionId) {
+        builder.addInt(0, subscriptionId, 0);
     }
 
-    public static void addTopicId(FlatBufferBuilder builder, short topicId) {
-        builder.addShort(1, topicId, 0);
+    public static void addTopicId(FlatBufferBuilder builder, int topicId) {
+        builder.addInt(1, topicId, 0);
     }
 
     public static void addPartitionRequests(FlatBufferBuilder builder, int partitionRequestsOffset) {
@@ -71,14 +71,14 @@ public final class TopicFetchRequest extends Table {
         return this;
     }
 
-    public short subscriptionId() {
+    public int subscriptionId() {
         int o = __offset(4);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
     }
 
-    public short topicId() {
+    public int topicId() {
         int o = __offset(6);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
     }
 
     public TopicPartitionFetchRequest partitionRequests(int j) {

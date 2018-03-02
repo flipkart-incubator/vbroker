@@ -3,10 +3,10 @@
 package com.flipkart.vbroker.entities;
 
 public final class HttpMethod {
-    public static final byte POST = 0;
-    public static final byte PUT = 1;
-    public static final byte DELETE = 2;
-    public static final byte PATCH = 3;
+    public static final int POST = 0;
+    public static final int PUT = 1;
+    public static final int DELETE = 2;
+    public static final int PATCH = 3;
     public static final String[] names = {"POST", "PUT", "DELETE", "PATCH",};
 
     private HttpMethod() {

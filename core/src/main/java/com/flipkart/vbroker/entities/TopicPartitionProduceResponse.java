@@ -20,7 +20,7 @@ public final class TopicPartitionProduceResponse extends Table {
     }
 
     public static int createTopicPartitionProduceResponse(FlatBufferBuilder builder,
-                                                          short partitionId,
+                                                          int partitionId,
                                                           int statusOffset) {
         builder.startObject(2);
         TopicPartitionProduceResponse.addStatus(builder, statusOffset);
@@ -32,8 +32,8 @@ public final class TopicPartitionProduceResponse extends Table {
         builder.startObject(2);
     }
 
-    public static void addPartitionId(FlatBufferBuilder builder, short partitionId) {
-        builder.addShort(0, partitionId, 0);
+    public static void addPartitionId(FlatBufferBuilder builder, int partitionId) {
+        builder.addInt(0, partitionId, 0);
     }
 
     public static void addStatus(FlatBufferBuilder builder, int statusOffset) {
@@ -55,9 +55,9 @@ public final class TopicPartitionProduceResponse extends Table {
         return this;
     }
 
-    public short partitionId() {
+    public int partitionId() {
         int o = __offset(4);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
     }
 
     public VStatus status() {

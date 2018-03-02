@@ -1,6 +1,7 @@
 package com.flipkart.vbroker.client;
 
-import com.flipkart.vbroker.entities.*;
+import com.flipkart.vbroker.entities.RequestMessage;
+import com.flipkart.vbroker.entities.VRequest;
 import com.flipkart.vbroker.handlers.ResponseHandlerFactory;
 import com.flipkart.vbroker.protocol.Request;
 import com.flipkart.vbroker.protocol.codecs.VBrokerClientCodec;

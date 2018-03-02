@@ -20,7 +20,7 @@ public final class VStatus extends Table {
     }
 
     public static int createVStatus(FlatBufferBuilder builder,
-                                    short statusCode,
+                                    int statusCode,
                                     int messageOffset) {
         builder.startObject(2);
         VStatus.addMessage(builder, messageOffset);
@@ -32,8 +32,8 @@ public final class VStatus extends Table {
         builder.startObject(2);
     }
 
-    public static void addStatusCode(FlatBufferBuilder builder, short statusCode) {
-        builder.addShort(0, statusCode, 0);
+    public static void addStatusCode(FlatBufferBuilder builder, int statusCode) {
+        builder.addInt(0, statusCode, 0);
     }
 
     public static void addMessage(FlatBufferBuilder builder, int messageOffset) {
@@ -55,9 +55,9 @@ public final class VStatus extends Table {
         return this;
     }
 
-    public short statusCode() {
+    public int statusCode() {
         int o = __offset(4);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
     }
 
     public String message() {

@@ -20,7 +20,7 @@ public final class TopicProduceResponse extends Table {
     }
 
     public static int createTopicProduceResponse(FlatBufferBuilder builder,
-                                                 short topicId,
+                                                 int topicId,
                                                  int partitionResponsesOffset) {
         builder.startObject(2);
         TopicProduceResponse.addPartitionResponses(builder, partitionResponsesOffset);
@@ -32,8 +32,8 @@ public final class TopicProduceResponse extends Table {
         builder.startObject(2);
     }
 
-    public static void addTopicId(FlatBufferBuilder builder, short topicId) {
-        builder.addShort(0, topicId, 0);
+    public static void addTopicId(FlatBufferBuilder builder, int topicId) {
+        builder.addInt(0, topicId, 0);
     }
 
     public static void addPartitionResponses(FlatBufferBuilder builder, int partitionResponsesOffset) {
@@ -65,9 +65,9 @@ public final class TopicProduceResponse extends Table {
         return this;
     }
 
-    public short topicId() {
+    public int topicId() {
         int o = __offset(4);
-        return o != 0 ? bb.getShort(o + bb_pos) : 0;
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
     }
 
     public TopicPartitionProduceResponse partitionResponses(int j) {
