@@ -1,11 +1,10 @@
 package com.flipkart.vbroker.client;
 
-import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.handlers.ResponseHandlerFactory;
 import com.flipkart.vbroker.protocol.Request;
-import com.flipkart.vbroker.subscribers.DummyEntities;
+import com.flipkart.vbroker.utils.DummyEntities;
 import com.flipkart.vbroker.utils.TopicUtils;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.bootstrap.Bootstrap;
@@ -27,7 +26,7 @@ public class VBrokerClient {
 
     public static void main(String args[]) throws InterruptedException, IOException {
 
-        VBrokerConfig config = VBrokerConfig.newConfig("broker.properties");
+        VBClientConfig config = VBClientConfig.newConfig("client.properties");
         log.info("Configs: ", config);
 
         EventLoopGroup group = new NioEventLoopGroup();
@@ -44,7 +43,7 @@ public class VBrokerClient {
             FlatBufferBuilder builder = new FlatBufferBuilder();
 
             List<Topic> topics = new LinkedList<>();
-            topics.add(DummyEntities.groupedTopic);
+            topics.add(DummyEntities.unGroupedTopic);
 
             int[] topicRequests = new int[topics.size()];
             for (int tIdx = 0; tIdx < topics.size(); tIdx++) {

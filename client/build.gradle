@@ -1,0 +1,27 @@
+apply plugin: 'application'
+apply plugin: 'java'
+
+version = '1.0-SNAPSHOT'
+sourceCompatibility = '1.8'
+mainClassName = "com.flipkart.vbroker.client.VBrokerProducerClient"
+
+//src dependencies
+def nettyVersion = "4.1.21.Final"
+
+//test dependencies
+def restitoVersion = "0.9.3"
+def testNgVersion = "6.14.2"
+
+dependencies {
+    //networking
+    compile "io.netty:netty-all:${nettyVersion}"
+
+    compile project(':core')
+
+    //testing
+    testCompile("com.xebialabs.restito:restito:${restitoVersion}") {
+        exclude group: 'junit', module: 'junit'
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
+    testCompile "org.testng:testng:${testNgVersion}"
+}

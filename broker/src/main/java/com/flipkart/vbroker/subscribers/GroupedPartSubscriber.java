@@ -78,9 +78,9 @@ public class GroupedPartSubscriber implements PartSubscriber {
         return new PartSubscriberIterator() {
             @Override
             protected Optional<PeekingIterator<IterableMessage>> nextIterator() {
-                log.info("Getting next iterator for QType {}", qType);
+                log.debug("Getting next iterator for QType {}", qType);
                 Optional<PeekingIterator<IterableMessage>> iterator = subPartDataManager.getIterator(partSubscription, qType);
-                log.info("Next iterator: {}", iterator);
+                log.debug("Next iterator: {}", iterator);
                 return iterator;
             }
         };

@@ -1,7 +1,6 @@
 package com.flipkart.integration;
 
 import com.flipkart.vbroker.VBrokerConfig;
-import com.flipkart.vbroker.client.VBrokerClient;
 import com.flipkart.vbroker.server.VBrokerServer;
 import com.xebialabs.restito.semantics.Condition;
 import com.xebialabs.restito.server.StubServer;
@@ -25,6 +24,7 @@ import static com.xebialabs.restito.semantics.Condition.uri;
  */
 public class ProduceMessageTest {
     public static final int MOCK_CONSUMER_PORT = 15000;
+
     VBrokerServer server;
     StubServer stubServer;
 
@@ -44,10 +44,11 @@ public class ProduceMessageTest {
 
     @Test
     public void shouldProduceAndConsumeMessage() throws IOException, InterruptedException {
+
         whenHttp(stubServer).match(Condition.post("/messages")).then(status(HttpStatus.OK_200));
 
         //Send produce request
-        VBrokerClient.main(new String[0]);
+        //VBrokerProducerClient.main(new String[0]);
 
         //Verify the message is consumed
         verifyHttp(stubServer).once(method(Method.POST),

@@ -22,7 +22,10 @@ public class InMemoryGroupedTopicPartData implements TopicPartData {
             getMessages(message.groupId()).add(message);
             log.trace("Added message with msg_id {} and group_id {} to the map", message.messageId(), message.groupId());
             log.trace("Group messages: {}", topicPartitionData.get(message.groupId()));
-            return new MessageMetadata(message.topicId(), message.partitionId(), new Random().nextInt());
+            return new MessageMetadata(message.messageId(),
+                message.topicId(),
+                message.partitionId(),
+                new Random().nextInt());
         });
     }
 

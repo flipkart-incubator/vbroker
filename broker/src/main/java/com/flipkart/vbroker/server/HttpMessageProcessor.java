@@ -71,9 +71,11 @@ public class HttpMessageProcessor implements MessageProcessor {
         return reqFuture
             .thenApply(response -> handleResponse(response, iterableMessage).toCompletableFuture())
             .exceptionally(throwable -> {
+                log.error("Exception in handling response: {}", throwable.getMessage());
                 if (throwable instanceof TimeoutException) {
                     return retry(iterableMessage).toCompletableFuture();
                 } else {
+                    log.info("Sidelining the message {}", iterableMessage.getMessage().messageId());
                     return sideline(iterableMessage).toCompletableFuture();
                 }
             })
@@ -180,12 +182,12 @@ public class HttpMessageProcessor implements MessageProcessor {
                 TopicPartMessage topicPartMessage =
                     TopicPartMessage.newInstance(topicPartition, callbackMsg);
                 return producerService.produceMessage(topicPartMessage);
-            }).exceptionally(input -> {
-                if (input instanceof TopicNotFoundException) {
+            }).exceptionally(e -> {
+                if (e instanceof TopicNotFoundException) {
                     log.error("Topic with id {} not found to produce callback message. Dropping it");
                     return null;
                 } else {
-                    throw new CallbackProducingFailedException("Unable to produce callback message. Please retry again");
+                    throw new CallbackProducingFailedException("Unable to produce callback message. Please retry again", e);
                 }
             });
     }

@@ -25,7 +25,11 @@ public class InMemoryUnGroupedTopicPartData implements TopicPartData {
     public CompletionStage<MessageMetadata> addMessage(Message message) {
         return CompletableFuture.supplyAsync(() -> {
             messages.add(message);
-            return new MessageMetadata(message.topicId(), message.partitionId(), new Random().nextInt());
+            return new MessageMetadata(
+                message.messageId(),
+                message.topicId(),
+                message.partitionId(),
+                new Random().nextInt());
         });
     }
 

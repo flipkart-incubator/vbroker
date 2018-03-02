@@ -37,9 +37,8 @@ public class CompletionStageTest {
     }
 
 
-
     @Test
-    public void whatIfLocalVariableUpdated(){
+    public void whatIfLocalVariableUpdated() {
         String s = "hello";
         //Need this otherwise we'll get error as we update s later
         String finalS = s;
@@ -56,14 +55,14 @@ public class CompletionStageTest {
     }
 
     @Test
-    public void allOfFuturesThrowsExceptionWhenOneThrows(){
+    public void allOfFuturesThrowsExceptionWhenOneThrows() {
         CompletableFuture<String> cf1 = CompletableFuture.completedFuture("a");
         CompletableFuture<String> cf2 = CompletableFuture.supplyAsync(() -> {
             throw new NullPointerException();
         });
 
         CompletableFuture<Void> allFuture = CompletableFuture.allOf(cf1, cf2);
-        if(allFuture.isCompletedExceptionally()) {
+        if (allFuture.isCompletedExceptionally()) {
             allFuture.exceptionally(throwable -> {
                 log.error("AllFuture completed exceptionally with error {}", throwable);
                 return null;
@@ -74,7 +73,7 @@ public class CompletionStageTest {
     }
 
     @Test
-    public void shouldCatchRegularException(){
+    public void shouldCatchRegularException() {
         LengthGetter lengthGetter = new LengthGetter();
         LengthMessageGetter lengthMessageGetter = new LengthMessageGetter(lengthGetter);
         String ret = lengthMessageGetter.getLengthMessage("exceptional").toCompletableFuture().join();
@@ -82,7 +81,7 @@ public class CompletionStageTest {
     }
 
     @Test
-    public void shouldCatchMockReturningExceptionalFuture(){
+    public void shouldCatchMockReturningExceptionalFuture() {
         LengthGetter lengthGetter = Mockito.mock(LengthGetter.class);
         Mockito.when(lengthGetter.getLength("exceptional"))
             .thenReturn(CompletableFuture.supplyAsync(() -> {
@@ -94,7 +93,7 @@ public class CompletionStageTest {
     }
 
     @Test(expectedExceptions = RuntimeException.class)
-    void shouldNotCatchMockThrowingException(){
+    void shouldNotCatchMockThrowingException() {
         LengthGetter lengthGetter = Mockito.mock(LengthGetter.class);
         Mockito.when(lengthGetter.getLength("exceptional"))
             .thenThrow(new RuntimeException("whoops"));
@@ -106,6 +105,7 @@ public class CompletionStageTest {
     @AllArgsConstructor
     public class LengthMessageGetter {
         private LengthGetter lengthGetter;
+
         public CompletionStage<String> getLengthMessage(String s) {
             return lengthGetter.getLength(s)
                 .thenApply(len -> "Len was: ".concat(len.toString()))

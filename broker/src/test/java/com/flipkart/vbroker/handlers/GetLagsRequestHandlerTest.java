@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.ExecutionException;
-import java.util.function.Supplier;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -35,7 +33,7 @@ public class GetLagsRequestHandlerTest {
     }
 
     @Test
-    public void shouldGetLagForOneSubscriptionWithOnePartition(){
+    public void shouldGetLagForOneSubscriptionWithOnePartition() {
         vRequest = generateVRequest(lagsReqForOnePartition());
 
         Subscription subscription = mock(Subscription.class);
@@ -58,7 +56,7 @@ public class GetLagsRequestHandlerTest {
     }
 
     @Test
-    public void shouldCatchExceptionInGetPartSubscriptionLag(){
+    public void shouldCatchExceptionInGetPartSubscriptionLag() {
         vRequest = generateVRequest(lagsReqForOnePartition());
 
         Subscription subscription = mock(Subscription.class);
@@ -83,7 +81,7 @@ public class GetLagsRequestHandlerTest {
     }
 
     @Test
-    public void shouldCatchExceptionInGetPartSubscription(){
+    public void shouldCatchExceptionInGetPartSubscription() {
         vRequest = generateVRequest(lagsReqForOnePartition());
 
         Subscription subscription = mock(Subscription.class);
@@ -101,7 +99,8 @@ public class GetLagsRequestHandlerTest {
         Assert.assertEquals(lag, -1);
     }
 
-    @Test void shouldCatchExceptionInGetSubscription(){
+    @Test
+    void shouldCatchExceptionInGetSubscription() {
         vRequest = generateVRequest(lagsReqForOnePartition());
 
         when(subscriptionService.getSubscription((short) 1, (short) 1))

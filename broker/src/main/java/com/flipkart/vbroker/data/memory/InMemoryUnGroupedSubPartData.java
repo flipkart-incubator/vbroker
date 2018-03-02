@@ -108,6 +108,12 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
             .toCompletableFuture().join();
     }
 
+    @Override
+    public CompletionStage<Integer> getLag() {
+        return topicPartDataManager.getCurrentOffset(partSubscription.getTopicPartition());
+
+    }
+
     @AllArgsConstructor
     class UnGroupedIterator implements PeekingIterator<IterableMessage> {
 
@@ -176,11 +182,5 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
             //log.debug("Total failed messages are {} and currIdx is {}", totalSize, currIndex);
             return currIndex < totalSize;
         }
-    }
-
-    @Override
-    public CompletionStage<Integer> getLag() {
-        return topicPartDataManager.getCurrentOffset(partSubscription.getTopicPartition());
-
     }
 }

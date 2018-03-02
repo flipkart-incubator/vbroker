@@ -1,7 +1,5 @@
-package com.flipkart.vbroker.curator;
+package com.flipkart.vbroker.client;
 
-import com.flipkart.vbroker.VBrokerConfig;
-import com.flipkart.vbroker.client.VBrokerClientInitializer;
 import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.handlers.ResponseHandlerFactory;
 import com.flipkart.vbroker.protocol.Request;
@@ -30,7 +28,7 @@ public class TopicCreateTest {
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(group).channel(NioSocketChannel.class).handler(new TopicCreateClientInitializer());
 
-        VBrokerConfig config = VBrokerConfig.newConfig("broker.properties");
+        VBClientConfig config = VBClientConfig.newConfig("client.properties");
 
         Channel channel = bootstrap.connect(config.getBrokerHost(), config.getBrokerPort()).sync().channel();
 

@@ -35,7 +35,7 @@ public class RedisTopicPartDataManager implements TopicPartDataManager {
             allPartitionsDataMap.computeIfAbsent(topicPartition, topicPartition1 -> {
                 TopicPartData topicPartData;
                 if (topicPartition1.isGrouped()) {
-                    topicPartData = new RedisGroupedTopicPartDataLua(client, topicPartition1);
+                    topicPartData = new RedisGroupedTopicPartData(client, topicPartition1);
                 } else {
                     topicPartData = new RedisUnGroupedTopicPartData(client, topicPartition1);
                 }
