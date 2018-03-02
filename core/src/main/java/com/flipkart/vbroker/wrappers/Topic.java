@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
 public class Topic {
     private final ProtoTopic protoTopic;
 
-    public static Topic fromJson(String protoTopicJson){
+    public static Topic fromJson(String protoTopicJson) {
         ProtoTopic.Builder topicBuilder = ProtoTopic.newBuilder();
         try {
             JsonFormat.parser().merge(protoTopicJson, topicBuilder);
@@ -23,7 +23,7 @@ public class Topic {
         return new Topic(topicBuilder.build());
     }
 
-    public static Topic fromBytes(byte[] fromBytes){
+    public static Topic fromBytes(byte[] fromBytes) {
         try {
             return new Topic(ProtoTopic.parseFrom(fromBytes));
         } catch (InvalidProtocolBufferException e) {
@@ -31,27 +31,27 @@ public class Topic {
         }
     }
 
-    public int id(){
+    public int id() {
         return protoTopic.getId();
     }
 
-    public String name(){
+    public String name() {
         return protoTopic.getName();
     }
 
-    public boolean grouped(){
+    public boolean grouped() {
         return protoTopic.getGrouped();
     }
 
-    public int partitions(){
+    public int partitions() {
         return protoTopic.getPartitions();
     }
 
-    public int replicationFactor(){
+    public int replicationFactor() {
         return protoTopic.getReplicationFactor();
     }
 
-    public TopicCategory topicCategory(){
+    public TopicCategory topicCategory() {
         return protoTopic.getTopicCategory();
     }
 
@@ -69,11 +69,11 @@ public class Topic {
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return protoTopic.getId();
     }
 
-    public String toJson(){
+    public String toJson() {
         try {
             return JsonFormat.printer().print(protoTopic);
         } catch (InvalidProtocolBufferException e) {
@@ -81,7 +81,7 @@ public class Topic {
         }
     }
 
-    public byte[] toBytes(){
+    public byte[] toBytes() {
         return protoTopic.toByteArray();
     }
 }

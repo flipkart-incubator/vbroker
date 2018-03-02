@@ -1,7 +1,6 @@
 package com.flipkart.vbroker.core;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.flipkart.vbroker.proto.CodeRange;
 import com.flipkart.vbroker.utils.JsonUtils;
 import com.google.common.collect.Sets;
 import lombok.*;

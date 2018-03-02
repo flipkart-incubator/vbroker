@@ -3,7 +3,6 @@ package com.flipkart.vbroker.wrappers;
 import com.flipkart.vbroker.proto.ProtoQueue;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
-import lombok.AllArgsConstructor;
 
 /**
  * Created by kaushal.hooda on 02/03/18.
@@ -13,13 +12,13 @@ public class Queue {
     private final Topic topic;
     private final Subscription subscription;
 
-    public Queue(ProtoQueue protoQueue){
+    public Queue(ProtoQueue protoQueue) {
         this.protoQueue = protoQueue;
         this.topic = new Topic(protoQueue.getTopic());
         this.subscription = new Subscription(protoQueue.getSubscription());
     }
 
-    public static Queue fromJson(String protoQueueJson){
+    public static Queue fromJson(String protoQueueJson) {
         ProtoQueue.Builder builder = ProtoQueue.newBuilder();
         try {
             JsonFormat.parser().merge(protoQueueJson, builder);
@@ -29,7 +28,7 @@ public class Queue {
         return new Queue(builder.build());
     }
 
-    public static Queue fromBytes(byte[] bytes){
+    public static Queue fromBytes(byte[] bytes) {
         try {
             return new Queue(ProtoQueue.parseFrom(bytes));
         } catch (InvalidProtocolBufferException e) {
@@ -37,15 +36,15 @@ public class Queue {
         }
     }
 
-    public int id(){
+    public int id() {
         return protoQueue.getId();
     }
 
-    public Topic topic(){
+    public Topic topic() {
         return new Topic(protoQueue.getTopic());
     }
 
-    public Subscription subscription(){
+    public Subscription subscription() {
         return new Subscription(protoQueue.getSubscription());
     }
 
@@ -63,11 +62,11 @@ public class Queue {
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return protoQueue.getId();
     }
 
-    public String toJson(){
+    public String toJson() {
         try {
             return JsonFormat.printer().print(protoQueue);
         } catch (InvalidProtocolBufferException e) {
@@ -75,7 +74,7 @@ public class Queue {
         }
     }
 
-    public byte[] toBytes(){
+    public byte[] toBytes() {
         return protoQueue.toByteArray();
     }
 

@@ -7,13 +7,13 @@ public interface TopicSubscriptionOrBuilder extends
     // @@protoc_insertion_point(interface_extends:proto.TopicSubscription)
     com.google.protobuf.MessageOrBuilder {
 
-  /**
-   * <code>int32 subscriptionId = 1;</code>
-   */
-  int getSubscriptionId();
+    /**
+     * <code>int32 subscriptionId = 1;</code>
+     */
+    int getSubscriptionId();
 
-  /**
-   * <code>int32 topicId = 2;</code>
-   */
-  int getTopicId();
+    /**
+     * <code>int32 topicId = 2;</code>
+     */
+    int getTopicId();
 }

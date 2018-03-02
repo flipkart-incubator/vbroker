@@ -1,21 +1,17 @@
 package com.flipkart.vbroker.handlers;
 
 import com.flipkart.vbroker.core.PartSubscription;
-import com.flipkart.vbroker.flatbuf.RequestMessage;
 import com.flipkart.vbroker.flatbuf.VRequest;
 import com.flipkart.vbroker.flatbuf.VResponse;
 import com.flipkart.vbroker.proto.*;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.flipkart.vbroker.wrappers.Subscription;
-import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -44,7 +40,7 @@ public class GetSubscriptionLagsRequestHandlerTest {
         Subscription subscription = mock(Subscription.class);
         PartSubscription partSubscription = mock(PartSubscription.class);
 
-        when(subscriptionService.getSubscription(1,1))
+        when(subscriptionService.getSubscription(1, 1))
             .thenReturn(CompletableFuture.completedFuture(subscription));
         when(subscriptionService.getPartSubscription(subscription, 1))
             .thenReturn(CompletableFuture.completedFuture(partSubscription));

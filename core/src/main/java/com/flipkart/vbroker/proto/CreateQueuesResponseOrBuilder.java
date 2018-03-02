@@ -7,27 +7,31 @@ public interface CreateQueuesResponseOrBuilder extends
     // @@protoc_insertion_point(interface_extends:proto.CreateQueuesResponse)
     com.google.protobuf.MessageOrBuilder {
 
-  /**
-   * <code>repeated .proto.CreateQueueResponse createQueueResponses = 1;</code>
-   */
-  java.util.List<com.flipkart.vbroker.proto.CreateQueueResponse> 
-      getCreateQueueResponsesList();
-  /**
-   * <code>repeated .proto.CreateQueueResponse createQueueResponses = 1;</code>
-   */
-  com.flipkart.vbroker.proto.CreateQueueResponse getCreateQueueResponses(int index);
-  /**
-   * <code>repeated .proto.CreateQueueResponse createQueueResponses = 1;</code>
-   */
-  int getCreateQueueResponsesCount();
-  /**
-   * <code>repeated .proto.CreateQueueResponse createQueueResponses = 1;</code>
-   */
-  java.util.List<? extends com.flipkart.vbroker.proto.CreateQueueResponseOrBuilder> 
-      getCreateQueueResponsesOrBuilderList();
-  /**
-   * <code>repeated .proto.CreateQueueResponse createQueueResponses = 1;</code>
-   */
-  com.flipkart.vbroker.proto.CreateQueueResponseOrBuilder getCreateQueueResponsesOrBuilder(
-      int index);
+    /**
+     * <code>repeated .proto.CreateQueueResponse createQueueResponses = 1;</code>
+     */
+    java.util.List<com.flipkart.vbroker.proto.CreateQueueResponse>
+    getCreateQueueResponsesList();
+
+    /**
+     * <code>repeated .proto.CreateQueueResponse createQueueResponses = 1;</code>
+     */
+    com.flipkart.vbroker.proto.CreateQueueResponse getCreateQueueResponses(int index);
+
+    /**
+     * <code>repeated .proto.CreateQueueResponse createQueueResponses = 1;</code>
+     */
+    int getCreateQueueResponsesCount();
+
+    /**
+     * <code>repeated .proto.CreateQueueResponse createQueueResponses = 1;</code>
+     */
+    java.util.List<? extends com.flipkart.vbroker.proto.CreateQueueResponseOrBuilder>
+    getCreateQueueResponsesOrBuilderList();
+
+    /**
+     * <code>repeated .proto.CreateQueueResponse createQueueResponses = 1;</code>
+     */
+    com.flipkart.vbroker.proto.CreateQueueResponseOrBuilder getCreateQueueResponsesOrBuilder(
+        int index);
 }

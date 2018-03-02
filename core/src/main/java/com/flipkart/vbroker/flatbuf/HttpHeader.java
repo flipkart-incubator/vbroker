@@ -2,38 +2,75 @@
 
 package com.flipkart.vbroker.flatbuf;
 
-import java.nio.*;
-import java.lang.*;
+import com.google.flatbuffers.FlatBufferBuilder;
+import com.google.flatbuffers.Table;
 
-import com.google.flatbuffers.*;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 @SuppressWarnings("unused")
 public final class HttpHeader extends Table {
-  public static HttpHeader getRootAsHttpHeader(ByteBuffer _bb) { return getRootAsHttpHeader(_bb, new HttpHeader()); }
-  public static HttpHeader getRootAsHttpHeader(ByteBuffer _bb, HttpHeader obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; }
-  public HttpHeader __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+    public static HttpHeader getRootAsHttpHeader(ByteBuffer _bb) {
+        return getRootAsHttpHeader(_bb, new HttpHeader());
+    }
 
-  public String key() { int o = __offset(4); return o != 0 ? __string(o + bb_pos) : null; }
-  public ByteBuffer keyAsByteBuffer() { return __vector_as_bytebuffer(4, 1); }
-  public String value() { int o = __offset(6); return o != 0 ? __string(o + bb_pos) : null; }
-  public ByteBuffer valueAsByteBuffer() { return __vector_as_bytebuffer(6, 1); }
+    public static HttpHeader getRootAsHttpHeader(ByteBuffer _bb, HttpHeader obj) {
+        _bb.order(ByteOrder.LITTLE_ENDIAN);
+        return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
+    }
 
-  public static int createHttpHeader(FlatBufferBuilder builder,
-      int keyOffset,
-      int valueOffset) {
-    builder.startObject(2);
-    HttpHeader.addValue(builder, valueOffset);
-    HttpHeader.addKey(builder, keyOffset);
-    return HttpHeader.endHttpHeader(builder);
-  }
+    public static int createHttpHeader(FlatBufferBuilder builder,
+                                       int keyOffset,
+                                       int valueOffset) {
+        builder.startObject(2);
+        HttpHeader.addValue(builder, valueOffset);
+        HttpHeader.addKey(builder, keyOffset);
+        return HttpHeader.endHttpHeader(builder);
+    }
 
-  public static void startHttpHeader(FlatBufferBuilder builder) { builder.startObject(2); }
-  public static void addKey(FlatBufferBuilder builder, int keyOffset) { builder.addOffset(0, keyOffset, 0); }
-  public static void addValue(FlatBufferBuilder builder, int valueOffset) { builder.addOffset(1, valueOffset, 0); }
-  public static int endHttpHeader(FlatBufferBuilder builder) {
-    int o = builder.endObject();
-    return o;
-  }
+    public static void startHttpHeader(FlatBufferBuilder builder) {
+        builder.startObject(2);
+    }
+
+    public static void addKey(FlatBufferBuilder builder, int keyOffset) {
+        builder.addOffset(0, keyOffset, 0);
+    }
+
+    public static void addValue(FlatBufferBuilder builder, int valueOffset) {
+        builder.addOffset(1, valueOffset, 0);
+    }
+
+    public static int endHttpHeader(FlatBufferBuilder builder) {
+        int o = builder.endObject();
+        return o;
+    }
+
+    public void __init(int _i, ByteBuffer _bb) {
+        bb_pos = _i;
+        bb = _bb;
+    }
+
+    public HttpHeader __assign(int _i, ByteBuffer _bb) {
+        __init(_i, _bb);
+        return this;
+    }
+
+    public String key() {
+        int o = __offset(4);
+        return o != 0 ? __string(o + bb_pos) : null;
+    }
+
+    public ByteBuffer keyAsByteBuffer() {
+        return __vector_as_bytebuffer(4, 1);
+    }
+
+    public String value() {
+        int o = __offset(6);
+        return o != 0 ? __string(o + bb_pos) : null;
+    }
+
+    public ByteBuffer valueAsByteBuffer() {
+        return __vector_as_bytebuffer(6, 1);
+    }
 }
 

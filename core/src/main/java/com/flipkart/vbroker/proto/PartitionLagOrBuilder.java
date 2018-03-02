@@ -7,26 +7,28 @@ public interface PartitionLagOrBuilder extends
     // @@protoc_insertion_point(interface_extends:proto.PartitionLag)
     com.google.protobuf.MessageOrBuilder {
 
-  /**
-   * <code>int32 partitionId = 1;</code>
-   */
-  int getPartitionId();
+    /**
+     * <code>int32 partitionId = 1;</code>
+     */
+    int getPartitionId();
 
-  /**
-   * <code>int32 lag = 2;</code>
-   */
-  int getLag();
+    /**
+     * <code>int32 lag = 2;</code>
+     */
+    int getLag();
 
-  /**
-   * <code>.proto.VStatus status = 3;</code>
-   */
-  boolean hasStatus();
-  /**
-   * <code>.proto.VStatus status = 3;</code>
-   */
-  com.flipkart.vbroker.proto.VStatus getStatus();
-  /**
-   * <code>.proto.VStatus status = 3;</code>
-   */
-  com.flipkart.vbroker.proto.VStatusOrBuilder getStatusOrBuilder();
+    /**
+     * <code>.proto.VStatus status = 3;</code>
+     */
+    boolean hasStatus();
+
+    /**
+     * <code>.proto.VStatus status = 3;</code>
+     */
+    com.flipkart.vbroker.proto.VStatus getStatus();
+
+    /**
+     * <code>.proto.VStatus status = 3;</code>
+     */
+    com.flipkart.vbroker.proto.VStatusOrBuilder getStatusOrBuilder();
 }

@@ -7,27 +7,31 @@ public interface GetSubscriptionsRequestOrBuilder extends
     // @@protoc_insertion_point(interface_extends:proto.GetSubscriptionsRequest)
     com.google.protobuf.MessageOrBuilder {
 
-  /**
-   * <code>repeated .proto.TopicSubscription subscriptions = 1;</code>
-   */
-  java.util.List<com.flipkart.vbroker.proto.TopicSubscription> 
-      getSubscriptionsList();
-  /**
-   * <code>repeated .proto.TopicSubscription subscriptions = 1;</code>
-   */
-  com.flipkart.vbroker.proto.TopicSubscription getSubscriptions(int index);
-  /**
-   * <code>repeated .proto.TopicSubscription subscriptions = 1;</code>
-   */
-  int getSubscriptionsCount();
-  /**
-   * <code>repeated .proto.TopicSubscription subscriptions = 1;</code>
-   */
-  java.util.List<? extends com.flipkart.vbroker.proto.TopicSubscriptionOrBuilder> 
-      getSubscriptionsOrBuilderList();
-  /**
-   * <code>repeated .proto.TopicSubscription subscriptions = 1;</code>
-   */
-  com.flipkart.vbroker.proto.TopicSubscriptionOrBuilder getSubscriptionsOrBuilder(
-      int index);
+    /**
+     * <code>repeated .proto.TopicSubscription subscriptions = 1;</code>
+     */
+    java.util.List<com.flipkart.vbroker.proto.TopicSubscription>
+    getSubscriptionsList();
+
+    /**
+     * <code>repeated .proto.TopicSubscription subscriptions = 1;</code>
+     */
+    com.flipkart.vbroker.proto.TopicSubscription getSubscriptions(int index);
+
+    /**
+     * <code>repeated .proto.TopicSubscription subscriptions = 1;</code>
+     */
+    int getSubscriptionsCount();
+
+    /**
+     * <code>repeated .proto.TopicSubscription subscriptions = 1;</code>
+     */
+    java.util.List<? extends com.flipkart.vbroker.proto.TopicSubscriptionOrBuilder>
+    getSubscriptionsOrBuilderList();
+
+    /**
+     * <code>repeated .proto.TopicSubscription subscriptions = 1;</code>
+     */
+    com.flipkart.vbroker.proto.TopicSubscriptionOrBuilder getSubscriptionsOrBuilder(
+        int index);
 }

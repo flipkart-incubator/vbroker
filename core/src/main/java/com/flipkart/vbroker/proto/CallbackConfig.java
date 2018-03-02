@@ -6,729 +6,781 @@ package com.flipkart.vbroker.proto;
 /**
  * Protobuf type {@code proto.CallbackConfig}
  */
-public  final class CallbackConfig extends
+public final class CallbackConfig extends
     com.google.protobuf.GeneratedMessageV3 implements
     // @@protoc_insertion_point(message_implements:proto.CallbackConfig)
     CallbackConfigOrBuilder {
-private static final long serialVersionUID = 0L;
-  // Use CallbackConfig.newBuilder() to construct.
-  private CallbackConfig(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-    super(builder);
-  }
-  private CallbackConfig() {
-    codeRanges_ = java.util.Collections.emptyList();
-  }
-
-  @java.lang.Override
-  public final com.google.protobuf.UnknownFieldSet
-  getUnknownFields() {
-    return this.unknownFields;
-  }
-  private CallbackConfig(
-      com.google.protobuf.CodedInputStream input,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    this();
-    if (extensionRegistry == null) {
-      throw new java.lang.NullPointerException();
-    }
-    int mutable_bitField0_ = 0;
-    com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-        com.google.protobuf.UnknownFieldSet.newBuilder();
-    try {
-      boolean done = false;
-      while (!done) {
-        int tag = input.readTag();
-        switch (tag) {
-          case 0:
-            done = true;
-            break;
-          default: {
-            if (!parseUnknownFieldProto3(
-                input, unknownFields, extensionRegistry, tag)) {
-              done = true;
-            }
-            break;
-          }
-          case 10: {
-            if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-              codeRanges_ = new java.util.ArrayList<com.flipkart.vbroker.proto.CodeRange>();
-              mutable_bitField0_ |= 0x00000001;
-            }
-            codeRanges_.add(
-                input.readMessage(com.flipkart.vbroker.proto.CodeRange.parser(), extensionRegistry));
-            break;
-          }
+    public static final int CODERANGES_FIELD_NUMBER = 1;
+    private static final long serialVersionUID = 0L;
+    // @@protoc_insertion_point(class_scope:proto.CallbackConfig)
+    private static final com.flipkart.vbroker.proto.CallbackConfig DEFAULT_INSTANCE;
+    private static final com.google.protobuf.Parser<CallbackConfig>
+        PARSER = new com.google.protobuf.AbstractParser<CallbackConfig>() {
+        public CallbackConfig parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+            return new CallbackConfig(input, extensionRegistry);
         }
-      }
-    } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-      throw e.setUnfinishedMessage(this);
-    } catch (java.io.IOException e) {
-      throw new com.google.protobuf.InvalidProtocolBufferException(
-          e).setUnfinishedMessage(this);
-    } finally {
-      if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-        codeRanges_ = java.util.Collections.unmodifiableList(codeRanges_);
-      }
-      this.unknownFields = unknownFields.build();
-      makeExtensionsImmutable();
-    }
-  }
-  public static final com.google.protobuf.Descriptors.Descriptor
-      getDescriptor() {
-    return com.flipkart.vbroker.proto.PEntities.internal_static_proto_CallbackConfig_descriptor;
-  }
+    };
 
-  protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internalGetFieldAccessorTable() {
-    return com.flipkart.vbroker.proto.PEntities.internal_static_proto_CallbackConfig_fieldAccessorTable
-        .ensureFieldAccessorsInitialized(
-            com.flipkart.vbroker.proto.CallbackConfig.class, com.flipkart.vbroker.proto.CallbackConfig.Builder.class);
-  }
-
-  public static final int CODERANGES_FIELD_NUMBER = 1;
-  private java.util.List<com.flipkart.vbroker.proto.CodeRange> codeRanges_;
-  /**
-   * <code>repeated .proto.CodeRange codeRanges = 1;</code>
-   */
-  public java.util.List<com.flipkart.vbroker.proto.CodeRange> getCodeRangesList() {
-    return codeRanges_;
-  }
-  /**
-   * <code>repeated .proto.CodeRange codeRanges = 1;</code>
-   */
-  public java.util.List<? extends com.flipkart.vbroker.proto.CodeRangeOrBuilder> 
-      getCodeRangesOrBuilderList() {
-    return codeRanges_;
-  }
-  /**
-   * <code>repeated .proto.CodeRange codeRanges = 1;</code>
-   */
-  public int getCodeRangesCount() {
-    return codeRanges_.size();
-  }
-  /**
-   * <code>repeated .proto.CodeRange codeRanges = 1;</code>
-   */
-  public com.flipkart.vbroker.proto.CodeRange getCodeRanges(int index) {
-    return codeRanges_.get(index);
-  }
-  /**
-   * <code>repeated .proto.CodeRange codeRanges = 1;</code>
-   */
-  public com.flipkart.vbroker.proto.CodeRangeOrBuilder getCodeRangesOrBuilder(
-      int index) {
-    return codeRanges_.get(index);
-  }
-
-  private byte memoizedIsInitialized = -1;
-  public final boolean isInitialized() {
-    byte isInitialized = memoizedIsInitialized;
-    if (isInitialized == 1) return true;
-    if (isInitialized == 0) return false;
-
-    memoizedIsInitialized = 1;
-    return true;
-  }
-
-  public void writeTo(com.google.protobuf.CodedOutputStream output)
-                      throws java.io.IOException {
-    for (int i = 0; i < codeRanges_.size(); i++) {
-      output.writeMessage(1, codeRanges_.get(i));
-    }
-    unknownFields.writeTo(output);
-  }
-
-  public int getSerializedSize() {
-    int size = memoizedSize;
-    if (size != -1) return size;
-
-    size = 0;
-    for (int i = 0; i < codeRanges_.size(); i++) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(1, codeRanges_.get(i));
-    }
-    size += unknownFields.getSerializedSize();
-    memoizedSize = size;
-    return size;
-  }
-
-  @java.lang.Override
-  public boolean equals(final java.lang.Object obj) {
-    if (obj == this) {
-     return true;
-    }
-    if (!(obj instanceof com.flipkart.vbroker.proto.CallbackConfig)) {
-      return super.equals(obj);
-    }
-    com.flipkart.vbroker.proto.CallbackConfig other = (com.flipkart.vbroker.proto.CallbackConfig) obj;
-
-    boolean result = true;
-    result = result && getCodeRangesList()
-        .equals(other.getCodeRangesList());
-    result = result && unknownFields.equals(other.unknownFields);
-    return result;
-  }
-
-  @java.lang.Override
-  public int hashCode() {
-    if (memoizedHashCode != 0) {
-      return memoizedHashCode;
-    }
-    int hash = 41;
-    hash = (19 * hash) + getDescriptor().hashCode();
-    if (getCodeRangesCount() > 0) {
-      hash = (37 * hash) + CODERANGES_FIELD_NUMBER;
-      hash = (53 * hash) + getCodeRangesList().hashCode();
-    }
-    hash = (29 * hash) + unknownFields.hashCode();
-    memoizedHashCode = hash;
-    return hash;
-  }
-
-  public static com.flipkart.vbroker.proto.CallbackConfig parseFrom(
-      java.nio.ByteBuffer data)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
-  }
-  public static com.flipkart.vbroker.proto.CallbackConfig parseFrom(
-      java.nio.ByteBuffer data,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
-  }
-  public static com.flipkart.vbroker.proto.CallbackConfig parseFrom(
-      com.google.protobuf.ByteString data)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
-  }
-  public static com.flipkart.vbroker.proto.CallbackConfig parseFrom(
-      com.google.protobuf.ByteString data,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
-  }
-  public static com.flipkart.vbroker.proto.CallbackConfig parseFrom(byte[] data)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data);
-  }
-  public static com.flipkart.vbroker.proto.CallbackConfig parseFrom(
-      byte[] data,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    return PARSER.parseFrom(data, extensionRegistry);
-  }
-  public static com.flipkart.vbroker.proto.CallbackConfig parseFrom(java.io.InputStream input)
-      throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessageV3
-        .parseWithIOException(PARSER, input);
-  }
-  public static com.flipkart.vbroker.proto.CallbackConfig parseFrom(
-      java.io.InputStream input,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessageV3
-        .parseWithIOException(PARSER, input, extensionRegistry);
-  }
-  public static com.flipkart.vbroker.proto.CallbackConfig parseDelimitedFrom(java.io.InputStream input)
-      throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessageV3
-        .parseDelimitedWithIOException(PARSER, input);
-  }
-  public static com.flipkart.vbroker.proto.CallbackConfig parseDelimitedFrom(
-      java.io.InputStream input,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessageV3
-        .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-  }
-  public static com.flipkart.vbroker.proto.CallbackConfig parseFrom(
-      com.google.protobuf.CodedInputStream input)
-      throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessageV3
-        .parseWithIOException(PARSER, input);
-  }
-  public static com.flipkart.vbroker.proto.CallbackConfig parseFrom(
-      com.google.protobuf.CodedInputStream input,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws java.io.IOException {
-    return com.google.protobuf.GeneratedMessageV3
-        .parseWithIOException(PARSER, input, extensionRegistry);
-  }
-
-  public Builder newBuilderForType() { return newBuilder(); }
-  public static Builder newBuilder() {
-    return DEFAULT_INSTANCE.toBuilder();
-  }
-  public static Builder newBuilder(com.flipkart.vbroker.proto.CallbackConfig prototype) {
-    return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-  }
-  public Builder toBuilder() {
-    return this == DEFAULT_INSTANCE
-        ? new Builder() : new Builder().mergeFrom(this);
-  }
-
-  @java.lang.Override
-  protected Builder newBuilderForType(
-      com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-    Builder builder = new Builder(parent);
-    return builder;
-  }
-  /**
-   * Protobuf type {@code proto.CallbackConfig}
-   */
-  public static final class Builder extends
-      com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:proto.CallbackConfig)
-      com.flipkart.vbroker.proto.CallbackConfigOrBuilder {
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return com.flipkart.vbroker.proto.PEntities.internal_static_proto_CallbackConfig_descriptor;
+    static {
+        DEFAULT_INSTANCE = new com.flipkart.vbroker.proto.CallbackConfig();
     }
 
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return com.flipkart.vbroker.proto.PEntities.internal_static_proto_CallbackConfig_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              com.flipkart.vbroker.proto.CallbackConfig.class, com.flipkart.vbroker.proto.CallbackConfig.Builder.class);
-    }
+    private java.util.List<com.flipkart.vbroker.proto.CodeRange> codeRanges_;
+    private byte memoizedIsInitialized = -1;
 
-    // Construct using com.flipkart.vbroker.proto.CallbackConfig.newBuilder()
-    private Builder() {
-      maybeForceBuilderInitialization();
+    // Use CallbackConfig.newBuilder() to construct.
+    private CallbackConfig(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+        super(builder);
     }
-
-    private Builder(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-      super(parent);
-      maybeForceBuilderInitialization();
-    }
-    private void maybeForceBuilderInitialization() {
-      if (com.google.protobuf.GeneratedMessageV3
-              .alwaysUseFieldBuilders) {
-        getCodeRangesFieldBuilder();
-      }
-    }
-    public Builder clear() {
-      super.clear();
-      if (codeRangesBuilder_ == null) {
+    private CallbackConfig() {
         codeRanges_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000001);
-      } else {
-        codeRangesBuilder_.clear();
-      }
-      return this;
     }
 
-    public com.google.protobuf.Descriptors.Descriptor
-        getDescriptorForType() {
-      return com.flipkart.vbroker.proto.PEntities.internal_static_proto_CallbackConfig_descriptor;
-    }
-
-    public com.flipkart.vbroker.proto.CallbackConfig getDefaultInstanceForType() {
-      return com.flipkart.vbroker.proto.CallbackConfig.getDefaultInstance();
-    }
-
-    public com.flipkart.vbroker.proto.CallbackConfig build() {
-      com.flipkart.vbroker.proto.CallbackConfig result = buildPartial();
-      if (!result.isInitialized()) {
-        throw newUninitializedMessageException(result);
-      }
-      return result;
-    }
-
-    public com.flipkart.vbroker.proto.CallbackConfig buildPartial() {
-      com.flipkart.vbroker.proto.CallbackConfig result = new com.flipkart.vbroker.proto.CallbackConfig(this);
-      int from_bitField0_ = bitField0_;
-      if (codeRangesBuilder_ == null) {
-        if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          codeRanges_ = java.util.Collections.unmodifiableList(codeRanges_);
-          bitField0_ = (bitField0_ & ~0x00000001);
+    private CallbackConfig(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+        this();
+        if (extensionRegistry == null) {
+            throw new java.lang.NullPointerException();
         }
-        result.codeRanges_ = codeRanges_;
-      } else {
-        result.codeRanges_ = codeRangesBuilder_.build();
-      }
-      onBuilt();
-      return result;
-    }
-
-    public Builder clone() {
-      return (Builder) super.clone();
-    }
-    public Builder setField(
-        com.google.protobuf.Descriptors.FieldDescriptor field,
-        java.lang.Object value) {
-      return (Builder) super.setField(field, value);
-    }
-    public Builder clearField(
-        com.google.protobuf.Descriptors.FieldDescriptor field) {
-      return (Builder) super.clearField(field);
-    }
-    public Builder clearOneof(
-        com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-      return (Builder) super.clearOneof(oneof);
-    }
-    public Builder setRepeatedField(
-        com.google.protobuf.Descriptors.FieldDescriptor field,
-        int index, java.lang.Object value) {
-      return (Builder) super.setRepeatedField(field, index, value);
-    }
-    public Builder addRepeatedField(
-        com.google.protobuf.Descriptors.FieldDescriptor field,
-        java.lang.Object value) {
-      return (Builder) super.addRepeatedField(field, value);
-    }
-    public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof com.flipkart.vbroker.proto.CallbackConfig) {
-        return mergeFrom((com.flipkart.vbroker.proto.CallbackConfig)other);
-      } else {
-        super.mergeFrom(other);
-        return this;
-      }
-    }
-
-    public Builder mergeFrom(com.flipkart.vbroker.proto.CallbackConfig other) {
-      if (other == com.flipkart.vbroker.proto.CallbackConfig.getDefaultInstance()) return this;
-      if (codeRangesBuilder_ == null) {
-        if (!other.codeRanges_.isEmpty()) {
-          if (codeRanges_.isEmpty()) {
-            codeRanges_ = other.codeRanges_;
-            bitField0_ = (bitField0_ & ~0x00000001);
-          } else {
-            ensureCodeRangesIsMutable();
-            codeRanges_.addAll(other.codeRanges_);
-          }
-          onChanged();
+        int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+            boolean done = false;
+            while (!done) {
+                int tag = input.readTag();
+                switch (tag) {
+                    case 0:
+                        done = true;
+                        break;
+                    default: {
+                        if (!parseUnknownFieldProto3(
+                            input, unknownFields, extensionRegistry, tag)) {
+                            done = true;
+                        }
+                        break;
+                    }
+                    case 10: {
+                        if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                            codeRanges_ = new java.util.ArrayList<com.flipkart.vbroker.proto.CodeRange>();
+                            mutable_bitField0_ |= 0x00000001;
+                        }
+                        codeRanges_.add(
+                            input.readMessage(com.flipkart.vbroker.proto.CodeRange.parser(), extensionRegistry));
+                        break;
+                    }
+                }
+            }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+            throw new com.google.protobuf.InvalidProtocolBufferException(
+                e).setUnfinishedMessage(this);
+        } finally {
+            if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                codeRanges_ = java.util.Collections.unmodifiableList(codeRanges_);
+            }
+            this.unknownFields = unknownFields.build();
+            makeExtensionsImmutable();
         }
-      } else {
-        if (!other.codeRanges_.isEmpty()) {
-          if (codeRangesBuilder_.isEmpty()) {
-            codeRangesBuilder_.dispose();
-            codeRangesBuilder_ = null;
-            codeRanges_ = other.codeRanges_;
-            bitField0_ = (bitField0_ & ~0x00000001);
-            codeRangesBuilder_ = 
-              com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
-                 getCodeRangesFieldBuilder() : null;
-          } else {
-            codeRangesBuilder_.addAllMessages(other.codeRanges_);
-          }
-        }
-      }
-      this.mergeUnknownFields(other.unknownFields);
-      onChanged();
-      return this;
     }
 
-    public final boolean isInitialized() {
-      return true;
+    public static final com.google.protobuf.Descriptors.Descriptor
+    getDescriptor() {
+        return com.flipkart.vbroker.proto.PEntities.internal_static_proto_CallbackConfig_descriptor;
     }
 
-    public Builder mergeFrom(
+    public static com.flipkart.vbroker.proto.CallbackConfig parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+    }
+
+    public static com.flipkart.vbroker.proto.CallbackConfig parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.flipkart.vbroker.proto.CallbackConfig parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+    }
+
+    public static com.flipkart.vbroker.proto.CallbackConfig parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.flipkart.vbroker.proto.CallbackConfig parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+    }
+
+    public static com.flipkart.vbroker.proto.CallbackConfig parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.flipkart.vbroker.proto.CallbackConfig parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseWithIOException(PARSER, input);
+    }
+
+    public static com.flipkart.vbroker.proto.CallbackConfig parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static com.flipkart.vbroker.proto.CallbackConfig parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.flipkart.vbroker.proto.CallbackConfig parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static com.flipkart.vbroker.proto.CallbackConfig parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+        return com.google.protobuf.GeneratedMessageV3
+            .parseWithIOException(PARSER, input);
+    }
+
+    public static com.flipkart.vbroker.proto.CallbackConfig parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      com.flipkart.vbroker.proto.CallbackConfig parsedMessage = null;
-      try {
-        parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (com.flipkart.vbroker.proto.CallbackConfig) e.getUnfinishedMessage();
-        throw e.unwrapIOException();
-      } finally {
-        if (parsedMessage != null) {
-          mergeFrom(parsedMessage);
-        }
-      }
-      return this;
-    }
-    private int bitField0_;
-
-    private java.util.List<com.flipkart.vbroker.proto.CodeRange> codeRanges_ =
-      java.util.Collections.emptyList();
-    private void ensureCodeRangesIsMutable() {
-      if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-        codeRanges_ = new java.util.ArrayList<com.flipkart.vbroker.proto.CodeRange>(codeRanges_);
-        bitField0_ |= 0x00000001;
-       }
+        return com.google.protobuf.GeneratedMessageV3
+            .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    private com.google.protobuf.RepeatedFieldBuilderV3<
-        com.flipkart.vbroker.proto.CodeRange, com.flipkart.vbroker.proto.CodeRange.Builder, com.flipkart.vbroker.proto.CodeRangeOrBuilder> codeRangesBuilder_;
+    public static Builder newBuilder() {
+        return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(com.flipkart.vbroker.proto.CallbackConfig prototype) {
+        return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    public static com.flipkart.vbroker.proto.CallbackConfig getDefaultInstance() {
+        return DEFAULT_INSTANCE;
+    }
+
+    public static com.google.protobuf.Parser<CallbackConfig> parser() {
+        return PARSER;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+        return this.unknownFields;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+    internalGetFieldAccessorTable() {
+        return com.flipkart.vbroker.proto.PEntities.internal_static_proto_CallbackConfig_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.flipkart.vbroker.proto.CallbackConfig.class, com.flipkart.vbroker.proto.CallbackConfig.Builder.class);
+    }
 
     /**
      * <code>repeated .proto.CodeRange codeRanges = 1;</code>
      */
     public java.util.List<com.flipkart.vbroker.proto.CodeRange> getCodeRangesList() {
-      if (codeRangesBuilder_ == null) {
-        return java.util.Collections.unmodifiableList(codeRanges_);
-      } else {
-        return codeRangesBuilder_.getMessageList();
-      }
+        return codeRanges_;
     }
+
+    /**
+     * <code>repeated .proto.CodeRange codeRanges = 1;</code>
+     */
+    public java.util.List<? extends com.flipkart.vbroker.proto.CodeRangeOrBuilder>
+    getCodeRangesOrBuilderList() {
+        return codeRanges_;
+    }
+
     /**
      * <code>repeated .proto.CodeRange codeRanges = 1;</code>
      */
     public int getCodeRangesCount() {
-      if (codeRangesBuilder_ == null) {
         return codeRanges_.size();
-      } else {
-        return codeRangesBuilder_.getCount();
-      }
     }
+
     /**
      * <code>repeated .proto.CodeRange codeRanges = 1;</code>
      */
     public com.flipkart.vbroker.proto.CodeRange getCodeRanges(int index) {
-      if (codeRangesBuilder_ == null) {
         return codeRanges_.get(index);
-      } else {
-        return codeRangesBuilder_.getMessage(index);
-      }
     }
-    /**
-     * <code>repeated .proto.CodeRange codeRanges = 1;</code>
-     */
-    public Builder setCodeRanges(
-        int index, com.flipkart.vbroker.proto.CodeRange value) {
-      if (codeRangesBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureCodeRangesIsMutable();
-        codeRanges_.set(index, value);
-        onChanged();
-      } else {
-        codeRangesBuilder_.setMessage(index, value);
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .proto.CodeRange codeRanges = 1;</code>
-     */
-    public Builder setCodeRanges(
-        int index, com.flipkart.vbroker.proto.CodeRange.Builder builderForValue) {
-      if (codeRangesBuilder_ == null) {
-        ensureCodeRangesIsMutable();
-        codeRanges_.set(index, builderForValue.build());
-        onChanged();
-      } else {
-        codeRangesBuilder_.setMessage(index, builderForValue.build());
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .proto.CodeRange codeRanges = 1;</code>
-     */
-    public Builder addCodeRanges(com.flipkart.vbroker.proto.CodeRange value) {
-      if (codeRangesBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureCodeRangesIsMutable();
-        codeRanges_.add(value);
-        onChanged();
-      } else {
-        codeRangesBuilder_.addMessage(value);
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .proto.CodeRange codeRanges = 1;</code>
-     */
-    public Builder addCodeRanges(
-        int index, com.flipkart.vbroker.proto.CodeRange value) {
-      if (codeRangesBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureCodeRangesIsMutable();
-        codeRanges_.add(index, value);
-        onChanged();
-      } else {
-        codeRangesBuilder_.addMessage(index, value);
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .proto.CodeRange codeRanges = 1;</code>
-     */
-    public Builder addCodeRanges(
-        com.flipkart.vbroker.proto.CodeRange.Builder builderForValue) {
-      if (codeRangesBuilder_ == null) {
-        ensureCodeRangesIsMutable();
-        codeRanges_.add(builderForValue.build());
-        onChanged();
-      } else {
-        codeRangesBuilder_.addMessage(builderForValue.build());
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .proto.CodeRange codeRanges = 1;</code>
-     */
-    public Builder addCodeRanges(
-        int index, com.flipkart.vbroker.proto.CodeRange.Builder builderForValue) {
-      if (codeRangesBuilder_ == null) {
-        ensureCodeRangesIsMutable();
-        codeRanges_.add(index, builderForValue.build());
-        onChanged();
-      } else {
-        codeRangesBuilder_.addMessage(index, builderForValue.build());
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .proto.CodeRange codeRanges = 1;</code>
-     */
-    public Builder addAllCodeRanges(
-        java.lang.Iterable<? extends com.flipkart.vbroker.proto.CodeRange> values) {
-      if (codeRangesBuilder_ == null) {
-        ensureCodeRangesIsMutable();
-        com.google.protobuf.AbstractMessageLite.Builder.addAll(
-            values, codeRanges_);
-        onChanged();
-      } else {
-        codeRangesBuilder_.addAllMessages(values);
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .proto.CodeRange codeRanges = 1;</code>
-     */
-    public Builder clearCodeRanges() {
-      if (codeRangesBuilder_ == null) {
-        codeRanges_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000001);
-        onChanged();
-      } else {
-        codeRangesBuilder_.clear();
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .proto.CodeRange codeRanges = 1;</code>
-     */
-    public Builder removeCodeRanges(int index) {
-      if (codeRangesBuilder_ == null) {
-        ensureCodeRangesIsMutable();
-        codeRanges_.remove(index);
-        onChanged();
-      } else {
-        codeRangesBuilder_.remove(index);
-      }
-      return this;
-    }
-    /**
-     * <code>repeated .proto.CodeRange codeRanges = 1;</code>
-     */
-    public com.flipkart.vbroker.proto.CodeRange.Builder getCodeRangesBuilder(
-        int index) {
-      return getCodeRangesFieldBuilder().getBuilder(index);
-    }
+
     /**
      * <code>repeated .proto.CodeRange codeRanges = 1;</code>
      */
     public com.flipkart.vbroker.proto.CodeRangeOrBuilder getCodeRangesOrBuilder(
         int index) {
-      if (codeRangesBuilder_ == null) {
-        return codeRanges_.get(index);  } else {
-        return codeRangesBuilder_.getMessageOrBuilder(index);
-      }
+        return codeRanges_.get(index);
     }
+
+    public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized == 1) return true;
+        if (isInitialized == 0) return false;
+
+        memoizedIsInitialized = 1;
+        return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+        throws java.io.IOException {
+        for (int i = 0; i < codeRanges_.size(); i++) {
+            output.writeMessage(1, codeRanges_.get(i));
+        }
+        unknownFields.writeTo(output);
+    }
+
+    public int getSerializedSize() {
+        int size = memoizedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        for (int i = 0; i < codeRanges_.size(); i++) {
+            size += com.google.protobuf.CodedOutputStream
+                .computeMessageSize(1, codeRanges_.get(i));
+        }
+        size += unknownFields.getSerializedSize();
+        memoizedSize = size;
+        return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof com.flipkart.vbroker.proto.CallbackConfig)) {
+            return super.equals(obj);
+        }
+        com.flipkart.vbroker.proto.CallbackConfig other = (com.flipkart.vbroker.proto.CallbackConfig) obj;
+
+        boolean result = true;
+        result = result && getCodeRangesList()
+            .equals(other.getCodeRangesList());
+        result = result && unknownFields.equals(other.unknownFields);
+        return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+        if (memoizedHashCode != 0) {
+            return memoizedHashCode;
+        }
+        int hash = 41;
+        hash = (19 * hash) + getDescriptor().hashCode();
+        if (getCodeRangesCount() > 0) {
+            hash = (37 * hash) + CODERANGES_FIELD_NUMBER;
+            hash = (53 * hash) + getCodeRangesList().hashCode();
+        }
+        hash = (29 * hash) + unknownFields.hashCode();
+        memoizedHashCode = hash;
+        return hash;
+    }
+
+    public Builder newBuilderForType() {
+        return newBuilder();
+    }
+
+    public Builder toBuilder() {
+        return this == DEFAULT_INSTANCE
+            ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<CallbackConfig> getParserForType() {
+        return PARSER;
+    }
+
+    public com.flipkart.vbroker.proto.CallbackConfig getDefaultInstanceForType() {
+        return DEFAULT_INSTANCE;
+    }
+
     /**
-     * <code>repeated .proto.CodeRange codeRanges = 1;</code>
+     * Protobuf type {@code proto.CallbackConfig}
      */
-    public java.util.List<? extends com.flipkart.vbroker.proto.CodeRangeOrBuilder> 
-         getCodeRangesOrBuilderList() {
-      if (codeRangesBuilder_ != null) {
-        return codeRangesBuilder_.getMessageOrBuilderList();
-      } else {
-        return java.util.Collections.unmodifiableList(codeRanges_);
-      }
-    }
-    /**
-     * <code>repeated .proto.CodeRange codeRanges = 1;</code>
-     */
-    public com.flipkart.vbroker.proto.CodeRange.Builder addCodeRangesBuilder() {
-      return getCodeRangesFieldBuilder().addBuilder(
-          com.flipkart.vbroker.proto.CodeRange.getDefaultInstance());
-    }
-    /**
-     * <code>repeated .proto.CodeRange codeRanges = 1;</code>
-     */
-    public com.flipkart.vbroker.proto.CodeRange.Builder addCodeRangesBuilder(
-        int index) {
-      return getCodeRangesFieldBuilder().addBuilder(
-          index, com.flipkart.vbroker.proto.CodeRange.getDefaultInstance());
-    }
-    /**
-     * <code>repeated .proto.CodeRange codeRanges = 1;</code>
-     */
-    public java.util.List<com.flipkart.vbroker.proto.CodeRange.Builder> 
-         getCodeRangesBuilderList() {
-      return getCodeRangesFieldBuilder().getBuilderList();
-    }
-    private com.google.protobuf.RepeatedFieldBuilderV3<
-        com.flipkart.vbroker.proto.CodeRange, com.flipkart.vbroker.proto.CodeRange.Builder, com.flipkart.vbroker.proto.CodeRangeOrBuilder> 
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:proto.CallbackConfig)
+        com.flipkart.vbroker.proto.CallbackConfigOrBuilder {
+        private int bitField0_;
+        private java.util.List<com.flipkart.vbroker.proto.CodeRange> codeRanges_ =
+            java.util.Collections.emptyList();
+        private com.google.protobuf.RepeatedFieldBuilderV3<
+            com.flipkart.vbroker.proto.CodeRange, com.flipkart.vbroker.proto.CodeRange.Builder, com.flipkart.vbroker.proto.CodeRangeOrBuilder> codeRangesBuilder_;
+
+        // Construct using com.flipkart.vbroker.proto.CallbackConfig.newBuilder()
+        private Builder() {
+            maybeForceBuilderInitialization();
+        }
+
+        private Builder(
+            com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+            super(parent);
+            maybeForceBuilderInitialization();
+        }
+
+        public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+            return com.flipkart.vbroker.proto.PEntities.internal_static_proto_CallbackConfig_descriptor;
+        }
+
+        protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+            return com.flipkart.vbroker.proto.PEntities.internal_static_proto_CallbackConfig_fieldAccessorTable
+                .ensureFieldAccessorsInitialized(
+                    com.flipkart.vbroker.proto.CallbackConfig.class, com.flipkart.vbroker.proto.CallbackConfig.Builder.class);
+        }
+
+        private void maybeForceBuilderInitialization() {
+            if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+                getCodeRangesFieldBuilder();
+            }
+        }
+
+        public Builder clear() {
+            super.clear();
+            if (codeRangesBuilder_ == null) {
+                codeRanges_ = java.util.Collections.emptyList();
+                bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+                codeRangesBuilder_.clear();
+            }
+            return this;
+        }
+
+        public com.google.protobuf.Descriptors.Descriptor
+        getDescriptorForType() {
+            return com.flipkart.vbroker.proto.PEntities.internal_static_proto_CallbackConfig_descriptor;
+        }
+
+        public com.flipkart.vbroker.proto.CallbackConfig getDefaultInstanceForType() {
+            return com.flipkart.vbroker.proto.CallbackConfig.getDefaultInstance();
+        }
+
+        public com.flipkart.vbroker.proto.CallbackConfig build() {
+            com.flipkart.vbroker.proto.CallbackConfig result = buildPartial();
+            if (!result.isInitialized()) {
+                throw newUninitializedMessageException(result);
+            }
+            return result;
+        }
+
+        public com.flipkart.vbroker.proto.CallbackConfig buildPartial() {
+            com.flipkart.vbroker.proto.CallbackConfig result = new com.flipkart.vbroker.proto.CallbackConfig(this);
+            int from_bitField0_ = bitField0_;
+            if (codeRangesBuilder_ == null) {
+                if (((bitField0_ & 0x00000001) == 0x00000001)) {
+                    codeRanges_ = java.util.Collections.unmodifiableList(codeRanges_);
+                    bitField0_ = (bitField0_ & ~0x00000001);
+                }
+                result.codeRanges_ = codeRanges_;
+            } else {
+                result.codeRanges_ = codeRangesBuilder_.build();
+            }
+            onBuilt();
+            return result;
+        }
+
+        public Builder clone() {
+            return (Builder) super.clone();
+        }
+
+        public Builder setField(
+            com.google.protobuf.Descriptors.FieldDescriptor field,
+            java.lang.Object value) {
+            return (Builder) super.setField(field, value);
+        }
+
+        public Builder clearField(
+            com.google.protobuf.Descriptors.FieldDescriptor field) {
+            return (Builder) super.clearField(field);
+        }
+
+        public Builder clearOneof(
+            com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+            return (Builder) super.clearOneof(oneof);
+        }
+
+        public Builder setRepeatedField(
+            com.google.protobuf.Descriptors.FieldDescriptor field,
+            int index, java.lang.Object value) {
+            return (Builder) super.setRepeatedField(field, index, value);
+        }
+
+        public Builder addRepeatedField(
+            com.google.protobuf.Descriptors.FieldDescriptor field,
+            java.lang.Object value) {
+            return (Builder) super.addRepeatedField(field, value);
+        }
+
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+            if (other instanceof com.flipkart.vbroker.proto.CallbackConfig) {
+                return mergeFrom((com.flipkart.vbroker.proto.CallbackConfig) other);
+            } else {
+                super.mergeFrom(other);
+                return this;
+            }
+        }
+
+        public Builder mergeFrom(com.flipkart.vbroker.proto.CallbackConfig other) {
+            if (other == com.flipkart.vbroker.proto.CallbackConfig.getDefaultInstance()) return this;
+            if (codeRangesBuilder_ == null) {
+                if (!other.codeRanges_.isEmpty()) {
+                    if (codeRanges_.isEmpty()) {
+                        codeRanges_ = other.codeRanges_;
+                        bitField0_ = (bitField0_ & ~0x00000001);
+                    } else {
+                        ensureCodeRangesIsMutable();
+                        codeRanges_.addAll(other.codeRanges_);
+                    }
+                    onChanged();
+                }
+            } else {
+                if (!other.codeRanges_.isEmpty()) {
+                    if (codeRangesBuilder_.isEmpty()) {
+                        codeRangesBuilder_.dispose();
+                        codeRangesBuilder_ = null;
+                        codeRanges_ = other.codeRanges_;
+                        bitField0_ = (bitField0_ & ~0x00000001);
+                        codeRangesBuilder_ =
+                            com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                                getCodeRangesFieldBuilder() : null;
+                    } else {
+                        codeRangesBuilder_.addAllMessages(other.codeRanges_);
+                    }
+                }
+            }
+            this.mergeUnknownFields(other.unknownFields);
+            onChanged();
+            return this;
+        }
+
+        public final boolean isInitialized() {
+            return true;
+        }
+
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+            com.flipkart.vbroker.proto.CallbackConfig parsedMessage = null;
+            try {
+                parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+            } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+                parsedMessage = (com.flipkart.vbroker.proto.CallbackConfig) e.getUnfinishedMessage();
+                throw e.unwrapIOException();
+            } finally {
+                if (parsedMessage != null) {
+                    mergeFrom(parsedMessage);
+                }
+            }
+            return this;
+        }
+
+        private void ensureCodeRangesIsMutable() {
+            if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+                codeRanges_ = new java.util.ArrayList<com.flipkart.vbroker.proto.CodeRange>(codeRanges_);
+                bitField0_ |= 0x00000001;
+            }
+        }
+
+        /**
+         * <code>repeated .proto.CodeRange codeRanges = 1;</code>
+         */
+        public java.util.List<com.flipkart.vbroker.proto.CodeRange> getCodeRangesList() {
+            if (codeRangesBuilder_ == null) {
+                return java.util.Collections.unmodifiableList(codeRanges_);
+            } else {
+                return codeRangesBuilder_.getMessageList();
+            }
+        }
+
+        /**
+         * <code>repeated .proto.CodeRange codeRanges = 1;</code>
+         */
+        public int getCodeRangesCount() {
+            if (codeRangesBuilder_ == null) {
+                return codeRanges_.size();
+            } else {
+                return codeRangesBuilder_.getCount();
+            }
+        }
+
+        /**
+         * <code>repeated .proto.CodeRange codeRanges = 1;</code>
+         */
+        public com.flipkart.vbroker.proto.CodeRange getCodeRanges(int index) {
+            if (codeRangesBuilder_ == null) {
+                return codeRanges_.get(index);
+            } else {
+                return codeRangesBuilder_.getMessage(index);
+            }
+        }
+
+        /**
+         * <code>repeated .proto.CodeRange codeRanges = 1;</code>
+         */
+        public Builder setCodeRanges(
+            int index, com.flipkart.vbroker.proto.CodeRange value) {
+            if (codeRangesBuilder_ == null) {
+                if (value == null) {
+                    throw new NullPointerException();
+                }
+                ensureCodeRangesIsMutable();
+                codeRanges_.set(index, value);
+                onChanged();
+            } else {
+                codeRangesBuilder_.setMessage(index, value);
+            }
+            return this;
+        }
+
+        /**
+         * <code>repeated .proto.CodeRange codeRanges = 1;</code>
+         */
+        public Builder setCodeRanges(
+            int index, com.flipkart.vbroker.proto.CodeRange.Builder builderForValue) {
+            if (codeRangesBuilder_ == null) {
+                ensureCodeRangesIsMutable();
+                codeRanges_.set(index, builderForValue.build());
+                onChanged();
+            } else {
+                codeRangesBuilder_.setMessage(index, builderForValue.build());
+            }
+            return this;
+        }
+
+        /**
+         * <code>repeated .proto.CodeRange codeRanges = 1;</code>
+         */
+        public Builder addCodeRanges(com.flipkart.vbroker.proto.CodeRange value) {
+            if (codeRangesBuilder_ == null) {
+                if (value == null) {
+                    throw new NullPointerException();
+                }
+                ensureCodeRangesIsMutable();
+                codeRanges_.add(value);
+                onChanged();
+            } else {
+                codeRangesBuilder_.addMessage(value);
+            }
+            return this;
+        }
+
+        /**
+         * <code>repeated .proto.CodeRange codeRanges = 1;</code>
+         */
+        public Builder addCodeRanges(
+            int index, com.flipkart.vbroker.proto.CodeRange value) {
+            if (codeRangesBuilder_ == null) {
+                if (value == null) {
+                    throw new NullPointerException();
+                }
+                ensureCodeRangesIsMutable();
+                codeRanges_.add(index, value);
+                onChanged();
+            } else {
+                codeRangesBuilder_.addMessage(index, value);
+            }
+            return this;
+        }
+
+        /**
+         * <code>repeated .proto.CodeRange codeRanges = 1;</code>
+         */
+        public Builder addCodeRanges(
+            com.flipkart.vbroker.proto.CodeRange.Builder builderForValue) {
+            if (codeRangesBuilder_ == null) {
+                ensureCodeRangesIsMutable();
+                codeRanges_.add(builderForValue.build());
+                onChanged();
+            } else {
+                codeRangesBuilder_.addMessage(builderForValue.build());
+            }
+            return this;
+        }
+
+        /**
+         * <code>repeated .proto.CodeRange codeRanges = 1;</code>
+         */
+        public Builder addCodeRanges(
+            int index, com.flipkart.vbroker.proto.CodeRange.Builder builderForValue) {
+            if (codeRangesBuilder_ == null) {
+                ensureCodeRangesIsMutable();
+                codeRanges_.add(index, builderForValue.build());
+                onChanged();
+            } else {
+                codeRangesBuilder_.addMessage(index, builderForValue.build());
+            }
+            return this;
+        }
+
+        /**
+         * <code>repeated .proto.CodeRange codeRanges = 1;</code>
+         */
+        public Builder addAllCodeRanges(
+            java.lang.Iterable<? extends com.flipkart.vbroker.proto.CodeRange> values) {
+            if (codeRangesBuilder_ == null) {
+                ensureCodeRangesIsMutable();
+                com.google.protobuf.AbstractMessageLite.Builder.addAll(
+                    values, codeRanges_);
+                onChanged();
+            } else {
+                codeRangesBuilder_.addAllMessages(values);
+            }
+            return this;
+        }
+
+        /**
+         * <code>repeated .proto.CodeRange codeRanges = 1;</code>
+         */
+        public Builder clearCodeRanges() {
+            if (codeRangesBuilder_ == null) {
+                codeRanges_ = java.util.Collections.emptyList();
+                bitField0_ = (bitField0_ & ~0x00000001);
+                onChanged();
+            } else {
+                codeRangesBuilder_.clear();
+            }
+            return this;
+        }
+
+        /**
+         * <code>repeated .proto.CodeRange codeRanges = 1;</code>
+         */
+        public Builder removeCodeRanges(int index) {
+            if (codeRangesBuilder_ == null) {
+                ensureCodeRangesIsMutable();
+                codeRanges_.remove(index);
+                onChanged();
+            } else {
+                codeRangesBuilder_.remove(index);
+            }
+            return this;
+        }
+
+        /**
+         * <code>repeated .proto.CodeRange codeRanges = 1;</code>
+         */
+        public com.flipkart.vbroker.proto.CodeRange.Builder getCodeRangesBuilder(
+            int index) {
+            return getCodeRangesFieldBuilder().getBuilder(index);
+        }
+
+        /**
+         * <code>repeated .proto.CodeRange codeRanges = 1;</code>
+         */
+        public com.flipkart.vbroker.proto.CodeRangeOrBuilder getCodeRangesOrBuilder(
+            int index) {
+            if (codeRangesBuilder_ == null) {
+                return codeRanges_.get(index);
+            } else {
+                return codeRangesBuilder_.getMessageOrBuilder(index);
+            }
+        }
+
+        /**
+         * <code>repeated .proto.CodeRange codeRanges = 1;</code>
+         */
+        public java.util.List<? extends com.flipkart.vbroker.proto.CodeRangeOrBuilder>
+        getCodeRangesOrBuilderList() {
+            if (codeRangesBuilder_ != null) {
+                return codeRangesBuilder_.getMessageOrBuilderList();
+            } else {
+                return java.util.Collections.unmodifiableList(codeRanges_);
+            }
+        }
+
+        /**
+         * <code>repeated .proto.CodeRange codeRanges = 1;</code>
+         */
+        public com.flipkart.vbroker.proto.CodeRange.Builder addCodeRangesBuilder() {
+            return getCodeRangesFieldBuilder().addBuilder(
+                com.flipkart.vbroker.proto.CodeRange.getDefaultInstance());
+        }
+
+        /**
+         * <code>repeated .proto.CodeRange codeRanges = 1;</code>
+         */
+        public com.flipkart.vbroker.proto.CodeRange.Builder addCodeRangesBuilder(
+            int index) {
+            return getCodeRangesFieldBuilder().addBuilder(
+                index, com.flipkart.vbroker.proto.CodeRange.getDefaultInstance());
+        }
+
+        /**
+         * <code>repeated .proto.CodeRange codeRanges = 1;</code>
+         */
+        public java.util.List<com.flipkart.vbroker.proto.CodeRange.Builder>
+        getCodeRangesBuilderList() {
+            return getCodeRangesFieldBuilder().getBuilderList();
+        }
+
+        private com.google.protobuf.RepeatedFieldBuilderV3<
+            com.flipkart.vbroker.proto.CodeRange, com.flipkart.vbroker.proto.CodeRange.Builder, com.flipkart.vbroker.proto.CodeRangeOrBuilder>
         getCodeRangesFieldBuilder() {
-      if (codeRangesBuilder_ == null) {
-        codeRangesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-            com.flipkart.vbroker.proto.CodeRange, com.flipkart.vbroker.proto.CodeRange.Builder, com.flipkart.vbroker.proto.CodeRangeOrBuilder>(
-                codeRanges_,
-                ((bitField0_ & 0x00000001) == 0x00000001),
-                getParentForChildren(),
-                isClean());
-        codeRanges_ = null;
-      }
-      return codeRangesBuilder_;
+            if (codeRangesBuilder_ == null) {
+                codeRangesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+                    com.flipkart.vbroker.proto.CodeRange, com.flipkart.vbroker.proto.CodeRange.Builder, com.flipkart.vbroker.proto.CodeRangeOrBuilder>(
+                    codeRanges_,
+                    ((bitField0_ & 0x00000001) == 0x00000001),
+                    getParentForChildren(),
+                    isClean());
+                codeRanges_ = null;
+            }
+            return codeRangesBuilder_;
+        }
+
+        public final Builder setUnknownFields(
+            final com.google.protobuf.UnknownFieldSet unknownFields) {
+            return super.setUnknownFieldsProto3(unknownFields);
+        }
+
+        public final Builder mergeUnknownFields(
+            final com.google.protobuf.UnknownFieldSet unknownFields) {
+            return super.mergeUnknownFields(unknownFields);
+        }
+
+
+        // @@protoc_insertion_point(builder_scope:proto.CallbackConfig)
     }
-    public final Builder setUnknownFields(
-        final com.google.protobuf.UnknownFieldSet unknownFields) {
-      return super.setUnknownFieldsProto3(unknownFields);
-    }
-
-    public final Builder mergeUnknownFields(
-        final com.google.protobuf.UnknownFieldSet unknownFields) {
-      return super.mergeUnknownFields(unknownFields);
-    }
-
-
-    // @@protoc_insertion_point(builder_scope:proto.CallbackConfig)
-  }
-
-  // @@protoc_insertion_point(class_scope:proto.CallbackConfig)
-  private static final com.flipkart.vbroker.proto.CallbackConfig DEFAULT_INSTANCE;
-  static {
-    DEFAULT_INSTANCE = new com.flipkart.vbroker.proto.CallbackConfig();
-  }
-
-  public static com.flipkart.vbroker.proto.CallbackConfig getDefaultInstance() {
-    return DEFAULT_INSTANCE;
-  }
-
-  private static final com.google.protobuf.Parser<CallbackConfig>
-      PARSER = new com.google.protobuf.AbstractParser<CallbackConfig>() {
-    public CallbackConfig parsePartialFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return new CallbackConfig(input, extensionRegistry);
-    }
-  };
-
-  public static com.google.protobuf.Parser<CallbackConfig> parser() {
-    return PARSER;
-  }
-
-  @java.lang.Override
-  public com.google.protobuf.Parser<CallbackConfig> getParserForType() {
-    return PARSER;
-  }
-
-  public com.flipkart.vbroker.proto.CallbackConfig getDefaultInstanceForType() {
-    return DEFAULT_INSTANCE;
-  }
 
 }
 

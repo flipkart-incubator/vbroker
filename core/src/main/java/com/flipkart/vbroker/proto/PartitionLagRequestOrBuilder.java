@@ -7,8 +7,8 @@ public interface PartitionLagRequestOrBuilder extends
     // @@protoc_insertion_point(interface_extends:proto.PartitionLagRequest)
     com.google.protobuf.MessageOrBuilder {
 
-  /**
-   * <code>int32 partitionId = 1;</code>
-   */
-  int getPartitionId();
+    /**
+     * <code>int32 partitionId = 1;</code>
+     */
+    int getPartitionId();
 }

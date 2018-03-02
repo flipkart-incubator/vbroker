@@ -7,27 +7,31 @@ public interface CreateSubscriptionsResponseOrBuilder extends
     // @@protoc_insertion_point(interface_extends:proto.CreateSubscriptionsResponse)
     com.google.protobuf.MessageOrBuilder {
 
-  /**
-   * <code>repeated .proto.CreateSubscriptionResponse createSubscriptionResponses = 1;</code>
-   */
-  java.util.List<com.flipkart.vbroker.proto.CreateSubscriptionResponse> 
-      getCreateSubscriptionResponsesList();
-  /**
-   * <code>repeated .proto.CreateSubscriptionResponse createSubscriptionResponses = 1;</code>
-   */
-  com.flipkart.vbroker.proto.CreateSubscriptionResponse getCreateSubscriptionResponses(int index);
-  /**
-   * <code>repeated .proto.CreateSubscriptionResponse createSubscriptionResponses = 1;</code>
-   */
-  int getCreateSubscriptionResponsesCount();
-  /**
-   * <code>repeated .proto.CreateSubscriptionResponse createSubscriptionResponses = 1;</code>
-   */
-  java.util.List<? extends com.flipkart.vbroker.proto.CreateSubscriptionResponseOrBuilder> 
-      getCreateSubscriptionResponsesOrBuilderList();
-  /**
-   * <code>repeated .proto.CreateSubscriptionResponse createSubscriptionResponses = 1;</code>
-   */
-  com.flipkart.vbroker.proto.CreateSubscriptionResponseOrBuilder getCreateSubscriptionResponsesOrBuilder(
-      int index);
+    /**
+     * <code>repeated .proto.CreateSubscriptionResponse createSubscriptionResponses = 1;</code>
+     */
+    java.util.List<com.flipkart.vbroker.proto.CreateSubscriptionResponse>
+    getCreateSubscriptionResponsesList();
+
+    /**
+     * <code>repeated .proto.CreateSubscriptionResponse createSubscriptionResponses = 1;</code>
+     */
+    com.flipkart.vbroker.proto.CreateSubscriptionResponse getCreateSubscriptionResponses(int index);
+
+    /**
+     * <code>repeated .proto.CreateSubscriptionResponse createSubscriptionResponses = 1;</code>
+     */
+    int getCreateSubscriptionResponsesCount();
+
+    /**
+     * <code>repeated .proto.CreateSubscriptionResponse createSubscriptionResponses = 1;</code>
+     */
+    java.util.List<? extends com.flipkart.vbroker.proto.CreateSubscriptionResponseOrBuilder>
+    getCreateSubscriptionResponsesOrBuilderList();
+
+    /**
+     * <code>repeated .proto.CreateSubscriptionResponse createSubscriptionResponses = 1;</code>
+     */
+    com.flipkart.vbroker.proto.CreateSubscriptionResponseOrBuilder getCreateSubscriptionResponsesOrBuilder(
+        int index);
 }

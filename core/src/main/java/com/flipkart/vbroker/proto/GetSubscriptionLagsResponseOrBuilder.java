@@ -7,27 +7,31 @@ public interface GetSubscriptionLagsResponseOrBuilder extends
     // @@protoc_insertion_point(interface_extends:proto.GetSubscriptionLagsResponse)
     com.google.protobuf.MessageOrBuilder {
 
-  /**
-   * <code>repeated .proto.SubscriptionLag subscriptionLags = 1;</code>
-   */
-  java.util.List<com.flipkart.vbroker.proto.SubscriptionLag> 
-      getSubscriptionLagsList();
-  /**
-   * <code>repeated .proto.SubscriptionLag subscriptionLags = 1;</code>
-   */
-  com.flipkart.vbroker.proto.SubscriptionLag getSubscriptionLags(int index);
-  /**
-   * <code>repeated .proto.SubscriptionLag subscriptionLags = 1;</code>
-   */
-  int getSubscriptionLagsCount();
-  /**
-   * <code>repeated .proto.SubscriptionLag subscriptionLags = 1;</code>
-   */
-  java.util.List<? extends com.flipkart.vbroker.proto.SubscriptionLagOrBuilder> 
-      getSubscriptionLagsOrBuilderList();
-  /**
-   * <code>repeated .proto.SubscriptionLag subscriptionLags = 1;</code>
-   */
-  com.flipkart.vbroker.proto.SubscriptionLagOrBuilder getSubscriptionLagsOrBuilder(
-      int index);
+    /**
+     * <code>repeated .proto.SubscriptionLag subscriptionLags = 1;</code>
+     */
+    java.util.List<com.flipkart.vbroker.proto.SubscriptionLag>
+    getSubscriptionLagsList();
+
+    /**
+     * <code>repeated .proto.SubscriptionLag subscriptionLags = 1;</code>
+     */
+    com.flipkart.vbroker.proto.SubscriptionLag getSubscriptionLags(int index);
+
+    /**
+     * <code>repeated .proto.SubscriptionLag subscriptionLags = 1;</code>
+     */
+    int getSubscriptionLagsCount();
+
+    /**
+     * <code>repeated .proto.SubscriptionLag subscriptionLags = 1;</code>
+     */
+    java.util.List<? extends com.flipkart.vbroker.proto.SubscriptionLagOrBuilder>
+    getSubscriptionLagsOrBuilderList();
+
+    /**
+     * <code>repeated .proto.SubscriptionLag subscriptionLags = 1;</code>
+     */
+    com.flipkart.vbroker.proto.SubscriptionLagOrBuilder getSubscriptionLagsOrBuilder(
+        int index);
 }

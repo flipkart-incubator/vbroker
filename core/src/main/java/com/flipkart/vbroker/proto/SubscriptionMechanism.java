@@ -8,96 +8,97 @@ package com.flipkart.vbroker.proto;
  */
 public enum SubscriptionMechanism
     implements com.google.protobuf.ProtocolMessageEnum {
-  /**
-   * <code>PUSH = 0;</code>
-   */
-  PUSH(0),
-  /**
-   * <code>PULL = 1;</code>
-   */
-  PULL(1),
-  UNRECOGNIZED(-1),
-  ;
+    /**
+     * <code>PUSH = 0;</code>
+     */
+    PUSH(0),
+    /**
+     * <code>PULL = 1;</code>
+     */
+    PULL(1),
+    UNRECOGNIZED(-1),;
 
-  /**
-   * <code>PUSH = 0;</code>
-   */
-  public static final int PUSH_VALUE = 0;
-  /**
-   * <code>PULL = 1;</code>
-   */
-  public static final int PULL_VALUE = 1;
-
-
-  public final int getNumber() {
-    if (this == UNRECOGNIZED) {
-      throw new java.lang.IllegalArgumentException(
-          "Can't get the number of an unknown enum value.");
-    }
-    return value;
-  }
-
-  /**
-   * @deprecated Use {@link #forNumber(int)} instead.
-   */
-  @java.lang.Deprecated
-  public static SubscriptionMechanism valueOf(int value) {
-    return forNumber(value);
-  }
-
-  public static SubscriptionMechanism forNumber(int value) {
-    switch (value) {
-      case 0: return PUSH;
-      case 1: return PULL;
-      default: return null;
-    }
-  }
-
-  public static com.google.protobuf.Internal.EnumLiteMap<SubscriptionMechanism>
-      internalGetValueMap() {
-    return internalValueMap;
-  }
-  private static final com.google.protobuf.Internal.EnumLiteMap<
-      SubscriptionMechanism> internalValueMap =
+    /**
+     * <code>PUSH = 0;</code>
+     */
+    public static final int PUSH_VALUE = 0;
+    /**
+     * <code>PULL = 1;</code>
+     */
+    public static final int PULL_VALUE = 1;
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        SubscriptionMechanism> internalValueMap =
         new com.google.protobuf.Internal.EnumLiteMap<SubscriptionMechanism>() {
-          public SubscriptionMechanism findValueByNumber(int number) {
-            return SubscriptionMechanism.forNumber(number);
-          }
+            public SubscriptionMechanism findValueByNumber(int number) {
+                return SubscriptionMechanism.forNumber(number);
+            }
         };
+    private static final SubscriptionMechanism[] VALUES = values();
+    private final int value;
 
-  public final com.google.protobuf.Descriptors.EnumValueDescriptor
-      getValueDescriptor() {
-    return getDescriptor().getValues().get(ordinal());
-  }
-  public final com.google.protobuf.Descriptors.EnumDescriptor
-      getDescriptorForType() {
-    return getDescriptor();
-  }
-  public static final com.google.protobuf.Descriptors.EnumDescriptor
-      getDescriptor() {
-    return com.flipkart.vbroker.proto.PEntities.getDescriptor().getEnumTypes().get(3);
-  }
-
-  private static final SubscriptionMechanism[] VALUES = values();
-
-  public static SubscriptionMechanism valueOf(
-      com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
-    if (desc.getType() != getDescriptor()) {
-      throw new java.lang.IllegalArgumentException(
-        "EnumValueDescriptor is not for this type.");
+    private SubscriptionMechanism(int value) {
+        this.value = value;
     }
-    if (desc.getIndex() == -1) {
-      return UNRECOGNIZED;
+
+    /**
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static SubscriptionMechanism valueOf(int value) {
+        return forNumber(value);
     }
-    return VALUES[desc.getIndex()];
-  }
 
-  private final int value;
+    public static SubscriptionMechanism forNumber(int value) {
+        switch (value) {
+            case 0:
+                return PUSH;
+            case 1:
+                return PULL;
+            default:
+                return null;
+        }
+    }
 
-  private SubscriptionMechanism(int value) {
-    this.value = value;
-  }
+    public static com.google.protobuf.Internal.EnumLiteMap<SubscriptionMechanism>
+    internalGetValueMap() {
+        return internalValueMap;
+    }
 
-  // @@protoc_insertion_point(enum_scope:proto.SubscriptionMechanism)
+    public static final com.google.protobuf.Descriptors.EnumDescriptor
+    getDescriptor() {
+        return com.flipkart.vbroker.proto.PEntities.getDescriptor().getEnumTypes().get(3);
+    }
+
+    public static SubscriptionMechanism valueOf(
+        com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+        if (desc.getType() != getDescriptor()) {
+            throw new java.lang.IllegalArgumentException(
+                "EnumValueDescriptor is not for this type.");
+        }
+        if (desc.getIndex() == -1) {
+            return UNRECOGNIZED;
+        }
+        return VALUES[desc.getIndex()];
+    }
+
+    public final int getNumber() {
+        if (this == UNRECOGNIZED) {
+            throw new java.lang.IllegalArgumentException(
+                "Can't get the number of an unknown enum value.");
+        }
+        return value;
+    }
+
+    public final com.google.protobuf.Descriptors.EnumValueDescriptor
+    getValueDescriptor() {
+        return getDescriptor().getValues().get(ordinal());
+    }
+
+    public final com.google.protobuf.Descriptors.EnumDescriptor
+    getDescriptorForType() {
+        return getDescriptor();
+    }
+
+    // @@protoc_insertion_point(enum_scope:proto.SubscriptionMechanism)
 }
 

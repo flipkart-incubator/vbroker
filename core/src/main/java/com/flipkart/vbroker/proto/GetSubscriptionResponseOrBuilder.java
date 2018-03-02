@@ -7,29 +7,33 @@ public interface GetSubscriptionResponseOrBuilder extends
     // @@protoc_insertion_point(interface_extends:proto.GetSubscriptionResponse)
     com.google.protobuf.MessageOrBuilder {
 
-  /**
-   * <code>.proto.ProtoSubscription subscription = 1;</code>
-   */
-  boolean hasSubscription();
-  /**
-   * <code>.proto.ProtoSubscription subscription = 1;</code>
-   */
-  com.flipkart.vbroker.proto.ProtoSubscription getSubscription();
-  /**
-   * <code>.proto.ProtoSubscription subscription = 1;</code>
-   */
-  com.flipkart.vbroker.proto.ProtoSubscriptionOrBuilder getSubscriptionOrBuilder();
+    /**
+     * <code>.proto.ProtoSubscription subscription = 1;</code>
+     */
+    boolean hasSubscription();
 
-  /**
-   * <code>.proto.VStatus status = 2;</code>
-   */
-  boolean hasStatus();
-  /**
-   * <code>.proto.VStatus status = 2;</code>
-   */
-  com.flipkart.vbroker.proto.VStatus getStatus();
-  /**
-   * <code>.proto.VStatus status = 2;</code>
-   */
-  com.flipkart.vbroker.proto.VStatusOrBuilder getStatusOrBuilder();
+    /**
+     * <code>.proto.ProtoSubscription subscription = 1;</code>
+     */
+    com.flipkart.vbroker.proto.ProtoSubscription getSubscription();
+
+    /**
+     * <code>.proto.ProtoSubscription subscription = 1;</code>
+     */
+    com.flipkart.vbroker.proto.ProtoSubscriptionOrBuilder getSubscriptionOrBuilder();
+
+    /**
+     * <code>.proto.VStatus status = 2;</code>
+     */
+    boolean hasStatus();
+
+    /**
+     * <code>.proto.VStatus status = 2;</code>
+     */
+    com.flipkart.vbroker.proto.VStatus getStatus();
+
+    /**
+     * <code>.proto.VStatus status = 2;</code>
+     */
+    com.flipkart.vbroker.proto.VStatusOrBuilder getStatusOrBuilder();
 }

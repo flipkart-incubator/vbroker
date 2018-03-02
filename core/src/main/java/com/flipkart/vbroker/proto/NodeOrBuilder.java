@@ -7,23 +7,24 @@ public interface NodeOrBuilder extends
     // @@protoc_insertion_point(interface_extends:proto.Node)
     com.google.protobuf.MessageOrBuilder {
 
-  /**
-   * <code>int32 brokerId = 1;</code>
-   */
-  int getBrokerId();
+    /**
+     * <code>int32 brokerId = 1;</code>
+     */
+    int getBrokerId();
 
-  /**
-   * <code>string hostIp = 2;</code>
-   */
-  java.lang.String getHostIp();
-  /**
-   * <code>string hostIp = 2;</code>
-   */
-  com.google.protobuf.ByteString
-      getHostIpBytes();
+    /**
+     * <code>string hostIp = 2;</code>
+     */
+    java.lang.String getHostIp();
 
-  /**
-   * <code>int32 hostPort = 3;</code>
-   */
-  int getHostPort();
+    /**
+     * <code>string hostIp = 2;</code>
+     */
+    com.google.protobuf.ByteString
+    getHostIpBytes();
+
+    /**
+     * <code>int32 hostPort = 3;</code>
+     */
+    int getHostPort();
 }

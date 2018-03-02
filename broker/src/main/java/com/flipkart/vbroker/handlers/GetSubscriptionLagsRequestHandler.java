@@ -1,15 +1,13 @@
 package com.flipkart.vbroker.handlers;
 
-import com.flipkart.vbroker.flatbuf.*;
+import com.flipkart.vbroker.flatbuf.StatusCode;
+import com.flipkart.vbroker.flatbuf.VRequest;
+import com.flipkart.vbroker.flatbuf.VResponse;
 import com.flipkart.vbroker.proto.*;
-import com.flipkart.vbroker.proto.VStatus;
 import com.flipkart.vbroker.services.SubscriptionService;
-import com.flipkart.vbroker.utils.ByteBufUtils;
 import com.flipkart.vbroker.utils.CompletionStageUtils;
 import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.flipkart.vbroker.wrappers.Subscription;
-import com.google.flatbuffers.FlatBufferBuilder;
-import com.google.protobuf.InvalidProtocolBufferException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,17 +29,16 @@ public class GetSubscriptionLagsRequestHandler implements RequestHandler {
         //TODO messageGroups with no corresponding subscriberGroups? (e.g., in L3?)
 
 
-
         GetSubscriptionLagsRequest getSubscriptionLagsRequest = FlatbufUtils.getProtoRequest(vRequest).getGetSubscriptionLagsRequest();
         List<CompletionStage<SubscriptionLag>> subscriptionLagStages =
             getSubscriptionLagsRequest.getSubscriptionLagRequestsList().stream()
-            .map(subscriptionLagReq -> {
-                int subscriptionId = subscriptionLagReq.getTopicSubscription().getSubscriptionId();
-                int topicId = subscriptionLagReq.getTopicSubscription().getTopicId();
-                List<Integer> partitionIds = getPartitionIds(subscriptionLagReq);
-                return getSubscriptionLag(subscriptionId, topicId, partitionIds);
-            })
-            .collect(Collectors.toList());
+                .map(subscriptionLagReq -> {
+                    int subscriptionId = subscriptionLagReq.getTopicSubscription().getSubscriptionId();
+                    int topicId = subscriptionLagReq.getTopicSubscription().getTopicId();
+                    List<Integer> partitionIds = getPartitionIds(subscriptionLagReq);
+                    return getSubscriptionLag(subscriptionId, topicId, partitionIds);
+                })
+                .collect(Collectors.toList());
         return CompletionStageUtils.listOfStagesToStageOfList(subscriptionLagStages).thenApply(subscriptionLags -> generateVResponse(subscriptionLags, vRequest.correlationId()));
     }
 

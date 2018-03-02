@@ -1,9 +1,11 @@
 package com.flipkart.vbroker.handlers;
 
-import com.flipkart.vbroker.flatbuf.RequestMessage;
 import com.flipkart.vbroker.flatbuf.VRequest;
 import com.flipkart.vbroker.flatbuf.VResponse;
-import com.flipkart.vbroker.proto.*;
+import com.flipkart.vbroker.proto.GetSubscriptionsRequest;
+import com.flipkart.vbroker.proto.GetSubscriptionsResponse;
+import com.flipkart.vbroker.proto.ProtoRequest;
+import com.flipkart.vbroker.proto.TopicSubscription;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.google.flatbuffers.FlatBufferBuilder;
@@ -12,7 +14,6 @@ import org.mockito.Mockito;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,5 +57,5 @@ public class GetSubscriptionsRequestHandlerTest {
             .build();
         ProtoRequest protoRequest = ProtoRequest.newBuilder().setGetSubscriptionsRequest(getSubscriptionsRequest).build();
         return FlatbufUtils.createVRequest((byte) 1, 1001, protoRequest);
-        }
+    }
 }

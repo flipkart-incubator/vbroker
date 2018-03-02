@@ -7,27 +7,31 @@ public interface CreateQueuesRequestOrBuilder extends
     // @@protoc_insertion_point(interface_extends:proto.CreateQueuesRequest)
     com.google.protobuf.MessageOrBuilder {
 
-  /**
-   * <code>repeated .proto.ProtoQueue queues = 1;</code>
-   */
-  java.util.List<com.flipkart.vbroker.proto.ProtoQueue> 
-      getQueuesList();
-  /**
-   * <code>repeated .proto.ProtoQueue queues = 1;</code>
-   */
-  com.flipkart.vbroker.proto.ProtoQueue getQueues(int index);
-  /**
-   * <code>repeated .proto.ProtoQueue queues = 1;</code>
-   */
-  int getQueuesCount();
-  /**
-   * <code>repeated .proto.ProtoQueue queues = 1;</code>
-   */
-  java.util.List<? extends com.flipkart.vbroker.proto.ProtoQueueOrBuilder> 
-      getQueuesOrBuilderList();
-  /**
-   * <code>repeated .proto.ProtoQueue queues = 1;</code>
-   */
-  com.flipkart.vbroker.proto.ProtoQueueOrBuilder getQueuesOrBuilder(
-      int index);
+    /**
+     * <code>repeated .proto.ProtoQueue queues = 1;</code>
+     */
+    java.util.List<com.flipkart.vbroker.proto.ProtoQueue>
+    getQueuesList();
+
+    /**
+     * <code>repeated .proto.ProtoQueue queues = 1;</code>
+     */
+    com.flipkart.vbroker.proto.ProtoQueue getQueues(int index);
+
+    /**
+     * <code>repeated .proto.ProtoQueue queues = 1;</code>
+     */
+    int getQueuesCount();
+
+    /**
+     * <code>repeated .proto.ProtoQueue queues = 1;</code>
+     */
+    java.util.List<? extends com.flipkart.vbroker.proto.ProtoQueueOrBuilder>
+    getQueuesOrBuilderList();
+
+    /**
+     * <code>repeated .proto.ProtoQueue queues = 1;</code>
+     */
+    com.flipkart.vbroker.proto.ProtoQueueOrBuilder getQueuesOrBuilder(
+        int index);
 }

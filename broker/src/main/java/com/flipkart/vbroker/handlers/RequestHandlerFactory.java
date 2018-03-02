@@ -1,9 +1,9 @@
 package com.flipkart.vbroker.handlers;
 
-import com.flipkart.vbroker.flatbuf.RequestMessage;
-import com.flipkart.vbroker.flatbuf.VRequest;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.exceptions.VBrokerException;
+import com.flipkart.vbroker.flatbuf.RequestMessage;
+import com.flipkart.vbroker.flatbuf.VRequest;
 import com.flipkart.vbroker.proto.ProtoRequest;
 import com.flipkart.vbroker.services.ProducerService;
 import com.flipkart.vbroker.services.SubscriptionService;
@@ -89,8 +89,8 @@ public class RequestHandlerFactory {
             case GETTOPICSREQUEST:
                 throw new NotImplementedException();
 //                break;
-                default:
-                    throw new VBrokerException("Unknown ProtoRequestType: " + protoRequest.getProtoRequestCase());
+            default:
+                throw new VBrokerException("Unknown ProtoRequestType: " + protoRequest.getProtoRequestCase());
         }
         return requestHandler;
     }

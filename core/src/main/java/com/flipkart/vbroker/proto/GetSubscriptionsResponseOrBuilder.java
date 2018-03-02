@@ -7,27 +7,31 @@ public interface GetSubscriptionsResponseOrBuilder extends
     // @@protoc_insertion_point(interface_extends:proto.GetSubscriptionsResponse)
     com.google.protobuf.MessageOrBuilder {
 
-  /**
-   * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
-   */
-  java.util.List<com.flipkart.vbroker.proto.GetSubscriptionResponse> 
-      getSubscriptionsList();
-  /**
-   * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
-   */
-  com.flipkart.vbroker.proto.GetSubscriptionResponse getSubscriptions(int index);
-  /**
-   * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
-   */
-  int getSubscriptionsCount();
-  /**
-   * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
-   */
-  java.util.List<? extends com.flipkart.vbroker.proto.GetSubscriptionResponseOrBuilder> 
-      getSubscriptionsOrBuilderList();
-  /**
-   * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
-   */
-  com.flipkart.vbroker.proto.GetSubscriptionResponseOrBuilder getSubscriptionsOrBuilder(
-      int index);
+    /**
+     * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+     */
+    java.util.List<com.flipkart.vbroker.proto.GetSubscriptionResponse>
+    getSubscriptionsList();
+
+    /**
+     * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+     */
+    com.flipkart.vbroker.proto.GetSubscriptionResponse getSubscriptions(int index);
+
+    /**
+     * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+     */
+    int getSubscriptionsCount();
+
+    /**
+     * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+     */
+    java.util.List<? extends com.flipkart.vbroker.proto.GetSubscriptionResponseOrBuilder>
+    getSubscriptionsOrBuilderList();
+
+    /**
+     * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+     */
+    com.flipkart.vbroker.proto.GetSubscriptionResponseOrBuilder getSubscriptionsOrBuilder(
+        int index);
 }

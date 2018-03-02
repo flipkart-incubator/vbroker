@@ -376,6 +376,7 @@ public final class TestProtos {
 
         // @@protoc_insertion_point(enum_scope:test.TopicCategory)
     }
+
     /**
      * Protobuf enum {@code test.SubscriptionType}
      */
@@ -474,6 +475,7 @@ public final class TestProtos {
 
         // @@protoc_insertion_point(enum_scope:test.SubscriptionType)
     }
+
     /**
      * Protobuf enum {@code test.SubscriptionMechanism}
      */
@@ -572,6 +574,7 @@ public final class TestProtos {
 
         // @@protoc_insertion_point(enum_scope:test.SubscriptionMechanism)
     }
+
     public interface TopicOrBuilder extends
         // @@protoc_insertion_point(interface_extends:test.Topic)
         com.google.protobuf.MessageOrBuilder {
@@ -617,6 +620,7 @@ public final class TestProtos {
          */
         com.flipkart.TestProtos.TopicCategory getTopicCategory();
     }
+
     public interface FilterKeyValueOrBuilder extends
         // @@protoc_insertion_point(interface_extends:test.FilterKeyValue)
         com.google.protobuf.MessageOrBuilder {
@@ -643,6 +647,7 @@ public final class TestProtos {
         com.google.protobuf.ByteString
         getValuesBytes();
     }
+
     public interface CodeRangeOrBuilder extends
         // @@protoc_insertion_point(interface_extends:test.CodeRange)
         com.google.protobuf.MessageOrBuilder {
@@ -657,6 +662,7 @@ public final class TestProtos {
          */
         int getTo();
     }
+
     public interface CallbackConfigOrBuilder extends
         // @@protoc_insertion_point(interface_extends:test.CallbackConfig)
         com.google.protobuf.MessageOrBuilder {
@@ -689,6 +695,7 @@ public final class TestProtos {
         com.flipkart.TestProtos.CodeRangeOrBuilder getCodeRangesOrBuilder(
             int index);
     }
+
     public interface SubscriptionOrBuilder extends
         // @@protoc_insertion_point(interface_extends:test.Subscription)
         com.google.protobuf.MessageOrBuilder {
@@ -830,6 +837,7 @@ public final class TestProtos {
          */
         com.flipkart.TestProtos.CallbackConfigOrBuilder getCallbackConfigOrBuilder();
     }
+
     public interface GetTopicsRequestOrBuilder extends
         // @@protoc_insertion_point(interface_extends:test.GetTopicsRequest)
         com.google.protobuf.MessageOrBuilder {
@@ -849,6 +857,7 @@ public final class TestProtos {
          */
         int getTopicIds(int index);
     }
+
     public interface TopicSubscriptionOrBuilder extends
         // @@protoc_insertion_point(interface_extends:test.TopicSubscription)
         com.google.protobuf.MessageOrBuilder {
@@ -863,6 +872,7 @@ public final class TestProtos {
          */
         int getTopicID();
     }
+
     public interface GetSubscriptionsRequestOrBuilder extends
         // @@protoc_insertion_point(interface_extends:test.GetSubscriptionsRequest)
         com.google.protobuf.MessageOrBuilder {
@@ -895,6 +905,7 @@ public final class TestProtos {
         com.flipkart.TestProtos.TopicSubscriptionOrBuilder getSubscriptionsOrBuilder(
             int index);
     }
+
     public interface VStatusOrBuilder extends
         // @@protoc_insertion_point(interface_extends:test.VStatus)
         com.google.protobuf.MessageOrBuilder {
@@ -915,6 +926,7 @@ public final class TestProtos {
         com.google.protobuf.ByteString
         getMessageBytes();
     }
+
     public interface GetTopicResponseOrBuilder extends
         // @@protoc_insertion_point(interface_extends:test.GetTopicResponse)
         com.google.protobuf.MessageOrBuilder {
@@ -949,6 +961,7 @@ public final class TestProtos {
          */
         com.flipkart.TestProtos.TopicOrBuilder getTopicOrBuilder();
     }
+
     public interface GetTopicsResponseOrBuilder extends
         // @@protoc_insertion_point(interface_extends:test.GetTopicsResponse)
         com.google.protobuf.MessageOrBuilder {
@@ -981,6 +994,7 @@ public final class TestProtos {
         com.flipkart.TestProtos.GetTopicResponseOrBuilder getResponsesOrBuilder(
             int index);
     }
+
     public interface GetSubscriptionResponseOrBuilder extends
         // @@protoc_insertion_point(interface_extends:test.GetSubscriptionResponse)
         com.google.protobuf.MessageOrBuilder {
@@ -1025,6 +1039,7 @@ public final class TestProtos {
          */
         com.flipkart.TestProtos.SubscriptionOrBuilder getSubscriptionOrBuilder();
     }
+
     public interface GetSubscriptionsResponseOrBuilder extends
         // @@protoc_insertion_point(interface_extends:test.GetSubscriptionsResponse)
         com.google.protobuf.MessageOrBuilder {
@@ -1057,6 +1072,7 @@ public final class TestProtos {
         com.flipkart.TestProtos.GetSubscriptionResponseOrBuilder getResponsesOrBuilder(
             int index);
     }
+
     public interface RequestMessageOrBuilder extends
         // @@protoc_insertion_point(interface_extends:test.RequestMessage)
         com.google.protobuf.MessageOrBuilder {
@@ -1093,6 +1109,7 @@ public final class TestProtos {
 
         public com.flipkart.TestProtos.RequestMessage.RequestMessageCase getRequestMessageCase();
     }
+
     public interface VRequestOrBuilder extends
         // @@protoc_insertion_point(interface_extends:test.VRequest)
         com.google.protobuf.MessageOrBuilder {
@@ -1123,6 +1140,7 @@ public final class TestProtos {
          */
         com.flipkart.TestProtos.RequestMessageOrBuilder getRequestMessageOrBuilder();
     }
+
     public interface ResponseMessageOrBuilder extends
         // @@protoc_insertion_point(interface_extends:test.ResponseMessage)
         com.google.protobuf.MessageOrBuilder {
@@ -1159,6 +1177,7 @@ public final class TestProtos {
 
         public com.flipkart.TestProtos.ResponseMessage.RequestMessageCase getRequestMessageCase();
     }
+
     public interface VResponseOrBuilder extends
         // @@protoc_insertion_point(interface_extends:test.VResponse)
         com.google.protobuf.MessageOrBuilder {
@@ -1232,6 +1251,7 @@ public final class TestProtos {
         private Topic(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
             super(builder);
         }
+
         private Topic() {
             name_ = "";
             id_ = 0;
@@ -2783,6 +2803,7 @@ public final class TestProtos {
             from_ = 0;
             to_ = 0;
         }
+
         private CodeRange(
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -3310,6 +3331,7 @@ public final class TestProtos {
         private CallbackConfig(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
             super(builder);
         }
+
         private CallbackConfig() {
             codeRanges_ = java.util.Collections.emptyList();
         }
@@ -4134,6 +4156,7 @@ public final class TestProtos {
             filterOperator_ = "";
             filterKeyValues_ = java.util.Collections.emptyList();
         }
+
         private Subscription(
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -5983,21 +6006,6 @@ public final class TestProtos {
             /**
              * <code>.test.CallbackConfig callbackConfig = 14;</code>
              */
-            public Builder setCallbackConfig(
-                com.flipkart.TestProtos.CallbackConfig.Builder builderForValue) {
-                if (callbackConfigBuilder_ == null) {
-                    callbackConfig_ = builderForValue.build();
-                    onChanged();
-                } else {
-                    callbackConfigBuilder_.setMessage(builderForValue.build());
-                }
-
-                return this;
-            }
-
-            /**
-             * <code>.test.CallbackConfig callbackConfig = 14;</code>
-             */
             public Builder setCallbackConfig(com.flipkart.TestProtos.CallbackConfig value) {
                 if (callbackConfigBuilder_ == null) {
                     if (value == null) {
@@ -6007,6 +6015,21 @@ public final class TestProtos {
                     onChanged();
                 } else {
                     callbackConfigBuilder_.setMessage(value);
+                }
+
+                return this;
+            }
+
+            /**
+             * <code>.test.CallbackConfig callbackConfig = 14;</code>
+             */
+            public Builder setCallbackConfig(
+                com.flipkart.TestProtos.CallbackConfig.Builder builderForValue) {
+                if (callbackConfigBuilder_ == null) {
+                    callbackConfig_ = builderForValue.build();
+                    onChanged();
+                } else {
+                    callbackConfigBuilder_.setMessage(builderForValue.build());
                 }
 
                 return this;
@@ -6128,6 +6151,7 @@ public final class TestProtos {
         private java.util.List<java.lang.Integer> topicIds_;
         private int topicIdsMemoizedSerializedSize = -1;
         private byte memoizedIsInitialized = -1;
+
         // Use GetTopicsRequest.newBuilder() to construct.
         private GetTopicsRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
             super(builder);
@@ -6723,6 +6747,7 @@ public final class TestProtos {
             subscriptionId_ = 0;
             topicID_ = 0;
         }
+
         private TopicSubscription(
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -7250,6 +7275,7 @@ public final class TestProtos {
         private GetSubscriptionsRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
             super(builder);
         }
+
         private GetSubscriptionsRequest() {
             subscriptions_ = java.util.Collections.emptyList();
         }
@@ -8038,6 +8064,7 @@ public final class TestProtos {
             statusCode_ = 0;
             message_ = "";
         }
+
         private VStatus(
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -9163,21 +9190,6 @@ public final class TestProtos {
             /**
              * <code>.test.VStatus status = 1;</code>
              */
-            public Builder setStatus(
-                com.flipkart.TestProtos.VStatus.Builder builderForValue) {
-                if (statusBuilder_ == null) {
-                    status_ = builderForValue.build();
-                    onChanged();
-                } else {
-                    statusBuilder_.setMessage(builderForValue.build());
-                }
-
-                return this;
-            }
-
-            /**
-             * <code>.test.VStatus status = 1;</code>
-             */
             public Builder setStatus(com.flipkart.TestProtos.VStatus value) {
                 if (statusBuilder_ == null) {
                     if (value == null) {
@@ -9187,6 +9199,21 @@ public final class TestProtos {
                     onChanged();
                 } else {
                     statusBuilder_.setMessage(value);
+                }
+
+                return this;
+            }
+
+            /**
+             * <code>.test.VStatus status = 1;</code>
+             */
+            public Builder setStatus(
+                com.flipkart.TestProtos.VStatus.Builder builderForValue) {
+                if (statusBuilder_ == null) {
+                    status_ = builderForValue.build();
+                    onChanged();
+                } else {
+                    statusBuilder_.setMessage(builderForValue.build());
                 }
 
                 return this;
@@ -9285,21 +9312,6 @@ public final class TestProtos {
             /**
              * <code>.test.Topic topic = 2;</code>
              */
-            public Builder setTopic(
-                com.flipkart.TestProtos.Topic.Builder builderForValue) {
-                if (topicBuilder_ == null) {
-                    topic_ = builderForValue.build();
-                    onChanged();
-                } else {
-                    topicBuilder_.setMessage(builderForValue.build());
-                }
-
-                return this;
-            }
-
-            /**
-             * <code>.test.Topic topic = 2;</code>
-             */
             public Builder setTopic(com.flipkart.TestProtos.Topic value) {
                 if (topicBuilder_ == null) {
                     if (value == null) {
@@ -9309,6 +9321,21 @@ public final class TestProtos {
                     onChanged();
                 } else {
                     topicBuilder_.setMessage(value);
+                }
+
+                return this;
+            }
+
+            /**
+             * <code>.test.Topic topic = 2;</code>
+             */
+            public Builder setTopic(
+                com.flipkart.TestProtos.Topic.Builder builderForValue) {
+                if (topicBuilder_ == null) {
+                    topic_ = builderForValue.build();
+                    onChanged();
+                } else {
+                    topicBuilder_.setMessage(builderForValue.build());
                 }
 
                 return this;
@@ -9434,6 +9461,7 @@ public final class TestProtos {
         private GetTopicsResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
             super(builder);
         }
+
         private GetTopicsResponse() {
             responses_ = java.util.Collections.emptyList();
         }
@@ -10221,6 +10249,7 @@ public final class TestProtos {
         private GetSubscriptionResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
             super(builder);
         }
+
         private GetSubscriptionResponse() {
             subscriptionId_ = 0;
             topicId_ = 0;
@@ -10860,21 +10889,6 @@ public final class TestProtos {
             /**
              * <code>.test.VStatus status = 3;</code>
              */
-            public Builder setStatus(
-                com.flipkart.TestProtos.VStatus.Builder builderForValue) {
-                if (statusBuilder_ == null) {
-                    status_ = builderForValue.build();
-                    onChanged();
-                } else {
-                    statusBuilder_.setMessage(builderForValue.build());
-                }
-
-                return this;
-            }
-
-            /**
-             * <code>.test.VStatus status = 3;</code>
-             */
             public Builder setStatus(com.flipkart.TestProtos.VStatus value) {
                 if (statusBuilder_ == null) {
                     if (value == null) {
@@ -10884,6 +10898,21 @@ public final class TestProtos {
                     onChanged();
                 } else {
                     statusBuilder_.setMessage(value);
+                }
+
+                return this;
+            }
+
+            /**
+             * <code>.test.VStatus status = 3;</code>
+             */
+            public Builder setStatus(
+                com.flipkart.TestProtos.VStatus.Builder builderForValue) {
+                if (statusBuilder_ == null) {
+                    status_ = builderForValue.build();
+                    onChanged();
+                } else {
+                    statusBuilder_.setMessage(builderForValue.build());
                 }
 
                 return this;
@@ -10982,21 +11011,6 @@ public final class TestProtos {
             /**
              * <code>.test.Subscription subscription = 4;</code>
              */
-            public Builder setSubscription(
-                com.flipkart.TestProtos.Subscription.Builder builderForValue) {
-                if (subscriptionBuilder_ == null) {
-                    subscription_ = builderForValue.build();
-                    onChanged();
-                } else {
-                    subscriptionBuilder_.setMessage(builderForValue.build());
-                }
-
-                return this;
-            }
-
-            /**
-             * <code>.test.Subscription subscription = 4;</code>
-             */
             public Builder setSubscription(com.flipkart.TestProtos.Subscription value) {
                 if (subscriptionBuilder_ == null) {
                     if (value == null) {
@@ -11006,6 +11020,21 @@ public final class TestProtos {
                     onChanged();
                 } else {
                     subscriptionBuilder_.setMessage(value);
+                }
+
+                return this;
+            }
+
+            /**
+             * <code>.test.Subscription subscription = 4;</code>
+             */
+            public Builder setSubscription(
+                com.flipkart.TestProtos.Subscription.Builder builderForValue) {
+                if (subscriptionBuilder_ == null) {
+                    subscription_ = builderForValue.build();
+                    onChanged();
+                } else {
+                    subscriptionBuilder_.setMessage(builderForValue.build());
                 }
 
                 return this;
@@ -11131,6 +11160,7 @@ public final class TestProtos {
         private GetSubscriptionsResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
             super(builder);
         }
+
         private GetSubscriptionsResponse() {
             responses_ = java.util.Collections.emptyList();
         }
@@ -12527,21 +12557,6 @@ public final class TestProtos {
             /**
              * <code>.test.GetSubscriptionsRequest getSubscriptionsRequest = 1;</code>
              */
-            public Builder setGetSubscriptionsRequest(
-                com.flipkart.TestProtos.GetSubscriptionsRequest.Builder builderForValue) {
-                if (getSubscriptionsRequestBuilder_ == null) {
-                    requestMessage_ = builderForValue.build();
-                    onChanged();
-                } else {
-                    getSubscriptionsRequestBuilder_.setMessage(builderForValue.build());
-                }
-                requestMessageCase_ = 1;
-                return this;
-            }
-
-            /**
-             * <code>.test.GetSubscriptionsRequest getSubscriptionsRequest = 1;</code>
-             */
             public Builder setGetSubscriptionsRequest(com.flipkart.TestProtos.GetSubscriptionsRequest value) {
                 if (getSubscriptionsRequestBuilder_ == null) {
                     if (value == null) {
@@ -12551,6 +12566,21 @@ public final class TestProtos {
                     onChanged();
                 } else {
                     getSubscriptionsRequestBuilder_.setMessage(value);
+                }
+                requestMessageCase_ = 1;
+                return this;
+            }
+
+            /**
+             * <code>.test.GetSubscriptionsRequest getSubscriptionsRequest = 1;</code>
+             */
+            public Builder setGetSubscriptionsRequest(
+                com.flipkart.TestProtos.GetSubscriptionsRequest.Builder builderForValue) {
+                if (getSubscriptionsRequestBuilder_ == null) {
+                    requestMessage_ = builderForValue.build();
+                    onChanged();
+                } else {
+                    getSubscriptionsRequestBuilder_.setMessage(builderForValue.build());
                 }
                 requestMessageCase_ = 1;
                 return this;
@@ -12670,21 +12700,6 @@ public final class TestProtos {
             /**
              * <code>.test.GetTopicsRequest getTopicsRequest = 2;</code>
              */
-            public Builder setGetTopicsRequest(
-                com.flipkart.TestProtos.GetTopicsRequest.Builder builderForValue) {
-                if (getTopicsRequestBuilder_ == null) {
-                    requestMessage_ = builderForValue.build();
-                    onChanged();
-                } else {
-                    getTopicsRequestBuilder_.setMessage(builderForValue.build());
-                }
-                requestMessageCase_ = 2;
-                return this;
-            }
-
-            /**
-             * <code>.test.GetTopicsRequest getTopicsRequest = 2;</code>
-             */
             public Builder setGetTopicsRequest(com.flipkart.TestProtos.GetTopicsRequest value) {
                 if (getTopicsRequestBuilder_ == null) {
                     if (value == null) {
@@ -12694,6 +12709,21 @@ public final class TestProtos {
                     onChanged();
                 } else {
                     getTopicsRequestBuilder_.setMessage(value);
+                }
+                requestMessageCase_ = 2;
+                return this;
+            }
+
+            /**
+             * <code>.test.GetTopicsRequest getTopicsRequest = 2;</code>
+             */
+            public Builder setGetTopicsRequest(
+                com.flipkart.TestProtos.GetTopicsRequest.Builder builderForValue) {
+                if (getTopicsRequestBuilder_ == null) {
+                    requestMessage_ = builderForValue.build();
+                    onChanged();
+                } else {
+                    getTopicsRequestBuilder_.setMessage(builderForValue.build());
                 }
                 requestMessageCase_ = 2;
                 return this;
@@ -13423,21 +13453,6 @@ public final class TestProtos {
             /**
              * <code>.test.RequestMessage requestMessage = 2;</code>
              */
-            public Builder setRequestMessage(
-                com.flipkart.TestProtos.RequestMessage.Builder builderForValue) {
-                if (requestMessageBuilder_ == null) {
-                    requestMessage_ = builderForValue.build();
-                    onChanged();
-                } else {
-                    requestMessageBuilder_.setMessage(builderForValue.build());
-                }
-
-                return this;
-            }
-
-            /**
-             * <code>.test.RequestMessage requestMessage = 2;</code>
-             */
             public Builder setRequestMessage(com.flipkart.TestProtos.RequestMessage value) {
                 if (requestMessageBuilder_ == null) {
                     if (value == null) {
@@ -13447,6 +13462,21 @@ public final class TestProtos {
                     onChanged();
                 } else {
                     requestMessageBuilder_.setMessage(value);
+                }
+
+                return this;
+            }
+
+            /**
+             * <code>.test.RequestMessage requestMessage = 2;</code>
+             */
+            public Builder setRequestMessage(
+                com.flipkart.TestProtos.RequestMessage.Builder builderForValue) {
+                if (requestMessageBuilder_ == null) {
+                    requestMessage_ = builderForValue.build();
+                    onChanged();
+                } else {
+                    requestMessageBuilder_.setMessage(builderForValue.build());
                 }
 
                 return this;
@@ -14187,21 +14217,6 @@ public final class TestProtos {
             /**
              * <code>.test.GetSubscriptionsResponse getSubscriptionsResponse = 1;</code>
              */
-            public Builder setGetSubscriptionsResponse(
-                com.flipkart.TestProtos.GetSubscriptionsResponse.Builder builderForValue) {
-                if (getSubscriptionsResponseBuilder_ == null) {
-                    requestMessage_ = builderForValue.build();
-                    onChanged();
-                } else {
-                    getSubscriptionsResponseBuilder_.setMessage(builderForValue.build());
-                }
-                requestMessageCase_ = 1;
-                return this;
-            }
-
-            /**
-             * <code>.test.GetSubscriptionsResponse getSubscriptionsResponse = 1;</code>
-             */
             public Builder setGetSubscriptionsResponse(com.flipkart.TestProtos.GetSubscriptionsResponse value) {
                 if (getSubscriptionsResponseBuilder_ == null) {
                     if (value == null) {
@@ -14211,6 +14226,21 @@ public final class TestProtos {
                     onChanged();
                 } else {
                     getSubscriptionsResponseBuilder_.setMessage(value);
+                }
+                requestMessageCase_ = 1;
+                return this;
+            }
+
+            /**
+             * <code>.test.GetSubscriptionsResponse getSubscriptionsResponse = 1;</code>
+             */
+            public Builder setGetSubscriptionsResponse(
+                com.flipkart.TestProtos.GetSubscriptionsResponse.Builder builderForValue) {
+                if (getSubscriptionsResponseBuilder_ == null) {
+                    requestMessage_ = builderForValue.build();
+                    onChanged();
+                } else {
+                    getSubscriptionsResponseBuilder_.setMessage(builderForValue.build());
                 }
                 requestMessageCase_ = 1;
                 return this;
@@ -14330,21 +14360,6 @@ public final class TestProtos {
             /**
              * <code>.test.GetTopicsResponse getTopicsResponse = 2;</code>
              */
-            public Builder setGetTopicsResponse(
-                com.flipkart.TestProtos.GetTopicsResponse.Builder builderForValue) {
-                if (getTopicsResponseBuilder_ == null) {
-                    requestMessage_ = builderForValue.build();
-                    onChanged();
-                } else {
-                    getTopicsResponseBuilder_.setMessage(builderForValue.build());
-                }
-                requestMessageCase_ = 2;
-                return this;
-            }
-
-            /**
-             * <code>.test.GetTopicsResponse getTopicsResponse = 2;</code>
-             */
             public Builder setGetTopicsResponse(com.flipkart.TestProtos.GetTopicsResponse value) {
                 if (getTopicsResponseBuilder_ == null) {
                     if (value == null) {
@@ -14354,6 +14369,21 @@ public final class TestProtos {
                     onChanged();
                 } else {
                     getTopicsResponseBuilder_.setMessage(value);
+                }
+                requestMessageCase_ = 2;
+                return this;
+            }
+
+            /**
+             * <code>.test.GetTopicsResponse getTopicsResponse = 2;</code>
+             */
+            public Builder setGetTopicsResponse(
+                com.flipkart.TestProtos.GetTopicsResponse.Builder builderForValue) {
+                if (getTopicsResponseBuilder_ == null) {
+                    requestMessage_ = builderForValue.build();
+                    onChanged();
+                } else {
+                    getTopicsResponseBuilder_.setMessage(builderForValue.build());
                 }
                 requestMessageCase_ = 2;
                 return this;
@@ -15083,21 +15113,6 @@ public final class TestProtos {
             /**
              * <code>.test.ResponseMessage responseMessage = 2;</code>
              */
-            public Builder setResponseMessage(
-                com.flipkart.TestProtos.ResponseMessage.Builder builderForValue) {
-                if (responseMessageBuilder_ == null) {
-                    responseMessage_ = builderForValue.build();
-                    onChanged();
-                } else {
-                    responseMessageBuilder_.setMessage(builderForValue.build());
-                }
-
-                return this;
-            }
-
-            /**
-             * <code>.test.ResponseMessage responseMessage = 2;</code>
-             */
             public Builder setResponseMessage(com.flipkart.TestProtos.ResponseMessage value) {
                 if (responseMessageBuilder_ == null) {
                     if (value == null) {
@@ -15107,6 +15122,21 @@ public final class TestProtos {
                     onChanged();
                 } else {
                     responseMessageBuilder_.setMessage(value);
+                }
+
+                return this;
+            }
+
+            /**
+             * <code>.test.ResponseMessage responseMessage = 2;</code>
+             */
+            public Builder setResponseMessage(
+                com.flipkart.TestProtos.ResponseMessage.Builder builderForValue) {
+                if (responseMessageBuilder_ == null) {
+                    responseMessage_ = builderForValue.build();
+                    onChanged();
+                } else {
+                    responseMessageBuilder_.setMessage(builderForValue.build());
                 }
 
                 return this;

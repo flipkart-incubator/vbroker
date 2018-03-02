@@ -14,7 +14,7 @@ import java.util.List;
 public class Subscription {
     private final ProtoSubscription protoSubscription;
 
-    public static Subscription fromJson(String protoSubscriptionJson){
+    public static Subscription fromJson(String protoSubscriptionJson) {
         ProtoSubscription.Builder builder = ProtoSubscription.newBuilder();
         try {
             JsonFormat.parser().merge(protoSubscriptionJson, builder);
@@ -24,7 +24,7 @@ public class Subscription {
         return new Subscription(builder.build());
     }
 
-    public static Subscription fromBytes(byte[] bytes){
+    public static Subscription fromBytes(byte[] bytes) {
         try {
             return new Subscription(ProtoSubscription.parseFrom(bytes));
         } catch (InvalidProtocolBufferException e) {
@@ -32,59 +32,59 @@ public class Subscription {
         }
     }
 
-    public int id(){
+    public int id() {
         return protoSubscription.getId();
     }
 
-    public int topicId(){
+    public int topicId() {
         return protoSubscription.getTopicId();
     }
 
-    public String name(){
+    public String name() {
         return protoSubscription.getName();
     }
 
-    public boolean grouped(){
+    public boolean grouped() {
         return protoSubscription.getGrouped();
     }
 
-    public int parallelism(){
+    public int parallelism() {
         return protoSubscription.getParallelism();
     }
 
-    public int requestTimeout(){
+    public int requestTimeout() {
         return protoSubscription.getRequestTimeout();
     }
 
-    public SubscriptionType subscriptionType(){
+    public SubscriptionType subscriptionType() {
         return protoSubscription.getSubscriptionType();
     }
 
-    public SubscriptionMechanism subscriptionMechanism(){
+    public SubscriptionMechanism subscriptionMechanism() {
         return protoSubscription.getSubscriptionMechanism();
     }
 
-    public String httpUri(){
+    public String httpUri() {
         return protoSubscription.getHttpUri();
     }
 
-    public HttpMethod httpMethod(){
+    public HttpMethod httpMethod() {
         return protoSubscription.getHttpMethod();
     }
 
-    public boolean elastic(){
+    public boolean elastic() {
         return protoSubscription.getElastic();
     }
 
-    public FilterOperator filterOperator(){
+    public FilterOperator filterOperator() {
         return protoSubscription.getFilterOperator();
     }
 
-    public List<FilterKeyValues> filterKeyValuesList(){
+    public List<FilterKeyValues> filterKeyValuesList() {
         return protoSubscription.getFilterKeyValuesListList();
     }
 
-    public CallbackConfig callbackConfig(){
+    public CallbackConfig callbackConfig() {
         return protoSubscription.getCallbackConfig();
     }
 
@@ -102,11 +102,11 @@ public class Subscription {
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return protoSubscription.getId();
     }
 
-    public String toJson(){
+    public String toJson() {
         try {
             return JsonFormat.printer().print(protoSubscription);
         } catch (InvalidProtocolBufferException e) {
@@ -114,7 +114,7 @@ public class Subscription {
         }
     }
 
-    public byte[] toBytes(){
+    public byte[] toBytes() {
         return protoSubscription.toByteArray();
     }
 }

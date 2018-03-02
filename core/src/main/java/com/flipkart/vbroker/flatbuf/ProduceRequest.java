@@ -2,36 +2,75 @@
 
 package com.flipkart.vbroker.flatbuf;
 
-import java.nio.*;
-import java.lang.*;
+import com.google.flatbuffers.FlatBufferBuilder;
+import com.google.flatbuffers.Table;
 
-import com.google.flatbuffers.*;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 @SuppressWarnings("unused")
 public final class ProduceRequest extends Table {
-  public static ProduceRequest getRootAsProduceRequest(ByteBuffer _bb) { return getRootAsProduceRequest(_bb, new ProduceRequest()); }
-  public static ProduceRequest getRootAsProduceRequest(ByteBuffer _bb, ProduceRequest obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; }
-  public ProduceRequest __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+    public static ProduceRequest getRootAsProduceRequest(ByteBuffer _bb) {
+        return getRootAsProduceRequest(_bb, new ProduceRequest());
+    }
 
-  public TopicProduceRequest topicRequests(int j) { return topicRequests(new TopicProduceRequest(), j); }
-  public TopicProduceRequest topicRequests(TopicProduceRequest obj, int j) { int o = __offset(4); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
-  public int topicRequestsLength() { int o = __offset(4); return o != 0 ? __vector_len(o) : 0; }
+    public static ProduceRequest getRootAsProduceRequest(ByteBuffer _bb, ProduceRequest obj) {
+        _bb.order(ByteOrder.LITTLE_ENDIAN);
+        return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
+    }
 
-  public static int createProduceRequest(FlatBufferBuilder builder,
-      int topicRequestsOffset) {
-    builder.startObject(1);
-    ProduceRequest.addTopicRequests(builder, topicRequestsOffset);
-    return ProduceRequest.endProduceRequest(builder);
-  }
+    public static int createProduceRequest(FlatBufferBuilder builder,
+                                           int topicRequestsOffset) {
+        builder.startObject(1);
+        ProduceRequest.addTopicRequests(builder, topicRequestsOffset);
+        return ProduceRequest.endProduceRequest(builder);
+    }
 
-  public static void startProduceRequest(FlatBufferBuilder builder) { builder.startObject(1); }
-  public static void addTopicRequests(FlatBufferBuilder builder, int topicRequestsOffset) { builder.addOffset(0, topicRequestsOffset, 0); }
-  public static int createTopicRequestsVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
-  public static void startTopicRequestsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
-  public static int endProduceRequest(FlatBufferBuilder builder) {
-    int o = builder.endObject();
-    return o;
-  }
+    public static void startProduceRequest(FlatBufferBuilder builder) {
+        builder.startObject(1);
+    }
+
+    public static void addTopicRequests(FlatBufferBuilder builder, int topicRequestsOffset) {
+        builder.addOffset(0, topicRequestsOffset, 0);
+    }
+
+    public static int createTopicRequestsVector(FlatBufferBuilder builder, int[] data) {
+        builder.startVector(4, data.length, 4);
+        for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]);
+        return builder.endVector();
+    }
+
+    public static void startTopicRequestsVector(FlatBufferBuilder builder, int numElems) {
+        builder.startVector(4, numElems, 4);
+    }
+
+    public static int endProduceRequest(FlatBufferBuilder builder) {
+        int o = builder.endObject();
+        return o;
+    }
+
+    public void __init(int _i, ByteBuffer _bb) {
+        bb_pos = _i;
+        bb = _bb;
+    }
+
+    public ProduceRequest __assign(int _i, ByteBuffer _bb) {
+        __init(_i, _bb);
+        return this;
+    }
+
+    public TopicProduceRequest topicRequests(int j) {
+        return topicRequests(new TopicProduceRequest(), j);
+    }
+
+    public TopicProduceRequest topicRequests(TopicProduceRequest obj, int j) {
+        int o = __offset(4);
+        return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null;
+    }
+
+    public int topicRequestsLength() {
+        int o = __offset(4);
+        return o != 0 ? __vector_len(o) : 0;
+    }
 }
 

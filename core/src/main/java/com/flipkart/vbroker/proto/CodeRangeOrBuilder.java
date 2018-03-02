@@ -7,13 +7,13 @@ public interface CodeRangeOrBuilder extends
     // @@protoc_insertion_point(interface_extends:proto.CodeRange)
     com.google.protobuf.MessageOrBuilder {
 
-  /**
-   * <code>int32 from = 1;</code>
-   */
-  int getFrom();
+    /**
+     * <code>int32 from = 1;</code>
+     */
+    int getFrom();
 
-  /**
-   * <code>int32 to = 2;</code>
-   */
-  int getTo();
+    /**
+     * <code>int32 to = 2;</code>
+     */
+    int getTo();
 }

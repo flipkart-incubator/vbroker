@@ -2,36 +2,67 @@
 
 package com.flipkart.vbroker.flatbuf;
 
-import java.nio.*;
-import java.lang.*;
+import com.google.flatbuffers.FlatBufferBuilder;
+import com.google.flatbuffers.Table;
 
-import com.google.flatbuffers.*;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 @SuppressWarnings("unused")
 public final class TopicPartitionFetchRequest extends Table {
-  public static TopicPartitionFetchRequest getRootAsTopicPartitionFetchRequest(ByteBuffer _bb) { return getRootAsTopicPartitionFetchRequest(_bb, new TopicPartitionFetchRequest()); }
-  public static TopicPartitionFetchRequest getRootAsTopicPartitionFetchRequest(ByteBuffer _bb, TopicPartitionFetchRequest obj) { _bb.order(ByteOrder.LITTLE_ENDIAN); return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb)); }
-  public void __init(int _i, ByteBuffer _bb) { bb_pos = _i; bb = _bb; }
-  public TopicPartitionFetchRequest __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+    public static TopicPartitionFetchRequest getRootAsTopicPartitionFetchRequest(ByteBuffer _bb) {
+        return getRootAsTopicPartitionFetchRequest(_bb, new TopicPartitionFetchRequest());
+    }
 
-  public int partitionId() { int o = __offset(4); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
-  public int noOfMessages() { int o = __offset(6); return o != 0 ? bb.getInt(o + bb_pos) : 0; }
+    public static TopicPartitionFetchRequest getRootAsTopicPartitionFetchRequest(ByteBuffer _bb, TopicPartitionFetchRequest obj) {
+        _bb.order(ByteOrder.LITTLE_ENDIAN);
+        return (obj.__assign(_bb.getInt(_bb.position()) + _bb.position(), _bb));
+    }
 
-  public static int createTopicPartitionFetchRequest(FlatBufferBuilder builder,
-      int partitionId,
-      int noOfMessages) {
-    builder.startObject(2);
-    TopicPartitionFetchRequest.addNoOfMessages(builder, noOfMessages);
-    TopicPartitionFetchRequest.addPartitionId(builder, partitionId);
-    return TopicPartitionFetchRequest.endTopicPartitionFetchRequest(builder);
-  }
+    public static int createTopicPartitionFetchRequest(FlatBufferBuilder builder,
+                                                       int partitionId,
+                                                       int noOfMessages) {
+        builder.startObject(2);
+        TopicPartitionFetchRequest.addNoOfMessages(builder, noOfMessages);
+        TopicPartitionFetchRequest.addPartitionId(builder, partitionId);
+        return TopicPartitionFetchRequest.endTopicPartitionFetchRequest(builder);
+    }
 
-  public static void startTopicPartitionFetchRequest(FlatBufferBuilder builder) { builder.startObject(2); }
-  public static void addPartitionId(FlatBufferBuilder builder, int partitionId) { builder.addInt(0, partitionId, 0); }
-  public static void addNoOfMessages(FlatBufferBuilder builder, int noOfMessages) { builder.addInt(1, noOfMessages, 0); }
-  public static int endTopicPartitionFetchRequest(FlatBufferBuilder builder) {
-    int o = builder.endObject();
-    return o;
-  }
+    public static void startTopicPartitionFetchRequest(FlatBufferBuilder builder) {
+        builder.startObject(2);
+    }
+
+    public static void addPartitionId(FlatBufferBuilder builder, int partitionId) {
+        builder.addInt(0, partitionId, 0);
+    }
+
+    public static void addNoOfMessages(FlatBufferBuilder builder, int noOfMessages) {
+        builder.addInt(1, noOfMessages, 0);
+    }
+
+    public static int endTopicPartitionFetchRequest(FlatBufferBuilder builder) {
+        int o = builder.endObject();
+        return o;
+    }
+
+    public void __init(int _i, ByteBuffer _bb) {
+        bb_pos = _i;
+        bb = _bb;
+    }
+
+    public TopicPartitionFetchRequest __assign(int _i, ByteBuffer _bb) {
+        __init(_i, _bb);
+        return this;
+    }
+
+    public int partitionId() {
+        int o = __offset(4);
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
+    }
+
+    public int noOfMessages() {
+        int o = __offset(6);
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
+    }
 }
 

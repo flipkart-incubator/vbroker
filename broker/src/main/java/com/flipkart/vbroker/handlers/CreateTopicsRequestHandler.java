@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
-import static java.util.Objects.nonNull;
-
 @Slf4j
 @AllArgsConstructor
 public class CreateTopicsRequestHandler implements RequestHandler {

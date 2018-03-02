@@ -7,29 +7,33 @@ public interface GetTopicResponseOrBuilder extends
     // @@protoc_insertion_point(interface_extends:proto.GetTopicResponse)
     com.google.protobuf.MessageOrBuilder {
 
-  /**
-   * <code>.proto.ProtoTopic topic = 1;</code>
-   */
-  boolean hasTopic();
-  /**
-   * <code>.proto.ProtoTopic topic = 1;</code>
-   */
-  com.flipkart.vbroker.proto.ProtoTopic getTopic();
-  /**
-   * <code>.proto.ProtoTopic topic = 1;</code>
-   */
-  com.flipkart.vbroker.proto.ProtoTopicOrBuilder getTopicOrBuilder();
+    /**
+     * <code>.proto.ProtoTopic topic = 1;</code>
+     */
+    boolean hasTopic();
 
-  /**
-   * <code>.proto.VStatus status = 2;</code>
-   */
-  boolean hasStatus();
-  /**
-   * <code>.proto.VStatus status = 2;</code>
-   */
-  com.flipkart.vbroker.proto.VStatus getStatus();
-  /**
-   * <code>.proto.VStatus status = 2;</code>
-   */
-  com.flipkart.vbroker.proto.VStatusOrBuilder getStatusOrBuilder();
+    /**
+     * <code>.proto.ProtoTopic topic = 1;</code>
+     */
+    com.flipkart.vbroker.proto.ProtoTopic getTopic();
+
+    /**
+     * <code>.proto.ProtoTopic topic = 1;</code>
+     */
+    com.flipkart.vbroker.proto.ProtoTopicOrBuilder getTopicOrBuilder();
+
+    /**
+     * <code>.proto.VStatus status = 2;</code>
+     */
+    boolean hasStatus();
+
+    /**
+     * <code>.proto.VStatus status = 2;</code>
+     */
+    com.flipkart.vbroker.proto.VStatus getStatus();
+
+    /**
+     * <code>.proto.VStatus status = 2;</code>
+     */
+    com.flipkart.vbroker.proto.VStatusOrBuilder getStatusOrBuilder();
 }

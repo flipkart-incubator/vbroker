@@ -1,6 +1,5 @@
 package com.flipkart.vbroker.utils;
 
-import com.flipkart.vbroker.wrappers.Topic;
 import org.testng.annotations.Test;
 
 import java.nio.ByteBuffer;

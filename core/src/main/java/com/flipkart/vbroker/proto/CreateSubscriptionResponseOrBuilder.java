@@ -7,31 +7,34 @@ public interface CreateSubscriptionResponseOrBuilder extends
     // @@protoc_insertion_point(interface_extends:proto.CreateSubscriptionResponse)
     com.google.protobuf.MessageOrBuilder {
 
-  /**
-   * <code>int32 topicId = 2;</code>
-   */
-  int getTopicId();
+    /**
+     * <code>int32 topicId = 2;</code>
+     */
+    int getTopicId();
 
-  /**
-   * <code>string name = 3;</code>
-   */
-  java.lang.String getName();
-  /**
-   * <code>string name = 3;</code>
-   */
-  com.google.protobuf.ByteString
-      getNameBytes();
+    /**
+     * <code>string name = 3;</code>
+     */
+    java.lang.String getName();
 
-  /**
-   * <code>.proto.VStatus status = 4;</code>
-   */
-  boolean hasStatus();
-  /**
-   * <code>.proto.VStatus status = 4;</code>
-   */
-  com.flipkart.vbroker.proto.VStatus getStatus();
-  /**
-   * <code>.proto.VStatus status = 4;</code>
-   */
-  com.flipkart.vbroker.proto.VStatusOrBuilder getStatusOrBuilder();
+    /**
+     * <code>string name = 3;</code>
+     */
+    com.google.protobuf.ByteString
+    getNameBytes();
+
+    /**
+     * <code>.proto.VStatus status = 4;</code>
+     */
+    boolean hasStatus();
+
+    /**
+     * <code>.proto.VStatus status = 4;</code>
+     */
+    com.flipkart.vbroker.proto.VStatus getStatus();
+
+    /**
+     * <code>.proto.VStatus status = 4;</code>
+     */
+    com.flipkart.vbroker.proto.VStatusOrBuilder getStatusOrBuilder();
 }

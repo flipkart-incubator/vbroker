@@ -7,42 +7,44 @@ public interface ProtoTopicOrBuilder extends
     // @@protoc_insertion_point(interface_extends:proto.ProtoTopic)
     com.google.protobuf.MessageOrBuilder {
 
-  /**
-   * <code>string name = 1;</code>
-   */
-  java.lang.String getName();
-  /**
-   * <code>string name = 1;</code>
-   */
-  com.google.protobuf.ByteString
-      getNameBytes();
+    /**
+     * <code>string name = 1;</code>
+     */
+    java.lang.String getName();
 
-  /**
-   * <code>int32 id = 2;</code>
-   */
-  int getId();
+    /**
+     * <code>string name = 1;</code>
+     */
+    com.google.protobuf.ByteString
+    getNameBytes();
 
-  /**
-   * <code>bool grouped = 3;</code>
-   */
-  boolean getGrouped();
+    /**
+     * <code>int32 id = 2;</code>
+     */
+    int getId();
 
-  /**
-   * <code>int32 partitions = 4;</code>
-   */
-  int getPartitions();
+    /**
+     * <code>bool grouped = 3;</code>
+     */
+    boolean getGrouped();
 
-  /**
-   * <code>int32 replicationFactor = 5;</code>
-   */
-  int getReplicationFactor();
+    /**
+     * <code>int32 partitions = 4;</code>
+     */
+    int getPartitions();
 
-  /**
-   * <code>.proto.TopicCategory topicCategory = 6;</code>
-   */
-  int getTopicCategoryValue();
-  /**
-   * <code>.proto.TopicCategory topicCategory = 6;</code>
-   */
-  com.flipkart.vbroker.proto.TopicCategory getTopicCategory();
+    /**
+     * <code>int32 replicationFactor = 5;</code>
+     */
+    int getReplicationFactor();
+
+    /**
+     * <code>.proto.TopicCategory topicCategory = 6;</code>
+     */
+    int getTopicCategoryValue();
+
+    /**
+     * <code>.proto.TopicCategory topicCategory = 6;</code>
+     */
+    com.flipkart.vbroker.proto.TopicCategory getTopicCategory();
 }

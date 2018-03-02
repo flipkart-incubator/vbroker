@@ -7,29 +7,33 @@ public interface GetQueueResponseOrBuilder extends
     // @@protoc_insertion_point(interface_extends:proto.GetQueueResponse)
     com.google.protobuf.MessageOrBuilder {
 
-  /**
-   * <code>.proto.ProtoQueue queue = 1;</code>
-   */
-  boolean hasQueue();
-  /**
-   * <code>.proto.ProtoQueue queue = 1;</code>
-   */
-  com.flipkart.vbroker.proto.ProtoQueue getQueue();
-  /**
-   * <code>.proto.ProtoQueue queue = 1;</code>
-   */
-  com.flipkart.vbroker.proto.ProtoQueueOrBuilder getQueueOrBuilder();
+    /**
+     * <code>.proto.ProtoQueue queue = 1;</code>
+     */
+    boolean hasQueue();
 
-  /**
-   * <code>.proto.VStatus status = 2;</code>
-   */
-  boolean hasStatus();
-  /**
-   * <code>.proto.VStatus status = 2;</code>
-   */
-  com.flipkart.vbroker.proto.VStatus getStatus();
-  /**
-   * <code>.proto.VStatus status = 2;</code>
-   */
-  com.flipkart.vbroker.proto.VStatusOrBuilder getStatusOrBuilder();
+    /**
+     * <code>.proto.ProtoQueue queue = 1;</code>
+     */
+    com.flipkart.vbroker.proto.ProtoQueue getQueue();
+
+    /**
+     * <code>.proto.ProtoQueue queue = 1;</code>
+     */
+    com.flipkart.vbroker.proto.ProtoQueueOrBuilder getQueueOrBuilder();
+
+    /**
+     * <code>.proto.VStatus status = 2;</code>
+     */
+    boolean hasStatus();
+
+    /**
+     * <code>.proto.VStatus status = 2;</code>
+     */
+    com.flipkart.vbroker.proto.VStatus getStatus();
+
+    /**
+     * <code>.proto.VStatus status = 2;</code>
+     */
+    com.flipkart.vbroker.proto.VStatusOrBuilder getStatusOrBuilder();
 }

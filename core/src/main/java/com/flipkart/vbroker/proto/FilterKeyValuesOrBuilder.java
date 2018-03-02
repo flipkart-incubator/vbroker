@@ -7,23 +7,25 @@ public interface FilterKeyValuesOrBuilder extends
     // @@protoc_insertion_point(interface_extends:proto.FilterKeyValues)
     com.google.protobuf.MessageOrBuilder {
 
-  /**
-   * <code>string key = 1;</code>
-   */
-  java.lang.String getKey();
-  /**
-   * <code>string key = 1;</code>
-   */
-  com.google.protobuf.ByteString
-      getKeyBytes();
+    /**
+     * <code>string key = 1;</code>
+     */
+    java.lang.String getKey();
 
-  /**
-   * <code>string values = 2;</code>
-   */
-  java.lang.String getValues();
-  /**
-   * <code>string values = 2;</code>
-   */
-  com.google.protobuf.ByteString
-      getValuesBytes();
+    /**
+     * <code>string key = 1;</code>
+     */
+    com.google.protobuf.ByteString
+    getKeyBytes();
+
+    /**
+     * <code>string values = 2;</code>
+     */
+    java.lang.String getValues();
+
+    /**
+     * <code>string values = 2;</code>
+     */
+    com.google.protobuf.ByteString
+    getValuesBytes();
 }

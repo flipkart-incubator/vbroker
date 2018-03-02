@@ -7,18 +7,19 @@ public interface VStatusOrBuilder extends
     // @@protoc_insertion_point(interface_extends:proto.VStatus)
     com.google.protobuf.MessageOrBuilder {
 
-  /**
-   * <code>int32 statusCode = 1;</code>
-   */
-  int getStatusCode();
+    /**
+     * <code>int32 statusCode = 1;</code>
+     */
+    int getStatusCode();
 
-  /**
-   * <code>string message = 2;</code>
-   */
-  java.lang.String getMessage();
-  /**
-   * <code>string message = 2;</code>
-   */
-  com.google.protobuf.ByteString
-      getMessageBytes();
+    /**
+     * <code>string message = 2;</code>
+     */
+    java.lang.String getMessage();
+
+    /**
+     * <code>string message = 2;</code>
+     */
+    com.google.protobuf.ByteString
+    getMessageBytes();
 }

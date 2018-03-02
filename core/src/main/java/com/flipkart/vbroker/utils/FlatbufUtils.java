@@ -61,7 +61,7 @@ public class FlatbufUtils {
         return VStatus.getRootAsVStatus(builder.dataBuffer());
     }
 
-    public static ProtoResponse getProtoResponse(VResponse response){
+    public static ProtoResponse getProtoResponse(VResponse response) {
         ControlResponse controlResponse = (ControlResponse) response.responseMessage(new ControlResponse());
         byte[] protoResponseBytes = ByteBufUtils.getBytes(controlResponse.payloadAsByteBuffer());
         try {
@@ -71,7 +71,7 @@ public class FlatbufUtils {
         }
     }
 
-    public static ProtoRequest getProtoRequest(VRequest vRequest){
+    public static ProtoRequest getProtoRequest(VRequest vRequest) {
         try {
             ControlRequest controlRequest = (ControlRequest) vRequest.requestMessage(new ControlRequest());
             byte[] protoRequestBytes = ByteBufUtils.getBytes(controlRequest.payloadAsByteBuffer());
@@ -91,7 +91,8 @@ public class FlatbufUtils {
     }
 
     public static VResponse createVResponse(int correlationId, ProtoResponse protoResponse) {
-        FlatBufferBuilder builder = new FlatBufferBuilder();;
+        FlatBufferBuilder builder = new FlatBufferBuilder();
+        ;
         int protoResponseOffset = builder.createByteVector(protoResponse.toByteArray());
         int controlResponseOffset = ControlResponse.createControlResponse(builder, protoResponseOffset);
         int vResponse = VResponse.createVResponse(builder, correlationId, ResponseMessage.ControlResponse, controlResponseOffset);

@@ -1,13 +1,14 @@
 package com.flipkart.vbroker.client;
 
-import com.flipkart.vbroker.flatbuf.RequestMessage;
 import com.flipkart.vbroker.flatbuf.VRequest;
 import com.flipkart.vbroker.handlers.ResponseHandlerFactory;
-import com.flipkart.vbroker.proto.*;
+import com.flipkart.vbroker.proto.CreateTopicsRequest;
+import com.flipkart.vbroker.proto.ProtoRequest;
+import com.flipkart.vbroker.proto.ProtoTopic;
+import com.flipkart.vbroker.proto.TopicCategory;
 import com.flipkart.vbroker.protocol.Request;
 import com.flipkart.vbroker.protocol.codecs.VBrokerClientCodec;
 import com.flipkart.vbroker.utils.FlatbufUtils;
-import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -19,8 +20,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.testng.annotations.Test;
-
-import java.nio.ByteBuffer;
 
 public class TopicCreateTest {
 
