@@ -1,9 +1,9 @@
 package com.flipkart.vbroker.client;
 
 import com.flipkart.vbroker.core.TopicPartition;
-import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.utils.DummyEntities;
 import com.flipkart.vbroker.utils.TopicUtils;
+import com.flipkart.vbroker.wrappers.Topic;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -15,7 +15,7 @@ import java.util.Map;
 public class MetadataImpl implements Metadata {
 
     private final List<Topic> topics = Lists.newArrayList();
-    private final Map<Short, Topic> topicsMap = Maps.newConcurrentMap();
+    private final Map<Integer, Topic> topicsMap = Maps.newConcurrentMap();
 
     private final List<Node> nodes = Lists.newArrayList();
     private final Multimap<Node, TopicPartition> nodeTopicPartMap = HashMultimap.create();
@@ -48,12 +48,12 @@ public class MetadataImpl implements Metadata {
     }
 
     @Override
-    public Topic getTopic(short topicId) {
+    public Topic getTopic(int topicId) {
         return topicsMap.get(topicId);
     }
 
     @Override
-    public TopicPartition getTopicPartition(short topicId, short partitionId) {
+    public TopicPartition getTopicPartition(int topicId, int partitionId) {
         Topic topic = getTopic(topicId);
         return TopicUtils.getTopicPartition(topic, partitionId);
     }

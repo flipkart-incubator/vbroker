@@ -3,11 +3,11 @@ package com.flipkart.vbroker.services;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
-import com.flipkart.vbroker.entities.Subscription;
 import com.flipkart.vbroker.subscribers.GroupedPartSubscriber;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
 import com.flipkart.vbroker.subscribers.UnGroupedPartSubscriber;
 import com.flipkart.vbroker.utils.SubscriptionUtils;
+import com.flipkart.vbroker.wrappers.Subscription;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class InMemorySubscriptionService implements SubscriptionService {
 
     private final TopicService topicService;
     private final TopicPartDataManager topicPartDataManager;
-    private final ConcurrentMap<Short, Subscription> subscriptionsMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Integer, Subscription> subscriptionsMap = new ConcurrentHashMap<>();
     private final ConcurrentMap<PartSubscription, PartSubscriber> subscriberMap = new ConcurrentHashMap<>();
     private final SubPartDataManager subPartDataManager;
 
@@ -47,7 +47,7 @@ public class InMemorySubscriptionService implements SubscriptionService {
     }
 
     @Override
-    public CompletionStage<PartSubscription> getPartSubscription(Subscription subscription, short partSubscriptionId) {
+    public CompletionStage<PartSubscription> getPartSubscription(Subscription subscription, int partSubscriptionId) {
         return CompletableFuture.supplyAsync(() -> {
             if (subscriptionsMap.containsKey(subscription.id())) {
                 Subscription existingSub = subscriptionsMap.get(subscription.id());
@@ -80,12 +80,12 @@ public class InMemorySubscriptionService implements SubscriptionService {
     }
 
     @Override
-    public CompletionStage<Subscription> getSubscription(short topicId, short subscriptionId) {
+    public CompletionStage<Subscription> getSubscription(int topicId, int subscriptionId) {
         return CompletableFuture.supplyAsync(() -> subscriptionsMap.get(subscriptionId));
     }
 
     @Override
-    public CompletionStage<List<Subscription>> getSubscriptionsForTopic(short topicId) {
+    public CompletionStage<List<Subscription>> getSubscriptionsForTopic(int topicId) {
         return CompletableFuture.supplyAsync(() -> new ArrayList<>(subscriptionsMap.values()));
     }
 

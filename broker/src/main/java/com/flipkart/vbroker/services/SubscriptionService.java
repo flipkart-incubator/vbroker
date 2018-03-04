@@ -1,8 +1,8 @@
 package com.flipkart.vbroker.services;
 
 import com.flipkart.vbroker.core.PartSubscription;
-import com.flipkart.vbroker.entities.Subscription;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
+import com.flipkart.vbroker.wrappers.Subscription;
 
 import java.util.List;
 import java.util.Set;
@@ -12,15 +12,15 @@ public interface SubscriptionService {
 
     public CompletionStage<Subscription> createSubscription(Subscription subscription);
 
-    public CompletionStage<Subscription> getSubscription(short topicId, short subscriptionId);
+    public CompletionStage<Subscription> getSubscription(int topicId, int subscriptionId);
 
     public CompletionStage<Set<Subscription>> getAllSubscriptions();
 
-    public CompletionStage<List<Subscription>> getSubscriptionsForTopic(short topicId);
+    public CompletionStage<List<Subscription>> getSubscriptionsForTopic(int topicId);
 
     public CompletionStage<List<Subscription>> getAllSubscriptionsForBroker(String brokerId);
 
-    public CompletionStage<PartSubscription> getPartSubscription(Subscription subscription, short partSubscriptionId);
+    public CompletionStage<PartSubscription> getPartSubscription(Subscription subscription, int partSubscriptionId);
 
     public CompletionStage<PartSubscriber> getPartSubscriber(PartSubscription subscription);
 

@@ -1,7 +1,7 @@
 package com.flipkart.vbroker.subscribers;
 
 import com.flipkart.vbroker.core.PartSubscription;
-import com.flipkart.vbroker.entities.Message;
+import com.flipkart.vbroker.flatbuf.Message;
 
 /**
  * this is the model interface used by message iterators
@@ -14,9 +14,9 @@ public interface IterableMessage {
 
     PartSubscription getPartSubscription();
 
-    short subscriptionId();
+    int subscriptionId();
 
-    short getTopicId();
+    int getTopicId();
 
     QType getQType();
 

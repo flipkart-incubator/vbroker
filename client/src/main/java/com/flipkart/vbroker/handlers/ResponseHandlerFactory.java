@@ -1,8 +1,10 @@
 package com.flipkart.vbroker.handlers;
 
-import com.flipkart.vbroker.entities.ResponseMessage;
-import com.flipkart.vbroker.entities.VResponse;
 import com.flipkart.vbroker.exceptions.VBrokerException;
+import com.flipkart.vbroker.flatbuf.ResponseMessage;
+import com.flipkart.vbroker.flatbuf.VResponse;
+import com.flipkart.vbroker.proto.ProtoResponse;
+import com.flipkart.vbroker.utils.FlatbufUtils;
 import io.netty.bootstrap.Bootstrap;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,18 +25,30 @@ public class ResponseHandlerFactory {
             case ResponseMessage.FetchResponse:
                 responseHandler = new FetchResponseHandler(clientBootstrap);
                 break;
-            case ResponseMessage.CreateTopicsResponse:
-                responseHandler = new TopicCreateResponseHandler();
+            case ResponseMessage.ControlResponse:
+                responseHandler = getProtoResponseHandler(FlatbufUtils.getProtoResponse(msg));
                 break;
-            case ResponseMessage.CreateSubscriptionsResponse:
-                responseHandler = new SubscriptionCreateResponseHandler();
-                break;
-            case ResponseMessage.GetLagsResponse:
-                responseHandler = new GetLagsResponseHandler();
             default:
                 throw new VBrokerException("Unsupported ResponseMessageType: " + msg.responseMessageType());
         }
 
+        return responseHandler;
+    }
+
+    private ResponseHandler getProtoResponseHandler(ProtoResponse response) {
+        ResponseHandler responseHandler;
+        switch (response.getProtoResponseCase()) {
+            case CREATESUBSCRIPTIONSRESPONSE:
+                responseHandler = new CreateSubscriptionsResponseHandler();
+                break;
+            case CREATETOPICSRESPONSE:
+                responseHandler = new CreateTopicsResponseHandler();
+                break;
+            case GETSUBSCRIPTIONSRESPONSE:
+                responseHandler = new GetSubscriptionLagsResponseHandler();
+            default:
+                throw new VBrokerException("Unsupported ProtoResponseType: " + response.getProtoResponseCase());
+        }
         return responseHandler;
     }
 }

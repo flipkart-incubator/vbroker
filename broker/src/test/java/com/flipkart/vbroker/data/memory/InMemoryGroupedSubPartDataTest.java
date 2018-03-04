@@ -28,8 +28,8 @@ public class InMemoryGroupedSubPartDataTest {
     public void shouldGetLag() throws Exception {
         PartSubscription partSubscription = mock(PartSubscription.class);
         TopicPartition topicPartition = mock(TopicPartition.class);
-        when(topicPartition.getId()).thenReturn((short) 1);
-        when(topicPartition.getTopicId()).thenReturn((short) 1);
+        when(topicPartition.getId()).thenReturn(1);
+        when(topicPartition.getTopicId()).thenReturn(1);
 
         SubscriberGroup group1 = setupMockGroup("g-1", topicPartition, 0);
         SubscriberGroup group2 = setupMockGroup("g-2", topicPartition, 2);

@@ -1,7 +1,7 @@
 package com.flipkart.vbroker.client;
 
-import com.flipkart.vbroker.entities.HttpHeader;
-import com.flipkart.vbroker.entities.Message;
+import com.flipkart.vbroker.flatbuf.HttpHeader;
+import com.flipkart.vbroker.flatbuf.Message;
 import com.google.common.primitives.Ints;
 import com.google.flatbuffers.FlatBufferBuilder;
 
@@ -12,7 +12,7 @@ public class RecordUtils {
 
     public static int flatBuffMsgOffset(FlatBufferBuilder builder,
                                         ProducerRecord record,
-                                        short partitionId) {
+                                        int partitionId) {
         List<Integer> collect = record.getHeaders()
             .entrySet()
             .stream()

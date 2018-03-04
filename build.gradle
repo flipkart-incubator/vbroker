@@ -12,6 +12,7 @@ subprojects {
     def guavaVersion = "23.6-jre"
     def lombokVersion = "1.16.18"
     def jacksonVersion = "2.9.4"
+    def protobufVersion = "3.5.1"
 
     //test dependencies
     //def jUnitVersion = "4.12"
@@ -35,6 +36,10 @@ subprojects {
         //utils
         compile "com.google.guava:guava:${guavaVersion}"
         compile "org.projectlombok:lombok:${lombokVersion}"
+
+        //protobuf
+        compile "com.google.protobuf:protobuf-java:${protobufVersion}"
+        compile "com.google.protobuf:protobuf-java-util:${protobufVersion}"
 
         //testing
         //testCompile "junit:junit:${jUnitVersion}"

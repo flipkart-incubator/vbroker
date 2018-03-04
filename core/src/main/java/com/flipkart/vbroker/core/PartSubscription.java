@@ -10,8 +10,8 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 public class PartSubscription {
-    private final short id;
+    private final int id;
     private final TopicPartition topicPartition;
-    private final short subscriptionId;
+    private final int subscriptionId;
     private boolean grouped;
 }

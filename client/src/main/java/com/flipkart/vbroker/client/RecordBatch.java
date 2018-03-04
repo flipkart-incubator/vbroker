@@ -1,7 +1,7 @@
 package com.flipkart.vbroker.client;
 
 import com.flipkart.vbroker.core.TopicPartition;
-import com.flipkart.vbroker.entities.VStatus;
+import com.flipkart.vbroker.flatbuf.VStatus;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -108,7 +108,7 @@ public class RecordBatch {
     @AllArgsConstructor
     @Getter
     public class TopicPartMetadata {
-        short partitionId;
-        short statusCode;
+        int partitionId;
+        int statusCode;
     }
 }

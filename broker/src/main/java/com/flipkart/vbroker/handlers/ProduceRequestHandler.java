@@ -2,9 +2,10 @@ package com.flipkart.vbroker.handlers;
 
 import com.flipkart.vbroker.core.TopicPartMessage;
 import com.flipkart.vbroker.core.TopicPartition;
-import com.flipkart.vbroker.entities.*;
+import com.flipkart.vbroker.flatbuf.*;
 import com.flipkart.vbroker.services.ProducerService;
 import com.flipkart.vbroker.services.TopicService;
+import com.flipkart.vbroker.wrappers.Topic;
 import com.google.common.primitives.Ints;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.flatbuffers.FlatBufferBuilder;
@@ -34,7 +35,7 @@ public class ProduceRequestHandler implements RequestHandler {
         assert nonNull(produceRequest);
 
         FlatBufferBuilder builder = new FlatBufferBuilder();
-        Map<Short, List<Integer>> topicPartitionResponseMap = new HashMap<>();
+        Map<Integer, List<Integer>> topicPartitionResponseMap = new HashMap<>();
         List<TopicPartMessage> messagesToProduce = new LinkedList<>();
 
         return CompletableFuture.supplyAsync(() -> {
@@ -74,8 +75,8 @@ public class ProduceRequestHandler implements RequestHandler {
             int noOfTopics = topicPartitionResponseMap.keySet().size();
             int[] topicProduceResponses = new int[noOfTopics];
             int i = 0;
-            for (Map.Entry<Short, List<Integer>> entry : topicPartitionResponseMap.entrySet()) {
-                Short topicId = entry.getKey();
+            for (Map.Entry<Integer, List<Integer>> entry : topicPartitionResponseMap.entrySet()) {
+                Integer topicId = entry.getKey();
                 List<Integer> partitionResponsesList = entry.getValue();
                 int[] partitionResponses = Ints.toArray(partitionResponsesList);
 
