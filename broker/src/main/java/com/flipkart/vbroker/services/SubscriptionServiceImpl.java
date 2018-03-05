@@ -5,11 +5,11 @@ import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.entities.*;
+import com.flipkart.vbroker.entities.Subscription;
+import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.exceptions.SubscriptionCreationException;
 import com.flipkart.vbroker.exceptions.SubscriptionException;
 import com.flipkart.vbroker.exceptions.VBrokerException;
-import com.flipkart.vbroker.entities.Subscription;
-import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.subscribers.GroupedPartSubscriber;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
 import com.flipkart.vbroker.subscribers.UnGroupedPartSubscriber;
@@ -49,7 +49,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         log.info("Creating subscription with id {} for topicId {} with uri {}", id, subscription.topicId(),
             subscription.httpUri());
         return curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT,
-            ByteBufUtils.getBytes(subscriptionWithId.getByteBuffer())).handleAsync((data, exception) -> {
+            ByteBufUtils.getBytes(subscriptionWithId.getByteBuffer()), false).handleAsync((data, exception) -> {
             if (exception != null) {
                 log.error("Exception in curator node create and set data stage {} ", exception);
                 throw new SubscriptionCreationException(exception.getMessage());
@@ -103,7 +103,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             List<CompletableFuture> subStages = new ArrayList<CompletableFuture>();
             for (Topic topic : topics) {
                 CompletionStage<List<Subscription>> subStage = this.getSubscriptionsForTopic(topic.id());
-                 CompletionStage<List<Subscription>> subComStage = subStage.thenCompose((subData) -> {
+                CompletionStage<List<Subscription>> subComStage = subStage.thenCompose((subData) -> {
                     subs.addAll(subData);
                     return CompletableFuture.completedFuture(subData);
                 }).exceptionally((throwable) -> {
@@ -290,7 +290,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         String path = config.getTopicsPath() + "/" + subscription.topicId() + "/subscriptions/" + id;
         Subscription subscriptionWithId = newSubscriptionFromSubscription(id, subscription);
         return curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT,
-            ByteBufUtils.getBytes(subscriptionWithId.getByteBuffer())).handleAsync((data, exception) -> {
+            ByteBufUtils.getBytes(subscriptionWithId.getByteBuffer()), false).handleAsync((data, exception) -> {
             if (exception != null) {
                 log.error("Exception in curator node create and set data stage {} ", exception);
                 throw new SubscriptionCreationException(exception.getMessage());

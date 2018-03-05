@@ -40,7 +40,7 @@ public class TopicServiceImplTest {
         CompletionStage<String> value = CompletableFuture.supplyAsync(() -> {
             return "topics/0001";
         });
-        when(curatorService.createNodeAndSetData(any(String.class), any(CreateMode.class), any())).thenReturn(value);
+        when(curatorService.createNodeAndSetData(any(String.class), any(CreateMode.class), any(), any())).thenReturn(value);
         Topic topic1 = DummyEntities.groupedTopic;
         topicService.createTopic(topic1).handle((data, exception) -> {
             assertEquals(data.id(), 0001);
@@ -55,7 +55,7 @@ public class TopicServiceImplTest {
         CompletionStage<String> value = CompletableFuture.supplyAsync(() -> {
             return "0001";
         });
-        when(curatorService.createNodeAndSetData(any(String.class), any(CreateMode.class), any())).thenReturn(value);
+        when(curatorService.createNodeAndSetData(any(String.class), any(CreateMode.class), any(), any())).thenReturn(value);
         Topic topic1 = DummyEntities.groupedTopic;
         topicService.createTopic(topic1).handle((data, exception) -> {
             assertTrue(exception.getCause() instanceof ArrayIndexOutOfBoundsException);
@@ -68,7 +68,7 @@ public class TopicServiceImplTest {
         CompletionStage<String> value = CompletableFuture.supplyAsync(() -> {
             throw new VBrokerException("Unknown error");
         });
-        when(curatorService.createNodeAndSetData(any(String.class), any(CreateMode.class), any()))
+        when(curatorService.createNodeAndSetData(any(String.class), any(CreateMode.class), any(), any()))
             .thenReturn(value);
         Topic topic1 = DummyEntities.groupedTopic;
         topicService.createTopic(topic1).handle((data, exception) -> {

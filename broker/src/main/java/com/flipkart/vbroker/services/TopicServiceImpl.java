@@ -37,7 +37,7 @@ public class TopicServiceImpl implements TopicService {
         String topicPath = config.getAdminTasksPath() + "/create_topic" + "/" + id;
         Topic topicWithId = newTopicModelFromTopic(id, topic);
         return curatorService
-            .createNodeAndSetData(topicPath, CreateMode.PERSISTENT, ByteBufUtils.getBytes(topicWithId.getByteBuffer()))
+            .createNodeAndSetData(topicPath, CreateMode.PERSISTENT, ByteBufUtils.getBytes(topicWithId.getByteBuffer()), false)
             .handleAsync((data, exception) -> {
                 if (exception != null) {
                     log.error("Exception in curator node create and set data stage {} ", exception);
@@ -171,7 +171,7 @@ public class TopicServiceImpl implements TopicService {
         String topicPath = config.getTopicsPath() + "/" + id;
         Topic topicWithId = newTopicModelFromTopic(id, topic);
         return curatorService
-            .createNodeAndSetData(topicPath, CreateMode.PERSISTENT, ByteBufUtils.getBytes(topicWithId.getByteBuffer()))
+            .createNodeAndSetData(topicPath, CreateMode.PERSISTENT, ByteBufUtils.getBytes(topicWithId.getByteBuffer()), false)
             .handleAsync((data, exception) -> {
                 if (exception != null) {
                     log.error("Exception in curator node create and set data stage {} ", exception);

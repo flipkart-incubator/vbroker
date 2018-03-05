@@ -149,7 +149,7 @@ public class VBrokerController extends AbstractExecutionThreadService {
                 curatorService.getData(fullPath)
                     .thenComposeAsync(bytes -> topicService.createTopicAdmin(topicId, TopicUtils.getTopic(bytes)));
             }
-        }).toCompletableFuture().join(); 
+        }).toCompletableFuture().join();
     }
 
     @Override

@@ -36,7 +36,7 @@ public class GetTopicTest {
         String topicPath = config.getTopicsPath() + "/" + "101";
         Topic topic = DummyEntities.groupedTopic;
         curatorService.createNodeAndSetData(topicPath, CreateMode.PERSISTENT,
-            ByteBufUtils.getBytes(topic.getByteBuffer())).handleAsync((data, exception) -> {
+            ByteBufUtils.getBytes(topic.getByteBuffer()), true).handleAsync((data, exception) -> {
             System.out.println("created " + data);
             return null;
         }).toCompletableFuture().get();

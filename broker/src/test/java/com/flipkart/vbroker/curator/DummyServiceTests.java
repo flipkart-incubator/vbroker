@@ -88,7 +88,7 @@ public class DummyServiceTests {
     @Test
     public void testCreateSubscription() throws Exception {
 
-        short topicId = 17369;
+        short topicId = 24528;
         EventLoopGroup group = new NioEventLoopGroup();
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(group).channel(NioSocketChannel.class).handler(new ClientInitializer());
@@ -98,8 +98,8 @@ public class DummyServiceTests {
         Channel channel = bootstrap.connect(config.getBrokerHost(), config.getBrokerPort()).sync().channel();
 
         FlatBufferBuilder builder = new FlatBufferBuilder();
-        int nameOffset = builder.createString("varadhi-sub");
-        int httpUriOffset = builder.createString("http://localhost:8080");
+        int nameOffset = builder.createString("varadhi-sub2");
+        int httpUriOffset = builder.createString("http://localhost:8081");
         int httpMethodOffset = builder.createString("POST");
 
         int codeRangeOffset = CodeRange.createCodeRange(builder, (short) 200, (short) 299);

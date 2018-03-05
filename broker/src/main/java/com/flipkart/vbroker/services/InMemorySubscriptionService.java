@@ -103,7 +103,7 @@ public class InMemorySubscriptionService implements SubscriptionService {
         // TODO Auto-generated method stub
         return null;
     }
-    
+
     public CompletionStage<Integer> getPartSubscriptionLag(PartSubscription partSubscription) {
         return subPartDataManager.getLag(partSubscription);
     }

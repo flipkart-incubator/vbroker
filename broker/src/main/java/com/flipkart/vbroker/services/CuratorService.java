@@ -10,6 +10,7 @@ import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.data.Stat;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletionStage;
 
 import static java.util.EnumSet.of;
@@ -20,32 +21,39 @@ public class CuratorService {
     private final AsyncCuratorFramework asyncZkClient;
 
     /**
-     * Creates node as per path. If already exists, this method won't throw an
-     * exception as it sets data, meaning re-creates.
+     * Creates node at path
      *
-     * @param path
-     * @param createMode
+     * @param path            path to create node at
+     * @param createMode      persistent/ephemeral
+     * @param setDataIfExists flag to indicate if data is to be set in case node at path
+     *                        already exists. If false, throws exception in case the node
+     *                        already exists
      * @return
      */
-    public AsyncStage<String> createNode(String path, CreateMode createMode) {
-        return asyncZkClient.create()
-            .withOptions(of(CreateOption.setDataIfExists, CreateOption.createParentsIfNeeded), createMode)
-            .forPath(path);
+    public AsyncStage<String> createNode(String path, CreateMode createMode, Boolean setDataIfExists) {
+        Set<CreateOption> options = of(CreateOption.createParentsIfNeeded);
+        if (setDataIfExists)
+            options.add(CreateOption.setDataIfExists);
+        return asyncZkClient.create().withOptions(options, createMode).forPath(path);
     }
 
     /**
-     * Creates node at path and set data. This method wont throw an exception if
-     * node already exists, it just sets the new data.
+     * Creates node at path and sets the data
      *
-     * @param path
-     * @param createMode
-     * @param data
+     * @param path            path to create node at
+     * @param createMode      persistent/ephemeral
+     * @param data            data to be set for node
+     * @param setDataIfExists flag to indicate if data is to be set in case node at path
+     *                        already exists. If false, throws exception in case the node
+     *                        already exists
      * @return
      */
-    public CompletionStage<String> createNodeAndSetData(String path, CreateMode createMode, byte[] data) {
-        return asyncZkClient.create()
-            .withOptions(of(CreateOption.setDataIfExists, CreateOption.createParentsIfNeeded), createMode)
-            .forPath(path, data);
+    public CompletionStage<String> createNodeAndSetData(String path, CreateMode createMode, byte[] data,
+                                                        Boolean setDataIfExists) {
+        Set<CreateOption> options = of(CreateOption.createParentsIfNeeded);
+        if (setDataIfExists)
+            options.add(CreateOption.setDataIfExists);
+        return asyncZkClient.create().withOptions(options, createMode).forPath(path, data);
     }
 
     /**
