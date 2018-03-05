@@ -48,20 +48,6 @@ public class GetSubscriptionLagsRequestHandler implements RequestHandler {
         //Get the subscription
         CompletionStage<Subscription> subscriptionStage = subscriptionService.getSubscription(topicId, subscriptionId);
 
-        //For each partition Id, get the corresponding partsubscription and its lag.
-        //NOTE assumes that partitionId = partSubscritptionId.
-//        List<CompletionStage<PartitionLag>> partitionLagStages =
-//            partitionIds.stream()
-//                .map(partitionId ->
-//                    subscriptionStage.thenCompose(subscription -> getPartSubscriberLag(subscription, partitionId)))
-//                .collect(Collectors.toList());
-
-        //Collect them in a list
-//        List<CompletionStage<PartitionLag>> partitionLagStages = partitionLagStages.stream()
-//            .map(partSubStage -> partSubStage.thenCompose(this::getPartSubscriberLag))
-//            .collect(Collectors.toList());
-
-
         List<CompletionStage<PartitionLag>> partitionLagStages = partitionIds.stream()
             .map(partitionId -> getPartSubscriberLag(subscriptionStage, partitionId))
             .collect(Collectors.toList());

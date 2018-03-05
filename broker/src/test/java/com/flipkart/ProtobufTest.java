@@ -1,5 +1,7 @@
 package com.flipkart;
 
+import com.flipkart.vbroker.proto.*;
+import com.flipkart.vbroker.wrappers.Topic;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import lombok.extern.slf4j.Slf4j;
@@ -7,8 +9,6 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
-
-import static com.flipkart.TestProtos.*;
 
 /**
  * Created by kaushal.hooda on 28/02/18.
@@ -20,65 +20,58 @@ public class ProtobufTest {
     public void shouldEncodeDecodeSimpleObject() {
         Topic topic = getSampleTopic(1);
         log.info(topic.toString());
-        byte[] topicBytes = topic.toByteArray();
-        try {
-            Topic topic1 = Topic.parseFrom(topicBytes);
-            Assert.assertEquals(topic.getId(), topic1.getId());
-            Assert.assertEquals(topic.toByteArray(), topic1.toByteArray());
-        } catch (InvalidProtocolBufferException ignored) {
-        }
+        byte[] topicBytes = topic.toBytes();
+        Topic topic1 = Topic.fromBytes(topicBytes);
+        Assert.assertEquals(topic.id(), topic1.id());
+        Assert.assertEquals(topic.toBytes(), topic1.toBytes());
     }
 
     @Test
     public void shouldConvertToJsonAndBack() throws InvalidProtocolBufferException {
         Topic topic = getSampleTopic(1);
-        String topicJson = JsonFormat.printer().print(topic);
+        String topicJson = topic.toJson();
 
         log.info(topicJson);
 
-        Topic.Builder topicBuilder = Topic.newBuilder();
+        ProtoTopic.Builder topicBuilder = ProtoTopic.newBuilder();
         JsonFormat.parser().merge(topicJson, topicBuilder);
-        Topic topic1 = topicBuilder.build();
+        Topic topic1 = new Topic(topicBuilder.build());
 
-        Assert.assertEquals(topic.getId(), topic1.getId());
-        Assert.assertEquals(topic.toByteArray(), topic1.toByteArray());
+        Assert.assertEquals(topic.id(), topic1.id());
+        Assert.assertEquals(topic.toBytes(), topic1.toBytes());
         Assert.assertTrue(topic.equals(topic1));
     }
 
     @Test
     public void shouldConvertToJsonAndBackForCompositeObject() throws InvalidProtocolBufferException {
-        GetTopicsRequest getTopicsRequest = GetTopicsRequest.newBuilder().addTopicIds(1).addTopicIds(2).build();
-        RequestMessage requestMessage = RequestMessage.newBuilder().setGetTopicsRequest(getTopicsRequest).build();
-        VRequest vRequest = VRequest.newBuilder().setRequestMessage(requestMessage).setCorrelationId("abc").build();
+        GetTopicsRequest getTopicsRequest = GetTopicsRequest.newBuilder().addIds(1).addIds(2).build();
+        ProtoRequest protoRequest = ProtoRequest.newBuilder().setGetTopicsRequest(getTopicsRequest).build();
 
-        String jsonVRequest = JsonFormat.printer().print(vRequest);
-        log.info(jsonVRequest);
+        String jsonRequest = JsonFormat.printer().print(protoRequest);
+        log.info(jsonRequest);
 
-        VRequest.Builder builder = VRequest.newBuilder();
-        JsonFormat.parser().merge(jsonVRequest, builder);
-        VRequest vRequest1 = builder.build();
-        Assert.assertEquals(vRequest, vRequest1);
+        ProtoRequest.Builder builder = ProtoRequest.newBuilder();
+        JsonFormat.parser().merge(jsonRequest, builder);
+        ProtoRequest protoRequest1 = builder.build();
+        Assert.assertEquals(protoRequest, protoRequest1);
     }
 
     //composite types
     @Test
     public void shouldHandleCompositeObjects() throws InvalidProtocolBufferException {
-        GetTopicsRequest getTopicsRequest = GetTopicsRequest.newBuilder().addTopicIds(1).addTopicIds(2).build();
-        RequestMessage requestMessage = RequestMessage.newBuilder().setGetTopicsRequest(getTopicsRequest).build();
-        VRequest vRequest = VRequest.newBuilder().setRequestMessage(requestMessage).setCorrelationId("abc").build();
+        GetTopicsRequest getTopicsRequest = GetTopicsRequest.newBuilder().addIds(1).addIds(2).build();
+        ProtoRequest protoRequest = ProtoRequest.newBuilder().setGetTopicsRequest(getTopicsRequest).build();
 
-        byte[] requestBytes = vRequest.toByteArray();
+        byte[] requestBytes = protoRequest.toByteArray();
 
-        VRequest vRequest1 = VRequest.parseFrom(requestBytes);
-        RequestMessage requestMessage1 = vRequest1.getRequestMessage();
-        RequestMessage.RequestMessageCase requestMessageCase = requestMessage1.getRequestMessageCase();
-        switch (requestMessageCase) {
+        ProtoRequest protoRequest1 = ProtoRequest.parseFrom(requestBytes);
+        switch (protoRequest1.getProtoRequestCase()) {
             case GETSUBSCRIPTIONSREQUEST:
                 throw new IllegalArgumentException();
             case GETTOPICSREQUEST:
-                Assert.assertTrue(requestMessage.getGetTopicsRequest().getTopicIdsList().equals(Arrays.asList(1, 2)));
+                Assert.assertTrue(protoRequest.getGetTopicsRequest().getIdsList().equals(Arrays.asList(1, 2)));
                 break;
-            case REQUESTMESSAGE_NOT_SET:
+            case PROTOREQUEST_NOT_SET:
                 throw new IllegalArgumentException();
         }
     }
@@ -95,15 +88,23 @@ public class ProtobufTest {
         VStatus vStatus1 = statusBuilder.setStatusCode(200).setMessage("OK").build();
 
         GetTopicResponse.Builder builder = GetTopicResponse.newBuilder();
-        GetTopicResponse getTopicResponse = builder.setStatus(vStatus).setTopic(topic).build();
+        GetTopicResponse getTopicResponse = null;
+        try {
+            getTopicResponse = builder.setStatus(vStatus).setTopic(ProtoTopic.parseFrom(topic.toBytes())).build();
+        } catch (InvalidProtocolBufferException e) {
+        }
 
 //        GetTopicResponse.Builder builder1 = GetTopicResponse.newBuilder();
-        GetTopicResponse getTopicResponse1 = builder.setStatus(vStatus1).setTopic(topic1).build();
+        GetTopicResponse getTopicResponse1 = null;
+        try {
+            getTopicResponse1 = builder.setStatus(vStatus1).setTopic(ProtoTopic.parseFrom(topic.toBytes())).build();
+        } catch (InvalidProtocolBufferException e) {
+        }
 
         GetTopicsResponse.Builder finalBuilder = GetTopicsResponse.newBuilder();
-        GetTopicsResponse getTopicsResponse = finalBuilder.addResponses(getTopicResponse).addResponses(getTopicResponse1).build();
-        Assert.assertEquals(getTopicsResponse.getResponsesCount(), 2);
-        Assert.assertEquals(getTopicsResponse.getResponses(0).getTopic().getId(), topic.getId());
+        GetTopicsResponse getTopicsResponse = finalBuilder.addTopics(getTopicResponse).addTopics(getTopicResponse1).build();
+        Assert.assertEquals(getTopicsResponse.getTopicsCount(), 2);
+        Assert.assertEquals(getTopicsResponse.getTopics(0).getTopic().getId(), topic.id());
     }
 
     @Test
@@ -113,14 +114,14 @@ public class ProtobufTest {
     }
 
     private Topic getSampleTopic(int id) {
-        Topic.Builder topicBuilder = Topic.newBuilder();
+        ProtoTopic.Builder topicBuilder = ProtoTopic.newBuilder();
         topicBuilder.setId(id);
         topicBuilder.setName("topic-1");
         topicBuilder.setGrouped(true);
         topicBuilder.setPartitions(5);
         topicBuilder.setReplicationFactor(3);
         topicBuilder.setTopicCategory(TopicCategory.TOPIC);
-        return topicBuilder.build();
+        return new Topic(topicBuilder.build());
     }
 
 }

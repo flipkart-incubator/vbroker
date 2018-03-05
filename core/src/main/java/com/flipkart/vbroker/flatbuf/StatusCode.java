@@ -4,6 +4,7 @@ package com.flipkart.vbroker.flatbuf;
 
 public final class StatusCode {
     public static final int None = 0;
+    public static final int Failure = 99;
     public static final int ProduceSuccess_NoError = 101;
     public static final int ProduceFailed_NoLeader = 151;
     public static final int ProduceFailed_NotEnoughReplicas = 152;

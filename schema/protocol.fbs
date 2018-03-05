@@ -1,4 +1,4 @@
-namespace com.flipkart.vbroker.entities;
+namespace com.flipkart.vbroker.flatbuf;
 
 enum ApiKey:byte {ProduceRequest=0, ProduceResponse=1}
 
@@ -6,6 +6,7 @@ enum ApiKey:byte {ProduceRequest=0, ProduceResponse=1}
 
 enum StatusCode:int32 {
 None=0,
+Failure=99,
 ProduceSuccess_NoError=101,
 ProduceFailed_NoLeader=151,
 ProduceFailed_NotEnoughReplicas=152,
