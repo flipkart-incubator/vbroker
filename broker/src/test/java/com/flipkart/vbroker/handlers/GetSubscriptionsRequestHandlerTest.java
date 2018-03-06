@@ -44,8 +44,8 @@ public class GetSubscriptionsRequestHandlerTest {
         VResponse response = getSubscriptionsRequestHandler.handle(vRequest).toCompletableFuture().join();
         GetSubscriptionsResponse subscriptionsResponse = FlatbufUtils.getProtoResponse(response).getGetSubscriptionsResponse();
 
-        Assert.assertEquals("subscription_1", subscriptionsResponse.getSubscriptions(0).getSubscription().getName());
-        Assert.assertEquals(subscription.toBytes(), subscriptionsResponse.getSubscriptions(0).getSubscription().toByteArray());
+        Assert.assertEquals("subscription_1", subscriptionsResponse.getSubscriptionResponses(0).getSubscription().getName());
+        Assert.assertEquals(subscription.toBytes(), subscriptionsResponse.getSubscriptionResponses(0).getSubscription().toByteArray());
     }
 
     @Test
@@ -62,7 +62,7 @@ public class GetSubscriptionsRequestHandlerTest {
         VRequest vRequest = generateVRequest(Arrays.asList(new Pair<>(1,1), new Pair<>(2,2)));
         VResponse response = getSubscriptionsRequestHandler.handle(vRequest).toCompletableFuture().join();
         GetSubscriptionsResponse subscriptionsResponse = FlatbufUtils.getProtoResponse(response).getGetSubscriptionsResponse();
-        List<GetSubscriptionResponse> subscriptionResponses = subscriptionsResponse.getSubscriptionsList();
+        List<GetSubscriptionResponse> subscriptionResponses = subscriptionsResponse.getSubscriptionResponsesList();
 
         Assert.assertEquals("subscription_1", subscriptionResponses.get(0).getSubscription().getName());
         Assert.assertEquals(subscription.toBytes(), subscriptionResponses.get(0).getSubscription().toByteArray());

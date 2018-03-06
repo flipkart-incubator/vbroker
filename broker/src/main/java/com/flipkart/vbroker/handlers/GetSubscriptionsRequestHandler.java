@@ -40,7 +40,7 @@ public class GetSubscriptionsRequestHandler implements RequestHandler {
     }
 
     private VResponse generateVResponse(VRequest vRequest, List<GetSubscriptionResponse> getSubscriptionResponses) {
-        GetSubscriptionsResponse getSubscriptionsResponse = GetSubscriptionsResponse.newBuilder().addAllSubscriptions(getSubscriptionResponses).build();
+        GetSubscriptionsResponse getSubscriptionsResponse = GetSubscriptionsResponse.newBuilder().addAllSubscriptionResponses(getSubscriptionResponses).build();
         ProtoResponse protoResponse = ProtoResponse.newBuilder().setGetSubscriptionsResponse(getSubscriptionsResponse).build();
         return FlatbufUtils.createVResponse(vRequest.correlationId(), protoResponse);
     }

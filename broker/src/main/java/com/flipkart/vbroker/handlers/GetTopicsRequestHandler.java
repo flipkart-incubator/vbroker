@@ -36,7 +36,7 @@ public class GetTopicsRequestHandler implements RequestHandler {
         }
 
         return CompletionStageUtils.listOfStagesToStageOfList(stages).thenApply(getTopicResponses -> {
-            GetTopicsResponse getTopicsResponse = GetTopicsResponse.newBuilder().addAllTopics(getTopicResponses).build();
+            GetTopicsResponse getTopicsResponse = GetTopicsResponse.newBuilder().addAllTopicResponses(getTopicResponses).build();
             ProtoResponse protoResponse = ProtoResponse.newBuilder().setGetTopicsResponse(getTopicsResponse).build();
             return FlatbufUtils.createVResponse(vRequest.correlationId(), protoResponse);
         });

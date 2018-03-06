@@ -3,6 +3,7 @@ package com.flipkart.vbroker.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.TopicPartition;
+import com.flipkart.vbroker.proto.ProtoTopic;
 import com.flipkart.vbroker.utils.JsonUtils;
 import com.flipkart.vbroker.utils.TopicUtils;
 import com.flipkart.vbroker.wrappers.Topic;

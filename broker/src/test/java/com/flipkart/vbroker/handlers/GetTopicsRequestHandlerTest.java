@@ -4,6 +4,10 @@ import com.flipkart.vbroker.exceptions.TopicNotFoundException;
 import com.flipkart.vbroker.flatbuf.StatusCode;
 import com.flipkart.vbroker.flatbuf.VRequest;
 import com.flipkart.vbroker.flatbuf.VResponse;
+import com.flipkart.vbroker.proto.GetTopicsRequest;
+import com.flipkart.vbroker.proto.GetTopicsResponse;
+import com.flipkart.vbroker.proto.ProtoRequest;
+import com.flipkart.vbroker.proto.ProtoTopic;
 import com.flipkart.vbroker.services.TopicService;
 import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.flipkart.vbroker.wrappers.Topic;
@@ -43,7 +47,7 @@ public class GetTopicsRequestHandlerTest {
         VResponse vResponse = getTopicsRequestHandler.handle(vRequest).toCompletableFuture().join();
         GetTopicsResponse response = FlatbufUtils.getProtoResponse(vResponse).getGetTopicsResponse();
 
-        Assert.assertEquals(response.getTopics(0).getTopic().toByteArray(), topic.toBytes());
+        Assert.assertEquals(response.getTopicResponses(0).getTopic().toByteArray(), topic.toBytes());
     }
 
     @Test
@@ -61,9 +65,9 @@ public class GetTopicsRequestHandlerTest {
         VResponse vResponse = getTopicsRequestHandler.handle(vRequest).toCompletableFuture().join();
         GetTopicsResponse response = FlatbufUtils.getProtoResponse(vResponse).getGetTopicsResponse();
 
-        Assert.assertEquals(response.getTopics(0).getTopic().toByteArray(), topic.toBytes());
-        Assert.assertEquals(response.getTopics(1).getTopic().getId(), topicId_2);
-        Assert.assertEquals(response.getTopics(1).getStatus().getStatusCode(), StatusCode.Failure);
+        Assert.assertEquals(response.getTopicResponses(0).getTopic().toByteArray(), topic.toBytes());
+        Assert.assertEquals(response.getTopicResponses(1).getTopic().getId(), topicId_2);
+        Assert.assertEquals(response.getTopicResponses(1).getStatus().getStatusCode(), StatusCode.Failure);
     }
 
     private VRequest generateVRequest(List<Integer> topics) {

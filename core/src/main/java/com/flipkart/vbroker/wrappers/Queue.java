@@ -1,5 +1,6 @@
 package com.flipkart.vbroker.wrappers;
 
+import com.flipkart.vbroker.proto.ProtoQueue;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 

@@ -3,6 +3,7 @@ package com.flipkart.vbroker.handlers;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.flatbuf.ResponseMessage;
 import com.flipkart.vbroker.flatbuf.VResponse;
+import com.flipkart.vbroker.proto.ProtoResponse;
 import com.flipkart.vbroker.utils.FlatbufUtils;
 import io.netty.bootstrap.Bootstrap;
 import lombok.AllArgsConstructor;

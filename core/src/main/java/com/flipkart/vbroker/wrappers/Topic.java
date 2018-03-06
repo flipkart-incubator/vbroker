@@ -1,5 +1,7 @@
 package com.flipkart.vbroker.wrappers;
 
+import com.flipkart.vbroker.proto.ProtoTopic;
+import com.flipkart.vbroker.proto.TopicCategory;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import lombok.AllArgsConstructor;

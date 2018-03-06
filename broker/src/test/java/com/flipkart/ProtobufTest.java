@@ -102,9 +102,9 @@ public class ProtobufTest {
         }
 
         GetTopicsResponse.Builder finalBuilder = GetTopicsResponse.newBuilder();
-        GetTopicsResponse getTopicsResponse = finalBuilder.addTopics(getTopicResponse).addTopics(getTopicResponse1).build();
-        Assert.assertEquals(getTopicsResponse.getTopicsCount(), 2);
-        Assert.assertEquals(getTopicsResponse.getTopics(0).getTopic().getId(), topic.id());
+        GetTopicsResponse getTopicsResponse = finalBuilder.addTopicResponses(getTopicResponse).addTopicResponses(getTopicResponse1).build();
+        Assert.assertEquals(getTopicsResponse.getTopicResponsesCount(), 2);
+        Assert.assertEquals(getTopicsResponse.getTopicResponses(0).getTopic().getId(), topic.id());
     }
 
     @Test
