@@ -13,8 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -37,7 +35,7 @@ public class GetAllTopicsRequestHandler implements RequestHandler {
             VStatus status;
             GetAllTopicsResponse getAllTopicsResponse;
 
-            if(throwable != null){
+            if (throwable != null) {
                 status = vBuilder.setMessage(throwable.getMessage()).setStatusCode(StatusCode.Failure).build();
                 getAllTopicsResponse = topicBuilder.setStatus(status).build();
             } else {

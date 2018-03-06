@@ -1,6 +1,5 @@
 package com.flipkart.vbroker.handlers;
 
-import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.flatbuf.RequestMessage;
 import com.flipkart.vbroker.flatbuf.VRequest;
@@ -95,7 +94,7 @@ public class RequestHandlerFactory {
 //            case GETALLQUEUESREQUEST:
 //                break;
             case GETSUBSCRIPTIONSREQUEST:
-                requestHandler =  getSubscriptionsRequestHandler;
+                requestHandler = getSubscriptionsRequestHandler;
                 break;
             case GETALLSUBSCRIPTIONSFORTOPICSREQUEST:
                 requestHandler = getAllSubscriptionsForTopicsRequestHandler;

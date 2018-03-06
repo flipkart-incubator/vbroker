@@ -38,6 +38,7 @@ public final class CreateSubscriptionResponse extends
     private volatile java.lang.Object name_;
     private com.flipkart.vbroker.proto.VStatus status_;
     private byte memoizedIsInitialized = -1;
+
     // Use CreateSubscriptionResponse.newBuilder() to construct.
     private CreateSubscriptionResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
@@ -691,21 +692,6 @@ public final class CreateSubscriptionResponse extends
         /**
          * <code>.proto.VStatus status = 4;</code>
          */
-        public Builder setStatus(
-            com.flipkart.vbroker.proto.VStatus.Builder builderForValue) {
-            if (statusBuilder_ == null) {
-                status_ = builderForValue.build();
-                onChanged();
-            } else {
-                statusBuilder_.setMessage(builderForValue.build());
-            }
-
-            return this;
-        }
-
-        /**
-         * <code>.proto.VStatus status = 4;</code>
-         */
         public Builder setStatus(com.flipkart.vbroker.proto.VStatus value) {
             if (statusBuilder_ == null) {
                 if (value == null) {
@@ -715,6 +701,21 @@ public final class CreateSubscriptionResponse extends
                 onChanged();
             } else {
                 statusBuilder_.setMessage(value);
+            }
+
+            return this;
+        }
+
+        /**
+         * <code>.proto.VStatus status = 4;</code>
+         */
+        public Builder setStatus(
+            com.flipkart.vbroker.proto.VStatus.Builder builderForValue) {
+            if (statusBuilder_ == null) {
+                status_ = builderForValue.build();
+                onChanged();
+            } else {
+                statusBuilder_.setMessage(builderForValue.build());
             }
 
             return this;

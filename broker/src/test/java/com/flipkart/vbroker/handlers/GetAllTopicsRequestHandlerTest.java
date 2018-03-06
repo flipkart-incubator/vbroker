@@ -10,18 +10,15 @@ import com.flipkart.vbroker.proto.ProtoTopic;
 import com.flipkart.vbroker.services.TopicService;
 import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.flipkart.vbroker.wrappers.Topic;
-import org.mockito.Mockito;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
-import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.mock;
-import static org.testng.Assert.*;
+import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Created by kaushal.hooda on 06/03/18.

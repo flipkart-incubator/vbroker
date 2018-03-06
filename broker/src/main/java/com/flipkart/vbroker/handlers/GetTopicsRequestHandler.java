@@ -42,11 +42,11 @@ public class GetTopicsRequestHandler implements RequestHandler {
         });
     }
 
-    private CompletionStage<GetTopicResponse> handleTopicStage(CompletionStage<Topic> topicCompletionStage, int topicId){
+    private CompletionStage<GetTopicResponse> handleTopicStage(CompletionStage<Topic> topicCompletionStage, int topicId) {
         return topicCompletionStage.handle((topic, throwable) -> {
             VStatus.Builder vBuilder = VStatus.newBuilder();
             GetTopicResponse.Builder topicBuilder = GetTopicResponse.newBuilder();
-            if (throwable != null){
+            if (throwable != null) {
                 VStatus vStatus = vBuilder.setMessage(throwable.getMessage()).setStatusCode(StatusCode.Failure).build();
                 return topicBuilder.setTopic(ProtoTopic.newBuilder().setId(topicId).build()).setStatus(vStatus).build();
             } else {

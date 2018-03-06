@@ -35,6 +35,7 @@ public final class GetAllSubscriptionsForTopicsResponse extends
     private GetAllSubscriptionsForTopicsResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
     }
+
     private GetAllSubscriptionsForTopicsResponse() {
         getAllSubscriptionsForTopicResponses_ = java.util.Collections.emptyList();
     }

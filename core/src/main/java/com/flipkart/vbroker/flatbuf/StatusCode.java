@@ -29,6 +29,7 @@ public final class StatusCode {
     public static final int Controller_Not_Available = 504;
     public static final int Not_Leader_For_Partition = 505;
     public static final int Entity_Not_Exists = 506;
+
     private StatusCode() {
     }
 }

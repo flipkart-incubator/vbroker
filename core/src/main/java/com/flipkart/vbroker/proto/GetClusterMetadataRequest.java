@@ -31,6 +31,7 @@ public final class GetClusterMetadataRequest extends
     private java.util.List<java.lang.Integer> topicIds_;
     private int topicIdsMemoizedSerializedSize = -1;
     private byte memoizedIsInitialized = -1;
+
     // Use GetClusterMetadataRequest.newBuilder() to construct.
     private GetClusterMetadataRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);

@@ -35,6 +35,7 @@ public final class GetTopicsRequest extends
     private java.util.List<java.lang.Integer> ids_;
     private int idsMemoizedSerializedSize = -1;
     private byte memoizedIsInitialized = -1;
+
     // Use GetTopicsRequest.newBuilder() to construct.
     private GetTopicsRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);

@@ -42,6 +42,7 @@ public final class CodeRange extends
         from_ = 0;
         to_ = 0;
     }
+
     private CodeRange(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)

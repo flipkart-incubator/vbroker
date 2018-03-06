@@ -608,21 +608,6 @@ public final class SubscriptionLagRequest extends
         /**
          * <code>.proto.TopicSubscription topicSubscription = 1;</code>
          */
-        public Builder setTopicSubscription(
-            com.flipkart.vbroker.proto.TopicSubscription.Builder builderForValue) {
-            if (topicSubscriptionBuilder_ == null) {
-                topicSubscription_ = builderForValue.build();
-                onChanged();
-            } else {
-                topicSubscriptionBuilder_.setMessage(builderForValue.build());
-            }
-
-            return this;
-        }
-
-        /**
-         * <code>.proto.TopicSubscription topicSubscription = 1;</code>
-         */
         public Builder setTopicSubscription(com.flipkart.vbroker.proto.TopicSubscription value) {
             if (topicSubscriptionBuilder_ == null) {
                 if (value == null) {
@@ -632,6 +617,21 @@ public final class SubscriptionLagRequest extends
                 onChanged();
             } else {
                 topicSubscriptionBuilder_.setMessage(value);
+            }
+
+            return this;
+        }
+
+        /**
+         * <code>.proto.TopicSubscription topicSubscription = 1;</code>
+         */
+        public Builder setTopicSubscription(
+            com.flipkart.vbroker.proto.TopicSubscription.Builder builderForValue) {
+            if (topicSubscriptionBuilder_ == null) {
+                topicSubscription_ = builderForValue.build();
+                onChanged();
+            } else {
+                topicSubscriptionBuilder_.setMessage(builderForValue.build());
             }
 
             return this;

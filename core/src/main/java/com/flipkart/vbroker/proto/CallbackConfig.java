@@ -35,6 +35,7 @@ public final class CallbackConfig extends
     private CallbackConfig(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
     }
+
     private CallbackConfig() {
         codeRanges_ = java.util.Collections.emptyList();
     }

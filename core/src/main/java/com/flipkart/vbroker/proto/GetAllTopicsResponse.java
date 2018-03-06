@@ -608,21 +608,6 @@ public final class GetAllTopicsResponse extends
         /**
          * <code>.proto.VStatus status = 1;</code>
          */
-        public Builder setStatus(
-            com.flipkart.vbroker.proto.VStatus.Builder builderForValue) {
-            if (statusBuilder_ == null) {
-                status_ = builderForValue.build();
-                onChanged();
-            } else {
-                statusBuilder_.setMessage(builderForValue.build());
-            }
-
-            return this;
-        }
-
-        /**
-         * <code>.proto.VStatus status = 1;</code>
-         */
         public Builder setStatus(com.flipkart.vbroker.proto.VStatus value) {
             if (statusBuilder_ == null) {
                 if (value == null) {
@@ -632,6 +617,21 @@ public final class GetAllTopicsResponse extends
                 onChanged();
             } else {
                 statusBuilder_.setMessage(value);
+            }
+
+            return this;
+        }
+
+        /**
+         * <code>.proto.VStatus status = 1;</code>
+         */
+        public Builder setStatus(
+            com.flipkart.vbroker.proto.VStatus.Builder builderForValue) {
+            if (statusBuilder_ == null) {
+                status_ = builderForValue.build();
+                onChanged();
+            } else {
+                statusBuilder_.setMessage(builderForValue.build());
             }
 
             return this;

@@ -15,9 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Created by kaushal.hooda on 27/02/18.
@@ -45,11 +42,11 @@ public class GetSubscriptionsRequestHandler implements RequestHandler {
         return FlatbufUtils.createVResponse(vRequest.correlationId(), protoResponse);
     }
 
-    private CompletionStage<GetSubscriptionResponse> handleSubscriptionStage(CompletionStage<Subscription> subscriptionCompletionStage, TopicSubscription requested){
+    private CompletionStage<GetSubscriptionResponse> handleSubscriptionStage(CompletionStage<Subscription> subscriptionCompletionStage, TopicSubscription requested) {
         return subscriptionCompletionStage.handle((subscription, throwable) -> {
             VStatus.Builder vBuilder = VStatus.newBuilder();
             GetSubscriptionResponse.Builder subBuilder = GetSubscriptionResponse.newBuilder();
-            if (throwable != null){
+            if (throwable != null) {
                 ProtoSubscription protoSubscription = ProtoSubscription.newBuilder().setId(requested.getSubscriptionId()).setTopicId(requested.getTopicId()).build();
                 VStatus vStatus = vBuilder.setStatusCode(StatusCode.Failure).setMessage(throwable.getMessage()).build();
                 return subBuilder.setStatus(vStatus).setSubscription(protoSubscription).build();

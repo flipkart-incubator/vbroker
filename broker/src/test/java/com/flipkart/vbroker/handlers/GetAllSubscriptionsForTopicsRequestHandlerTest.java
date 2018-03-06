@@ -4,9 +4,11 @@ import com.flipkart.vbroker.exceptions.TopicNotFoundException;
 import com.flipkart.vbroker.flatbuf.StatusCode;
 import com.flipkart.vbroker.flatbuf.VRequest;
 import com.flipkart.vbroker.flatbuf.VResponse;
-import com.flipkart.vbroker.proto.*;
+import com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicResponse;
+import com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest;
+import com.flipkart.vbroker.proto.ProtoRequest;
+import com.flipkart.vbroker.proto.ProtoSubscription;
 import com.flipkart.vbroker.services.SubscriptionService;
-import com.flipkart.vbroker.services.TopicService;
 import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.flipkart.vbroker.wrappers.Subscription;
 import org.testng.Assert;
@@ -18,10 +20,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static org.mockito.Mockito.ignoreStubs;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.*;
 
 /**
  * Created by kaushal.hooda on 06/03/18.
@@ -37,7 +37,7 @@ public class GetAllSubscriptionsForTopicsRequestHandlerTest {
     }
 
     @Test
-    public void shouldHandlePartialSuccess(){
+    public void shouldHandlePartialSuccess() {
         Subscription subscription = new Subscription(ProtoSubscription.newBuilder().setId(1).setName("subscription_1").build());
         when(subscriptionService.getSubscriptionsForTopic(1))
             .thenReturn(CompletableFuture.completedFuture(Collections.singletonList(subscription)));
@@ -46,7 +46,7 @@ public class GetAllSubscriptionsForTopicsRequestHandlerTest {
                 throw new TopicNotFoundException("Topic not found");
             }));
 
-        VRequest vRequest = generateVRequest(Arrays.asList(1,2));
+        VRequest vRequest = generateVRequest(Arrays.asList(1, 2));
         VResponse vResponse = getAllSubscriptionsForTopicsRequestHandler.handle(vRequest).toCompletableFuture().join();
         List<GetAllSubscriptionsForTopicResponse> responses = FlatbufUtils.getProtoResponse(vResponse).getGetAllSubscriptionsForTopicsResponse().getGetAllSubscriptionsForTopicResponsesList();
 

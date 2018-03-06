@@ -49,7 +49,7 @@ public class GetSubscriptionsRequestHandlerTest {
     }
 
     @Test
-    public void shouldHandleOneMissingOneExistingSubscription(){
+    public void shouldHandleOneMissingOneExistingSubscription() {
         Subscription subscription = new Subscription(ProtoSubscription.newBuilder().setId(1).setName("subscription_1").build());
         Mockito.when(subscriptionService.getSubscription(1, 1))
             .thenReturn(CompletableFuture.completedFuture(subscription));
@@ -59,7 +59,7 @@ public class GetSubscriptionsRequestHandlerTest {
             }));
 
 
-        VRequest vRequest = generateVRequest(Arrays.asList(new Pair<>(1,1), new Pair<>(2,2)));
+        VRequest vRequest = generateVRequest(Arrays.asList(new Pair<>(1, 1), new Pair<>(2, 2)));
         VResponse response = getSubscriptionsRequestHandler.handle(vRequest).toCompletableFuture().join();
         GetSubscriptionsResponse subscriptionsResponse = FlatbufUtils.getProtoResponse(response).getGetSubscriptionsResponse();
         List<GetSubscriptionResponse> subscriptionResponses = subscriptionsResponse.getSubscriptionResponsesList();

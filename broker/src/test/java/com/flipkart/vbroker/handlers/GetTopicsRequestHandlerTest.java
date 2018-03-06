@@ -37,7 +37,7 @@ public class GetTopicsRequestHandlerTest {
     }
 
     @Test
-    public void shouldReturnTopic(){
+    public void shouldReturnTopic() {
         int topicId = 1;
         String topicName = "topic_1";
         Topic topic = new Topic(ProtoTopic.newBuilder().setId(topicId).setName(topicName).build());
@@ -51,7 +51,7 @@ public class GetTopicsRequestHandlerTest {
     }
 
     @Test
-    public void shouldHandleOneExistingAndOneMissingTopic(){
+    public void shouldHandleOneExistingAndOneMissingTopic() {
         int topicId = 1;
         String topicName = "topic_1";
         int topicId_2 = 2;

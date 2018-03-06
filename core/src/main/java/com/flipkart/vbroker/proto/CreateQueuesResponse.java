@@ -35,6 +35,7 @@ public final class CreateQueuesResponse extends
     private CreateQueuesResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
     }
+
     private CreateQueuesResponse() {
         createQueueResponses_ = java.util.Collections.emptyList();
     }

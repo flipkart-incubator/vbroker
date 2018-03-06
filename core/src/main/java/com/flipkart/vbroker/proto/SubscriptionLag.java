@@ -35,6 +35,7 @@ public final class SubscriptionLag extends
     private int topicId_;
     private java.util.List<com.flipkart.vbroker.proto.PartitionLag> partitionLags_;
     private byte memoizedIsInitialized = -1;
+
     // Use SubscriptionLag.newBuilder() to construct.
     private SubscriptionLag(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);

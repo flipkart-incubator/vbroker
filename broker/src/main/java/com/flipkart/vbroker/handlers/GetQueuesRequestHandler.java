@@ -39,11 +39,11 @@ public class GetQueuesRequestHandler implements RequestHandler {
         });
     }
 
-    private CompletionStage<GetQueueResponse> handleQueueStage(CompletionStage<Queue> queueCompletionStage, int queueId){
+    private CompletionStage<GetQueueResponse> handleQueueStage(CompletionStage<Queue> queueCompletionStage, int queueId) {
         return queueCompletionStage.handle((queue, throwable) -> {
             VStatus.Builder vBuilder = VStatus.newBuilder();
             GetQueueResponse.Builder queueBuilder = GetQueueResponse.newBuilder();
-            if (throwable != null){
+            if (throwable != null) {
                 VStatus vStatus = vBuilder.setMessage(throwable.getMessage()).setStatusCode(StatusCode.Failure).build();
                 return queueBuilder.setQueue(ProtoQueue.newBuilder().setId(queueId).build()).setStatus(vStatus).build();
             } else {

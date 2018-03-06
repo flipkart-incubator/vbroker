@@ -15,8 +15,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.testng.Assert.*;
-
 /**
  * Created by kaushal.hooda on 05/03/18.
  */
@@ -24,12 +22,12 @@ public class GetQueuesRequestHandlerTest {
     private GetQueuesRequestHandler getQueuesRequestHandler;
 
     @BeforeMethod
-    public void setUp(){
+    public void setUp() {
         getQueuesRequestHandler = new GetQueuesRequestHandler();
     }
 
     @Test
-    public void shouldReturnQueue(){
+    public void shouldReturnQueue() {
         VRequest vRequest = generateVRequest(Collections.singletonList(1));
         VResponse vResponse = getQueuesRequestHandler.handle(vRequest).toCompletableFuture().join();
         GetQueuesResponse response = FlatbufUtils.getProtoResponse(vResponse).getGetQueuesResponse();
@@ -37,15 +35,15 @@ public class GetQueuesRequestHandlerTest {
     }
 
     @Test
-    public void shouldHandleOneMissingOnePresentQueue(){
-        VRequest vRequest = generateVRequest(Arrays.asList(1,2));
+    public void shouldHandleOneMissingOnePresentQueue() {
+        VRequest vRequest = generateVRequest(Arrays.asList(1, 2));
         VResponse vResponse = getQueuesRequestHandler.handle(vRequest).toCompletableFuture().join();
         GetQueuesResponse response = FlatbufUtils.getProtoResponse(vResponse).getGetQueuesResponse();
         Assert.assertEquals(response.getQueueResponses(0).getQueue().getId(), 1);
         Assert.assertEquals(response.getQueueResponses(1).getStatus().getStatusCode(), StatusCode.Failure);
     }
 
-    private VRequest generateVRequest(List<Integer> queueIds){
+    private VRequest generateVRequest(List<Integer> queueIds) {
         GetQueuesRequest getQueuesRequest = GetQueuesRequest.newBuilder().addAllIds(queueIds).build();
         return FlatbufUtils.createVRequest((byte) 1, 1001, ProtoRequest.newBuilder().setGetQueuesRequest(getQueuesRequest).build());
     }

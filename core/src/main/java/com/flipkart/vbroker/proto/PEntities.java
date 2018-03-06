@@ -184,6 +184,7 @@ public final class PEntities {
             internal_static_proto_ClusterMetadata_descriptor,
             new java.lang.String[]{"TopicMetadatas", "Nodes",});
     }
+
     private PEntities() {
     }
 
