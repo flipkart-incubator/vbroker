@@ -29,7 +29,7 @@ public class RequestHandlerFactoryTest {
         producerService = mock(ProducerService.class);
         topicService = mock(TopicService.class);
         subscriptionService = mock(SubscriptionService.class);
-        requestHandlerFactory = new RequestHandlerFactory(producerService, topicService, subscriptionService);
+        requestHandlerFactory = new RequestHandlerFactory(producerService, topicService, subscriptionService, null, null);
         vRequest = mock(VRequest.class);
     }
 

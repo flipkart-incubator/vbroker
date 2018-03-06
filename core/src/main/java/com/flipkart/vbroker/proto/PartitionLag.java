@@ -38,6 +38,7 @@ public final class PartitionLag extends
     private int lag_;
     private com.flipkart.vbroker.proto.VStatus status_;
     private byte memoizedIsInitialized = -1;
+
     // Use PartitionLag.newBuilder() to construct.
     private PartitionLag(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);

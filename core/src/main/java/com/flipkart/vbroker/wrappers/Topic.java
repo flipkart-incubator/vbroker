@@ -60,12 +60,12 @@ public class Topic {
         if (obj == this) {
             return true;
         }
-        if (!(obj instanceof ProtoTopic)) {
+        if (!(obj instanceof Topic)) {
             return super.equals(obj);
         }
-        ProtoTopic other = (ProtoTopic) obj;
+        Topic other = (Topic) obj;
 
-        return protoTopic.getId() == other.getId();
+        return protoTopic.getId() == other.id();
     }
 
     @Override

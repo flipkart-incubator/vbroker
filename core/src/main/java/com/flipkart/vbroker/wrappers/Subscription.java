@@ -93,12 +93,12 @@ public class Subscription {
         if (obj == this) {
             return true;
         }
-        if (!(obj instanceof ProtoSubscription)) {
+        if (!(obj instanceof Subscription)) {
             return super.equals(obj);
         }
-        ProtoSubscription other = (ProtoSubscription) obj;
+        Subscription other = (Subscription) obj;
 
-        return protoSubscription.getId() == other.getId();
+        return protoSubscription.getId() == other.id();
     }
 
     @Override

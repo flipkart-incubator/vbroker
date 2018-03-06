@@ -46,6 +46,7 @@ public final class VStatus extends
         statusCode_ = 0;
         message_ = "";
     }
+
     private VStatus(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)

@@ -3,8 +3,8 @@
 
 package com.flipkart.vbroker.proto;
 
-public interface GetClusterMetadataOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:proto.GetClusterMetadata)
+public interface GetClusterMetadataRequestOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:proto.GetClusterMetadataRequest)
     com.google.protobuf.MessageOrBuilder {
 
     /**

@@ -38,6 +38,7 @@ public final class PartitionMetadata extends
     private java.util.List<java.lang.Integer> replicas_;
     private int replicasMemoizedSerializedSize = -1;
     private byte memoizedIsInitialized = -1;
+
     // Use PartitionMetadata.newBuilder() to construct.
     private PartitionMetadata(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);

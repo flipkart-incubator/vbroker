@@ -8,30 +8,30 @@ public interface GetSubscriptionsResponseOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+     * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
      */
     java.util.List<com.flipkart.vbroker.proto.GetSubscriptionResponse>
-    getSubscriptionsList();
+    getSubscriptionResponsesList();
 
     /**
-     * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+     * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
      */
-    com.flipkart.vbroker.proto.GetSubscriptionResponse getSubscriptions(int index);
+    com.flipkart.vbroker.proto.GetSubscriptionResponse getSubscriptionResponses(int index);
 
     /**
-     * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+     * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
      */
-    int getSubscriptionsCount();
+    int getSubscriptionResponsesCount();
 
     /**
-     * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+     * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
      */
     java.util.List<? extends com.flipkart.vbroker.proto.GetSubscriptionResponseOrBuilder>
-    getSubscriptionsOrBuilderList();
+    getSubscriptionResponsesOrBuilderList();
 
     /**
-     * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+     * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
      */
-    com.flipkart.vbroker.proto.GetSubscriptionResponseOrBuilder getSubscriptionsOrBuilder(
+    com.flipkart.vbroker.proto.GetSubscriptionResponseOrBuilder getSubscriptionResponsesOrBuilder(
         int index);
 }

@@ -78,6 +78,7 @@ public final class ProtoSubscription extends
         filterOperator_ = 0;
         filterKeyValuesList_ = java.util.Collections.emptyList();
     }
+
     private ProtoSubscription(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
