@@ -16,9 +16,13 @@ message ProtoRequest {
         CreateSubscriptionsRequest createSubscriptionsRequest = 2;
         CreateQueuesRequest createQueuesRequest = 3;
         GetTopicsRequest getTopicsRequest = 4;
-        GetSubscriptionsRequest getSubscriptionsRequest = 5;
-        GetQueuesRequest getQueuesRequest = 6;
-        GetSubscriptionLagsRequest getSubscriptionLagsRequest = 7;
+        GetAllTopicsRequest getAllTopicsRequest = 5;
+        GetSubscriptionsRequest getSubscriptionsRequest = 6;
+        GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicRequest = 7;
+        GetQueuesRequest getQueuesRequest = 8;
+        GetAllQueuesRequest getAllQueuesRequest = 9;
+        GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;
+        GetClusterMetadataRequest getClusterMetadataRequest = 11;
     }
 }
 
@@ -43,14 +47,24 @@ message GetQueuesRequest {
     repeated int32 ids = 1;
 }
 
+message GetAllQueuesRequest {
+}
+
 // get topics request
 message GetTopicsRequest {
     repeated int32 ids = 1;
 }
 
+message GetAllTopicsRequest {
+}
+
 // get subscriptions request
 message GetSubscriptionsRequest {
     repeated TopicSubscription subscriptions = 1;
+}
+
+message GetAllSubscriptionsForTopicsRequest {
+    repeated int32 topicIds = 1;
 }
 
 // get lags request
@@ -68,6 +82,6 @@ message GetSubscriptionLagsRequest {
 }
 
 
-message GetClusterMetadata {
+message GetClusterMetadataRequest {
     repeated int32 topicIds = 1;
 }

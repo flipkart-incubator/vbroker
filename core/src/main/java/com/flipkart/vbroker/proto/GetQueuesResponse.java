@@ -10,7 +10,7 @@ public final class GetQueuesResponse extends
     com.google.protobuf.GeneratedMessageV3 implements
     // @@protoc_insertion_point(message_implements:proto.GetQueuesResponse)
     GetQueuesResponseOrBuilder {
-    public static final int QUEUES_FIELD_NUMBER = 1;
+    public static final int QUEUERESPONSES_FIELD_NUMBER = 1;
     private static final long serialVersionUID = 0L;
     // @@protoc_insertion_point(class_scope:proto.GetQueuesResponse)
     private static final com.flipkart.vbroker.proto.GetQueuesResponse DEFAULT_INSTANCE;
@@ -28,7 +28,7 @@ public final class GetQueuesResponse extends
         DEFAULT_INSTANCE = new com.flipkart.vbroker.proto.GetQueuesResponse();
     }
 
-    private java.util.List<com.flipkart.vbroker.proto.GetQueueResponse> queues_;
+    private java.util.List<com.flipkart.vbroker.proto.GetQueueResponse> queueResponses_;
     private byte memoizedIsInitialized = -1;
 
     // Use GetQueuesResponse.newBuilder() to construct.
@@ -36,7 +36,7 @@ public final class GetQueuesResponse extends
         super(builder);
     }
     private GetQueuesResponse() {
-        queues_ = java.util.Collections.emptyList();
+        queueResponses_ = java.util.Collections.emptyList();
     }
 
     private GetQueuesResponse(
@@ -67,10 +67,10 @@ public final class GetQueuesResponse extends
                     }
                     case 10: {
                         if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-                            queues_ = new java.util.ArrayList<com.flipkart.vbroker.proto.GetQueueResponse>();
+                            queueResponses_ = new java.util.ArrayList<com.flipkart.vbroker.proto.GetQueueResponse>();
                             mutable_bitField0_ |= 0x00000001;
                         }
-                        queues_.add(
+                        queueResponses_.add(
                             input.readMessage(com.flipkart.vbroker.proto.GetQueueResponse.parser(), extensionRegistry));
                         break;
                     }
@@ -83,7 +83,7 @@ public final class GetQueuesResponse extends
                 e).setUnfinishedMessage(this);
         } finally {
             if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-                queues_ = java.util.Collections.unmodifiableList(queues_);
+                queueResponses_ = java.util.Collections.unmodifiableList(queueResponses_);
             }
             this.unknownFields = unknownFields.build();
             makeExtensionsImmutable();
@@ -206,40 +206,40 @@ public final class GetQueuesResponse extends
     }
 
     /**
-     * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+     * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
      */
-    public java.util.List<com.flipkart.vbroker.proto.GetQueueResponse> getQueuesList() {
-        return queues_;
+    public java.util.List<com.flipkart.vbroker.proto.GetQueueResponse> getQueueResponsesList() {
+        return queueResponses_;
     }
 
     /**
-     * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+     * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
      */
     public java.util.List<? extends com.flipkart.vbroker.proto.GetQueueResponseOrBuilder>
-    getQueuesOrBuilderList() {
-        return queues_;
+    getQueueResponsesOrBuilderList() {
+        return queueResponses_;
     }
 
     /**
-     * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+     * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
      */
-    public int getQueuesCount() {
-        return queues_.size();
+    public int getQueueResponsesCount() {
+        return queueResponses_.size();
     }
 
     /**
-     * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+     * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
      */
-    public com.flipkart.vbroker.proto.GetQueueResponse getQueues(int index) {
-        return queues_.get(index);
+    public com.flipkart.vbroker.proto.GetQueueResponse getQueueResponses(int index) {
+        return queueResponses_.get(index);
     }
 
     /**
-     * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+     * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
      */
-    public com.flipkart.vbroker.proto.GetQueueResponseOrBuilder getQueuesOrBuilder(
+    public com.flipkart.vbroker.proto.GetQueueResponseOrBuilder getQueueResponsesOrBuilder(
         int index) {
-        return queues_.get(index);
+        return queueResponses_.get(index);
     }
 
     public final boolean isInitialized() {
@@ -253,8 +253,8 @@ public final class GetQueuesResponse extends
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
         throws java.io.IOException {
-        for (int i = 0; i < queues_.size(); i++) {
-            output.writeMessage(1, queues_.get(i));
+        for (int i = 0; i < queueResponses_.size(); i++) {
+            output.writeMessage(1, queueResponses_.get(i));
         }
         unknownFields.writeTo(output);
     }
@@ -264,9 +264,9 @@ public final class GetQueuesResponse extends
         if (size != -1) return size;
 
         size = 0;
-        for (int i = 0; i < queues_.size(); i++) {
+        for (int i = 0; i < queueResponses_.size(); i++) {
             size += com.google.protobuf.CodedOutputStream
-                .computeMessageSize(1, queues_.get(i));
+                .computeMessageSize(1, queueResponses_.get(i));
         }
         size += unknownFields.getSerializedSize();
         memoizedSize = size;
@@ -284,8 +284,8 @@ public final class GetQueuesResponse extends
         com.flipkart.vbroker.proto.GetQueuesResponse other = (com.flipkart.vbroker.proto.GetQueuesResponse) obj;
 
         boolean result = true;
-        result = result && getQueuesList()
-            .equals(other.getQueuesList());
+        result = result && getQueueResponsesList()
+            .equals(other.getQueueResponsesList());
         result = result && unknownFields.equals(other.unknownFields);
         return result;
     }
@@ -297,9 +297,9 @@ public final class GetQueuesResponse extends
         }
         int hash = 41;
         hash = (19 * hash) + getDescriptor().hashCode();
-        if (getQueuesCount() > 0) {
-            hash = (37 * hash) + QUEUES_FIELD_NUMBER;
-            hash = (53 * hash) + getQueuesList().hashCode();
+        if (getQueueResponsesCount() > 0) {
+            hash = (37 * hash) + QUEUERESPONSES_FIELD_NUMBER;
+            hash = (53 * hash) + getQueueResponsesList().hashCode();
         }
         hash = (29 * hash) + unknownFields.hashCode();
         memoizedHashCode = hash;
@@ -339,10 +339,10 @@ public final class GetQueuesResponse extends
         // @@protoc_insertion_point(builder_implements:proto.GetQueuesResponse)
         com.flipkart.vbroker.proto.GetQueuesResponseOrBuilder {
         private int bitField0_;
-        private java.util.List<com.flipkart.vbroker.proto.GetQueueResponse> queues_ =
+        private java.util.List<com.flipkart.vbroker.proto.GetQueueResponse> queueResponses_ =
             java.util.Collections.emptyList();
         private com.google.protobuf.RepeatedFieldBuilderV3<
-            com.flipkart.vbroker.proto.GetQueueResponse, com.flipkart.vbroker.proto.GetQueueResponse.Builder, com.flipkart.vbroker.proto.GetQueueResponseOrBuilder> queuesBuilder_;
+            com.flipkart.vbroker.proto.GetQueueResponse, com.flipkart.vbroker.proto.GetQueueResponse.Builder, com.flipkart.vbroker.proto.GetQueueResponseOrBuilder> queueResponsesBuilder_;
 
         // Construct using com.flipkart.vbroker.proto.GetQueuesResponse.newBuilder()
         private Builder() {
@@ -370,17 +370,17 @@ public final class GetQueuesResponse extends
         private void maybeForceBuilderInitialization() {
             if (com.google.protobuf.GeneratedMessageV3
                 .alwaysUseFieldBuilders) {
-                getQueuesFieldBuilder();
+                getQueueResponsesFieldBuilder();
             }
         }
 
         public Builder clear() {
             super.clear();
-            if (queuesBuilder_ == null) {
-                queues_ = java.util.Collections.emptyList();
+            if (queueResponsesBuilder_ == null) {
+                queueResponses_ = java.util.Collections.emptyList();
                 bitField0_ = (bitField0_ & ~0x00000001);
             } else {
-                queuesBuilder_.clear();
+                queueResponsesBuilder_.clear();
             }
             return this;
         }
@@ -405,14 +405,14 @@ public final class GetQueuesResponse extends
         public com.flipkart.vbroker.proto.GetQueuesResponse buildPartial() {
             com.flipkart.vbroker.proto.GetQueuesResponse result = new com.flipkart.vbroker.proto.GetQueuesResponse(this);
             int from_bitField0_ = bitField0_;
-            if (queuesBuilder_ == null) {
+            if (queueResponsesBuilder_ == null) {
                 if (((bitField0_ & 0x00000001) == 0x00000001)) {
-                    queues_ = java.util.Collections.unmodifiableList(queues_);
+                    queueResponses_ = java.util.Collections.unmodifiableList(queueResponses_);
                     bitField0_ = (bitField0_ & ~0x00000001);
                 }
-                result.queues_ = queues_;
+                result.queueResponses_ = queueResponses_;
             } else {
-                result.queues_ = queuesBuilder_.build();
+                result.queueResponses_ = queueResponsesBuilder_.build();
             }
             onBuilt();
             return result;
@@ -461,29 +461,29 @@ public final class GetQueuesResponse extends
 
         public Builder mergeFrom(com.flipkart.vbroker.proto.GetQueuesResponse other) {
             if (other == com.flipkart.vbroker.proto.GetQueuesResponse.getDefaultInstance()) return this;
-            if (queuesBuilder_ == null) {
-                if (!other.queues_.isEmpty()) {
-                    if (queues_.isEmpty()) {
-                        queues_ = other.queues_;
+            if (queueResponsesBuilder_ == null) {
+                if (!other.queueResponses_.isEmpty()) {
+                    if (queueResponses_.isEmpty()) {
+                        queueResponses_ = other.queueResponses_;
                         bitField0_ = (bitField0_ & ~0x00000001);
                     } else {
-                        ensureQueuesIsMutable();
-                        queues_.addAll(other.queues_);
+                        ensureQueueResponsesIsMutable();
+                        queueResponses_.addAll(other.queueResponses_);
                     }
                     onChanged();
                 }
             } else {
-                if (!other.queues_.isEmpty()) {
-                    if (queuesBuilder_.isEmpty()) {
-                        queuesBuilder_.dispose();
-                        queuesBuilder_ = null;
-                        queues_ = other.queues_;
+                if (!other.queueResponses_.isEmpty()) {
+                    if (queueResponsesBuilder_.isEmpty()) {
+                        queueResponsesBuilder_.dispose();
+                        queueResponsesBuilder_ = null;
+                        queueResponses_ = other.queueResponses_;
                         bitField0_ = (bitField0_ & ~0x00000001);
-                        queuesBuilder_ =
+                        queueResponsesBuilder_ =
                             com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
-                                getQueuesFieldBuilder() : null;
+                                getQueueResponsesFieldBuilder() : null;
                     } else {
-                        queuesBuilder_.addAllMessages(other.queues_);
+                        queueResponsesBuilder_.addAllMessages(other.queueResponses_);
                     }
                 }
             }
@@ -514,258 +514,258 @@ public final class GetQueuesResponse extends
             return this;
         }
 
-        private void ensureQueuesIsMutable() {
+        private void ensureQueueResponsesIsMutable() {
             if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-                queues_ = new java.util.ArrayList<com.flipkart.vbroker.proto.GetQueueResponse>(queues_);
+                queueResponses_ = new java.util.ArrayList<com.flipkart.vbroker.proto.GetQueueResponse>(queueResponses_);
                 bitField0_ |= 0x00000001;
             }
         }
 
         /**
-         * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+         * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
          */
-        public java.util.List<com.flipkart.vbroker.proto.GetQueueResponse> getQueuesList() {
-            if (queuesBuilder_ == null) {
-                return java.util.Collections.unmodifiableList(queues_);
+        public java.util.List<com.flipkart.vbroker.proto.GetQueueResponse> getQueueResponsesList() {
+            if (queueResponsesBuilder_ == null) {
+                return java.util.Collections.unmodifiableList(queueResponses_);
             } else {
-                return queuesBuilder_.getMessageList();
+                return queueResponsesBuilder_.getMessageList();
             }
         }
 
         /**
-         * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+         * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
          */
-        public int getQueuesCount() {
-            if (queuesBuilder_ == null) {
-                return queues_.size();
+        public int getQueueResponsesCount() {
+            if (queueResponsesBuilder_ == null) {
+                return queueResponses_.size();
             } else {
-                return queuesBuilder_.getCount();
+                return queueResponsesBuilder_.getCount();
             }
         }
 
         /**
-         * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+         * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
          */
-        public com.flipkart.vbroker.proto.GetQueueResponse getQueues(int index) {
-            if (queuesBuilder_ == null) {
-                return queues_.get(index);
+        public com.flipkart.vbroker.proto.GetQueueResponse getQueueResponses(int index) {
+            if (queueResponsesBuilder_ == null) {
+                return queueResponses_.get(index);
             } else {
-                return queuesBuilder_.getMessage(index);
+                return queueResponsesBuilder_.getMessage(index);
             }
         }
 
         /**
-         * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+         * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
          */
-        public Builder setQueues(
+        public Builder setQueueResponses(
             int index, com.flipkart.vbroker.proto.GetQueueResponse value) {
-            if (queuesBuilder_ == null) {
+            if (queueResponsesBuilder_ == null) {
                 if (value == null) {
                     throw new NullPointerException();
                 }
-                ensureQueuesIsMutable();
-                queues_.set(index, value);
+                ensureQueueResponsesIsMutable();
+                queueResponses_.set(index, value);
                 onChanged();
             } else {
-                queuesBuilder_.setMessage(index, value);
+                queueResponsesBuilder_.setMessage(index, value);
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+         * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
          */
-        public Builder setQueues(
+        public Builder setQueueResponses(
             int index, com.flipkart.vbroker.proto.GetQueueResponse.Builder builderForValue) {
-            if (queuesBuilder_ == null) {
-                ensureQueuesIsMutable();
-                queues_.set(index, builderForValue.build());
+            if (queueResponsesBuilder_ == null) {
+                ensureQueueResponsesIsMutable();
+                queueResponses_.set(index, builderForValue.build());
                 onChanged();
             } else {
-                queuesBuilder_.setMessage(index, builderForValue.build());
+                queueResponsesBuilder_.setMessage(index, builderForValue.build());
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+         * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
          */
-        public Builder addQueues(com.flipkart.vbroker.proto.GetQueueResponse value) {
-            if (queuesBuilder_ == null) {
+        public Builder addQueueResponses(com.flipkart.vbroker.proto.GetQueueResponse value) {
+            if (queueResponsesBuilder_ == null) {
                 if (value == null) {
                     throw new NullPointerException();
                 }
-                ensureQueuesIsMutable();
-                queues_.add(value);
+                ensureQueueResponsesIsMutable();
+                queueResponses_.add(value);
                 onChanged();
             } else {
-                queuesBuilder_.addMessage(value);
+                queueResponsesBuilder_.addMessage(value);
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+         * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
          */
-        public Builder addQueues(
+        public Builder addQueueResponses(
             int index, com.flipkart.vbroker.proto.GetQueueResponse value) {
-            if (queuesBuilder_ == null) {
+            if (queueResponsesBuilder_ == null) {
                 if (value == null) {
                     throw new NullPointerException();
                 }
-                ensureQueuesIsMutable();
-                queues_.add(index, value);
+                ensureQueueResponsesIsMutable();
+                queueResponses_.add(index, value);
                 onChanged();
             } else {
-                queuesBuilder_.addMessage(index, value);
+                queueResponsesBuilder_.addMessage(index, value);
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+         * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
          */
-        public Builder addQueues(
+        public Builder addQueueResponses(
             com.flipkart.vbroker.proto.GetQueueResponse.Builder builderForValue) {
-            if (queuesBuilder_ == null) {
-                ensureQueuesIsMutable();
-                queues_.add(builderForValue.build());
+            if (queueResponsesBuilder_ == null) {
+                ensureQueueResponsesIsMutable();
+                queueResponses_.add(builderForValue.build());
                 onChanged();
             } else {
-                queuesBuilder_.addMessage(builderForValue.build());
+                queueResponsesBuilder_.addMessage(builderForValue.build());
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+         * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
          */
-        public Builder addQueues(
+        public Builder addQueueResponses(
             int index, com.flipkart.vbroker.proto.GetQueueResponse.Builder builderForValue) {
-            if (queuesBuilder_ == null) {
-                ensureQueuesIsMutable();
-                queues_.add(index, builderForValue.build());
+            if (queueResponsesBuilder_ == null) {
+                ensureQueueResponsesIsMutable();
+                queueResponses_.add(index, builderForValue.build());
                 onChanged();
             } else {
-                queuesBuilder_.addMessage(index, builderForValue.build());
+                queueResponsesBuilder_.addMessage(index, builderForValue.build());
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+         * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
          */
-        public Builder addAllQueues(
+        public Builder addAllQueueResponses(
             java.lang.Iterable<? extends com.flipkart.vbroker.proto.GetQueueResponse> values) {
-            if (queuesBuilder_ == null) {
-                ensureQueuesIsMutable();
+            if (queueResponsesBuilder_ == null) {
+                ensureQueueResponsesIsMutable();
                 com.google.protobuf.AbstractMessageLite.Builder.addAll(
-                    values, queues_);
+                    values, queueResponses_);
                 onChanged();
             } else {
-                queuesBuilder_.addAllMessages(values);
+                queueResponsesBuilder_.addAllMessages(values);
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+         * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
          */
-        public Builder clearQueues() {
-            if (queuesBuilder_ == null) {
-                queues_ = java.util.Collections.emptyList();
+        public Builder clearQueueResponses() {
+            if (queueResponsesBuilder_ == null) {
+                queueResponses_ = java.util.Collections.emptyList();
                 bitField0_ = (bitField0_ & ~0x00000001);
                 onChanged();
             } else {
-                queuesBuilder_.clear();
+                queueResponsesBuilder_.clear();
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+         * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
          */
-        public Builder removeQueues(int index) {
-            if (queuesBuilder_ == null) {
-                ensureQueuesIsMutable();
-                queues_.remove(index);
+        public Builder removeQueueResponses(int index) {
+            if (queueResponsesBuilder_ == null) {
+                ensureQueueResponsesIsMutable();
+                queueResponses_.remove(index);
                 onChanged();
             } else {
-                queuesBuilder_.remove(index);
+                queueResponsesBuilder_.remove(index);
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+         * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
          */
-        public com.flipkart.vbroker.proto.GetQueueResponse.Builder getQueuesBuilder(
+        public com.flipkart.vbroker.proto.GetQueueResponse.Builder getQueueResponsesBuilder(
             int index) {
-            return getQueuesFieldBuilder().getBuilder(index);
+            return getQueueResponsesFieldBuilder().getBuilder(index);
         }
 
         /**
-         * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+         * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
          */
-        public com.flipkart.vbroker.proto.GetQueueResponseOrBuilder getQueuesOrBuilder(
+        public com.flipkart.vbroker.proto.GetQueueResponseOrBuilder getQueueResponsesOrBuilder(
             int index) {
-            if (queuesBuilder_ == null) {
-                return queues_.get(index);
+            if (queueResponsesBuilder_ == null) {
+                return queueResponses_.get(index);
             } else {
-                return queuesBuilder_.getMessageOrBuilder(index);
+                return queueResponsesBuilder_.getMessageOrBuilder(index);
             }
         }
 
         /**
-         * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+         * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
          */
         public java.util.List<? extends com.flipkart.vbroker.proto.GetQueueResponseOrBuilder>
-        getQueuesOrBuilderList() {
-            if (queuesBuilder_ != null) {
-                return queuesBuilder_.getMessageOrBuilderList();
+        getQueueResponsesOrBuilderList() {
+            if (queueResponsesBuilder_ != null) {
+                return queueResponsesBuilder_.getMessageOrBuilderList();
             } else {
-                return java.util.Collections.unmodifiableList(queues_);
+                return java.util.Collections.unmodifiableList(queueResponses_);
             }
         }
 
         /**
-         * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+         * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
          */
-        public com.flipkart.vbroker.proto.GetQueueResponse.Builder addQueuesBuilder() {
-            return getQueuesFieldBuilder().addBuilder(
+        public com.flipkart.vbroker.proto.GetQueueResponse.Builder addQueueResponsesBuilder() {
+            return getQueueResponsesFieldBuilder().addBuilder(
                 com.flipkart.vbroker.proto.GetQueueResponse.getDefaultInstance());
         }
 
         /**
-         * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+         * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
          */
-        public com.flipkart.vbroker.proto.GetQueueResponse.Builder addQueuesBuilder(
+        public com.flipkart.vbroker.proto.GetQueueResponse.Builder addQueueResponsesBuilder(
             int index) {
-            return getQueuesFieldBuilder().addBuilder(
+            return getQueueResponsesFieldBuilder().addBuilder(
                 index, com.flipkart.vbroker.proto.GetQueueResponse.getDefaultInstance());
         }
 
         /**
-         * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+         * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
          */
         public java.util.List<com.flipkart.vbroker.proto.GetQueueResponse.Builder>
-        getQueuesBuilderList() {
-            return getQueuesFieldBuilder().getBuilderList();
+        getQueueResponsesBuilderList() {
+            return getQueueResponsesFieldBuilder().getBuilderList();
         }
 
         private com.google.protobuf.RepeatedFieldBuilderV3<
             com.flipkart.vbroker.proto.GetQueueResponse, com.flipkart.vbroker.proto.GetQueueResponse.Builder, com.flipkart.vbroker.proto.GetQueueResponseOrBuilder>
-        getQueuesFieldBuilder() {
-            if (queuesBuilder_ == null) {
-                queuesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+        getQueueResponsesFieldBuilder() {
+            if (queueResponsesBuilder_ == null) {
+                queueResponsesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
                     com.flipkart.vbroker.proto.GetQueueResponse, com.flipkart.vbroker.proto.GetQueueResponse.Builder, com.flipkart.vbroker.proto.GetQueueResponseOrBuilder>(
-                    queues_,
+                    queueResponses_,
                     ((bitField0_ & 0x00000001) == 0x00000001),
                     getParentForChildren(),
                     isClean());
-                queues_ = null;
+                queueResponses_ = null;
             }
-            return queuesBuilder_;
+            return queueResponsesBuilder_;
         }
 
         public final Builder setUnknownFields(

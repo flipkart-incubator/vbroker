@@ -10,7 +10,7 @@ public final class GetTopicsResponse extends
     com.google.protobuf.GeneratedMessageV3 implements
     // @@protoc_insertion_point(message_implements:proto.GetTopicsResponse)
     GetTopicsResponseOrBuilder {
-    public static final int TOPICS_FIELD_NUMBER = 1;
+    public static final int TOPICRESPONSES_FIELD_NUMBER = 1;
     private static final long serialVersionUID = 0L;
     // @@protoc_insertion_point(class_scope:proto.GetTopicsResponse)
     private static final com.flipkart.vbroker.proto.GetTopicsResponse DEFAULT_INSTANCE;
@@ -28,7 +28,7 @@ public final class GetTopicsResponse extends
         DEFAULT_INSTANCE = new com.flipkart.vbroker.proto.GetTopicsResponse();
     }
 
-    private java.util.List<com.flipkart.vbroker.proto.GetTopicResponse> topics_;
+    private java.util.List<com.flipkart.vbroker.proto.GetTopicResponse> topicResponses_;
     private byte memoizedIsInitialized = -1;
 
     // Use GetTopicsResponse.newBuilder() to construct.
@@ -36,7 +36,7 @@ public final class GetTopicsResponse extends
         super(builder);
     }
     private GetTopicsResponse() {
-        topics_ = java.util.Collections.emptyList();
+        topicResponses_ = java.util.Collections.emptyList();
     }
 
     private GetTopicsResponse(
@@ -67,10 +67,10 @@ public final class GetTopicsResponse extends
                     }
                     case 10: {
                         if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-                            topics_ = new java.util.ArrayList<com.flipkart.vbroker.proto.GetTopicResponse>();
+                            topicResponses_ = new java.util.ArrayList<com.flipkart.vbroker.proto.GetTopicResponse>();
                             mutable_bitField0_ |= 0x00000001;
                         }
-                        topics_.add(
+                        topicResponses_.add(
                             input.readMessage(com.flipkart.vbroker.proto.GetTopicResponse.parser(), extensionRegistry));
                         break;
                     }
@@ -83,7 +83,7 @@ public final class GetTopicsResponse extends
                 e).setUnfinishedMessage(this);
         } finally {
             if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-                topics_ = java.util.Collections.unmodifiableList(topics_);
+                topicResponses_ = java.util.Collections.unmodifiableList(topicResponses_);
             }
             this.unknownFields = unknownFields.build();
             makeExtensionsImmutable();
@@ -206,40 +206,40 @@ public final class GetTopicsResponse extends
     }
 
     /**
-     * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+     * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
      */
-    public java.util.List<com.flipkart.vbroker.proto.GetTopicResponse> getTopicsList() {
-        return topics_;
+    public java.util.List<com.flipkart.vbroker.proto.GetTopicResponse> getTopicResponsesList() {
+        return topicResponses_;
     }
 
     /**
-     * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+     * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
      */
     public java.util.List<? extends com.flipkart.vbroker.proto.GetTopicResponseOrBuilder>
-    getTopicsOrBuilderList() {
-        return topics_;
+    getTopicResponsesOrBuilderList() {
+        return topicResponses_;
     }
 
     /**
-     * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+     * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
      */
-    public int getTopicsCount() {
-        return topics_.size();
+    public int getTopicResponsesCount() {
+        return topicResponses_.size();
     }
 
     /**
-     * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+     * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
      */
-    public com.flipkart.vbroker.proto.GetTopicResponse getTopics(int index) {
-        return topics_.get(index);
+    public com.flipkart.vbroker.proto.GetTopicResponse getTopicResponses(int index) {
+        return topicResponses_.get(index);
     }
 
     /**
-     * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+     * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
      */
-    public com.flipkart.vbroker.proto.GetTopicResponseOrBuilder getTopicsOrBuilder(
+    public com.flipkart.vbroker.proto.GetTopicResponseOrBuilder getTopicResponsesOrBuilder(
         int index) {
-        return topics_.get(index);
+        return topicResponses_.get(index);
     }
 
     public final boolean isInitialized() {
@@ -253,8 +253,8 @@ public final class GetTopicsResponse extends
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
         throws java.io.IOException {
-        for (int i = 0; i < topics_.size(); i++) {
-            output.writeMessage(1, topics_.get(i));
+        for (int i = 0; i < topicResponses_.size(); i++) {
+            output.writeMessage(1, topicResponses_.get(i));
         }
         unknownFields.writeTo(output);
     }
@@ -264,9 +264,9 @@ public final class GetTopicsResponse extends
         if (size != -1) return size;
 
         size = 0;
-        for (int i = 0; i < topics_.size(); i++) {
+        for (int i = 0; i < topicResponses_.size(); i++) {
             size += com.google.protobuf.CodedOutputStream
-                .computeMessageSize(1, topics_.get(i));
+                .computeMessageSize(1, topicResponses_.get(i));
         }
         size += unknownFields.getSerializedSize();
         memoizedSize = size;
@@ -284,8 +284,8 @@ public final class GetTopicsResponse extends
         com.flipkart.vbroker.proto.GetTopicsResponse other = (com.flipkart.vbroker.proto.GetTopicsResponse) obj;
 
         boolean result = true;
-        result = result && getTopicsList()
-            .equals(other.getTopicsList());
+        result = result && getTopicResponsesList()
+            .equals(other.getTopicResponsesList());
         result = result && unknownFields.equals(other.unknownFields);
         return result;
     }
@@ -297,9 +297,9 @@ public final class GetTopicsResponse extends
         }
         int hash = 41;
         hash = (19 * hash) + getDescriptor().hashCode();
-        if (getTopicsCount() > 0) {
-            hash = (37 * hash) + TOPICS_FIELD_NUMBER;
-            hash = (53 * hash) + getTopicsList().hashCode();
+        if (getTopicResponsesCount() > 0) {
+            hash = (37 * hash) + TOPICRESPONSES_FIELD_NUMBER;
+            hash = (53 * hash) + getTopicResponsesList().hashCode();
         }
         hash = (29 * hash) + unknownFields.hashCode();
         memoizedHashCode = hash;
@@ -339,10 +339,10 @@ public final class GetTopicsResponse extends
         // @@protoc_insertion_point(builder_implements:proto.GetTopicsResponse)
         com.flipkart.vbroker.proto.GetTopicsResponseOrBuilder {
         private int bitField0_;
-        private java.util.List<com.flipkart.vbroker.proto.GetTopicResponse> topics_ =
+        private java.util.List<com.flipkart.vbroker.proto.GetTopicResponse> topicResponses_ =
             java.util.Collections.emptyList();
         private com.google.protobuf.RepeatedFieldBuilderV3<
-            com.flipkart.vbroker.proto.GetTopicResponse, com.flipkart.vbroker.proto.GetTopicResponse.Builder, com.flipkart.vbroker.proto.GetTopicResponseOrBuilder> topicsBuilder_;
+            com.flipkart.vbroker.proto.GetTopicResponse, com.flipkart.vbroker.proto.GetTopicResponse.Builder, com.flipkart.vbroker.proto.GetTopicResponseOrBuilder> topicResponsesBuilder_;
 
         // Construct using com.flipkart.vbroker.proto.GetTopicsResponse.newBuilder()
         private Builder() {
@@ -370,17 +370,17 @@ public final class GetTopicsResponse extends
         private void maybeForceBuilderInitialization() {
             if (com.google.protobuf.GeneratedMessageV3
                 .alwaysUseFieldBuilders) {
-                getTopicsFieldBuilder();
+                getTopicResponsesFieldBuilder();
             }
         }
 
         public Builder clear() {
             super.clear();
-            if (topicsBuilder_ == null) {
-                topics_ = java.util.Collections.emptyList();
+            if (topicResponsesBuilder_ == null) {
+                topicResponses_ = java.util.Collections.emptyList();
                 bitField0_ = (bitField0_ & ~0x00000001);
             } else {
-                topicsBuilder_.clear();
+                topicResponsesBuilder_.clear();
             }
             return this;
         }
@@ -405,14 +405,14 @@ public final class GetTopicsResponse extends
         public com.flipkart.vbroker.proto.GetTopicsResponse buildPartial() {
             com.flipkart.vbroker.proto.GetTopicsResponse result = new com.flipkart.vbroker.proto.GetTopicsResponse(this);
             int from_bitField0_ = bitField0_;
-            if (topicsBuilder_ == null) {
+            if (topicResponsesBuilder_ == null) {
                 if (((bitField0_ & 0x00000001) == 0x00000001)) {
-                    topics_ = java.util.Collections.unmodifiableList(topics_);
+                    topicResponses_ = java.util.Collections.unmodifiableList(topicResponses_);
                     bitField0_ = (bitField0_ & ~0x00000001);
                 }
-                result.topics_ = topics_;
+                result.topicResponses_ = topicResponses_;
             } else {
-                result.topics_ = topicsBuilder_.build();
+                result.topicResponses_ = topicResponsesBuilder_.build();
             }
             onBuilt();
             return result;
@@ -461,29 +461,29 @@ public final class GetTopicsResponse extends
 
         public Builder mergeFrom(com.flipkart.vbroker.proto.GetTopicsResponse other) {
             if (other == com.flipkart.vbroker.proto.GetTopicsResponse.getDefaultInstance()) return this;
-            if (topicsBuilder_ == null) {
-                if (!other.topics_.isEmpty()) {
-                    if (topics_.isEmpty()) {
-                        topics_ = other.topics_;
+            if (topicResponsesBuilder_ == null) {
+                if (!other.topicResponses_.isEmpty()) {
+                    if (topicResponses_.isEmpty()) {
+                        topicResponses_ = other.topicResponses_;
                         bitField0_ = (bitField0_ & ~0x00000001);
                     } else {
-                        ensureTopicsIsMutable();
-                        topics_.addAll(other.topics_);
+                        ensureTopicResponsesIsMutable();
+                        topicResponses_.addAll(other.topicResponses_);
                     }
                     onChanged();
                 }
             } else {
-                if (!other.topics_.isEmpty()) {
-                    if (topicsBuilder_.isEmpty()) {
-                        topicsBuilder_.dispose();
-                        topicsBuilder_ = null;
-                        topics_ = other.topics_;
+                if (!other.topicResponses_.isEmpty()) {
+                    if (topicResponsesBuilder_.isEmpty()) {
+                        topicResponsesBuilder_.dispose();
+                        topicResponsesBuilder_ = null;
+                        topicResponses_ = other.topicResponses_;
                         bitField0_ = (bitField0_ & ~0x00000001);
-                        topicsBuilder_ =
+                        topicResponsesBuilder_ =
                             com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
-                                getTopicsFieldBuilder() : null;
+                                getTopicResponsesFieldBuilder() : null;
                     } else {
-                        topicsBuilder_.addAllMessages(other.topics_);
+                        topicResponsesBuilder_.addAllMessages(other.topicResponses_);
                     }
                 }
             }
@@ -514,258 +514,258 @@ public final class GetTopicsResponse extends
             return this;
         }
 
-        private void ensureTopicsIsMutable() {
+        private void ensureTopicResponsesIsMutable() {
             if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-                topics_ = new java.util.ArrayList<com.flipkart.vbroker.proto.GetTopicResponse>(topics_);
+                topicResponses_ = new java.util.ArrayList<com.flipkart.vbroker.proto.GetTopicResponse>(topicResponses_);
                 bitField0_ |= 0x00000001;
             }
         }
 
         /**
-         * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+         * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
          */
-        public java.util.List<com.flipkart.vbroker.proto.GetTopicResponse> getTopicsList() {
-            if (topicsBuilder_ == null) {
-                return java.util.Collections.unmodifiableList(topics_);
+        public java.util.List<com.flipkart.vbroker.proto.GetTopicResponse> getTopicResponsesList() {
+            if (topicResponsesBuilder_ == null) {
+                return java.util.Collections.unmodifiableList(topicResponses_);
             } else {
-                return topicsBuilder_.getMessageList();
+                return topicResponsesBuilder_.getMessageList();
             }
         }
 
         /**
-         * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+         * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
          */
-        public int getTopicsCount() {
-            if (topicsBuilder_ == null) {
-                return topics_.size();
+        public int getTopicResponsesCount() {
+            if (topicResponsesBuilder_ == null) {
+                return topicResponses_.size();
             } else {
-                return topicsBuilder_.getCount();
+                return topicResponsesBuilder_.getCount();
             }
         }
 
         /**
-         * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+         * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
          */
-        public com.flipkart.vbroker.proto.GetTopicResponse getTopics(int index) {
-            if (topicsBuilder_ == null) {
-                return topics_.get(index);
+        public com.flipkart.vbroker.proto.GetTopicResponse getTopicResponses(int index) {
+            if (topicResponsesBuilder_ == null) {
+                return topicResponses_.get(index);
             } else {
-                return topicsBuilder_.getMessage(index);
+                return topicResponsesBuilder_.getMessage(index);
             }
         }
 
         /**
-         * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+         * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
          */
-        public Builder setTopics(
+        public Builder setTopicResponses(
             int index, com.flipkart.vbroker.proto.GetTopicResponse value) {
-            if (topicsBuilder_ == null) {
+            if (topicResponsesBuilder_ == null) {
                 if (value == null) {
                     throw new NullPointerException();
                 }
-                ensureTopicsIsMutable();
-                topics_.set(index, value);
+                ensureTopicResponsesIsMutable();
+                topicResponses_.set(index, value);
                 onChanged();
             } else {
-                topicsBuilder_.setMessage(index, value);
+                topicResponsesBuilder_.setMessage(index, value);
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+         * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
          */
-        public Builder setTopics(
+        public Builder setTopicResponses(
             int index, com.flipkart.vbroker.proto.GetTopicResponse.Builder builderForValue) {
-            if (topicsBuilder_ == null) {
-                ensureTopicsIsMutable();
-                topics_.set(index, builderForValue.build());
+            if (topicResponsesBuilder_ == null) {
+                ensureTopicResponsesIsMutable();
+                topicResponses_.set(index, builderForValue.build());
                 onChanged();
             } else {
-                topicsBuilder_.setMessage(index, builderForValue.build());
+                topicResponsesBuilder_.setMessage(index, builderForValue.build());
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+         * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
          */
-        public Builder addTopics(com.flipkart.vbroker.proto.GetTopicResponse value) {
-            if (topicsBuilder_ == null) {
+        public Builder addTopicResponses(com.flipkart.vbroker.proto.GetTopicResponse value) {
+            if (topicResponsesBuilder_ == null) {
                 if (value == null) {
                     throw new NullPointerException();
                 }
-                ensureTopicsIsMutable();
-                topics_.add(value);
+                ensureTopicResponsesIsMutable();
+                topicResponses_.add(value);
                 onChanged();
             } else {
-                topicsBuilder_.addMessage(value);
+                topicResponsesBuilder_.addMessage(value);
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+         * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
          */
-        public Builder addTopics(
+        public Builder addTopicResponses(
             int index, com.flipkart.vbroker.proto.GetTopicResponse value) {
-            if (topicsBuilder_ == null) {
+            if (topicResponsesBuilder_ == null) {
                 if (value == null) {
                     throw new NullPointerException();
                 }
-                ensureTopicsIsMutable();
-                topics_.add(index, value);
+                ensureTopicResponsesIsMutable();
+                topicResponses_.add(index, value);
                 onChanged();
             } else {
-                topicsBuilder_.addMessage(index, value);
+                topicResponsesBuilder_.addMessage(index, value);
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+         * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
          */
-        public Builder addTopics(
+        public Builder addTopicResponses(
             com.flipkart.vbroker.proto.GetTopicResponse.Builder builderForValue) {
-            if (topicsBuilder_ == null) {
-                ensureTopicsIsMutable();
-                topics_.add(builderForValue.build());
+            if (topicResponsesBuilder_ == null) {
+                ensureTopicResponsesIsMutable();
+                topicResponses_.add(builderForValue.build());
                 onChanged();
             } else {
-                topicsBuilder_.addMessage(builderForValue.build());
+                topicResponsesBuilder_.addMessage(builderForValue.build());
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+         * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
          */
-        public Builder addTopics(
+        public Builder addTopicResponses(
             int index, com.flipkart.vbroker.proto.GetTopicResponse.Builder builderForValue) {
-            if (topicsBuilder_ == null) {
-                ensureTopicsIsMutable();
-                topics_.add(index, builderForValue.build());
+            if (topicResponsesBuilder_ == null) {
+                ensureTopicResponsesIsMutable();
+                topicResponses_.add(index, builderForValue.build());
                 onChanged();
             } else {
-                topicsBuilder_.addMessage(index, builderForValue.build());
+                topicResponsesBuilder_.addMessage(index, builderForValue.build());
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+         * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
          */
-        public Builder addAllTopics(
+        public Builder addAllTopicResponses(
             java.lang.Iterable<? extends com.flipkart.vbroker.proto.GetTopicResponse> values) {
-            if (topicsBuilder_ == null) {
-                ensureTopicsIsMutable();
+            if (topicResponsesBuilder_ == null) {
+                ensureTopicResponsesIsMutable();
                 com.google.protobuf.AbstractMessageLite.Builder.addAll(
-                    values, topics_);
+                    values, topicResponses_);
                 onChanged();
             } else {
-                topicsBuilder_.addAllMessages(values);
+                topicResponsesBuilder_.addAllMessages(values);
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+         * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
          */
-        public Builder clearTopics() {
-            if (topicsBuilder_ == null) {
-                topics_ = java.util.Collections.emptyList();
+        public Builder clearTopicResponses() {
+            if (topicResponsesBuilder_ == null) {
+                topicResponses_ = java.util.Collections.emptyList();
                 bitField0_ = (bitField0_ & ~0x00000001);
                 onChanged();
             } else {
-                topicsBuilder_.clear();
+                topicResponsesBuilder_.clear();
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+         * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
          */
-        public Builder removeTopics(int index) {
-            if (topicsBuilder_ == null) {
-                ensureTopicsIsMutable();
-                topics_.remove(index);
+        public Builder removeTopicResponses(int index) {
+            if (topicResponsesBuilder_ == null) {
+                ensureTopicResponsesIsMutable();
+                topicResponses_.remove(index);
                 onChanged();
             } else {
-                topicsBuilder_.remove(index);
+                topicResponsesBuilder_.remove(index);
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+         * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
          */
-        public com.flipkart.vbroker.proto.GetTopicResponse.Builder getTopicsBuilder(
+        public com.flipkart.vbroker.proto.GetTopicResponse.Builder getTopicResponsesBuilder(
             int index) {
-            return getTopicsFieldBuilder().getBuilder(index);
+            return getTopicResponsesFieldBuilder().getBuilder(index);
         }
 
         /**
-         * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+         * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
          */
-        public com.flipkart.vbroker.proto.GetTopicResponseOrBuilder getTopicsOrBuilder(
+        public com.flipkart.vbroker.proto.GetTopicResponseOrBuilder getTopicResponsesOrBuilder(
             int index) {
-            if (topicsBuilder_ == null) {
-                return topics_.get(index);
+            if (topicResponsesBuilder_ == null) {
+                return topicResponses_.get(index);
             } else {
-                return topicsBuilder_.getMessageOrBuilder(index);
+                return topicResponsesBuilder_.getMessageOrBuilder(index);
             }
         }
 
         /**
-         * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+         * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
          */
         public java.util.List<? extends com.flipkart.vbroker.proto.GetTopicResponseOrBuilder>
-        getTopicsOrBuilderList() {
-            if (topicsBuilder_ != null) {
-                return topicsBuilder_.getMessageOrBuilderList();
+        getTopicResponsesOrBuilderList() {
+            if (topicResponsesBuilder_ != null) {
+                return topicResponsesBuilder_.getMessageOrBuilderList();
             } else {
-                return java.util.Collections.unmodifiableList(topics_);
+                return java.util.Collections.unmodifiableList(topicResponses_);
             }
         }
 
         /**
-         * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+         * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
          */
-        public com.flipkart.vbroker.proto.GetTopicResponse.Builder addTopicsBuilder() {
-            return getTopicsFieldBuilder().addBuilder(
+        public com.flipkart.vbroker.proto.GetTopicResponse.Builder addTopicResponsesBuilder() {
+            return getTopicResponsesFieldBuilder().addBuilder(
                 com.flipkart.vbroker.proto.GetTopicResponse.getDefaultInstance());
         }
 
         /**
-         * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+         * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
          */
-        public com.flipkart.vbroker.proto.GetTopicResponse.Builder addTopicsBuilder(
+        public com.flipkart.vbroker.proto.GetTopicResponse.Builder addTopicResponsesBuilder(
             int index) {
-            return getTopicsFieldBuilder().addBuilder(
+            return getTopicResponsesFieldBuilder().addBuilder(
                 index, com.flipkart.vbroker.proto.GetTopicResponse.getDefaultInstance());
         }
 
         /**
-         * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+         * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
          */
         public java.util.List<com.flipkart.vbroker.proto.GetTopicResponse.Builder>
-        getTopicsBuilderList() {
-            return getTopicsFieldBuilder().getBuilderList();
+        getTopicResponsesBuilderList() {
+            return getTopicResponsesFieldBuilder().getBuilderList();
         }
 
         private com.google.protobuf.RepeatedFieldBuilderV3<
             com.flipkart.vbroker.proto.GetTopicResponse, com.flipkart.vbroker.proto.GetTopicResponse.Builder, com.flipkart.vbroker.proto.GetTopicResponseOrBuilder>
-        getTopicsFieldBuilder() {
-            if (topicsBuilder_ == null) {
-                topicsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+        getTopicResponsesFieldBuilder() {
+            if (topicResponsesBuilder_ == null) {
+                topicResponsesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
                     com.flipkart.vbroker.proto.GetTopicResponse, com.flipkart.vbroker.proto.GetTopicResponse.Builder, com.flipkart.vbroker.proto.GetTopicResponseOrBuilder>(
-                    topics_,
+                    topicResponses_,
                     ((bitField0_ & 0x00000001) == 0x00000001),
                     getParentForChildren(),
                     isClean());
-                topics_ = null;
+                topicResponses_ = null;
             }
-            return topicsBuilder_;
+            return topicResponsesBuilder_;
         }
 
         public final Builder setUnknownFields(

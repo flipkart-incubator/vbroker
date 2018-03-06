@@ -21,9 +21,13 @@ message ProtoResponse {
         CreateSubscriptionsResponse createSubscriptionsResponse = 2;
         CreateQueuesResponse createQueuesResponse = 3;
         GetTopicsResponse getTopicsResponse = 4;
-        GetQueuesResponse getQueuesResponse = 5;
-        GetSubscriptionsResponse getSubscriptionsResponse = 6;
-        GetSubscriptionLagsResponse getSubscriptionLagsResponse = 7;
+        GetAllTopicsResponse getAllTopicsResponse = 5;
+        GetQueuesResponse getQueuesResponse = 6;
+        GetAllQueuesResponse getAllQueuesResponse = 7;
+        GetSubscriptionsResponse getSubscriptionsResponse = 8;
+        GetAllSubscriptionsForTopicsResponse getAllSubscriptionsForTopicsResponse = 9;
+        GetSubscriptionLagsResponse getSubscriptionLagsResponse = 10;
+        GetClusterMetadataResponse getClusterMetadataResponse = 11;
     }
 }
 
@@ -65,7 +69,12 @@ message GetTopicResponse {
 }
 
 message GetTopicsResponse {
-    repeated GetTopicResponse topics = 1;
+    repeated GetTopicResponse topicResponses = 1;
+}
+
+message GetAllTopicsResponse {
+    VStatus status = 1;
+    repeated ProtoTopic topics = 2;
 }
 
 // get subscriptions response
@@ -75,7 +84,17 @@ message GetSubscriptionResponse {
 }
 
 message GetSubscriptionsResponse {
-    repeated GetSubscriptionResponse subscriptions = 1;
+    repeated GetSubscriptionResponse subscriptionResponses = 1;
+}
+
+message GetAllSubscriptionsForTopicResponse {
+    int32 topicId = 1;
+    VStatus status = 2;
+    repeated ProtoSubscription subscriptions = 3;
+}
+
+message GetAllSubscriptionsForTopicsResponse {
+    repeated GetAllSubscriptionsForTopicResponse getAllSubscriptionsForTopicResponses = 1;
 }
 
 // get queues response
@@ -85,7 +104,12 @@ message GetQueueResponse {
 }
 
 message GetQueuesResponse {
-    repeated GetQueueResponse queues = 1;
+    repeated GetQueueResponse queueResponses = 1;
+}
+
+message GetAllQueuesResponse {
+    VStatus status = 1;
+    repeated ProtoQueue queues = 2;
 }
 
 // get lags response

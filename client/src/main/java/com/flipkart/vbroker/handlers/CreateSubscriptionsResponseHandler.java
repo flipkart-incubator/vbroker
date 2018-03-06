@@ -1,7 +1,6 @@
 package com.flipkart.vbroker.handlers;
 
 import com.flipkart.vbroker.flatbuf.VResponse;
-import com.flipkart.vbroker.proto.CreateSubscriptionsResponse;
 import com.flipkart.vbroker.utils.FlatbufUtils;
 import lombok.extern.slf4j.Slf4j;
 

@@ -8,30 +8,30 @@ public interface GetTopicsResponseOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+     * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
      */
     java.util.List<com.flipkart.vbroker.proto.GetTopicResponse>
-    getTopicsList();
+    getTopicResponsesList();
 
     /**
-     * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+     * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
      */
-    com.flipkart.vbroker.proto.GetTopicResponse getTopics(int index);
+    com.flipkart.vbroker.proto.GetTopicResponse getTopicResponses(int index);
 
     /**
-     * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+     * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
      */
-    int getTopicsCount();
+    int getTopicResponsesCount();
 
     /**
-     * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+     * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
      */
     java.util.List<? extends com.flipkart.vbroker.proto.GetTopicResponseOrBuilder>
-    getTopicsOrBuilderList();
+    getTopicResponsesOrBuilderList();
 
     /**
-     * <code>repeated .proto.GetTopicResponse topics = 1;</code>
+     * <code>repeated .proto.GetTopicResponse topicResponses = 1;</code>
      */
-    com.flipkart.vbroker.proto.GetTopicResponseOrBuilder getTopicsOrBuilder(
+    com.flipkart.vbroker.proto.GetTopicResponseOrBuilder getTopicResponsesOrBuilder(
         int index);
 }

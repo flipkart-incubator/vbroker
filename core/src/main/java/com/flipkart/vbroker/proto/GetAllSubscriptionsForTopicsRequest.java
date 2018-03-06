@@ -4,43 +4,43 @@
 package com.flipkart.vbroker.proto;
 
 /**
- * Protobuf type {@code proto.GetClusterMetadata}
+ * Protobuf type {@code proto.GetAllSubscriptionsForTopicsRequest}
  */
-public final class GetClusterMetadata extends
+public final class GetAllSubscriptionsForTopicsRequest extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:proto.GetClusterMetadata)
-    GetClusterMetadataOrBuilder {
+    // @@protoc_insertion_point(message_implements:proto.GetAllSubscriptionsForTopicsRequest)
+    GetAllSubscriptionsForTopicsRequestOrBuilder {
     public static final int TOPICIDS_FIELD_NUMBER = 1;
     private static final long serialVersionUID = 0L;
-    // @@protoc_insertion_point(class_scope:proto.GetClusterMetadata)
-    private static final com.flipkart.vbroker.proto.GetClusterMetadata DEFAULT_INSTANCE;
-    private static final com.google.protobuf.Parser<GetClusterMetadata>
-        PARSER = new com.google.protobuf.AbstractParser<GetClusterMetadata>() {
-        public GetClusterMetadata parsePartialFrom(
+    // @@protoc_insertion_point(class_scope:proto.GetAllSubscriptionsForTopicsRequest)
+    private static final com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest DEFAULT_INSTANCE;
+    private static final com.google.protobuf.Parser<GetAllSubscriptionsForTopicsRequest>
+        PARSER = new com.google.protobuf.AbstractParser<GetAllSubscriptionsForTopicsRequest>() {
+        public GetAllSubscriptionsForTopicsRequest parsePartialFrom(
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
-            return new GetClusterMetadata(input, extensionRegistry);
+            return new GetAllSubscriptionsForTopicsRequest(input, extensionRegistry);
         }
     };
 
     static {
-        DEFAULT_INSTANCE = new com.flipkart.vbroker.proto.GetClusterMetadata();
+        DEFAULT_INSTANCE = new com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest();
     }
 
     private java.util.List<java.lang.Integer> topicIds_;
     private int topicIdsMemoizedSerializedSize = -1;
     private byte memoizedIsInitialized = -1;
-    // Use GetClusterMetadata.newBuilder() to construct.
-    private GetClusterMetadata(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // Use GetAllSubscriptionsForTopicsRequest.newBuilder() to construct.
+    private GetAllSubscriptionsForTopicsRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
     }
 
-    private GetClusterMetadata() {
+    private GetAllSubscriptionsForTopicsRequest() {
         topicIds_ = java.util.Collections.emptyList();
     }
 
-    private GetClusterMetadata(
+    private GetAllSubscriptionsForTopicsRequest(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -105,54 +105,54 @@ public final class GetClusterMetadata extends
 
     public static final com.google.protobuf.Descriptors.Descriptor
     getDescriptor() {
-        return com.flipkart.vbroker.proto.PRequests.internal_static_proto_GetClusterMetadata_descriptor;
+        return com.flipkart.vbroker.proto.PRequests.internal_static_proto_GetAllSubscriptionsForTopicsRequest_descriptor;
     }
 
-    public static com.flipkart.vbroker.proto.GetClusterMetadata parseFrom(
+    public static com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
     }
 
-    public static com.flipkart.vbroker.proto.GetClusterMetadata parseFrom(
+    public static com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
     }
 
-    public static com.flipkart.vbroker.proto.GetClusterMetadata parseFrom(
+    public static com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
     }
 
-    public static com.flipkart.vbroker.proto.GetClusterMetadata parseFrom(
+    public static com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
     }
 
-    public static com.flipkart.vbroker.proto.GetClusterMetadata parseFrom(byte[] data)
+    public static com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
     }
 
-    public static com.flipkart.vbroker.proto.GetClusterMetadata parseFrom(
+    public static com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
     }
 
-    public static com.flipkart.vbroker.proto.GetClusterMetadata parseFrom(java.io.InputStream input)
+    public static com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseWithIOException(PARSER, input);
     }
 
-    public static com.flipkart.vbroker.proto.GetClusterMetadata parseFrom(
+    public static com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -160,13 +160,13 @@ public final class GetClusterMetadata extends
             .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static com.flipkart.vbroker.proto.GetClusterMetadata parseDelimitedFrom(java.io.InputStream input)
+    public static com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static com.flipkart.vbroker.proto.GetClusterMetadata parseDelimitedFrom(
+    public static com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -174,14 +174,14 @@ public final class GetClusterMetadata extends
             .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static com.flipkart.vbroker.proto.GetClusterMetadata parseFrom(
+    public static com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseWithIOException(PARSER, input);
     }
 
-    public static com.flipkart.vbroker.proto.GetClusterMetadata parseFrom(
+    public static com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -193,15 +193,15 @@ public final class GetClusterMetadata extends
         return DEFAULT_INSTANCE.toBuilder();
     }
 
-    public static Builder newBuilder(com.flipkart.vbroker.proto.GetClusterMetadata prototype) {
+    public static Builder newBuilder(com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest prototype) {
         return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
 
-    public static com.flipkart.vbroker.proto.GetClusterMetadata getDefaultInstance() {
+    public static com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest getDefaultInstance() {
         return DEFAULT_INSTANCE;
     }
 
-    public static com.google.protobuf.Parser<GetClusterMetadata> parser() {
+    public static com.google.protobuf.Parser<GetAllSubscriptionsForTopicsRequest> parser() {
         return PARSER;
     }
 
@@ -213,9 +213,9 @@ public final class GetClusterMetadata extends
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
     internalGetFieldAccessorTable() {
-        return com.flipkart.vbroker.proto.PRequests.internal_static_proto_GetClusterMetadata_fieldAccessorTable
+        return com.flipkart.vbroker.proto.PRequests.internal_static_proto_GetAllSubscriptionsForTopicsRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                com.flipkart.vbroker.proto.GetClusterMetadata.class, com.flipkart.vbroker.proto.GetClusterMetadata.Builder.class);
+                com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest.class, com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest.Builder.class);
     }
 
     /**
@@ -291,10 +291,10 @@ public final class GetClusterMetadata extends
         if (obj == this) {
             return true;
         }
-        if (!(obj instanceof com.flipkart.vbroker.proto.GetClusterMetadata)) {
+        if (!(obj instanceof com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest)) {
             return super.equals(obj);
         }
-        com.flipkart.vbroker.proto.GetClusterMetadata other = (com.flipkart.vbroker.proto.GetClusterMetadata) obj;
+        com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest other = (com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest) obj;
 
         boolean result = true;
         result = result && getTopicIdsList()
@@ -336,25 +336,25 @@ public final class GetClusterMetadata extends
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<GetClusterMetadata> getParserForType() {
+    public com.google.protobuf.Parser<GetAllSubscriptionsForTopicsRequest> getParserForType() {
         return PARSER;
     }
 
-    public com.flipkart.vbroker.proto.GetClusterMetadata getDefaultInstanceForType() {
+    public com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest getDefaultInstanceForType() {
         return DEFAULT_INSTANCE;
     }
 
     /**
-     * Protobuf type {@code proto.GetClusterMetadata}
+     * Protobuf type {@code proto.GetAllSubscriptionsForTopicsRequest}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.GetClusterMetadata)
-        com.flipkart.vbroker.proto.GetClusterMetadataOrBuilder {
+        // @@protoc_insertion_point(builder_implements:proto.GetAllSubscriptionsForTopicsRequest)
+        com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequestOrBuilder {
         private int bitField0_;
         private java.util.List<java.lang.Integer> topicIds_ = java.util.Collections.emptyList();
 
-        // Construct using com.flipkart.vbroker.proto.GetClusterMetadata.newBuilder()
+        // Construct using com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest.newBuilder()
         private Builder() {
             maybeForceBuilderInitialization();
         }
@@ -367,14 +367,14 @@ public final class GetClusterMetadata extends
 
         public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-            return com.flipkart.vbroker.proto.PRequests.internal_static_proto_GetClusterMetadata_descriptor;
+            return com.flipkart.vbroker.proto.PRequests.internal_static_proto_GetAllSubscriptionsForTopicsRequest_descriptor;
         }
 
         protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-            return com.flipkart.vbroker.proto.PRequests.internal_static_proto_GetClusterMetadata_fieldAccessorTable
+            return com.flipkart.vbroker.proto.PRequests.internal_static_proto_GetAllSubscriptionsForTopicsRequest_fieldAccessorTable
                 .ensureFieldAccessorsInitialized(
-                    com.flipkart.vbroker.proto.GetClusterMetadata.class, com.flipkart.vbroker.proto.GetClusterMetadata.Builder.class);
+                    com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest.class, com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest.Builder.class);
         }
 
         private void maybeForceBuilderInitialization() {
@@ -392,23 +392,23 @@ public final class GetClusterMetadata extends
 
         public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-            return com.flipkart.vbroker.proto.PRequests.internal_static_proto_GetClusterMetadata_descriptor;
+            return com.flipkart.vbroker.proto.PRequests.internal_static_proto_GetAllSubscriptionsForTopicsRequest_descriptor;
         }
 
-        public com.flipkart.vbroker.proto.GetClusterMetadata getDefaultInstanceForType() {
-            return com.flipkart.vbroker.proto.GetClusterMetadata.getDefaultInstance();
+        public com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest getDefaultInstanceForType() {
+            return com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest.getDefaultInstance();
         }
 
-        public com.flipkart.vbroker.proto.GetClusterMetadata build() {
-            com.flipkart.vbroker.proto.GetClusterMetadata result = buildPartial();
+        public com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest build() {
+            com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest result = buildPartial();
             if (!result.isInitialized()) {
                 throw newUninitializedMessageException(result);
             }
             return result;
         }
 
-        public com.flipkart.vbroker.proto.GetClusterMetadata buildPartial() {
-            com.flipkart.vbroker.proto.GetClusterMetadata result = new com.flipkart.vbroker.proto.GetClusterMetadata(this);
+        public com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest buildPartial() {
+            com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest result = new com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest(this);
             int from_bitField0_ = bitField0_;
             if (((bitField0_ & 0x00000001) == 0x00000001)) {
                 topicIds_ = java.util.Collections.unmodifiableList(topicIds_);
@@ -452,16 +452,17 @@ public final class GetClusterMetadata extends
         }
 
         public Builder mergeFrom(com.google.protobuf.Message other) {
-            if (other instanceof com.flipkart.vbroker.proto.GetClusterMetadata) {
-                return mergeFrom((com.flipkart.vbroker.proto.GetClusterMetadata) other);
+            if (other instanceof com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest) {
+                return mergeFrom((com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest) other);
             } else {
                 super.mergeFrom(other);
                 return this;
             }
         }
 
-        public Builder mergeFrom(com.flipkart.vbroker.proto.GetClusterMetadata other) {
-            if (other == com.flipkart.vbroker.proto.GetClusterMetadata.getDefaultInstance()) return this;
+        public Builder mergeFrom(com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest other) {
+            if (other == com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest.getDefaultInstance())
+                return this;
             if (!other.topicIds_.isEmpty()) {
                 if (topicIds_.isEmpty()) {
                     topicIds_ = other.topicIds_;
@@ -485,11 +486,11 @@ public final class GetClusterMetadata extends
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
-            com.flipkart.vbroker.proto.GetClusterMetadata parsedMessage = null;
+            com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest parsedMessage = null;
             try {
                 parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
             } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-                parsedMessage = (com.flipkart.vbroker.proto.GetClusterMetadata) e.getUnfinishedMessage();
+                parsedMessage = (com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest) e.getUnfinishedMessage();
                 throw e.unwrapIOException();
             } finally {
                 if (parsedMessage != null) {
@@ -582,7 +583,7 @@ public final class GetClusterMetadata extends
         }
 
 
-        // @@protoc_insertion_point(builder_scope:proto.GetClusterMetadata)
+        // @@protoc_insertion_point(builder_scope:proto.GetAllSubscriptionsForTopicsRequest)
     }
 
 }

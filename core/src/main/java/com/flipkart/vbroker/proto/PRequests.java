@@ -30,15 +30,30 @@ public final class PRequests {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internal_static_proto_GetQueuesRequest_fieldAccessorTable;
     static final com.google.protobuf.Descriptors.Descriptor
+        internal_static_proto_GetAllQueuesRequest_descriptor;
+    static final
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internal_static_proto_GetAllQueuesRequest_fieldAccessorTable;
+    static final com.google.protobuf.Descriptors.Descriptor
         internal_static_proto_GetTopicsRequest_descriptor;
     static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internal_static_proto_GetTopicsRequest_fieldAccessorTable;
     static final com.google.protobuf.Descriptors.Descriptor
+        internal_static_proto_GetAllTopicsRequest_descriptor;
+    static final
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internal_static_proto_GetAllTopicsRequest_fieldAccessorTable;
+    static final com.google.protobuf.Descriptors.Descriptor
         internal_static_proto_GetSubscriptionsRequest_descriptor;
     static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internal_static_proto_GetSubscriptionsRequest_fieldAccessorTable;
+    static final com.google.protobuf.Descriptors.Descriptor
+        internal_static_proto_GetAllSubscriptionsForTopicsRequest_descriptor;
+    static final
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internal_static_proto_GetAllSubscriptionsForTopicsRequest_fieldAccessorTable;
     static final com.google.protobuf.Descriptors.Descriptor
         internal_static_proto_PartitionLagRequest_descriptor;
     static final
@@ -55,46 +70,55 @@ public final class PRequests {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internal_static_proto_GetSubscriptionLagsRequest_fieldAccessorTable;
     static final com.google.protobuf.Descriptors.Descriptor
-        internal_static_proto_GetClusterMetadata_descriptor;
+        internal_static_proto_GetClusterMetadataRequest_descriptor;
     static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-        internal_static_proto_GetClusterMetadata_fieldAccessorTable;
+        internal_static_proto_GetClusterMetadataRequest_fieldAccessorTable;
     private static com.google.protobuf.Descriptors.FileDescriptor
         descriptor;
 
     static {
         java.lang.String[] descriptorData = {
             "\n\016requests.proto\022\005proto\032\016entities.proto\"" +
-                "\323\003\n\014ProtoRequest\0229\n\023createTopicsRequest\030" +
+                "\352\005\n\014ProtoRequest\0229\n\023createTopicsRequest\030" +
                 "\001 \001(\0132\032.proto.CreateTopicsRequestH\000\022G\n\032c" +
                 "reateSubscriptionsRequest\030\002 \001(\0132!.proto." +
                 "CreateSubscriptionsRequestH\000\0229\n\023createQu" +
                 "euesRequest\030\003 \001(\0132\032.proto.CreateQueuesRe" +
                 "questH\000\0223\n\020getTopicsRequest\030\004 \001(\0132\027.prot" +
-                "o.GetTopicsRequestH\000\022A\n\027getSubscriptions" +
-                "Request\030\005 \001(\0132\036.proto.GetSubscriptionsRe" +
-                "questH\000\0223\n\020getQueuesRequest\030\006 \001(\0132\027.prot" +
-                "o.GetQueuesRequestH\000\022G\n\032getSubscriptionL" +
-                "agsRequest\030\007 \001(\0132!.proto.GetSubscription" +
-                "LagsRequestH\000B\016\n\014protoRequest\"8\n\023CreateT" +
-                "opicsRequest\022!\n\006topics\030\001 \003(\0132\021.proto.Pro" +
-                "toTopic\"M\n\032CreateSubscriptionsRequest\022/\n" +
-                "\rsubscriptions\030\001 \003(\0132\030.proto.ProtoSubscr" +
-                "iption\"8\n\023CreateQueuesRequest\022!\n\006queues\030" +
-                "\001 \003(\0132\021.proto.ProtoQueue\"\037\n\020GetQueuesReq" +
-                "uest\022\013\n\003ids\030\001 \003(\005\"\037\n\020GetTopicsRequest\022\013\n" +
-                "\003ids\030\001 \003(\005\"J\n\027GetSubscriptionsRequest\022/\n" +
-                "\rsubscriptions\030\001 \003(\0132\030.proto.TopicSubscr" +
-                "iption\"*\n\023PartitionLagRequest\022\023\n\013partiti" +
-                "onId\030\001 \001(\005\"\200\001\n\026SubscriptionLagRequest\0223\n" +
-                "\021topicSubscription\030\001 \001(\0132\030.proto.TopicSu" +
-                "bscription\0221\n\rpartitionLags\030\002 \003(\0132\032.prot" +
-                "o.PartitionLagRequest\"\\\n\032GetSubscription" +
-                "LagsRequest\022>\n\027subscriptionLagRequests\030\001" +
-                " \003(\0132\035.proto.SubscriptionLagRequest\"&\n\022G" +
-                "etClusterMetadata\022\020\n\010topicIds\030\001 \003(\005B)\n\032c" +
-                "om.flipkart.vbroker.protoB\tPRequestsP\001b\006" +
-                "proto3"
+                "o.GetTopicsRequestH\000\0229\n\023getAllTopicsRequ" +
+                "est\030\005 \001(\0132\032.proto.GetAllTopicsRequestH\000\022" +
+                "A\n\027getSubscriptionsRequest\030\006 \001(\0132\036.proto" +
+                ".GetSubscriptionsRequestH\000\022X\n\"getAllSubs" +
+                "criptionsForTopicRequest\030\007 \001(\0132*.proto.G" +
+                "etAllSubscriptionsForTopicsRequestH\000\0223\n\020" +
+                "getQueuesRequest\030\010 \001(\0132\027.proto.GetQueues" +
+                "RequestH\000\0229\n\023getAllQueuesRequest\030\t \001(\0132\032" +
+                ".proto.GetAllQueuesRequestH\000\022G\n\032getSubsc" +
+                "riptionLagsRequest\030\n \001(\0132!.proto.GetSubs" +
+                "criptionLagsRequestH\000\022E\n\031getClusterMetad" +
+                "ataRequest\030\013 \001(\0132 .proto.GetClusterMetad" +
+                "ataRequestH\000B\016\n\014protoRequest\"8\n\023CreateTo" +
+                "picsRequest\022!\n\006topics\030\001 \003(\0132\021.proto.Prot" +
+                "oTopic\"M\n\032CreateSubscriptionsRequest\022/\n\r" +
+                "subscriptions\030\001 \003(\0132\030.proto.ProtoSubscri" +
+                "ption\"8\n\023CreateQueuesRequest\022!\n\006queues\030\001" +
+                " \003(\0132\021.proto.ProtoQueue\"\037\n\020GetQueuesRequ" +
+                "est\022\013\n\003ids\030\001 \003(\005\"\025\n\023GetAllQueuesRequest\"" +
+                "\037\n\020GetTopicsRequest\022\013\n\003ids\030\001 \003(\005\"\025\n\023GetA" +
+                "llTopicsRequest\"J\n\027GetSubscriptionsReque" +
+                "st\022/\n\rsubscriptions\030\001 \003(\0132\030.proto.TopicS" +
+                "ubscription\"7\n#GetAllSubscriptionsForTop" +
+                "icsRequest\022\020\n\010topicIds\030\001 \003(\005\"*\n\023Partitio" +
+                "nLagRequest\022\023\n\013partitionId\030\001 \001(\005\"\200\001\n\026Sub" +
+                "scriptionLagRequest\0223\n\021topicSubscription" +
+                "\030\001 \001(\0132\030.proto.TopicSubscription\0221\n\rpart" +
+                "itionLags\030\002 \003(\0132\032.proto.PartitionLagRequ" +
+                "est\"\\\n\032GetSubscriptionLagsRequest\022>\n\027sub" +
+                "scriptionLagRequests\030\001 \003(\0132\035.proto.Subsc" +
+                "riptionLagRequest\"-\n\031GetClusterMetadataR" +
+                "equest\022\020\n\010topicIds\030\001 \003(\005B)\n\032com.flipkart" +
+                ".vbroker.protoB\tPRequestsP\001b\006proto3"
         };
         com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
             new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -114,7 +138,7 @@ public final class PRequests {
         internal_static_proto_ProtoRequest_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_proto_ProtoRequest_descriptor,
-            new java.lang.String[]{"CreateTopicsRequest", "CreateSubscriptionsRequest", "CreateQueuesRequest", "GetTopicsRequest", "GetSubscriptionsRequest", "GetQueuesRequest", "GetSubscriptionLagsRequest", "ProtoRequest",});
+            new java.lang.String[]{"CreateTopicsRequest", "CreateSubscriptionsRequest", "CreateQueuesRequest", "GetTopicsRequest", "GetAllTopicsRequest", "GetSubscriptionsRequest", "GetAllSubscriptionsForTopicRequest", "GetQueuesRequest", "GetAllQueuesRequest", "GetSubscriptionLagsRequest", "GetClusterMetadataRequest", "ProtoRequest",});
         internal_static_proto_CreateTopicsRequest_descriptor =
             getDescriptor().getMessageTypes().get(1);
         internal_static_proto_CreateTopicsRequest_fieldAccessorTable = new
@@ -139,41 +163,59 @@ public final class PRequests {
             com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_proto_GetQueuesRequest_descriptor,
             new java.lang.String[]{"Ids",});
-        internal_static_proto_GetTopicsRequest_descriptor =
+        internal_static_proto_GetAllQueuesRequest_descriptor =
             getDescriptor().getMessageTypes().get(5);
+        internal_static_proto_GetAllQueuesRequest_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_proto_GetAllQueuesRequest_descriptor,
+            new java.lang.String[]{});
+        internal_static_proto_GetTopicsRequest_descriptor =
+            getDescriptor().getMessageTypes().get(6);
         internal_static_proto_GetTopicsRequest_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_proto_GetTopicsRequest_descriptor,
             new java.lang.String[]{"Ids",});
+        internal_static_proto_GetAllTopicsRequest_descriptor =
+            getDescriptor().getMessageTypes().get(7);
+        internal_static_proto_GetAllTopicsRequest_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_proto_GetAllTopicsRequest_descriptor,
+            new java.lang.String[]{});
         internal_static_proto_GetSubscriptionsRequest_descriptor =
-            getDescriptor().getMessageTypes().get(6);
+            getDescriptor().getMessageTypes().get(8);
         internal_static_proto_GetSubscriptionsRequest_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_proto_GetSubscriptionsRequest_descriptor,
             new java.lang.String[]{"Subscriptions",});
+        internal_static_proto_GetAllSubscriptionsForTopicsRequest_descriptor =
+            getDescriptor().getMessageTypes().get(9);
+        internal_static_proto_GetAllSubscriptionsForTopicsRequest_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_proto_GetAllSubscriptionsForTopicsRequest_descriptor,
+            new java.lang.String[]{"TopicIds",});
         internal_static_proto_PartitionLagRequest_descriptor =
-            getDescriptor().getMessageTypes().get(7);
+            getDescriptor().getMessageTypes().get(10);
         internal_static_proto_PartitionLagRequest_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_proto_PartitionLagRequest_descriptor,
             new java.lang.String[]{"PartitionId",});
         internal_static_proto_SubscriptionLagRequest_descriptor =
-            getDescriptor().getMessageTypes().get(8);
+            getDescriptor().getMessageTypes().get(11);
         internal_static_proto_SubscriptionLagRequest_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_proto_SubscriptionLagRequest_descriptor,
             new java.lang.String[]{"TopicSubscription", "PartitionLags",});
         internal_static_proto_GetSubscriptionLagsRequest_descriptor =
-            getDescriptor().getMessageTypes().get(9);
+            getDescriptor().getMessageTypes().get(12);
         internal_static_proto_GetSubscriptionLagsRequest_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_proto_GetSubscriptionLagsRequest_descriptor,
             new java.lang.String[]{"SubscriptionLagRequests",});
-        internal_static_proto_GetClusterMetadata_descriptor =
-            getDescriptor().getMessageTypes().get(10);
-        internal_static_proto_GetClusterMetadata_fieldAccessorTable = new
+        internal_static_proto_GetClusterMetadataRequest_descriptor =
+            getDescriptor().getMessageTypes().get(13);
+        internal_static_proto_GetClusterMetadataRequest_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-            internal_static_proto_GetClusterMetadata_descriptor,
+            internal_static_proto_GetClusterMetadataRequest_descriptor,
             new java.lang.String[]{"TopicIds",});
         com.flipkart.vbroker.proto.PEntities.getDescriptor();
     }

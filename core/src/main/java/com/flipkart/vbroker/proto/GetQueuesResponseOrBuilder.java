@@ -8,30 +8,30 @@ public interface GetQueuesResponseOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+     * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
      */
     java.util.List<com.flipkart.vbroker.proto.GetQueueResponse>
-    getQueuesList();
+    getQueueResponsesList();
 
     /**
-     * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+     * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
      */
-    com.flipkart.vbroker.proto.GetQueueResponse getQueues(int index);
+    com.flipkart.vbroker.proto.GetQueueResponse getQueueResponses(int index);
 
     /**
-     * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+     * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
      */
-    int getQueuesCount();
+    int getQueueResponsesCount();
 
     /**
-     * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+     * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
      */
     java.util.List<? extends com.flipkart.vbroker.proto.GetQueueResponseOrBuilder>
-    getQueuesOrBuilderList();
+    getQueueResponsesOrBuilderList();
 
     /**
-     * <code>repeated .proto.GetQueueResponse queues = 1;</code>
+     * <code>repeated .proto.GetQueueResponse queueResponses = 1;</code>
      */
-    com.flipkart.vbroker.proto.GetQueueResponseOrBuilder getQueuesOrBuilder(
+    com.flipkart.vbroker.proto.GetQueueResponseOrBuilder getQueueResponsesOrBuilder(
         int index);
 }

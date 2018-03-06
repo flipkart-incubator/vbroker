@@ -5,8 +5,6 @@ package com.flipkart.vbroker.utils;
  */
 
 import com.flipkart.vbroker.flatbuf.*;
-import com.flipkart.vbroker.proto.ProtoRequest;
-import com.flipkart.vbroker.proto.ProtoResponse;
 import com.google.flatbuffers.FlatBufferBuilder;
 import com.google.protobuf.InvalidProtocolBufferException;
 

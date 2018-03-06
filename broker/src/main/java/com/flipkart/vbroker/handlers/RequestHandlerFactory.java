@@ -4,7 +4,6 @@ import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.flatbuf.RequestMessage;
 import com.flipkart.vbroker.flatbuf.VRequest;
-import com.flipkart.vbroker.proto.ProtoRequest;
 import com.flipkart.vbroker.services.ProducerService;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
@@ -23,6 +22,8 @@ public class RequestHandlerFactory {
     private final RequestHandler createTopicsRequestHandler;
     private final RequestHandler subscriptionCreateRequestHandler;
     private final GetSubscriptionLagsRequestHandler getSubscriptionLagsRequestHandler;
+    private final GetSubscriptionsRequestHandler getSubscriptionsRequestHandler;
+    private final GetTopicsRequestHandler getTopicsRequestHandler;
 
     public RequestHandlerFactory(ProducerService producerService,
                                  TopicService topicService,
@@ -42,6 +43,8 @@ public class RequestHandlerFactory {
         this.createTopicsRequestHandler = new CreateTopicsRequestHandler(topicService, adminReqExecutorService);
         this.subscriptionCreateRequestHandler = new CreateSubscriptionsRequestHandler(subscriptionService, adminReqExecutorService);
         this.getSubscriptionLagsRequestHandler = new GetSubscriptionLagsRequestHandler(subscriptionService);
+        this.getSubscriptionsRequestHandler = new GetSubscriptionsRequestHandler(subscriptionService);
+        this.getTopicsRequestHandler = new GetTopicsRequestHandler(topicService);
     }
 
     public RequestHandler getRequestHandler(VRequest request) {
@@ -84,11 +87,11 @@ public class RequestHandlerFactory {
                 throw new NotImplementedException();
 //                break;
             case GETSUBSCRIPTIONSREQUEST:
-                throw new NotImplementedException();
-//                break;
+                requestHandler =  getSubscriptionsRequestHandler;
+                break;
             case GETTOPICSREQUEST:
-                throw new NotImplementedException();
-//                break;
+                requestHandler = getTopicsRequestHandler;
+                break;
             default:
                 throw new VBrokerException("Unknown ProtoRequestType: " + protoRequest.getProtoRequestCase());
         }
