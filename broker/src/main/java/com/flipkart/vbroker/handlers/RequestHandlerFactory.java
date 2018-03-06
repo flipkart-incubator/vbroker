@@ -25,6 +25,9 @@ public class RequestHandlerFactory {
     private final GetSubscriptionLagsRequestHandler getSubscriptionLagsRequestHandler;
     private final GetSubscriptionsRequestHandler getSubscriptionsRequestHandler;
     private final GetTopicsRequestHandler getTopicsRequestHandler;
+    private final GetQueuesRequestHandler getQueuesRequestHandler;
+    private final GetAllTopicsRequestHandler getAllTopicsRequesetHandler;
+    private final GetAllSubscriptionsForTopicsRequestHandler getAllSubscriptionsForTopicsRequestHandler;
 
     public RequestHandlerFactory(ProducerService producerService,
                                  TopicService topicService,
@@ -46,6 +49,9 @@ public class RequestHandlerFactory {
         this.getSubscriptionLagsRequestHandler = new GetSubscriptionLagsRequestHandler(subscriptionService);
         this.getSubscriptionsRequestHandler = new GetSubscriptionsRequestHandler(subscriptionService);
         this.getTopicsRequestHandler = new GetTopicsRequestHandler(topicService);
+        this.getQueuesRequestHandler = new GetQueuesRequestHandler();
+        this.getAllTopicsRequesetHandler = new GetAllTopicsRequestHandler(topicService);
+        this.getAllSubscriptionsForTopicsRequestHandler = new GetAllSubscriptionsForTopicsRequestHandler(subscriptionService);
     }
 
     public RequestHandler getRequestHandler(VRequest request) {
@@ -81,18 +87,27 @@ public class RequestHandlerFactory {
             case GETSUBSCRIPTIONLAGSREQUEST:
                 requestHandler = getSubscriptionLagsRequestHandler;
                 break;
-            case CREATEQUEUESREQUEST:
-                throw new NotImplementedException();
-//                break;
+//            case CREATEQUEUESREQUEST:
+//                  break;
             case GETQUEUESREQUEST:
-                throw new NotImplementedException();
+                requestHandler = getQueuesRequestHandler;
+                break;
+//            case GETALLQUEUESREQUEST:
 //                break;
             case GETSUBSCRIPTIONSREQUEST:
                 requestHandler =  getSubscriptionsRequestHandler;
                 break;
+            case GETALLSUBSCRIPTIONSFORTOPICSREQUEST:
+                requestHandler = getAllSubscriptionsForTopicsRequestHandler;
+                break;
             case GETTOPICSREQUEST:
                 requestHandler = getTopicsRequestHandler;
                 break;
+            case GETALLTOPICSREQUEST:
+                requestHandler = getAllTopicsRequesetHandler;
+                break;
+//            case GETCLUSTERMETADATAREQUEST:
+//                break;
             default:
                 throw new VBrokerException("Unknown ProtoRequestType: " + protoRequest.getProtoRequestCase());
         }

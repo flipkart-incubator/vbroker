@@ -18,7 +18,7 @@ message ProtoRequest {
         GetTopicsRequest getTopicsRequest = 4;
         GetAllTopicsRequest getAllTopicsRequest = 5;
         GetSubscriptionsRequest getSubscriptionsRequest = 6;
-        GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicRequest = 7;
+        GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;
         GetQueuesRequest getQueuesRequest = 8;
         GetAllQueuesRequest getAllQueuesRequest = 9;
         GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;

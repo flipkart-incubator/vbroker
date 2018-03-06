@@ -98,19 +98,19 @@ public interface ProtoRequestOrBuilder extends
     com.flipkart.vbroker.proto.GetSubscriptionsRequestOrBuilder getGetSubscriptionsRequestOrBuilder();
 
     /**
-     * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicRequest = 7;</code>
+     * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
      */
-    boolean hasGetAllSubscriptionsForTopicRequest();
+    boolean hasGetAllSubscriptionsForTopicsRequest();
 
     /**
-     * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicRequest = 7;</code>
+     * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
      */
-    com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest getGetAllSubscriptionsForTopicRequest();
+    com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest getGetAllSubscriptionsForTopicsRequest();
 
     /**
-     * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicRequest = 7;</code>
+     * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
      */
-    com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequestOrBuilder getGetAllSubscriptionsForTopicRequestOrBuilder();
+    com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequestOrBuilder getGetAllSubscriptionsForTopicsRequestOrBuilder();
 
     /**
      * <code>.proto.GetQueuesRequest getQueuesRequest = 8;</code>

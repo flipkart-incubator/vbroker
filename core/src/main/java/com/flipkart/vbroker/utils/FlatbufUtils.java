@@ -54,7 +54,6 @@ public class FlatbufUtils {
 
     public static VResponse createVResponse(int correlationId, ProtoResponse protoResponse) {
         FlatBufferBuilder builder = new FlatBufferBuilder();
-        ;
         int protoResponseOffset = builder.createByteVector(protoResponse.toByteArray());
         int controlResponseOffset = ControlResponse.createControlResponse(builder, protoResponseOffset);
         int vResponse = VResponse.createVResponse(builder, correlationId, ResponseMessage.ControlResponse, controlResponseOffset);
