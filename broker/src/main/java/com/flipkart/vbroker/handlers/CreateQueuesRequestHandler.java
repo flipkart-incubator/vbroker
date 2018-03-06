@@ -13,8 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -44,11 +42,11 @@ public class CreateQueuesRequestHandler implements RequestHandler {
         });
     }
 
-    private CompletionStage<CreateQueueResponse> createQueue(Queue queue){
+    private CompletionStage<CreateQueueResponse> createQueue(Queue queue) {
         return queueService.createQueue(queue).handle((ignored, throwable) -> {
             int statusCode = StatusCode.Success;
             String message = "";
-            if(throwable != null){
+            if (throwable != null) {
                 statusCode = StatusCode.Failure;
                 message = throwable.getMessage();
             }

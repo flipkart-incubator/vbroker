@@ -3,8 +3,6 @@ package com.flipkart.vbroker.handlers;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.flatbuf.RequestMessage;
 import com.flipkart.vbroker.flatbuf.VRequest;
-import com.flipkart.vbroker.proto.GetAllQueuesResponse;
-import com.flipkart.vbroker.proto.GetClusterMetadataResponse;
 import com.flipkart.vbroker.proto.ProtoRequest;
 import com.flipkart.vbroker.services.*;
 import com.flipkart.vbroker.utils.FlatbufUtils;
@@ -97,13 +95,13 @@ public class RequestHandlerFactory {
                 break;
             case CREATEQUEUESREQUEST:
                 requestHandler = createQueuesRequestHandler;
-                  break;
+                break;
             case GETQUEUESREQUEST:
                 requestHandler = getQueuesRequestHandler;
                 break;
             case GETALLQUEUESREQUEST:
-               requestHandler = getAllQueuesResponse;
-               break;
+                requestHandler = getAllQueuesResponse;
+                break;
             case GETSUBSCRIPTIONSREQUEST:
                 requestHandler = getSubscriptionsRequestHandler;
                 break;
