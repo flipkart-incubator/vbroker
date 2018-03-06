@@ -70,6 +70,9 @@ public class VBrokerServer extends AbstractExecutionThreadService {
 
         SubscriptionService subscriptionService = new InMemorySubscriptionService(topicService, topicPartDataManager, subPartDataManager);
 
+        QueueService queueService = null;
+        ClusterMetadataService clusterMetadataService = null;
+
         //global broker controller
         brokerController = new VBrokerController(curatorService, topicService, config);
         log.info("Starting controller and awaiting it to be ready");
@@ -86,7 +89,7 @@ public class VBrokerServer extends AbstractExecutionThreadService {
 
         ProducerService producerService = new ProducerService(topicPartDataManager);
         RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactory(
-            producerService, topicService, subscriptionService);
+            producerService, topicService, subscriptionService, queueService, clusterMetadataService);
 
         //TODO: declare broker as healthy by registering in /brokers/ids for example now that everything is validated
         //the broker can now startServer accepting new requests

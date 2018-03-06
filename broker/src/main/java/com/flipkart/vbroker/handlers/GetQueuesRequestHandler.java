@@ -4,6 +4,7 @@ import com.flipkart.vbroker.flatbuf.StatusCode;
 import com.flipkart.vbroker.flatbuf.VRequest;
 import com.flipkart.vbroker.flatbuf.VResponse;
 import com.flipkart.vbroker.proto.*;
+import com.flipkart.vbroker.services.QueueService;
 import com.flipkart.vbroker.utils.CompletionStageUtils;
 import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.flipkart.vbroker.wrappers.Queue;
@@ -21,13 +22,15 @@ import java.util.concurrent.CompletionStage;
 @Slf4j
 @AllArgsConstructor
 public class GetQueuesRequestHandler implements RequestHandler {
+    private final QueueService queueService;
+
     @Override
     public CompletionStage<VResponse> handle(VRequest vRequest) {
         GetQueuesRequest getQueuesRequest = FlatbufUtils.getProtoRequest(vRequest).getGetQueuesRequest();
 
         List<CompletionStage<GetQueueResponse>> stages = new ArrayList<>();
         for (Integer queueId : getQueuesRequest.getIdsList()) {
-            CompletionStage<Queue> queueCompletionStage = null; //TODO queueService.getQueue(queueId);
+            CompletionStage<Queue> queueCompletionStage = queueService.getQueue(queueId);
             CompletionStage<GetQueueResponse> getQueueResponseStage = handleQueueStage(queueCompletionStage, queueId);
             stages.add(getQueueResponseStage);
         }
