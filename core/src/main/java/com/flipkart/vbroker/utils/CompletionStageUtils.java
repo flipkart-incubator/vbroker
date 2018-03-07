@@ -19,7 +19,18 @@ public class CompletionStageUtils {
         List<CompletableFuture<T>> futures = stages.stream()
             .map(CompletionStage::toCompletableFuture)
             .collect(Collectors.toList());
+        return listOfFuturesToStageOfList(futures);
+    }
 
+    /**
+     * Given a list of CompletionStage<T>, generates a new CompletionStage that is completed
+     * when all of the provided futures are completed, and returns a List<T> as it's result.
+     */
+    public static <T> CompletionStage<List<T>> listOfFuturesToStageOfList(List<CompletableFuture<T>> futures) {
+        return listOfFuturesToFutureOfList(futures);
+    }
+
+    public static <T> CompletableFuture<List<T>> listOfFuturesToFutureOfList(List<CompletableFuture<T>> futures) {
         return CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()]))
             .thenApply(v -> futures.stream()
                 .map(CompletionStage::toCompletableFuture)

@@ -23,18 +23,15 @@ public class Sender implements Runnable {
     private final Accumulator accumulator;
     private final Metadata metadata;
     private final NetworkClient client;
-    private final VBClientConfig config;
     private final CountDownLatch runningLatch;
     private volatile boolean running;
 
     public Sender(Accumulator accumulator,
                   Metadata metadata,
-                  NetworkClient client,
-                  VBClientConfig config) {
+                  NetworkClient client) {
         this.accumulator = accumulator;
         this.metadata = metadata;
         this.client = client;
-        this.config = config;
 
         running = true;
         runningLatch = new CountDownLatch(1);
@@ -74,15 +71,24 @@ public class Sender implements Runnable {
             int totalNoOfRecords = recordBatch.getTotalNoOfRecords();
             //if (totalNoOfRecords > 0) {
             log.info("Total no of records in batch for Node {} are {}", node.getBrokerId(), totalNoOfRecords);
-            sendRecordBatch(node, recordBatch);
-            //}
+            CompletionStage<Void> sendStage = sendRecordBatch(node, recordBatch);
+            sendStage
+                .thenAccept(aVoid -> log.info("RecordBatch to node {} is sent successfully", node))
+                .exceptionally(throwable -> {
+                    log.error("RecordBatch to node has failed during send", throwable);
+                    return null;
+                });
         });
     }
 
-    private void sendRecordBatch(Node node, RecordBatch recordBatch) {
+    /**
+     * @param node        to send record to
+     * @param recordBatch that has data to send
+     */
+    private CompletionStage<Void> sendRecordBatch(Node node, RecordBatch recordBatch) {
         VRequest vRequest = newVRequest(recordBatch);
         CompletionStage<VResponse> responseStage = client.send(node, vRequest);
-        responseStage
+        return responseStage
             .thenAccept(vResponse -> {
                 recordBatch.setState(RecordBatch.BatchState.DONE_SUCCESS);
                 log.info("Received vResponse with correlationId {}", vResponse.correlationId());
