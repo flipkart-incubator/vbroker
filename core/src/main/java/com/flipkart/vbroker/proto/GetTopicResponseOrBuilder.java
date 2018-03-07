@@ -8,32 +8,32 @@ public interface GetTopicResponseOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.proto.ProtoTopic topic = 1;</code>
+     * <code>optional .proto.ProtoTopic topic = 1;</code>
      */
     boolean hasTopic();
 
     /**
-     * <code>.proto.ProtoTopic topic = 1;</code>
+     * <code>optional .proto.ProtoTopic topic = 1;</code>
      */
     com.flipkart.vbroker.proto.ProtoTopic getTopic();
 
     /**
-     * <code>.proto.ProtoTopic topic = 1;</code>
+     * <code>optional .proto.ProtoTopic topic = 1;</code>
      */
     com.flipkart.vbroker.proto.ProtoTopicOrBuilder getTopicOrBuilder();
 
     /**
-     * <code>.proto.VStatus status = 2;</code>
+     * <code>optional .proto.VStatus status = 2;</code>
      */
     boolean hasStatus();
 
     /**
-     * <code>.proto.VStatus status = 2;</code>
+     * <code>optional .proto.VStatus status = 2;</code>
      */
     com.flipkart.vbroker.proto.VStatus getStatus();
 
     /**
-     * <code>.proto.VStatus status = 2;</code>
+     * <code>optional .proto.VStatus status = 2;</code>
      */
     com.flipkart.vbroker.proto.VStatusOrBuilder getStatusOrBuilder();
 }

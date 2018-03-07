@@ -88,8 +88,8 @@ public final class PRequests {
                 "questH\000\0223\n\020getTopicsRequest\030\004 \001(\0132\027.prot" +
                 "o.GetTopicsRequestH\000\0229\n\023getAllTopicsRequ" +
                 "est\030\005 \001(\0132\032.proto.GetAllTopicsRequestH\000\022" +
-                "A\n\027getSubscriptionsRequest\030\006 \001(\0132\036.proto" +
-                ".GetSubscriptionsRequestH\000\022Y\n#getAllSubs" +
+                "A\n\027getSubscriptionsRequest\030\006 \001(\0132\036.proto",
+            ".GetSubscriptionsRequestH\000\022Y\n#getAllSubs" +
                 "criptionsForTopicsRequest\030\007 \001(\0132*.proto." +
                 "GetAllSubscriptionsForTopicsRequestH\000\0223\n" +
                 "\020getQueuesRequest\030\010 \001(\0132\027.proto.GetQueue" +
@@ -98,8 +98,8 @@ public final class PRequests {
                 "criptionLagsRequest\030\n \001(\0132!.proto.GetSub" +
                 "scriptionLagsRequestH\000\022E\n\031getClusterMeta" +
                 "dataRequest\030\013 \001(\0132 .proto.GetClusterMeta" +
-                "dataRequestH\000B\016\n\014protoRequest\"8\n\023CreateT" +
-                "opicsRequest\022!\n\006topics\030\001 \003(\0132\021.proto.Pro" +
+                "dataRequestH\000B\016\n\014protoRequest\"8\n\023CreateT",
+            "opicsRequest\022!\n\006topics\030\001 \003(\0132\021.proto.Pro" +
                 "toTopic\"M\n\032CreateSubscriptionsRequest\022/\n" +
                 "\rsubscriptions\030\001 \003(\0132\030.proto.ProtoSubscr" +
                 "iption\"8\n\023CreateQueuesRequest\022!\n\006queues\030" +
@@ -108,8 +108,8 @@ public final class PRequests {
                 "\"\037\n\020GetTopicsRequest\022\013\n\003ids\030\001 \003(\005\"\025\n\023Get" +
                 "AllTopicsRequest\"J\n\027GetSubscriptionsRequ" +
                 "est\022/\n\rsubscriptions\030\001 \003(\0132\030.proto.Topic" +
-                "Subscription\"7\n#GetAllSubscriptionsForTo" +
-                "picsRequest\022\020\n\010topicIds\030\001 \003(\005\"*\n\023Partiti" +
+                "Subscription\"7\n#GetAllSubscriptionsForTo",
+            "picsRequest\022\020\n\010topicIds\030\001 \003(\005\"*\n\023Partiti" +
                 "onLagRequest\022\023\n\013partitionId\030\001 \001(\005\"\200\001\n\026Su" +
                 "bscriptionLagRequest\0223\n\021topicSubscriptio" +
                 "n\030\001 \001(\0132\030.proto.TopicSubscription\0221\n\rpar" +
@@ -219,7 +219,6 @@ public final class PRequests {
             new java.lang.String[]{"TopicIds",});
         com.flipkart.vbroker.proto.PEntities.getDescriptor();
     }
-
     private PRequests() {
     }
 

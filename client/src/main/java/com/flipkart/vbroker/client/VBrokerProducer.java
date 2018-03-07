@@ -26,7 +26,7 @@ public class VBrokerProducer implements Producer {
         this.config = config;
         log.info("Configs: ", config);
         networkClient = new NetworkClientImpl();
-        sender = new Sender(accumulator, accumulator.fetchMetadata(), networkClient, config);
+        sender = new Sender(accumulator, accumulator.fetchMetadata(), networkClient);
         senderExecutor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1));
         senderCallbackExecutor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1));
         ListenableFuture<?> senderFuture = senderExecutor.submit(sender);
@@ -52,13 +52,13 @@ public class VBrokerProducer implements Producer {
         try {
             networkClient.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Exception in closing NetworkClient", e);
         }
 
         MoreExecutors.shutdownAndAwaitTermination(senderExecutor,
-            config.getLingerTimeMs() * 5, TimeUnit.MILLISECONDS);
+            config.getLingerTimeMs(), TimeUnit.MILLISECONDS);
         MoreExecutors.shutdownAndAwaitTermination(senderCallbackExecutor,
-            config.getLingerTimeMs() * 5, TimeUnit.MILLISECONDS);
+            config.getLingerTimeMs(), TimeUnit.MILLISECONDS);
 
         log.info("VBrokerProducer closed");
     }

@@ -1,7 +1,10 @@
 package com.flipkart.vbroker;
 
+import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.server.VBrokerServer;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
 
 /*
  * @author vamsi, @date 2/1/18 2:55 PM
@@ -9,10 +12,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class VBrokerApp {
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws IOException {
         log.info("== Starting VBrokerApp ==");
 
-        VBrokerServer server = new VBrokerServer();
+        if (args.length < 1) {
+            throw new VBrokerException("Please specify the properties file as the first argument");
+        }
+
+        String configFile = "broker.properties";
+        VBrokerConfig config = VBrokerConfig.newConfig(configFile);
+        log.info("Configs: {}", config);
+
+        VBrokerServer server = new VBrokerServer(config);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             log.info("Got shutdown hook. Triggering stop and await termination of the server");

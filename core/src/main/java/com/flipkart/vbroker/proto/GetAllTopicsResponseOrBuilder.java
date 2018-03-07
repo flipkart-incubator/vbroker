@@ -8,17 +8,17 @@ public interface GetAllTopicsResponseOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.proto.VStatus status = 1;</code>
+     * <code>optional .proto.VStatus status = 1;</code>
      */
     boolean hasStatus();
 
     /**
-     * <code>.proto.VStatus status = 1;</code>
+     * <code>optional .proto.VStatus status = 1;</code>
      */
     com.flipkart.vbroker.proto.VStatus getStatus();
 
     /**
-     * <code>.proto.VStatus status = 1;</code>
+     * <code>optional .proto.VStatus status = 1;</code>
      */
     com.flipkart.vbroker.proto.VStatusOrBuilder getStatusOrBuilder();
 

@@ -14,14 +14,17 @@ import java.util.Properties;
 @Getter
 @ToString
 public class VBClientConfig {
-
     private final Properties properties;
+
+    //broker
     private String brokerHost;
     private int brokerPort;
 
+    //producer
     private long batchSize;
     private long lingerTimeMs;
 
+    //metadata
     private long metadataExpiryTimeMs;
 
     public VBClientConfig(Properties props) {

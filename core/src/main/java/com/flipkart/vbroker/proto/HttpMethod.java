@@ -86,7 +86,8 @@ public enum HttpMethod
 
     public static final com.google.protobuf.Descriptors.EnumDescriptor
     getDescriptor() {
-        return com.flipkart.vbroker.proto.PEntities.getDescriptor().getEnumTypes().get(1);
+        return com.flipkart.vbroker.proto.PEntities.getDescriptor()
+            .getEnumTypes().get(1);
     }
 
     public static HttpMethod valueOf(

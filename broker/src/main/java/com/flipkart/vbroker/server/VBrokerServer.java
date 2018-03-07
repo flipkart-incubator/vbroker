@@ -27,7 +27,6 @@ import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 
-import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -37,6 +36,8 @@ import static java.util.Objects.nonNull;
 @Slf4j
 public class VBrokerServer extends AbstractExecutionThreadService {
 
+    private final VBrokerConfig config;
+
     private final CountDownLatch mainLatch = new CountDownLatch(1);
     private Channel serverChannel;
     private Channel serverLocalChannel;
@@ -44,11 +45,12 @@ public class VBrokerServer extends AbstractExecutionThreadService {
     private BrokerSubscriber brokerSubscriber;
     private CuratorFramework curatorClient;
 
-    private void startServer() throws IOException {
-        Thread.currentThread().setName("vbroker_server");
+    public VBrokerServer(VBrokerConfig config) {
+        this.config = config;
+    }
 
-        VBrokerConfig config = VBrokerConfig.newConfig("broker.properties");
-        log.info("Configs: {}", config);
+    private void startServer() {
+        Thread.currentThread().setName("vbroker_server");
 
         curatorClient = CuratorFrameworkFactory.newClient(config.getZookeeperUrl(),
             new ExponentialBackoffRetry(1000, 5));
@@ -239,11 +241,7 @@ public class VBrokerServer extends AbstractExecutionThreadService {
 
     @Override
     protected void run() {
-        try {
-            startServer();
-        } catch (IOException e) {
-            log.error("Exception in starting app", e);
-        }
+        startServer();
     }
 
     @Override

@@ -8,17 +8,17 @@ public interface SubscriptionLagRequestOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.proto.TopicSubscription topicSubscription = 1;</code>
+     * <code>optional .proto.TopicSubscription topicSubscription = 1;</code>
      */
     boolean hasTopicSubscription();
 
     /**
-     * <code>.proto.TopicSubscription topicSubscription = 1;</code>
+     * <code>optional .proto.TopicSubscription topicSubscription = 1;</code>
      */
     com.flipkart.vbroker.proto.TopicSubscription getTopicSubscription();
 
     /**
-     * <code>.proto.TopicSubscription topicSubscription = 1;</code>
+     * <code>optional .proto.TopicSubscription topicSubscription = 1;</code>
      */
     com.flipkart.vbroker.proto.TopicSubscriptionOrBuilder getTopicSubscriptionOrBuilder();
 

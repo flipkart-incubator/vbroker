@@ -46,12 +46,7 @@ public final class GetAllSubscriptionsForTopicsRequest extends
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
         this();
-        if (extensionRegistry == null) {
-            throw new java.lang.NullPointerException();
-        }
         int mutable_bitField0_ = 0;
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-            com.google.protobuf.UnknownFieldSet.newBuilder();
         try {
             boolean done = false;
             while (!done) {
@@ -61,8 +56,7 @@ public final class GetAllSubscriptionsForTopicsRequest extends
                         done = true;
                         break;
                     default: {
-                        if (!parseUnknownFieldProto3(
-                            input, unknownFields, extensionRegistry, tag)) {
+                        if (!input.skipField(tag)) {
                             done = true;
                         }
                         break;
@@ -99,7 +93,6 @@ public final class GetAllSubscriptionsForTopicsRequest extends
             if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
                 topicIds_ = java.util.Collections.unmodifiableList(topicIds_);
             }
-            this.unknownFields = unknownFields.build();
             makeExtensionsImmutable();
         }
     }
@@ -107,19 +100,6 @@ public final class GetAllSubscriptionsForTopicsRequest extends
     public static final com.google.protobuf.Descriptors.Descriptor
     getDescriptor() {
         return com.flipkart.vbroker.proto.PRequests.internal_static_proto_GetAllSubscriptionsForTopicsRequest_descriptor;
-    }
-
-    public static com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-    }
-
-    public static com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
     }
 
     public static com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest parseFrom(
@@ -209,7 +189,7 @@ public final class GetAllSubscriptionsForTopicsRequest extends
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
-        return this.unknownFields;
+        return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -260,7 +240,6 @@ public final class GetAllSubscriptionsForTopicsRequest extends
         for (int i = 0; i < topicIds_.size(); i++) {
             output.writeInt32NoTag(topicIds_.get(i));
         }
-        unknownFields.writeTo(output);
     }
 
     public int getSerializedSize() {
@@ -282,7 +261,6 @@ public final class GetAllSubscriptionsForTopicsRequest extends
             }
             topicIdsMemoizedSerializedSize = dataSize;
         }
-        size += unknownFields.getSerializedSize();
         memoizedSize = size;
         return size;
     }
@@ -300,7 +278,6 @@ public final class GetAllSubscriptionsForTopicsRequest extends
         boolean result = true;
         result = result && getTopicIdsList()
             .equals(other.getTopicIdsList());
-        result = result && unknownFields.equals(other.unknownFields);
         return result;
     }
 
@@ -310,7 +287,7 @@ public final class GetAllSubscriptionsForTopicsRequest extends
             return memoizedHashCode;
         }
         int hash = 41;
-        hash = (19 * hash) + getDescriptor().hashCode();
+        hash = (19 * hash) + getDescriptorForType().hashCode();
         if (getTopicIdsCount() > 0) {
             hash = (37 * hash) + TOPICIDS_FIELD_NUMBER;
             hash = (53 * hash) + getTopicIdsList().hashCode();
@@ -426,7 +403,7 @@ public final class GetAllSubscriptionsForTopicsRequest extends
 
         public Builder setField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            java.lang.Object value) {
+            Object value) {
             return (Builder) super.setField(field, value);
         }
 
@@ -442,13 +419,13 @@ public final class GetAllSubscriptionsForTopicsRequest extends
 
         public Builder setRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            int index, java.lang.Object value) {
+            int index, Object value) {
             return (Builder) super.setRepeatedField(field, index, value);
         }
 
         public Builder addRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            java.lang.Object value) {
+            Object value) {
             return (Builder) super.addRepeatedField(field, value);
         }
 
@@ -474,7 +451,6 @@ public final class GetAllSubscriptionsForTopicsRequest extends
                 }
                 onChanged();
             }
-            this.mergeUnknownFields(other.unknownFields);
             onChanged();
             return this;
         }
@@ -575,12 +551,12 @@ public final class GetAllSubscriptionsForTopicsRequest extends
 
         public final Builder setUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
-            return super.setUnknownFieldsProto3(unknownFields);
+            return this;
         }
 
         public final Builder mergeUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
-            return super.mergeUnknownFields(unknownFields);
+            return this;
         }
 
 

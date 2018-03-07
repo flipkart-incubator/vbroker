@@ -49,12 +49,7 @@ public final class ProtoQueue extends
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
         this();
-        if (extensionRegistry == null) {
-            throw new java.lang.NullPointerException();
-        }
         int mutable_bitField0_ = 0;
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-            com.google.protobuf.UnknownFieldSet.newBuilder();
         try {
             boolean done = false;
             while (!done) {
@@ -64,8 +59,7 @@ public final class ProtoQueue extends
                         done = true;
                         break;
                     default: {
-                        if (!parseUnknownFieldProto3(
-                            input, unknownFields, extensionRegistry, tag)) {
+                        if (!input.skipField(tag)) {
                             done = true;
                         }
                         break;
@@ -109,7 +103,6 @@ public final class ProtoQueue extends
             throw new com.google.protobuf.InvalidProtocolBufferException(
                 e).setUnfinishedMessage(this);
         } finally {
-            this.unknownFields = unknownFields.build();
             makeExtensionsImmutable();
         }
     }
@@ -117,19 +110,6 @@ public final class ProtoQueue extends
     public static final com.google.protobuf.Descriptors.Descriptor
     getDescriptor() {
         return com.flipkart.vbroker.proto.PEntities.internal_static_proto_ProtoQueue_descriptor;
-    }
-
-    public static com.flipkart.vbroker.proto.ProtoQueue parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-    }
-
-    public static com.flipkart.vbroker.proto.ProtoQueue parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
     }
 
     public static com.flipkart.vbroker.proto.ProtoQueue parseFrom(
@@ -219,7 +199,7 @@ public final class ProtoQueue extends
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
-        return this.unknownFields;
+        return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -230,49 +210,49 @@ public final class ProtoQueue extends
     }
 
     /**
-     * <code>int32 id = 1;</code>
+     * <code>optional int32 id = 1;</code>
      */
     public int getId() {
         return id_;
     }
 
     /**
-     * <code>.proto.ProtoTopic topic = 2;</code>
+     * <code>optional .proto.ProtoTopic topic = 2;</code>
      */
     public boolean hasTopic() {
         return topic_ != null;
     }
 
     /**
-     * <code>.proto.ProtoTopic topic = 2;</code>
+     * <code>optional .proto.ProtoTopic topic = 2;</code>
      */
     public com.flipkart.vbroker.proto.ProtoTopic getTopic() {
         return topic_ == null ? com.flipkart.vbroker.proto.ProtoTopic.getDefaultInstance() : topic_;
     }
 
     /**
-     * <code>.proto.ProtoTopic topic = 2;</code>
+     * <code>optional .proto.ProtoTopic topic = 2;</code>
      */
     public com.flipkart.vbroker.proto.ProtoTopicOrBuilder getTopicOrBuilder() {
         return getTopic();
     }
 
     /**
-     * <code>.proto.ProtoSubscription subscription = 3;</code>
+     * <code>optional .proto.ProtoSubscription subscription = 3;</code>
      */
     public boolean hasSubscription() {
         return subscription_ != null;
     }
 
     /**
-     * <code>.proto.ProtoSubscription subscription = 3;</code>
+     * <code>optional .proto.ProtoSubscription subscription = 3;</code>
      */
     public com.flipkart.vbroker.proto.ProtoSubscription getSubscription() {
         return subscription_ == null ? com.flipkart.vbroker.proto.ProtoSubscription.getDefaultInstance() : subscription_;
     }
 
     /**
-     * <code>.proto.ProtoSubscription subscription = 3;</code>
+     * <code>optional .proto.ProtoSubscription subscription = 3;</code>
      */
     public com.flipkart.vbroker.proto.ProtoSubscriptionOrBuilder getSubscriptionOrBuilder() {
         return getSubscription();
@@ -298,7 +278,6 @@ public final class ProtoQueue extends
         if (subscription_ != null) {
             output.writeMessage(3, getSubscription());
         }
-        unknownFields.writeTo(output);
     }
 
     public int getSerializedSize() {
@@ -318,7 +297,6 @@ public final class ProtoQueue extends
             size += com.google.protobuf.CodedOutputStream
                 .computeMessageSize(3, getSubscription());
         }
-        size += unknownFields.getSerializedSize();
         memoizedSize = size;
         return size;
     }
@@ -346,7 +324,6 @@ public final class ProtoQueue extends
             result = result && getSubscription()
                 .equals(other.getSubscription());
         }
-        result = result && unknownFields.equals(other.unknownFields);
         return result;
     }
 
@@ -356,7 +333,7 @@ public final class ProtoQueue extends
             return memoizedHashCode;
         }
         int hash = 41;
-        hash = (19 * hash) + getDescriptor().hashCode();
+        hash = (19 * hash) + getDescriptorForType().hashCode();
         hash = (37 * hash) + ID_FIELD_NUMBER;
         hash = (53 * hash) + getId();
         if (hasTopic()) {
@@ -500,7 +477,7 @@ public final class ProtoQueue extends
 
         public Builder setField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            java.lang.Object value) {
+            Object value) {
             return (Builder) super.setField(field, value);
         }
 
@@ -516,13 +493,13 @@ public final class ProtoQueue extends
 
         public Builder setRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            int index, java.lang.Object value) {
+            int index, Object value) {
             return (Builder) super.setRepeatedField(field, index, value);
         }
 
         public Builder addRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            java.lang.Object value) {
+            Object value) {
             return (Builder) super.addRepeatedField(field, value);
         }
 
@@ -546,7 +523,6 @@ public final class ProtoQueue extends
             if (other.hasSubscription()) {
                 mergeSubscription(other.getSubscription());
             }
-            this.mergeUnknownFields(other.unknownFields);
             onChanged();
             return this;
         }
@@ -574,14 +550,14 @@ public final class ProtoQueue extends
         }
 
         /**
-         * <code>int32 id = 1;</code>
+         * <code>optional int32 id = 1;</code>
          */
         public int getId() {
             return id_;
         }
 
         /**
-         * <code>int32 id = 1;</code>
+         * <code>optional int32 id = 1;</code>
          */
         public Builder setId(int value) {
 
@@ -591,7 +567,7 @@ public final class ProtoQueue extends
         }
 
         /**
-         * <code>int32 id = 1;</code>
+         * <code>optional int32 id = 1;</code>
          */
         public Builder clearId() {
 
@@ -601,14 +577,14 @@ public final class ProtoQueue extends
         }
 
         /**
-         * <code>.proto.ProtoTopic topic = 2;</code>
+         * <code>optional .proto.ProtoTopic topic = 2;</code>
          */
         public boolean hasTopic() {
             return topicBuilder_ != null || topic_ != null;
         }
 
         /**
-         * <code>.proto.ProtoTopic topic = 2;</code>
+         * <code>optional .proto.ProtoTopic topic = 2;</code>
          */
         public com.flipkart.vbroker.proto.ProtoTopic getTopic() {
             if (topicBuilder_ == null) {
@@ -619,7 +595,7 @@ public final class ProtoQueue extends
         }
 
         /**
-         * <code>.proto.ProtoTopic topic = 2;</code>
+         * <code>optional .proto.ProtoTopic topic = 2;</code>
          */
         public Builder setTopic(
             com.flipkart.vbroker.proto.ProtoTopic.Builder builderForValue) {
@@ -634,7 +610,7 @@ public final class ProtoQueue extends
         }
 
         /**
-         * <code>.proto.ProtoTopic topic = 2;</code>
+         * <code>optional .proto.ProtoTopic topic = 2;</code>
          */
         public Builder setTopic(com.flipkart.vbroker.proto.ProtoTopic value) {
             if (topicBuilder_ == null) {
@@ -651,7 +627,7 @@ public final class ProtoQueue extends
         }
 
         /**
-         * <code>.proto.ProtoTopic topic = 2;</code>
+         * <code>optional .proto.ProtoTopic topic = 2;</code>
          */
         public Builder mergeTopic(com.flipkart.vbroker.proto.ProtoTopic value) {
             if (topicBuilder_ == null) {
@@ -670,7 +646,7 @@ public final class ProtoQueue extends
         }
 
         /**
-         * <code>.proto.ProtoTopic topic = 2;</code>
+         * <code>optional .proto.ProtoTopic topic = 2;</code>
          */
         public Builder clearTopic() {
             if (topicBuilder_ == null) {
@@ -685,7 +661,7 @@ public final class ProtoQueue extends
         }
 
         /**
-         * <code>.proto.ProtoTopic topic = 2;</code>
+         * <code>optional .proto.ProtoTopic topic = 2;</code>
          */
         public com.flipkart.vbroker.proto.ProtoTopic.Builder getTopicBuilder() {
 
@@ -694,7 +670,7 @@ public final class ProtoQueue extends
         }
 
         /**
-         * <code>.proto.ProtoTopic topic = 2;</code>
+         * <code>optional .proto.ProtoTopic topic = 2;</code>
          */
         public com.flipkart.vbroker.proto.ProtoTopicOrBuilder getTopicOrBuilder() {
             if (topicBuilder_ != null) {
@@ -706,7 +682,7 @@ public final class ProtoQueue extends
         }
 
         /**
-         * <code>.proto.ProtoTopic topic = 2;</code>
+         * <code>optional .proto.ProtoTopic topic = 2;</code>
          */
         private com.google.protobuf.SingleFieldBuilderV3<
             com.flipkart.vbroker.proto.ProtoTopic, com.flipkart.vbroker.proto.ProtoTopic.Builder, com.flipkart.vbroker.proto.ProtoTopicOrBuilder>
@@ -723,14 +699,14 @@ public final class ProtoQueue extends
         }
 
         /**
-         * <code>.proto.ProtoSubscription subscription = 3;</code>
+         * <code>optional .proto.ProtoSubscription subscription = 3;</code>
          */
         public boolean hasSubscription() {
             return subscriptionBuilder_ != null || subscription_ != null;
         }
 
         /**
-         * <code>.proto.ProtoSubscription subscription = 3;</code>
+         * <code>optional .proto.ProtoSubscription subscription = 3;</code>
          */
         public com.flipkart.vbroker.proto.ProtoSubscription getSubscription() {
             if (subscriptionBuilder_ == null) {
@@ -741,7 +717,7 @@ public final class ProtoQueue extends
         }
 
         /**
-         * <code>.proto.ProtoSubscription subscription = 3;</code>
+         * <code>optional .proto.ProtoSubscription subscription = 3;</code>
          */
         public Builder setSubscription(
             com.flipkart.vbroker.proto.ProtoSubscription.Builder builderForValue) {
@@ -756,7 +732,7 @@ public final class ProtoQueue extends
         }
 
         /**
-         * <code>.proto.ProtoSubscription subscription = 3;</code>
+         * <code>optional .proto.ProtoSubscription subscription = 3;</code>
          */
         public Builder setSubscription(com.flipkart.vbroker.proto.ProtoSubscription value) {
             if (subscriptionBuilder_ == null) {
@@ -773,7 +749,7 @@ public final class ProtoQueue extends
         }
 
         /**
-         * <code>.proto.ProtoSubscription subscription = 3;</code>
+         * <code>optional .proto.ProtoSubscription subscription = 3;</code>
          */
         public Builder mergeSubscription(com.flipkart.vbroker.proto.ProtoSubscription value) {
             if (subscriptionBuilder_ == null) {
@@ -792,7 +768,7 @@ public final class ProtoQueue extends
         }
 
         /**
-         * <code>.proto.ProtoSubscription subscription = 3;</code>
+         * <code>optional .proto.ProtoSubscription subscription = 3;</code>
          */
         public Builder clearSubscription() {
             if (subscriptionBuilder_ == null) {
@@ -807,7 +783,7 @@ public final class ProtoQueue extends
         }
 
         /**
-         * <code>.proto.ProtoSubscription subscription = 3;</code>
+         * <code>optional .proto.ProtoSubscription subscription = 3;</code>
          */
         public com.flipkart.vbroker.proto.ProtoSubscription.Builder getSubscriptionBuilder() {
 
@@ -816,7 +792,7 @@ public final class ProtoQueue extends
         }
 
         /**
-         * <code>.proto.ProtoSubscription subscription = 3;</code>
+         * <code>optional .proto.ProtoSubscription subscription = 3;</code>
          */
         public com.flipkart.vbroker.proto.ProtoSubscriptionOrBuilder getSubscriptionOrBuilder() {
             if (subscriptionBuilder_ != null) {
@@ -828,7 +804,7 @@ public final class ProtoQueue extends
         }
 
         /**
-         * <code>.proto.ProtoSubscription subscription = 3;</code>
+         * <code>optional .proto.ProtoSubscription subscription = 3;</code>
          */
         private com.google.protobuf.SingleFieldBuilderV3<
             com.flipkart.vbroker.proto.ProtoSubscription, com.flipkart.vbroker.proto.ProtoSubscription.Builder, com.flipkart.vbroker.proto.ProtoSubscriptionOrBuilder>
@@ -846,12 +822,12 @@ public final class ProtoQueue extends
 
         public final Builder setUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
-            return super.setUnknownFieldsProto3(unknownFields);
+            return this;
         }
 
         public final Builder mergeUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
-            return super.mergeUnknownFields(unknownFields);
+            return this;
         }
 
 

@@ -66,7 +66,8 @@ public enum SubscriptionMechanism
 
     public static final com.google.protobuf.Descriptors.EnumDescriptor
     getDescriptor() {
-        return com.flipkart.vbroker.proto.PEntities.getDescriptor().getEnumTypes().get(3);
+        return com.flipkart.vbroker.proto.PEntities.getDescriptor()
+            .getEnumTypes().get(3);
     }
 
     public static SubscriptionMechanism valueOf(

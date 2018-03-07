@@ -8,94 +8,94 @@ public interface ProtoSubscriptionOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int32 id = 1;</code>
+     * <code>optional int32 id = 1;</code>
      */
     int getId();
 
     /**
-     * <code>int32 topicId = 2;</code>
+     * <code>optional int32 topicId = 2;</code>
      */
     int getTopicId();
 
     /**
-     * <code>string name = 3;</code>
+     * <code>optional string name = 3;</code>
      */
     java.lang.String getName();
 
     /**
-     * <code>string name = 3;</code>
+     * <code>optional string name = 3;</code>
      */
     com.google.protobuf.ByteString
     getNameBytes();
 
     /**
-     * <code>bool grouped = 4;</code>
+     * <code>optional bool grouped = 4;</code>
      */
     boolean getGrouped();
 
     /**
-     * <code>int32 parallelism = 5;</code>
+     * <code>optional int32 parallelism = 5;</code>
      */
     int getParallelism();
 
     /**
-     * <code>int32 requestTimeout = 6;</code>
+     * <code>optional int32 requestTimeout = 6;</code>
      */
     int getRequestTimeout();
 
     /**
-     * <code>.proto.SubscriptionType subscriptionType = 7;</code>
+     * <code>optional .proto.SubscriptionType subscriptionType = 7;</code>
      */
     int getSubscriptionTypeValue();
 
     /**
-     * <code>.proto.SubscriptionType subscriptionType = 7;</code>
+     * <code>optional .proto.SubscriptionType subscriptionType = 7;</code>
      */
     com.flipkart.vbroker.proto.SubscriptionType getSubscriptionType();
 
     /**
-     * <code>.proto.SubscriptionMechanism subscriptionMechanism = 8;</code>
+     * <code>optional .proto.SubscriptionMechanism subscriptionMechanism = 8;</code>
      */
     int getSubscriptionMechanismValue();
 
     /**
-     * <code>.proto.SubscriptionMechanism subscriptionMechanism = 8;</code>
+     * <code>optional .proto.SubscriptionMechanism subscriptionMechanism = 8;</code>
      */
     com.flipkart.vbroker.proto.SubscriptionMechanism getSubscriptionMechanism();
 
     /**
-     * <code>string httpUri = 9;</code>
+     * <code>optional string httpUri = 9;</code>
      */
     java.lang.String getHttpUri();
 
     /**
-     * <code>string httpUri = 9;</code>
+     * <code>optional string httpUri = 9;</code>
      */
     com.google.protobuf.ByteString
     getHttpUriBytes();
 
     /**
-     * <code>.proto.HttpMethod httpMethod = 10;</code>
+     * <code>optional .proto.HttpMethod httpMethod = 10;</code>
      */
     int getHttpMethodValue();
 
     /**
-     * <code>.proto.HttpMethod httpMethod = 10;</code>
+     * <code>optional .proto.HttpMethod httpMethod = 10;</code>
      */
     com.flipkart.vbroker.proto.HttpMethod getHttpMethod();
 
     /**
-     * <code>bool elastic = 11;</code>
+     * <code>optional bool elastic = 11;</code>
      */
     boolean getElastic();
 
     /**
-     * <code>.proto.FilterOperator filterOperator = 12;</code>
+     * <code>optional .proto.FilterOperator filterOperator = 12;</code>
      */
     int getFilterOperatorValue();
 
     /**
-     * <code>.proto.FilterOperator filterOperator = 12;</code>
+     * <code>optional .proto.FilterOperator filterOperator = 12;</code>
      */
     com.flipkart.vbroker.proto.FilterOperator getFilterOperator();
 
@@ -128,17 +128,17 @@ public interface ProtoSubscriptionOrBuilder extends
         int index);
 
     /**
-     * <code>.proto.CallbackConfig callbackConfig = 14;</code>
+     * <code>optional .proto.CallbackConfig callbackConfig = 14;</code>
      */
     boolean hasCallbackConfig();
 
     /**
-     * <code>.proto.CallbackConfig callbackConfig = 14;</code>
+     * <code>optional .proto.CallbackConfig callbackConfig = 14;</code>
      */
     com.flipkart.vbroker.proto.CallbackConfig getCallbackConfig();
 
     /**
-     * <code>.proto.CallbackConfig callbackConfig = 14;</code>
+     * <code>optional .proto.CallbackConfig callbackConfig = 14;</code>
      */
     com.flipkart.vbroker.proto.CallbackConfigOrBuilder getCallbackConfigOrBuilder();
 }

@@ -45,18 +45,12 @@ public final class CreateTopicResponse extends
     private CreateTopicResponse() {
         name_ = "";
     }
-
     private CreateTopicResponse(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
         this();
-        if (extensionRegistry == null) {
-            throw new java.lang.NullPointerException();
-        }
         int mutable_bitField0_ = 0;
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-            com.google.protobuf.UnknownFieldSet.newBuilder();
         try {
             boolean done = false;
             while (!done) {
@@ -66,8 +60,7 @@ public final class CreateTopicResponse extends
                         done = true;
                         break;
                     default: {
-                        if (!parseUnknownFieldProto3(
-                            input, unknownFields, extensionRegistry, tag)) {
+                        if (!input.skipField(tag)) {
                             done = true;
                         }
                         break;
@@ -99,7 +92,6 @@ public final class CreateTopicResponse extends
             throw new com.google.protobuf.InvalidProtocolBufferException(
                 e).setUnfinishedMessage(this);
         } finally {
-            this.unknownFields = unknownFields.build();
             makeExtensionsImmutable();
         }
     }
@@ -107,19 +99,6 @@ public final class CreateTopicResponse extends
     public static final com.google.protobuf.Descriptors.Descriptor
     getDescriptor() {
         return com.flipkart.vbroker.proto.PResponses.internal_static_proto_CreateTopicResponse_descriptor;
-    }
-
-    public static com.flipkart.vbroker.proto.CreateTopicResponse parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-    }
-
-    public static com.flipkart.vbroker.proto.CreateTopicResponse parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
     }
 
     public static com.flipkart.vbroker.proto.CreateTopicResponse parseFrom(
@@ -209,7 +188,7 @@ public final class CreateTopicResponse extends
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
-        return this.unknownFields;
+        return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -220,7 +199,7 @@ public final class CreateTopicResponse extends
     }
 
     /**
-     * <code>string name = 2;</code>
+     * <code>optional string name = 2;</code>
      */
     public java.lang.String getName() {
         java.lang.Object ref = name_;
@@ -236,7 +215,7 @@ public final class CreateTopicResponse extends
     }
 
     /**
-     * <code>string name = 2;</code>
+     * <code>optional string name = 2;</code>
      */
     public com.google.protobuf.ByteString
     getNameBytes() {
@@ -253,21 +232,21 @@ public final class CreateTopicResponse extends
     }
 
     /**
-     * <code>.proto.VStatus status = 3;</code>
+     * <code>optional .proto.VStatus status = 3;</code>
      */
     public boolean hasStatus() {
         return status_ != null;
     }
 
     /**
-     * <code>.proto.VStatus status = 3;</code>
+     * <code>optional .proto.VStatus status = 3;</code>
      */
     public com.flipkart.vbroker.proto.VStatus getStatus() {
         return status_ == null ? com.flipkart.vbroker.proto.VStatus.getDefaultInstance() : status_;
     }
 
     /**
-     * <code>.proto.VStatus status = 3;</code>
+     * <code>optional .proto.VStatus status = 3;</code>
      */
     public com.flipkart.vbroker.proto.VStatusOrBuilder getStatusOrBuilder() {
         return getStatus();
@@ -290,7 +269,6 @@ public final class CreateTopicResponse extends
         if (status_ != null) {
             output.writeMessage(3, getStatus());
         }
-        unknownFields.writeTo(output);
     }
 
     public int getSerializedSize() {
@@ -305,7 +283,6 @@ public final class CreateTopicResponse extends
             size += com.google.protobuf.CodedOutputStream
                 .computeMessageSize(3, getStatus());
         }
-        size += unknownFields.getSerializedSize();
         memoizedSize = size;
         return size;
     }
@@ -328,7 +305,6 @@ public final class CreateTopicResponse extends
             result = result && getStatus()
                 .equals(other.getStatus());
         }
-        result = result && unknownFields.equals(other.unknownFields);
         return result;
     }
 
@@ -338,7 +314,7 @@ public final class CreateTopicResponse extends
             return memoizedHashCode;
         }
         int hash = 41;
-        hash = (19 * hash) + getDescriptor().hashCode();
+        hash = (19 * hash) + getDescriptorForType().hashCode();
         hash = (37 * hash) + NAME_FIELD_NUMBER;
         hash = (53 * hash) + getName().hashCode();
         if (hasStatus()) {
@@ -468,7 +444,7 @@ public final class CreateTopicResponse extends
 
         public Builder setField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            java.lang.Object value) {
+            Object value) {
             return (Builder) super.setField(field, value);
         }
 
@@ -484,13 +460,13 @@ public final class CreateTopicResponse extends
 
         public Builder setRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            int index, java.lang.Object value) {
+            int index, Object value) {
             return (Builder) super.setRepeatedField(field, index, value);
         }
 
         public Builder addRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            java.lang.Object value) {
+            Object value) {
             return (Builder) super.addRepeatedField(field, value);
         }
 
@@ -512,7 +488,6 @@ public final class CreateTopicResponse extends
             if (other.hasStatus()) {
                 mergeStatus(other.getStatus());
             }
-            this.mergeUnknownFields(other.unknownFields);
             onChanged();
             return this;
         }
@@ -540,7 +515,7 @@ public final class CreateTopicResponse extends
         }
 
         /**
-         * <code>string name = 2;</code>
+         * <code>optional string name = 2;</code>
          */
         public java.lang.String getName() {
             java.lang.Object ref = name_;
@@ -556,7 +531,7 @@ public final class CreateTopicResponse extends
         }
 
         /**
-         * <code>string name = 2;</code>
+         * <code>optional string name = 2;</code>
          */
         public Builder setName(
             java.lang.String value) {
@@ -570,7 +545,7 @@ public final class CreateTopicResponse extends
         }
 
         /**
-         * <code>string name = 2;</code>
+         * <code>optional string name = 2;</code>
          */
         public com.google.protobuf.ByteString
         getNameBytes() {
@@ -587,7 +562,7 @@ public final class CreateTopicResponse extends
         }
 
         /**
-         * <code>string name = 2;</code>
+         * <code>optional string name = 2;</code>
          */
         public Builder setNameBytes(
             com.google.protobuf.ByteString value) {
@@ -602,7 +577,7 @@ public final class CreateTopicResponse extends
         }
 
         /**
-         * <code>string name = 2;</code>
+         * <code>optional string name = 2;</code>
          */
         public Builder clearName() {
 
@@ -612,14 +587,14 @@ public final class CreateTopicResponse extends
         }
 
         /**
-         * <code>.proto.VStatus status = 3;</code>
+         * <code>optional .proto.VStatus status = 3;</code>
          */
         public boolean hasStatus() {
             return statusBuilder_ != null || status_ != null;
         }
 
         /**
-         * <code>.proto.VStatus status = 3;</code>
+         * <code>optional .proto.VStatus status = 3;</code>
          */
         public com.flipkart.vbroker.proto.VStatus getStatus() {
             if (statusBuilder_ == null) {
@@ -630,7 +605,7 @@ public final class CreateTopicResponse extends
         }
 
         /**
-         * <code>.proto.VStatus status = 3;</code>
+         * <code>optional .proto.VStatus status = 3;</code>
          */
         public Builder setStatus(
             com.flipkart.vbroker.proto.VStatus.Builder builderForValue) {
@@ -645,7 +620,7 @@ public final class CreateTopicResponse extends
         }
 
         /**
-         * <code>.proto.VStatus status = 3;</code>
+         * <code>optional .proto.VStatus status = 3;</code>
          */
         public Builder setStatus(com.flipkart.vbroker.proto.VStatus value) {
             if (statusBuilder_ == null) {
@@ -662,7 +637,7 @@ public final class CreateTopicResponse extends
         }
 
         /**
-         * <code>.proto.VStatus status = 3;</code>
+         * <code>optional .proto.VStatus status = 3;</code>
          */
         public Builder mergeStatus(com.flipkart.vbroker.proto.VStatus value) {
             if (statusBuilder_ == null) {
@@ -681,7 +656,7 @@ public final class CreateTopicResponse extends
         }
 
         /**
-         * <code>.proto.VStatus status = 3;</code>
+         * <code>optional .proto.VStatus status = 3;</code>
          */
         public Builder clearStatus() {
             if (statusBuilder_ == null) {
@@ -696,7 +671,7 @@ public final class CreateTopicResponse extends
         }
 
         /**
-         * <code>.proto.VStatus status = 3;</code>
+         * <code>optional .proto.VStatus status = 3;</code>
          */
         public com.flipkart.vbroker.proto.VStatus.Builder getStatusBuilder() {
 
@@ -705,7 +680,7 @@ public final class CreateTopicResponse extends
         }
 
         /**
-         * <code>.proto.VStatus status = 3;</code>
+         * <code>optional .proto.VStatus status = 3;</code>
          */
         public com.flipkart.vbroker.proto.VStatusOrBuilder getStatusOrBuilder() {
             if (statusBuilder_ != null) {
@@ -717,7 +692,7 @@ public final class CreateTopicResponse extends
         }
 
         /**
-         * <code>.proto.VStatus status = 3;</code>
+         * <code>optional .proto.VStatus status = 3;</code>
          */
         private com.google.protobuf.SingleFieldBuilderV3<
             com.flipkart.vbroker.proto.VStatus, com.flipkart.vbroker.proto.VStatus.Builder, com.flipkart.vbroker.proto.VStatusOrBuilder>
@@ -735,12 +710,12 @@ public final class CreateTopicResponse extends
 
         public final Builder setUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
-            return super.setUnknownFieldsProto3(unknownFields);
+            return this;
         }
 
         public final Builder mergeUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
-            return super.mergeUnknownFields(unknownFields);
+            return this;
         }
 
 

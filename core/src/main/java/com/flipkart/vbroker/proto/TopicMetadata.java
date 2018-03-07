@@ -48,12 +48,7 @@ public final class TopicMetadata extends
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
         this();
-        if (extensionRegistry == null) {
-            throw new java.lang.NullPointerException();
-        }
         int mutable_bitField0_ = 0;
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-            com.google.protobuf.UnknownFieldSet.newBuilder();
         try {
             boolean done = false;
             while (!done) {
@@ -63,8 +58,7 @@ public final class TopicMetadata extends
                         done = true;
                         break;
                     default: {
-                        if (!parseUnknownFieldProto3(
-                            input, unknownFields, extensionRegistry, tag)) {
+                        if (!input.skipField(tag)) {
                             done = true;
                         }
                         break;
@@ -102,7 +96,6 @@ public final class TopicMetadata extends
             if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
                 partitionMetadatas_ = java.util.Collections.unmodifiableList(partitionMetadatas_);
             }
-            this.unknownFields = unknownFields.build();
             makeExtensionsImmutable();
         }
     }
@@ -110,19 +103,6 @@ public final class TopicMetadata extends
     public static final com.google.protobuf.Descriptors.Descriptor
     getDescriptor() {
         return com.flipkart.vbroker.proto.PEntities.internal_static_proto_TopicMetadata_descriptor;
-    }
-
-    public static com.flipkart.vbroker.proto.TopicMetadata parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-    }
-
-    public static com.flipkart.vbroker.proto.TopicMetadata parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
     }
 
     public static com.flipkart.vbroker.proto.TopicMetadata parseFrom(
@@ -212,7 +192,7 @@ public final class TopicMetadata extends
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
-        return this.unknownFields;
+        return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -223,21 +203,21 @@ public final class TopicMetadata extends
     }
 
     /**
-     * <code>.proto.ProtoTopic topic = 1;</code>
+     * <code>optional .proto.ProtoTopic topic = 1;</code>
      */
     public boolean hasTopic() {
         return topic_ != null;
     }
 
     /**
-     * <code>.proto.ProtoTopic topic = 1;</code>
+     * <code>optional .proto.ProtoTopic topic = 1;</code>
      */
     public com.flipkart.vbroker.proto.ProtoTopic getTopic() {
         return topic_ == null ? com.flipkart.vbroker.proto.ProtoTopic.getDefaultInstance() : topic_;
     }
 
     /**
-     * <code>.proto.ProtoTopic topic = 1;</code>
+     * <code>optional .proto.ProtoTopic topic = 1;</code>
      */
     public com.flipkart.vbroker.proto.ProtoTopicOrBuilder getTopicOrBuilder() {
         return getTopic();
@@ -297,7 +277,6 @@ public final class TopicMetadata extends
         for (int i = 0; i < partitionMetadatas_.size(); i++) {
             output.writeMessage(2, partitionMetadatas_.get(i));
         }
-        unknownFields.writeTo(output);
     }
 
     public int getSerializedSize() {
@@ -313,7 +292,6 @@ public final class TopicMetadata extends
             size += com.google.protobuf.CodedOutputStream
                 .computeMessageSize(2, partitionMetadatas_.get(i));
         }
-        size += unknownFields.getSerializedSize();
         memoizedSize = size;
         return size;
     }
@@ -336,7 +314,6 @@ public final class TopicMetadata extends
         }
         result = result && getPartitionMetadatasList()
             .equals(other.getPartitionMetadatasList());
-        result = result && unknownFields.equals(other.unknownFields);
         return result;
     }
 
@@ -346,7 +323,7 @@ public final class TopicMetadata extends
             return memoizedHashCode;
         }
         int hash = 41;
-        hash = (19 * hash) + getDescriptor().hashCode();
+        hash = (19 * hash) + getDescriptorForType().hashCode();
         if (hasTopic()) {
             hash = (37 * hash) + TOPIC_FIELD_NUMBER;
             hash = (53 * hash) + getTopic().hashCode();
@@ -494,7 +471,7 @@ public final class TopicMetadata extends
 
         public Builder setField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            java.lang.Object value) {
+            Object value) {
             return (Builder) super.setField(field, value);
         }
 
@@ -510,13 +487,13 @@ public final class TopicMetadata extends
 
         public Builder setRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            int index, java.lang.Object value) {
+            int index, Object value) {
             return (Builder) super.setRepeatedField(field, index, value);
         }
 
         public Builder addRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            java.lang.Object value) {
+            Object value) {
             return (Builder) super.addRepeatedField(field, value);
         }
 
@@ -560,7 +537,6 @@ public final class TopicMetadata extends
                     }
                 }
             }
-            this.mergeUnknownFields(other.unknownFields);
             onChanged();
             return this;
         }
@@ -588,14 +564,14 @@ public final class TopicMetadata extends
         }
 
         /**
-         * <code>.proto.ProtoTopic topic = 1;</code>
+         * <code>optional .proto.ProtoTopic topic = 1;</code>
          */
         public boolean hasTopic() {
             return topicBuilder_ != null || topic_ != null;
         }
 
         /**
-         * <code>.proto.ProtoTopic topic = 1;</code>
+         * <code>optional .proto.ProtoTopic topic = 1;</code>
          */
         public com.flipkart.vbroker.proto.ProtoTopic getTopic() {
             if (topicBuilder_ == null) {
@@ -606,7 +582,7 @@ public final class TopicMetadata extends
         }
 
         /**
-         * <code>.proto.ProtoTopic topic = 1;</code>
+         * <code>optional .proto.ProtoTopic topic = 1;</code>
          */
         public Builder setTopic(
             com.flipkart.vbroker.proto.ProtoTopic.Builder builderForValue) {
@@ -621,7 +597,7 @@ public final class TopicMetadata extends
         }
 
         /**
-         * <code>.proto.ProtoTopic topic = 1;</code>
+         * <code>optional .proto.ProtoTopic topic = 1;</code>
          */
         public Builder setTopic(com.flipkart.vbroker.proto.ProtoTopic value) {
             if (topicBuilder_ == null) {
@@ -638,7 +614,7 @@ public final class TopicMetadata extends
         }
 
         /**
-         * <code>.proto.ProtoTopic topic = 1;</code>
+         * <code>optional .proto.ProtoTopic topic = 1;</code>
          */
         public Builder mergeTopic(com.flipkart.vbroker.proto.ProtoTopic value) {
             if (topicBuilder_ == null) {
@@ -657,7 +633,7 @@ public final class TopicMetadata extends
         }
 
         /**
-         * <code>.proto.ProtoTopic topic = 1;</code>
+         * <code>optional .proto.ProtoTopic topic = 1;</code>
          */
         public Builder clearTopic() {
             if (topicBuilder_ == null) {
@@ -672,7 +648,7 @@ public final class TopicMetadata extends
         }
 
         /**
-         * <code>.proto.ProtoTopic topic = 1;</code>
+         * <code>optional .proto.ProtoTopic topic = 1;</code>
          */
         public com.flipkart.vbroker.proto.ProtoTopic.Builder getTopicBuilder() {
 
@@ -681,7 +657,7 @@ public final class TopicMetadata extends
         }
 
         /**
-         * <code>.proto.ProtoTopic topic = 1;</code>
+         * <code>optional .proto.ProtoTopic topic = 1;</code>
          */
         public com.flipkart.vbroker.proto.ProtoTopicOrBuilder getTopicOrBuilder() {
             if (topicBuilder_ != null) {
@@ -693,7 +669,7 @@ public final class TopicMetadata extends
         }
 
         /**
-         * <code>.proto.ProtoTopic topic = 1;</code>
+         * <code>optional .proto.ProtoTopic topic = 1;</code>
          */
         private com.google.protobuf.SingleFieldBuilderV3<
             com.flipkart.vbroker.proto.ProtoTopic, com.flipkart.vbroker.proto.ProtoTopic.Builder, com.flipkart.vbroker.proto.ProtoTopicOrBuilder>
@@ -965,12 +941,12 @@ public final class TopicMetadata extends
 
         public final Builder setUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
-            return super.setUnknownFieldsProto3(unknownFields);
+            return this;
         }
 
         public final Builder mergeUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
-            return super.mergeUnknownFields(unknownFields);
+            return this;
         }
 
 

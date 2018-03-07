@@ -8,167 +8,112 @@ public interface ProtoResponseOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.proto.CreateTopicsResponse createTopicsResponse = 1;</code>
-     */
-    boolean hasCreateTopicsResponse();
-
-    /**
-     * <code>.proto.CreateTopicsResponse createTopicsResponse = 1;</code>
+     * <code>optional .proto.CreateTopicsResponse createTopicsResponse = 1;</code>
      */
     com.flipkart.vbroker.proto.CreateTopicsResponse getCreateTopicsResponse();
 
     /**
-     * <code>.proto.CreateTopicsResponse createTopicsResponse = 1;</code>
+     * <code>optional .proto.CreateTopicsResponse createTopicsResponse = 1;</code>
      */
     com.flipkart.vbroker.proto.CreateTopicsResponseOrBuilder getCreateTopicsResponseOrBuilder();
 
     /**
-     * <code>.proto.CreateSubscriptionsResponse createSubscriptionsResponse = 2;</code>
-     */
-    boolean hasCreateSubscriptionsResponse();
-
-    /**
-     * <code>.proto.CreateSubscriptionsResponse createSubscriptionsResponse = 2;</code>
+     * <code>optional .proto.CreateSubscriptionsResponse createSubscriptionsResponse = 2;</code>
      */
     com.flipkart.vbroker.proto.CreateSubscriptionsResponse getCreateSubscriptionsResponse();
 
     /**
-     * <code>.proto.CreateSubscriptionsResponse createSubscriptionsResponse = 2;</code>
+     * <code>optional .proto.CreateSubscriptionsResponse createSubscriptionsResponse = 2;</code>
      */
     com.flipkart.vbroker.proto.CreateSubscriptionsResponseOrBuilder getCreateSubscriptionsResponseOrBuilder();
 
     /**
-     * <code>.proto.CreateQueuesResponse createQueuesResponse = 3;</code>
-     */
-    boolean hasCreateQueuesResponse();
-
-    /**
-     * <code>.proto.CreateQueuesResponse createQueuesResponse = 3;</code>
+     * <code>optional .proto.CreateQueuesResponse createQueuesResponse = 3;</code>
      */
     com.flipkart.vbroker.proto.CreateQueuesResponse getCreateQueuesResponse();
 
     /**
-     * <code>.proto.CreateQueuesResponse createQueuesResponse = 3;</code>
+     * <code>optional .proto.CreateQueuesResponse createQueuesResponse = 3;</code>
      */
     com.flipkart.vbroker.proto.CreateQueuesResponseOrBuilder getCreateQueuesResponseOrBuilder();
 
     /**
-     * <code>.proto.GetTopicsResponse getTopicsResponse = 4;</code>
-     */
-    boolean hasGetTopicsResponse();
-
-    /**
-     * <code>.proto.GetTopicsResponse getTopicsResponse = 4;</code>
+     * <code>optional .proto.GetTopicsResponse getTopicsResponse = 4;</code>
      */
     com.flipkart.vbroker.proto.GetTopicsResponse getGetTopicsResponse();
 
     /**
-     * <code>.proto.GetTopicsResponse getTopicsResponse = 4;</code>
+     * <code>optional .proto.GetTopicsResponse getTopicsResponse = 4;</code>
      */
     com.flipkart.vbroker.proto.GetTopicsResponseOrBuilder getGetTopicsResponseOrBuilder();
 
     /**
-     * <code>.proto.GetAllTopicsResponse getAllTopicsResponse = 5;</code>
-     */
-    boolean hasGetAllTopicsResponse();
-
-    /**
-     * <code>.proto.GetAllTopicsResponse getAllTopicsResponse = 5;</code>
+     * <code>optional .proto.GetAllTopicsResponse getAllTopicsResponse = 5;</code>
      */
     com.flipkart.vbroker.proto.GetAllTopicsResponse getGetAllTopicsResponse();
 
     /**
-     * <code>.proto.GetAllTopicsResponse getAllTopicsResponse = 5;</code>
+     * <code>optional .proto.GetAllTopicsResponse getAllTopicsResponse = 5;</code>
      */
     com.flipkart.vbroker.proto.GetAllTopicsResponseOrBuilder getGetAllTopicsResponseOrBuilder();
 
     /**
-     * <code>.proto.GetQueuesResponse getQueuesResponse = 6;</code>
-     */
-    boolean hasGetQueuesResponse();
-
-    /**
-     * <code>.proto.GetQueuesResponse getQueuesResponse = 6;</code>
+     * <code>optional .proto.GetQueuesResponse getQueuesResponse = 6;</code>
      */
     com.flipkart.vbroker.proto.GetQueuesResponse getGetQueuesResponse();
 
     /**
-     * <code>.proto.GetQueuesResponse getQueuesResponse = 6;</code>
+     * <code>optional .proto.GetQueuesResponse getQueuesResponse = 6;</code>
      */
     com.flipkart.vbroker.proto.GetQueuesResponseOrBuilder getGetQueuesResponseOrBuilder();
 
     /**
-     * <code>.proto.GetAllQueuesResponse getAllQueuesResponse = 7;</code>
-     */
-    boolean hasGetAllQueuesResponse();
-
-    /**
-     * <code>.proto.GetAllQueuesResponse getAllQueuesResponse = 7;</code>
+     * <code>optional .proto.GetAllQueuesResponse getAllQueuesResponse = 7;</code>
      */
     com.flipkart.vbroker.proto.GetAllQueuesResponse getGetAllQueuesResponse();
 
     /**
-     * <code>.proto.GetAllQueuesResponse getAllQueuesResponse = 7;</code>
+     * <code>optional .proto.GetAllQueuesResponse getAllQueuesResponse = 7;</code>
      */
     com.flipkart.vbroker.proto.GetAllQueuesResponseOrBuilder getGetAllQueuesResponseOrBuilder();
 
     /**
-     * <code>.proto.GetSubscriptionsResponse getSubscriptionsResponse = 8;</code>
-     */
-    boolean hasGetSubscriptionsResponse();
-
-    /**
-     * <code>.proto.GetSubscriptionsResponse getSubscriptionsResponse = 8;</code>
+     * <code>optional .proto.GetSubscriptionsResponse getSubscriptionsResponse = 8;</code>
      */
     com.flipkart.vbroker.proto.GetSubscriptionsResponse getGetSubscriptionsResponse();
 
     /**
-     * <code>.proto.GetSubscriptionsResponse getSubscriptionsResponse = 8;</code>
+     * <code>optional .proto.GetSubscriptionsResponse getSubscriptionsResponse = 8;</code>
      */
     com.flipkart.vbroker.proto.GetSubscriptionsResponseOrBuilder getGetSubscriptionsResponseOrBuilder();
 
     /**
-     * <code>.proto.GetAllSubscriptionsForTopicsResponse getAllSubscriptionsForTopicsResponse = 9;</code>
-     */
-    boolean hasGetAllSubscriptionsForTopicsResponse();
-
-    /**
-     * <code>.proto.GetAllSubscriptionsForTopicsResponse getAllSubscriptionsForTopicsResponse = 9;</code>
+     * <code>optional .proto.GetAllSubscriptionsForTopicsResponse getAllSubscriptionsForTopicsResponse = 9;</code>
      */
     com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsResponse getGetAllSubscriptionsForTopicsResponse();
 
     /**
-     * <code>.proto.GetAllSubscriptionsForTopicsResponse getAllSubscriptionsForTopicsResponse = 9;</code>
+     * <code>optional .proto.GetAllSubscriptionsForTopicsResponse getAllSubscriptionsForTopicsResponse = 9;</code>
      */
     com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsResponseOrBuilder getGetAllSubscriptionsForTopicsResponseOrBuilder();
 
     /**
-     * <code>.proto.GetSubscriptionLagsResponse getSubscriptionLagsResponse = 10;</code>
-     */
-    boolean hasGetSubscriptionLagsResponse();
-
-    /**
-     * <code>.proto.GetSubscriptionLagsResponse getSubscriptionLagsResponse = 10;</code>
+     * <code>optional .proto.GetSubscriptionLagsResponse getSubscriptionLagsResponse = 10;</code>
      */
     com.flipkart.vbroker.proto.GetSubscriptionLagsResponse getGetSubscriptionLagsResponse();
 
     /**
-     * <code>.proto.GetSubscriptionLagsResponse getSubscriptionLagsResponse = 10;</code>
+     * <code>optional .proto.GetSubscriptionLagsResponse getSubscriptionLagsResponse = 10;</code>
      */
     com.flipkart.vbroker.proto.GetSubscriptionLagsResponseOrBuilder getGetSubscriptionLagsResponseOrBuilder();
 
     /**
-     * <code>.proto.GetClusterMetadataResponse getClusterMetadataResponse = 11;</code>
-     */
-    boolean hasGetClusterMetadataResponse();
-
-    /**
-     * <code>.proto.GetClusterMetadataResponse getClusterMetadataResponse = 11;</code>
+     * <code>optional .proto.GetClusterMetadataResponse getClusterMetadataResponse = 11;</code>
      */
     com.flipkart.vbroker.proto.GetClusterMetadataResponse getGetClusterMetadataResponse();
 
     /**
-     * <code>.proto.GetClusterMetadataResponse getClusterMetadataResponse = 11;</code>
+     * <code>optional .proto.GetClusterMetadataResponse getClusterMetadataResponse = 11;</code>
      */
     com.flipkart.vbroker.proto.GetClusterMetadataResponseOrBuilder getGetClusterMetadataResponseOrBuilder();
 

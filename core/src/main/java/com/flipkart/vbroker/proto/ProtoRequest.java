@@ -24,9 +24,9 @@ public final class ProtoRequest extends
     public static final int GETALLSUBSCRIPTIONSFORTOPICSREQUEST_FIELD_NUMBER = 7;
     public static final int GETQUEUESREQUEST_FIELD_NUMBER = 8;
     public static final int GETALLQUEUESREQUEST_FIELD_NUMBER = 9;
-    public static final int GETSUBSCRIPTIONLAGSREQUEST_FIELD_NUMBER = 10;
 
     ;
+    public static final int GETSUBSCRIPTIONLAGSREQUEST_FIELD_NUMBER = 10;
     public static final int GETCLUSTERMETADATAREQUEST_FIELD_NUMBER = 11;
     private static final long serialVersionUID = 0L;
     // @@protoc_insertion_point(class_scope:proto.ProtoRequest)
@@ -62,12 +62,7 @@ public final class ProtoRequest extends
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
         this();
-        if (extensionRegistry == null) {
-            throw new java.lang.NullPointerException();
-        }
         int mutable_bitField0_ = 0;
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-            com.google.protobuf.UnknownFieldSet.newBuilder();
         try {
             boolean done = false;
             while (!done) {
@@ -77,8 +72,7 @@ public final class ProtoRequest extends
                         done = true;
                         break;
                     default: {
-                        if (!parseUnknownFieldProto3(
-                            input, unknownFields, extensionRegistry, tag)) {
+                        if (!input.skipField(tag)) {
                             done = true;
                         }
                         break;
@@ -245,7 +239,6 @@ public final class ProtoRequest extends
             throw new com.google.protobuf.InvalidProtocolBufferException(
                 e).setUnfinishedMessage(this);
         } finally {
-            this.unknownFields = unknownFields.build();
             makeExtensionsImmutable();
         }
     }
@@ -253,19 +246,6 @@ public final class ProtoRequest extends
     public static final com.google.protobuf.Descriptors.Descriptor
     getDescriptor() {
         return com.flipkart.vbroker.proto.PRequests.internal_static_proto_ProtoRequest_descriptor;
-    }
-
-    public static com.flipkart.vbroker.proto.ProtoRequest parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-    }
-
-    public static com.flipkart.vbroker.proto.ProtoRequest parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
     }
 
     public static com.flipkart.vbroker.proto.ProtoRequest parseFrom(
@@ -355,7 +335,7 @@ public final class ProtoRequest extends
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
-        return this.unknownFields;
+        return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -372,14 +352,7 @@ public final class ProtoRequest extends
     }
 
     /**
-     * <code>.proto.CreateTopicsRequest createTopicsRequest = 1;</code>
-     */
-    public boolean hasCreateTopicsRequest() {
-        return protoRequestCase_ == 1;
-    }
-
-    /**
-     * <code>.proto.CreateTopicsRequest createTopicsRequest = 1;</code>
+     * <code>optional .proto.CreateTopicsRequest createTopicsRequest = 1;</code>
      */
     public com.flipkart.vbroker.proto.CreateTopicsRequest getCreateTopicsRequest() {
         if (protoRequestCase_ == 1) {
@@ -389,7 +362,7 @@ public final class ProtoRequest extends
     }
 
     /**
-     * <code>.proto.CreateTopicsRequest createTopicsRequest = 1;</code>
+     * <code>optional .proto.CreateTopicsRequest createTopicsRequest = 1;</code>
      */
     public com.flipkart.vbroker.proto.CreateTopicsRequestOrBuilder getCreateTopicsRequestOrBuilder() {
         if (protoRequestCase_ == 1) {
@@ -399,14 +372,7 @@ public final class ProtoRequest extends
     }
 
     /**
-     * <code>.proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
-     */
-    public boolean hasCreateSubscriptionsRequest() {
-        return protoRequestCase_ == 2;
-    }
-
-    /**
-     * <code>.proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
+     * <code>optional .proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
      */
     public com.flipkart.vbroker.proto.CreateSubscriptionsRequest getCreateSubscriptionsRequest() {
         if (protoRequestCase_ == 2) {
@@ -416,7 +382,7 @@ public final class ProtoRequest extends
     }
 
     /**
-     * <code>.proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
+     * <code>optional .proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
      */
     public com.flipkart.vbroker.proto.CreateSubscriptionsRequestOrBuilder getCreateSubscriptionsRequestOrBuilder() {
         if (protoRequestCase_ == 2) {
@@ -426,14 +392,7 @@ public final class ProtoRequest extends
     }
 
     /**
-     * <code>.proto.CreateQueuesRequest createQueuesRequest = 3;</code>
-     */
-    public boolean hasCreateQueuesRequest() {
-        return protoRequestCase_ == 3;
-    }
-
-    /**
-     * <code>.proto.CreateQueuesRequest createQueuesRequest = 3;</code>
+     * <code>optional .proto.CreateQueuesRequest createQueuesRequest = 3;</code>
      */
     public com.flipkart.vbroker.proto.CreateQueuesRequest getCreateQueuesRequest() {
         if (protoRequestCase_ == 3) {
@@ -443,7 +402,7 @@ public final class ProtoRequest extends
     }
 
     /**
-     * <code>.proto.CreateQueuesRequest createQueuesRequest = 3;</code>
+     * <code>optional .proto.CreateQueuesRequest createQueuesRequest = 3;</code>
      */
     public com.flipkart.vbroker.proto.CreateQueuesRequestOrBuilder getCreateQueuesRequestOrBuilder() {
         if (protoRequestCase_ == 3) {
@@ -453,14 +412,7 @@ public final class ProtoRequest extends
     }
 
     /**
-     * <code>.proto.GetTopicsRequest getTopicsRequest = 4;</code>
-     */
-    public boolean hasGetTopicsRequest() {
-        return protoRequestCase_ == 4;
-    }
-
-    /**
-     * <code>.proto.GetTopicsRequest getTopicsRequest = 4;</code>
+     * <code>optional .proto.GetTopicsRequest getTopicsRequest = 4;</code>
      */
     public com.flipkart.vbroker.proto.GetTopicsRequest getGetTopicsRequest() {
         if (protoRequestCase_ == 4) {
@@ -470,7 +422,7 @@ public final class ProtoRequest extends
     }
 
     /**
-     * <code>.proto.GetTopicsRequest getTopicsRequest = 4;</code>
+     * <code>optional .proto.GetTopicsRequest getTopicsRequest = 4;</code>
      */
     public com.flipkart.vbroker.proto.GetTopicsRequestOrBuilder getGetTopicsRequestOrBuilder() {
         if (protoRequestCase_ == 4) {
@@ -480,14 +432,7 @@ public final class ProtoRequest extends
     }
 
     /**
-     * <code>.proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
-     */
-    public boolean hasGetAllTopicsRequest() {
-        return protoRequestCase_ == 5;
-    }
-
-    /**
-     * <code>.proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
+     * <code>optional .proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
      */
     public com.flipkart.vbroker.proto.GetAllTopicsRequest getGetAllTopicsRequest() {
         if (protoRequestCase_ == 5) {
@@ -497,7 +442,7 @@ public final class ProtoRequest extends
     }
 
     /**
-     * <code>.proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
+     * <code>optional .proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
      */
     public com.flipkart.vbroker.proto.GetAllTopicsRequestOrBuilder getGetAllTopicsRequestOrBuilder() {
         if (protoRequestCase_ == 5) {
@@ -507,14 +452,7 @@ public final class ProtoRequest extends
     }
 
     /**
-     * <code>.proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
-     */
-    public boolean hasGetSubscriptionsRequest() {
-        return protoRequestCase_ == 6;
-    }
-
-    /**
-     * <code>.proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
+     * <code>optional .proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
      */
     public com.flipkart.vbroker.proto.GetSubscriptionsRequest getGetSubscriptionsRequest() {
         if (protoRequestCase_ == 6) {
@@ -524,7 +462,7 @@ public final class ProtoRequest extends
     }
 
     /**
-     * <code>.proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
+     * <code>optional .proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
      */
     public com.flipkart.vbroker.proto.GetSubscriptionsRequestOrBuilder getGetSubscriptionsRequestOrBuilder() {
         if (protoRequestCase_ == 6) {
@@ -534,14 +472,7 @@ public final class ProtoRequest extends
     }
 
     /**
-     * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
-     */
-    public boolean hasGetAllSubscriptionsForTopicsRequest() {
-        return protoRequestCase_ == 7;
-    }
-
-    /**
-     * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
+     * <code>optional .proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
      */
     public com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest getGetAllSubscriptionsForTopicsRequest() {
         if (protoRequestCase_ == 7) {
@@ -551,7 +482,7 @@ public final class ProtoRequest extends
     }
 
     /**
-     * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
+     * <code>optional .proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
      */
     public com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequestOrBuilder getGetAllSubscriptionsForTopicsRequestOrBuilder() {
         if (protoRequestCase_ == 7) {
@@ -561,14 +492,7 @@ public final class ProtoRequest extends
     }
 
     /**
-     * <code>.proto.GetQueuesRequest getQueuesRequest = 8;</code>
-     */
-    public boolean hasGetQueuesRequest() {
-        return protoRequestCase_ == 8;
-    }
-
-    /**
-     * <code>.proto.GetQueuesRequest getQueuesRequest = 8;</code>
+     * <code>optional .proto.GetQueuesRequest getQueuesRequest = 8;</code>
      */
     public com.flipkart.vbroker.proto.GetQueuesRequest getGetQueuesRequest() {
         if (protoRequestCase_ == 8) {
@@ -578,7 +502,7 @@ public final class ProtoRequest extends
     }
 
     /**
-     * <code>.proto.GetQueuesRequest getQueuesRequest = 8;</code>
+     * <code>optional .proto.GetQueuesRequest getQueuesRequest = 8;</code>
      */
     public com.flipkart.vbroker.proto.GetQueuesRequestOrBuilder getGetQueuesRequestOrBuilder() {
         if (protoRequestCase_ == 8) {
@@ -588,14 +512,7 @@ public final class ProtoRequest extends
     }
 
     /**
-     * <code>.proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
-     */
-    public boolean hasGetAllQueuesRequest() {
-        return protoRequestCase_ == 9;
-    }
-
-    /**
-     * <code>.proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
+     * <code>optional .proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
      */
     public com.flipkart.vbroker.proto.GetAllQueuesRequest getGetAllQueuesRequest() {
         if (protoRequestCase_ == 9) {
@@ -605,7 +522,7 @@ public final class ProtoRequest extends
     }
 
     /**
-     * <code>.proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
+     * <code>optional .proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
      */
     public com.flipkart.vbroker.proto.GetAllQueuesRequestOrBuilder getGetAllQueuesRequestOrBuilder() {
         if (protoRequestCase_ == 9) {
@@ -615,14 +532,7 @@ public final class ProtoRequest extends
     }
 
     /**
-     * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
-     */
-    public boolean hasGetSubscriptionLagsRequest() {
-        return protoRequestCase_ == 10;
-    }
-
-    /**
-     * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
+     * <code>optional .proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
      */
     public com.flipkart.vbroker.proto.GetSubscriptionLagsRequest getGetSubscriptionLagsRequest() {
         if (protoRequestCase_ == 10) {
@@ -632,7 +542,7 @@ public final class ProtoRequest extends
     }
 
     /**
-     * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
+     * <code>optional .proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
      */
     public com.flipkart.vbroker.proto.GetSubscriptionLagsRequestOrBuilder getGetSubscriptionLagsRequestOrBuilder() {
         if (protoRequestCase_ == 10) {
@@ -642,14 +552,7 @@ public final class ProtoRequest extends
     }
 
     /**
-     * <code>.proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
-     */
-    public boolean hasGetClusterMetadataRequest() {
-        return protoRequestCase_ == 11;
-    }
-
-    /**
-     * <code>.proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
+     * <code>optional .proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
      */
     public com.flipkart.vbroker.proto.GetClusterMetadataRequest getGetClusterMetadataRequest() {
         if (protoRequestCase_ == 11) {
@@ -659,7 +562,7 @@ public final class ProtoRequest extends
     }
 
     /**
-     * <code>.proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
+     * <code>optional .proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
      */
     public com.flipkart.vbroker.proto.GetClusterMetadataRequestOrBuilder getGetClusterMetadataRequestOrBuilder() {
         if (protoRequestCase_ == 11) {
@@ -712,7 +615,6 @@ public final class ProtoRequest extends
         if (protoRequestCase_ == 11) {
             output.writeMessage(11, (com.flipkart.vbroker.proto.GetClusterMetadataRequest) protoRequest_);
         }
-        unknownFields.writeTo(output);
     }
 
     public int getSerializedSize() {
@@ -764,7 +666,6 @@ public final class ProtoRequest extends
             size += com.google.protobuf.CodedOutputStream
                 .computeMessageSize(11, (com.flipkart.vbroker.proto.GetClusterMetadataRequest) protoRequest_);
         }
-        size += unknownFields.getSerializedSize();
         memoizedSize = size;
         return size;
     }
@@ -831,7 +732,6 @@ public final class ProtoRequest extends
             case 0:
             default:
         }
-        result = result && unknownFields.equals(other.unknownFields);
         return result;
     }
 
@@ -841,7 +741,7 @@ public final class ProtoRequest extends
             return memoizedHashCode;
         }
         int hash = 41;
-        hash = (19 * hash) + getDescriptor().hashCode();
+        hash = (19 * hash) + getDescriptorForType().hashCode();
         switch (protoRequestCase_) {
             case 1:
                 hash = (37 * hash) + CREATETOPICSREQUEST_FIELD_NUMBER;
@@ -1164,7 +1064,7 @@ public final class ProtoRequest extends
 
         public Builder setField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            java.lang.Object value) {
+            Object value) {
             return (Builder) super.setField(field, value);
         }
 
@@ -1180,13 +1080,13 @@ public final class ProtoRequest extends
 
         public Builder setRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            int index, java.lang.Object value) {
+            int index, Object value) {
             return (Builder) super.setRepeatedField(field, index, value);
         }
 
         public Builder addRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            java.lang.Object value) {
+            Object value) {
             return (Builder) super.addRepeatedField(field, value);
         }
 
@@ -1250,7 +1150,6 @@ public final class ProtoRequest extends
                     break;
                 }
             }
-            this.mergeUnknownFields(other.unknownFields);
             onChanged();
             return this;
         }
@@ -1291,14 +1190,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.CreateTopicsRequest createTopicsRequest = 1;</code>
-         */
-        public boolean hasCreateTopicsRequest() {
-            return protoRequestCase_ == 1;
-        }
-
-        /**
-         * <code>.proto.CreateTopicsRequest createTopicsRequest = 1;</code>
+         * <code>optional .proto.CreateTopicsRequest createTopicsRequest = 1;</code>
          */
         public com.flipkart.vbroker.proto.CreateTopicsRequest getCreateTopicsRequest() {
             if (createTopicsRequestBuilder_ == null) {
@@ -1315,7 +1207,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.CreateTopicsRequest createTopicsRequest = 1;</code>
+         * <code>optional .proto.CreateTopicsRequest createTopicsRequest = 1;</code>
          */
         public Builder setCreateTopicsRequest(
             com.flipkart.vbroker.proto.CreateTopicsRequest.Builder builderForValue) {
@@ -1330,7 +1222,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.CreateTopicsRequest createTopicsRequest = 1;</code>
+         * <code>optional .proto.CreateTopicsRequest createTopicsRequest = 1;</code>
          */
         public Builder setCreateTopicsRequest(com.flipkart.vbroker.proto.CreateTopicsRequest value) {
             if (createTopicsRequestBuilder_ == null) {
@@ -1347,7 +1239,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.CreateTopicsRequest createTopicsRequest = 1;</code>
+         * <code>optional .proto.CreateTopicsRequest createTopicsRequest = 1;</code>
          */
         public Builder mergeCreateTopicsRequest(com.flipkart.vbroker.proto.CreateTopicsRequest value) {
             if (createTopicsRequestBuilder_ == null) {
@@ -1370,7 +1262,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.CreateTopicsRequest createTopicsRequest = 1;</code>
+         * <code>optional .proto.CreateTopicsRequest createTopicsRequest = 1;</code>
          */
         public Builder clearCreateTopicsRequest() {
             if (createTopicsRequestBuilder_ == null) {
@@ -1390,14 +1282,14 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.CreateTopicsRequest createTopicsRequest = 1;</code>
+         * <code>optional .proto.CreateTopicsRequest createTopicsRequest = 1;</code>
          */
         public com.flipkart.vbroker.proto.CreateTopicsRequest.Builder getCreateTopicsRequestBuilder() {
             return getCreateTopicsRequestFieldBuilder().getBuilder();
         }
 
         /**
-         * <code>.proto.CreateTopicsRequest createTopicsRequest = 1;</code>
+         * <code>optional .proto.CreateTopicsRequest createTopicsRequest = 1;</code>
          */
         public com.flipkart.vbroker.proto.CreateTopicsRequestOrBuilder getCreateTopicsRequestOrBuilder() {
             if ((protoRequestCase_ == 1) && (createTopicsRequestBuilder_ != null)) {
@@ -1411,7 +1303,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.CreateTopicsRequest createTopicsRequest = 1;</code>
+         * <code>optional .proto.CreateTopicsRequest createTopicsRequest = 1;</code>
          */
         private com.google.protobuf.SingleFieldBuilderV3<
             com.flipkart.vbroker.proto.CreateTopicsRequest, com.flipkart.vbroker.proto.CreateTopicsRequest.Builder, com.flipkart.vbroker.proto.CreateTopicsRequestOrBuilder>
@@ -1434,14 +1326,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
-         */
-        public boolean hasCreateSubscriptionsRequest() {
-            return protoRequestCase_ == 2;
-        }
-
-        /**
-         * <code>.proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
+         * <code>optional .proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
          */
         public com.flipkart.vbroker.proto.CreateSubscriptionsRequest getCreateSubscriptionsRequest() {
             if (createSubscriptionsRequestBuilder_ == null) {
@@ -1458,7 +1343,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
+         * <code>optional .proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
          */
         public Builder setCreateSubscriptionsRequest(
             com.flipkart.vbroker.proto.CreateSubscriptionsRequest.Builder builderForValue) {
@@ -1473,7 +1358,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
+         * <code>optional .proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
          */
         public Builder setCreateSubscriptionsRequest(com.flipkart.vbroker.proto.CreateSubscriptionsRequest value) {
             if (createSubscriptionsRequestBuilder_ == null) {
@@ -1490,7 +1375,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
+         * <code>optional .proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
          */
         public Builder mergeCreateSubscriptionsRequest(com.flipkart.vbroker.proto.CreateSubscriptionsRequest value) {
             if (createSubscriptionsRequestBuilder_ == null) {
@@ -1513,7 +1398,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
+         * <code>optional .proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
          */
         public Builder clearCreateSubscriptionsRequest() {
             if (createSubscriptionsRequestBuilder_ == null) {
@@ -1533,14 +1418,14 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
+         * <code>optional .proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
          */
         public com.flipkart.vbroker.proto.CreateSubscriptionsRequest.Builder getCreateSubscriptionsRequestBuilder() {
             return getCreateSubscriptionsRequestFieldBuilder().getBuilder();
         }
 
         /**
-         * <code>.proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
+         * <code>optional .proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
          */
         public com.flipkart.vbroker.proto.CreateSubscriptionsRequestOrBuilder getCreateSubscriptionsRequestOrBuilder() {
             if ((protoRequestCase_ == 2) && (createSubscriptionsRequestBuilder_ != null)) {
@@ -1554,7 +1439,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
+         * <code>optional .proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
          */
         private com.google.protobuf.SingleFieldBuilderV3<
             com.flipkart.vbroker.proto.CreateSubscriptionsRequest, com.flipkart.vbroker.proto.CreateSubscriptionsRequest.Builder, com.flipkart.vbroker.proto.CreateSubscriptionsRequestOrBuilder>
@@ -1577,14 +1462,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.CreateQueuesRequest createQueuesRequest = 3;</code>
-         */
-        public boolean hasCreateQueuesRequest() {
-            return protoRequestCase_ == 3;
-        }
-
-        /**
-         * <code>.proto.CreateQueuesRequest createQueuesRequest = 3;</code>
+         * <code>optional .proto.CreateQueuesRequest createQueuesRequest = 3;</code>
          */
         public com.flipkart.vbroker.proto.CreateQueuesRequest getCreateQueuesRequest() {
             if (createQueuesRequestBuilder_ == null) {
@@ -1601,7 +1479,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.CreateQueuesRequest createQueuesRequest = 3;</code>
+         * <code>optional .proto.CreateQueuesRequest createQueuesRequest = 3;</code>
          */
         public Builder setCreateQueuesRequest(
             com.flipkart.vbroker.proto.CreateQueuesRequest.Builder builderForValue) {
@@ -1616,7 +1494,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.CreateQueuesRequest createQueuesRequest = 3;</code>
+         * <code>optional .proto.CreateQueuesRequest createQueuesRequest = 3;</code>
          */
         public Builder setCreateQueuesRequest(com.flipkart.vbroker.proto.CreateQueuesRequest value) {
             if (createQueuesRequestBuilder_ == null) {
@@ -1633,7 +1511,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.CreateQueuesRequest createQueuesRequest = 3;</code>
+         * <code>optional .proto.CreateQueuesRequest createQueuesRequest = 3;</code>
          */
         public Builder mergeCreateQueuesRequest(com.flipkart.vbroker.proto.CreateQueuesRequest value) {
             if (createQueuesRequestBuilder_ == null) {
@@ -1656,7 +1534,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.CreateQueuesRequest createQueuesRequest = 3;</code>
+         * <code>optional .proto.CreateQueuesRequest createQueuesRequest = 3;</code>
          */
         public Builder clearCreateQueuesRequest() {
             if (createQueuesRequestBuilder_ == null) {
@@ -1676,14 +1554,14 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.CreateQueuesRequest createQueuesRequest = 3;</code>
+         * <code>optional .proto.CreateQueuesRequest createQueuesRequest = 3;</code>
          */
         public com.flipkart.vbroker.proto.CreateQueuesRequest.Builder getCreateQueuesRequestBuilder() {
             return getCreateQueuesRequestFieldBuilder().getBuilder();
         }
 
         /**
-         * <code>.proto.CreateQueuesRequest createQueuesRequest = 3;</code>
+         * <code>optional .proto.CreateQueuesRequest createQueuesRequest = 3;</code>
          */
         public com.flipkart.vbroker.proto.CreateQueuesRequestOrBuilder getCreateQueuesRequestOrBuilder() {
             if ((protoRequestCase_ == 3) && (createQueuesRequestBuilder_ != null)) {
@@ -1697,7 +1575,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.CreateQueuesRequest createQueuesRequest = 3;</code>
+         * <code>optional .proto.CreateQueuesRequest createQueuesRequest = 3;</code>
          */
         private com.google.protobuf.SingleFieldBuilderV3<
             com.flipkart.vbroker.proto.CreateQueuesRequest, com.flipkart.vbroker.proto.CreateQueuesRequest.Builder, com.flipkart.vbroker.proto.CreateQueuesRequestOrBuilder>
@@ -1720,14 +1598,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetTopicsRequest getTopicsRequest = 4;</code>
-         */
-        public boolean hasGetTopicsRequest() {
-            return protoRequestCase_ == 4;
-        }
-
-        /**
-         * <code>.proto.GetTopicsRequest getTopicsRequest = 4;</code>
+         * <code>optional .proto.GetTopicsRequest getTopicsRequest = 4;</code>
          */
         public com.flipkart.vbroker.proto.GetTopicsRequest getGetTopicsRequest() {
             if (getTopicsRequestBuilder_ == null) {
@@ -1744,7 +1615,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetTopicsRequest getTopicsRequest = 4;</code>
+         * <code>optional .proto.GetTopicsRequest getTopicsRequest = 4;</code>
          */
         public Builder setGetTopicsRequest(
             com.flipkart.vbroker.proto.GetTopicsRequest.Builder builderForValue) {
@@ -1759,7 +1630,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetTopicsRequest getTopicsRequest = 4;</code>
+         * <code>optional .proto.GetTopicsRequest getTopicsRequest = 4;</code>
          */
         public Builder setGetTopicsRequest(com.flipkart.vbroker.proto.GetTopicsRequest value) {
             if (getTopicsRequestBuilder_ == null) {
@@ -1776,7 +1647,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetTopicsRequest getTopicsRequest = 4;</code>
+         * <code>optional .proto.GetTopicsRequest getTopicsRequest = 4;</code>
          */
         public Builder mergeGetTopicsRequest(com.flipkart.vbroker.proto.GetTopicsRequest value) {
             if (getTopicsRequestBuilder_ == null) {
@@ -1799,7 +1670,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetTopicsRequest getTopicsRequest = 4;</code>
+         * <code>optional .proto.GetTopicsRequest getTopicsRequest = 4;</code>
          */
         public Builder clearGetTopicsRequest() {
             if (getTopicsRequestBuilder_ == null) {
@@ -1819,14 +1690,14 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetTopicsRequest getTopicsRequest = 4;</code>
+         * <code>optional .proto.GetTopicsRequest getTopicsRequest = 4;</code>
          */
         public com.flipkart.vbroker.proto.GetTopicsRequest.Builder getGetTopicsRequestBuilder() {
             return getGetTopicsRequestFieldBuilder().getBuilder();
         }
 
         /**
-         * <code>.proto.GetTopicsRequest getTopicsRequest = 4;</code>
+         * <code>optional .proto.GetTopicsRequest getTopicsRequest = 4;</code>
          */
         public com.flipkart.vbroker.proto.GetTopicsRequestOrBuilder getGetTopicsRequestOrBuilder() {
             if ((protoRequestCase_ == 4) && (getTopicsRequestBuilder_ != null)) {
@@ -1840,7 +1711,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetTopicsRequest getTopicsRequest = 4;</code>
+         * <code>optional .proto.GetTopicsRequest getTopicsRequest = 4;</code>
          */
         private com.google.protobuf.SingleFieldBuilderV3<
             com.flipkart.vbroker.proto.GetTopicsRequest, com.flipkart.vbroker.proto.GetTopicsRequest.Builder, com.flipkart.vbroker.proto.GetTopicsRequestOrBuilder>
@@ -1863,14 +1734,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
-         */
-        public boolean hasGetAllTopicsRequest() {
-            return protoRequestCase_ == 5;
-        }
-
-        /**
-         * <code>.proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
+         * <code>optional .proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
          */
         public com.flipkart.vbroker.proto.GetAllTopicsRequest getGetAllTopicsRequest() {
             if (getAllTopicsRequestBuilder_ == null) {
@@ -1887,7 +1751,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
+         * <code>optional .proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
          */
         public Builder setGetAllTopicsRequest(
             com.flipkart.vbroker.proto.GetAllTopicsRequest.Builder builderForValue) {
@@ -1902,7 +1766,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
+         * <code>optional .proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
          */
         public Builder setGetAllTopicsRequest(com.flipkart.vbroker.proto.GetAllTopicsRequest value) {
             if (getAllTopicsRequestBuilder_ == null) {
@@ -1919,7 +1783,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
+         * <code>optional .proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
          */
         public Builder mergeGetAllTopicsRequest(com.flipkart.vbroker.proto.GetAllTopicsRequest value) {
             if (getAllTopicsRequestBuilder_ == null) {
@@ -1942,7 +1806,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
+         * <code>optional .proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
          */
         public Builder clearGetAllTopicsRequest() {
             if (getAllTopicsRequestBuilder_ == null) {
@@ -1962,14 +1826,14 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
+         * <code>optional .proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
          */
         public com.flipkart.vbroker.proto.GetAllTopicsRequest.Builder getGetAllTopicsRequestBuilder() {
             return getGetAllTopicsRequestFieldBuilder().getBuilder();
         }
 
         /**
-         * <code>.proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
+         * <code>optional .proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
          */
         public com.flipkart.vbroker.proto.GetAllTopicsRequestOrBuilder getGetAllTopicsRequestOrBuilder() {
             if ((protoRequestCase_ == 5) && (getAllTopicsRequestBuilder_ != null)) {
@@ -1983,7 +1847,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
+         * <code>optional .proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
          */
         private com.google.protobuf.SingleFieldBuilderV3<
             com.flipkart.vbroker.proto.GetAllTopicsRequest, com.flipkart.vbroker.proto.GetAllTopicsRequest.Builder, com.flipkart.vbroker.proto.GetAllTopicsRequestOrBuilder>
@@ -2006,14 +1870,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
-         */
-        public boolean hasGetSubscriptionsRequest() {
-            return protoRequestCase_ == 6;
-        }
-
-        /**
-         * <code>.proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
+         * <code>optional .proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
          */
         public com.flipkart.vbroker.proto.GetSubscriptionsRequest getGetSubscriptionsRequest() {
             if (getSubscriptionsRequestBuilder_ == null) {
@@ -2030,7 +1887,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
+         * <code>optional .proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
          */
         public Builder setGetSubscriptionsRequest(
             com.flipkart.vbroker.proto.GetSubscriptionsRequest.Builder builderForValue) {
@@ -2045,7 +1902,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
+         * <code>optional .proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
          */
         public Builder setGetSubscriptionsRequest(com.flipkart.vbroker.proto.GetSubscriptionsRequest value) {
             if (getSubscriptionsRequestBuilder_ == null) {
@@ -2062,7 +1919,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
+         * <code>optional .proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
          */
         public Builder mergeGetSubscriptionsRequest(com.flipkart.vbroker.proto.GetSubscriptionsRequest value) {
             if (getSubscriptionsRequestBuilder_ == null) {
@@ -2085,7 +1942,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
+         * <code>optional .proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
          */
         public Builder clearGetSubscriptionsRequest() {
             if (getSubscriptionsRequestBuilder_ == null) {
@@ -2105,14 +1962,14 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
+         * <code>optional .proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
          */
         public com.flipkart.vbroker.proto.GetSubscriptionsRequest.Builder getGetSubscriptionsRequestBuilder() {
             return getGetSubscriptionsRequestFieldBuilder().getBuilder();
         }
 
         /**
-         * <code>.proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
+         * <code>optional .proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
          */
         public com.flipkart.vbroker.proto.GetSubscriptionsRequestOrBuilder getGetSubscriptionsRequestOrBuilder() {
             if ((protoRequestCase_ == 6) && (getSubscriptionsRequestBuilder_ != null)) {
@@ -2126,7 +1983,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
+         * <code>optional .proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
          */
         private com.google.protobuf.SingleFieldBuilderV3<
             com.flipkart.vbroker.proto.GetSubscriptionsRequest, com.flipkart.vbroker.proto.GetSubscriptionsRequest.Builder, com.flipkart.vbroker.proto.GetSubscriptionsRequestOrBuilder>
@@ -2149,14 +2006,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
-         */
-        public boolean hasGetAllSubscriptionsForTopicsRequest() {
-            return protoRequestCase_ == 7;
-        }
-
-        /**
-         * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
+         * <code>optional .proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
          */
         public com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest getGetAllSubscriptionsForTopicsRequest() {
             if (getAllSubscriptionsForTopicsRequestBuilder_ == null) {
@@ -2173,7 +2023,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
+         * <code>optional .proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
          */
         public Builder setGetAllSubscriptionsForTopicsRequest(
             com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest.Builder builderForValue) {
@@ -2188,7 +2038,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
+         * <code>optional .proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
          */
         public Builder setGetAllSubscriptionsForTopicsRequest(com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest value) {
             if (getAllSubscriptionsForTopicsRequestBuilder_ == null) {
@@ -2205,7 +2055,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
+         * <code>optional .proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
          */
         public Builder mergeGetAllSubscriptionsForTopicsRequest(com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest value) {
             if (getAllSubscriptionsForTopicsRequestBuilder_ == null) {
@@ -2228,7 +2078,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
+         * <code>optional .proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
          */
         public Builder clearGetAllSubscriptionsForTopicsRequest() {
             if (getAllSubscriptionsForTopicsRequestBuilder_ == null) {
@@ -2248,14 +2098,14 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
+         * <code>optional .proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
          */
         public com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest.Builder getGetAllSubscriptionsForTopicsRequestBuilder() {
             return getGetAllSubscriptionsForTopicsRequestFieldBuilder().getBuilder();
         }
 
         /**
-         * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
+         * <code>optional .proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
          */
         public com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequestOrBuilder getGetAllSubscriptionsForTopicsRequestOrBuilder() {
             if ((protoRequestCase_ == 7) && (getAllSubscriptionsForTopicsRequestBuilder_ != null)) {
@@ -2269,7 +2119,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
+         * <code>optional .proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
          */
         private com.google.protobuf.SingleFieldBuilderV3<
             com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest, com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest.Builder, com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequestOrBuilder>
@@ -2292,14 +2142,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetQueuesRequest getQueuesRequest = 8;</code>
-         */
-        public boolean hasGetQueuesRequest() {
-            return protoRequestCase_ == 8;
-        }
-
-        /**
-         * <code>.proto.GetQueuesRequest getQueuesRequest = 8;</code>
+         * <code>optional .proto.GetQueuesRequest getQueuesRequest = 8;</code>
          */
         public com.flipkart.vbroker.proto.GetQueuesRequest getGetQueuesRequest() {
             if (getQueuesRequestBuilder_ == null) {
@@ -2316,7 +2159,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetQueuesRequest getQueuesRequest = 8;</code>
+         * <code>optional .proto.GetQueuesRequest getQueuesRequest = 8;</code>
          */
         public Builder setGetQueuesRequest(
             com.flipkart.vbroker.proto.GetQueuesRequest.Builder builderForValue) {
@@ -2331,7 +2174,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetQueuesRequest getQueuesRequest = 8;</code>
+         * <code>optional .proto.GetQueuesRequest getQueuesRequest = 8;</code>
          */
         public Builder setGetQueuesRequest(com.flipkart.vbroker.proto.GetQueuesRequest value) {
             if (getQueuesRequestBuilder_ == null) {
@@ -2348,7 +2191,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetQueuesRequest getQueuesRequest = 8;</code>
+         * <code>optional .proto.GetQueuesRequest getQueuesRequest = 8;</code>
          */
         public Builder mergeGetQueuesRequest(com.flipkart.vbroker.proto.GetQueuesRequest value) {
             if (getQueuesRequestBuilder_ == null) {
@@ -2371,7 +2214,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetQueuesRequest getQueuesRequest = 8;</code>
+         * <code>optional .proto.GetQueuesRequest getQueuesRequest = 8;</code>
          */
         public Builder clearGetQueuesRequest() {
             if (getQueuesRequestBuilder_ == null) {
@@ -2391,14 +2234,14 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetQueuesRequest getQueuesRequest = 8;</code>
+         * <code>optional .proto.GetQueuesRequest getQueuesRequest = 8;</code>
          */
         public com.flipkart.vbroker.proto.GetQueuesRequest.Builder getGetQueuesRequestBuilder() {
             return getGetQueuesRequestFieldBuilder().getBuilder();
         }
 
         /**
-         * <code>.proto.GetQueuesRequest getQueuesRequest = 8;</code>
+         * <code>optional .proto.GetQueuesRequest getQueuesRequest = 8;</code>
          */
         public com.flipkart.vbroker.proto.GetQueuesRequestOrBuilder getGetQueuesRequestOrBuilder() {
             if ((protoRequestCase_ == 8) && (getQueuesRequestBuilder_ != null)) {
@@ -2412,7 +2255,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetQueuesRequest getQueuesRequest = 8;</code>
+         * <code>optional .proto.GetQueuesRequest getQueuesRequest = 8;</code>
          */
         private com.google.protobuf.SingleFieldBuilderV3<
             com.flipkart.vbroker.proto.GetQueuesRequest, com.flipkart.vbroker.proto.GetQueuesRequest.Builder, com.flipkart.vbroker.proto.GetQueuesRequestOrBuilder>
@@ -2435,14 +2278,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
-         */
-        public boolean hasGetAllQueuesRequest() {
-            return protoRequestCase_ == 9;
-        }
-
-        /**
-         * <code>.proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
+         * <code>optional .proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
          */
         public com.flipkart.vbroker.proto.GetAllQueuesRequest getGetAllQueuesRequest() {
             if (getAllQueuesRequestBuilder_ == null) {
@@ -2459,7 +2295,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
+         * <code>optional .proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
          */
         public Builder setGetAllQueuesRequest(
             com.flipkart.vbroker.proto.GetAllQueuesRequest.Builder builderForValue) {
@@ -2474,7 +2310,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
+         * <code>optional .proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
          */
         public Builder setGetAllQueuesRequest(com.flipkart.vbroker.proto.GetAllQueuesRequest value) {
             if (getAllQueuesRequestBuilder_ == null) {
@@ -2491,7 +2327,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
+         * <code>optional .proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
          */
         public Builder mergeGetAllQueuesRequest(com.flipkart.vbroker.proto.GetAllQueuesRequest value) {
             if (getAllQueuesRequestBuilder_ == null) {
@@ -2514,7 +2350,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
+         * <code>optional .proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
          */
         public Builder clearGetAllQueuesRequest() {
             if (getAllQueuesRequestBuilder_ == null) {
@@ -2534,14 +2370,14 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
+         * <code>optional .proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
          */
         public com.flipkart.vbroker.proto.GetAllQueuesRequest.Builder getGetAllQueuesRequestBuilder() {
             return getGetAllQueuesRequestFieldBuilder().getBuilder();
         }
 
         /**
-         * <code>.proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
+         * <code>optional .proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
          */
         public com.flipkart.vbroker.proto.GetAllQueuesRequestOrBuilder getGetAllQueuesRequestOrBuilder() {
             if ((protoRequestCase_ == 9) && (getAllQueuesRequestBuilder_ != null)) {
@@ -2555,7 +2391,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
+         * <code>optional .proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
          */
         private com.google.protobuf.SingleFieldBuilderV3<
             com.flipkart.vbroker.proto.GetAllQueuesRequest, com.flipkart.vbroker.proto.GetAllQueuesRequest.Builder, com.flipkart.vbroker.proto.GetAllQueuesRequestOrBuilder>
@@ -2578,14 +2414,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
-         */
-        public boolean hasGetSubscriptionLagsRequest() {
-            return protoRequestCase_ == 10;
-        }
-
-        /**
-         * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
+         * <code>optional .proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
          */
         public com.flipkart.vbroker.proto.GetSubscriptionLagsRequest getGetSubscriptionLagsRequest() {
             if (getSubscriptionLagsRequestBuilder_ == null) {
@@ -2602,7 +2431,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
+         * <code>optional .proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
          */
         public Builder setGetSubscriptionLagsRequest(
             com.flipkart.vbroker.proto.GetSubscriptionLagsRequest.Builder builderForValue) {
@@ -2617,7 +2446,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
+         * <code>optional .proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
          */
         public Builder setGetSubscriptionLagsRequest(com.flipkart.vbroker.proto.GetSubscriptionLagsRequest value) {
             if (getSubscriptionLagsRequestBuilder_ == null) {
@@ -2634,7 +2463,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
+         * <code>optional .proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
          */
         public Builder mergeGetSubscriptionLagsRequest(com.flipkart.vbroker.proto.GetSubscriptionLagsRequest value) {
             if (getSubscriptionLagsRequestBuilder_ == null) {
@@ -2657,7 +2486,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
+         * <code>optional .proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
          */
         public Builder clearGetSubscriptionLagsRequest() {
             if (getSubscriptionLagsRequestBuilder_ == null) {
@@ -2677,14 +2506,14 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
+         * <code>optional .proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
          */
         public com.flipkart.vbroker.proto.GetSubscriptionLagsRequest.Builder getGetSubscriptionLagsRequestBuilder() {
             return getGetSubscriptionLagsRequestFieldBuilder().getBuilder();
         }
 
         /**
-         * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
+         * <code>optional .proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
          */
         public com.flipkart.vbroker.proto.GetSubscriptionLagsRequestOrBuilder getGetSubscriptionLagsRequestOrBuilder() {
             if ((protoRequestCase_ == 10) && (getSubscriptionLagsRequestBuilder_ != null)) {
@@ -2698,7 +2527,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
+         * <code>optional .proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
          */
         private com.google.protobuf.SingleFieldBuilderV3<
             com.flipkart.vbroker.proto.GetSubscriptionLagsRequest, com.flipkart.vbroker.proto.GetSubscriptionLagsRequest.Builder, com.flipkart.vbroker.proto.GetSubscriptionLagsRequestOrBuilder>
@@ -2721,14 +2550,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
-         */
-        public boolean hasGetClusterMetadataRequest() {
-            return protoRequestCase_ == 11;
-        }
-
-        /**
-         * <code>.proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
+         * <code>optional .proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
          */
         public com.flipkart.vbroker.proto.GetClusterMetadataRequest getGetClusterMetadataRequest() {
             if (getClusterMetadataRequestBuilder_ == null) {
@@ -2745,7 +2567,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
+         * <code>optional .proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
          */
         public Builder setGetClusterMetadataRequest(
             com.flipkart.vbroker.proto.GetClusterMetadataRequest.Builder builderForValue) {
@@ -2760,7 +2582,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
+         * <code>optional .proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
          */
         public Builder setGetClusterMetadataRequest(com.flipkart.vbroker.proto.GetClusterMetadataRequest value) {
             if (getClusterMetadataRequestBuilder_ == null) {
@@ -2777,7 +2599,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
+         * <code>optional .proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
          */
         public Builder mergeGetClusterMetadataRequest(com.flipkart.vbroker.proto.GetClusterMetadataRequest value) {
             if (getClusterMetadataRequestBuilder_ == null) {
@@ -2800,7 +2622,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
+         * <code>optional .proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
          */
         public Builder clearGetClusterMetadataRequest() {
             if (getClusterMetadataRequestBuilder_ == null) {
@@ -2820,14 +2642,14 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
+         * <code>optional .proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
          */
         public com.flipkart.vbroker.proto.GetClusterMetadataRequest.Builder getGetClusterMetadataRequestBuilder() {
             return getGetClusterMetadataRequestFieldBuilder().getBuilder();
         }
 
         /**
-         * <code>.proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
+         * <code>optional .proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
          */
         public com.flipkart.vbroker.proto.GetClusterMetadataRequestOrBuilder getGetClusterMetadataRequestOrBuilder() {
             if ((protoRequestCase_ == 11) && (getClusterMetadataRequestBuilder_ != null)) {
@@ -2841,7 +2663,7 @@ public final class ProtoRequest extends
         }
 
         /**
-         * <code>.proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
+         * <code>optional .proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
          */
         private com.google.protobuf.SingleFieldBuilderV3<
             com.flipkart.vbroker.proto.GetClusterMetadataRequest, com.flipkart.vbroker.proto.GetClusterMetadataRequest.Builder, com.flipkart.vbroker.proto.GetClusterMetadataRequestOrBuilder>
@@ -2865,12 +2687,12 @@ public final class ProtoRequest extends
 
         public final Builder setUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
-            return super.setUnknownFieldsProto3(unknownFields);
+            return this;
         }
 
         public final Builder mergeUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
-            return super.mergeUnknownFields(unknownFields);
+            return this;
         }
 
 

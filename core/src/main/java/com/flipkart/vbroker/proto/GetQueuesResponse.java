@@ -30,7 +30,6 @@ public final class GetQueuesResponse extends
 
     private java.util.List<com.flipkart.vbroker.proto.GetQueueResponse> queueResponses_;
     private byte memoizedIsInitialized = -1;
-
     // Use GetQueuesResponse.newBuilder() to construct.
     private GetQueuesResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
@@ -45,12 +44,7 @@ public final class GetQueuesResponse extends
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
         this();
-        if (extensionRegistry == null) {
-            throw new java.lang.NullPointerException();
-        }
         int mutable_bitField0_ = 0;
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-            com.google.protobuf.UnknownFieldSet.newBuilder();
         try {
             boolean done = false;
             while (!done) {
@@ -60,8 +54,7 @@ public final class GetQueuesResponse extends
                         done = true;
                         break;
                     default: {
-                        if (!parseUnknownFieldProto3(
-                            input, unknownFields, extensionRegistry, tag)) {
+                        if (!input.skipField(tag)) {
                             done = true;
                         }
                         break;
@@ -86,7 +79,6 @@ public final class GetQueuesResponse extends
             if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
                 queueResponses_ = java.util.Collections.unmodifiableList(queueResponses_);
             }
-            this.unknownFields = unknownFields.build();
             makeExtensionsImmutable();
         }
     }
@@ -94,19 +86,6 @@ public final class GetQueuesResponse extends
     public static final com.google.protobuf.Descriptors.Descriptor
     getDescriptor() {
         return com.flipkart.vbroker.proto.PResponses.internal_static_proto_GetQueuesResponse_descriptor;
-    }
-
-    public static com.flipkart.vbroker.proto.GetQueuesResponse parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-    }
-
-    public static com.flipkart.vbroker.proto.GetQueuesResponse parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
     }
 
     public static com.flipkart.vbroker.proto.GetQueuesResponse parseFrom(
@@ -196,7 +175,7 @@ public final class GetQueuesResponse extends
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
-        return this.unknownFields;
+        return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -257,7 +236,6 @@ public final class GetQueuesResponse extends
         for (int i = 0; i < queueResponses_.size(); i++) {
             output.writeMessage(1, queueResponses_.get(i));
         }
-        unknownFields.writeTo(output);
     }
 
     public int getSerializedSize() {
@@ -269,7 +247,6 @@ public final class GetQueuesResponse extends
             size += com.google.protobuf.CodedOutputStream
                 .computeMessageSize(1, queueResponses_.get(i));
         }
-        size += unknownFields.getSerializedSize();
         memoizedSize = size;
         return size;
     }
@@ -287,7 +264,6 @@ public final class GetQueuesResponse extends
         boolean result = true;
         result = result && getQueueResponsesList()
             .equals(other.getQueueResponsesList());
-        result = result && unknownFields.equals(other.unknownFields);
         return result;
     }
 
@@ -297,7 +273,7 @@ public final class GetQueuesResponse extends
             return memoizedHashCode;
         }
         int hash = 41;
-        hash = (19 * hash) + getDescriptor().hashCode();
+        hash = (19 * hash) + getDescriptorForType().hashCode();
         if (getQueueResponsesCount() > 0) {
             hash = (37 * hash) + QUEUERESPONSES_FIELD_NUMBER;
             hash = (53 * hash) + getQueueResponsesList().hashCode();
@@ -425,7 +401,7 @@ public final class GetQueuesResponse extends
 
         public Builder setField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            java.lang.Object value) {
+            Object value) {
             return (Builder) super.setField(field, value);
         }
 
@@ -441,13 +417,13 @@ public final class GetQueuesResponse extends
 
         public Builder setRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            int index, java.lang.Object value) {
+            int index, Object value) {
             return (Builder) super.setRepeatedField(field, index, value);
         }
 
         public Builder addRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            java.lang.Object value) {
+            Object value) {
             return (Builder) super.addRepeatedField(field, value);
         }
 
@@ -488,7 +464,6 @@ public final class GetQueuesResponse extends
                     }
                 }
             }
-            this.mergeUnknownFields(other.unknownFields);
             onChanged();
             return this;
         }
@@ -771,12 +746,12 @@ public final class GetQueuesResponse extends
 
         public final Builder setUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
-            return super.setUnknownFieldsProto3(unknownFields);
+            return this;
         }
 
         public final Builder mergeUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
-            return super.mergeUnknownFields(unknownFields);
+            return this;
         }
 
 

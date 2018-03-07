@@ -8,23 +8,23 @@ public interface NodeOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int32 brokerId = 1;</code>
+     * <code>optional int32 brokerId = 1;</code>
      */
     int getBrokerId();
 
     /**
-     * <code>string hostIp = 2;</code>
+     * <code>optional string hostIp = 2;</code>
      */
     java.lang.String getHostIp();
 
     /**
-     * <code>string hostIp = 2;</code>
+     * <code>optional string hostIp = 2;</code>
      */
     com.google.protobuf.ByteString
     getHostIpBytes();
 
     /**
-     * <code>int32 hostPort = 3;</code>
+     * <code>optional int32 hostPort = 3;</code>
      */
     int getHostPort();
 }

@@ -70,7 +70,8 @@ public enum TopicCategory
 
     public static final com.google.protobuf.Descriptors.EnumDescriptor
     getDescriptor() {
-        return com.flipkart.vbroker.proto.PEntities.getDescriptor().getEnumTypes().get(0);
+        return com.flipkart.vbroker.proto.PEntities.getDescriptor()
+            .getEnumTypes().get(0);
     }
 
     public static TopicCategory valueOf(

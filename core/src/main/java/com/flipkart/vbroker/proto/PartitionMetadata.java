@@ -50,18 +50,12 @@ public final class PartitionMetadata extends
         leaderId_ = 0;
         replicas_ = java.util.Collections.emptyList();
     }
-
     private PartitionMetadata(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
         this();
-        if (extensionRegistry == null) {
-            throw new java.lang.NullPointerException();
-        }
         int mutable_bitField0_ = 0;
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-            com.google.protobuf.UnknownFieldSet.newBuilder();
         try {
             boolean done = false;
             while (!done) {
@@ -71,8 +65,7 @@ public final class PartitionMetadata extends
                         done = true;
                         break;
                     default: {
-                        if (!parseUnknownFieldProto3(
-                            input, unknownFields, extensionRegistry, tag)) {
+                        if (!input.skipField(tag)) {
                             done = true;
                         }
                         break;
@@ -124,7 +117,6 @@ public final class PartitionMetadata extends
             if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
                 replicas_ = java.util.Collections.unmodifiableList(replicas_);
             }
-            this.unknownFields = unknownFields.build();
             makeExtensionsImmutable();
         }
     }
@@ -132,19 +124,6 @@ public final class PartitionMetadata extends
     public static final com.google.protobuf.Descriptors.Descriptor
     getDescriptor() {
         return com.flipkart.vbroker.proto.PEntities.internal_static_proto_PartitionMetadata_descriptor;
-    }
-
-    public static com.flipkart.vbroker.proto.PartitionMetadata parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data);
-    }
-
-    public static com.flipkart.vbroker.proto.PartitionMetadata parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-        return PARSER.parseFrom(data, extensionRegistry);
     }
 
     public static com.flipkart.vbroker.proto.PartitionMetadata parseFrom(
@@ -234,7 +213,7 @@ public final class PartitionMetadata extends
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
-        return this.unknownFields;
+        return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -245,21 +224,21 @@ public final class PartitionMetadata extends
     }
 
     /**
-     * <code>int32 id = 1;</code>
+     * <code>optional int32 id = 1;</code>
      */
     public int getId() {
         return id_;
     }
 
     /**
-     * <code>int32 topicId = 2;</code>
+     * <code>optional int32 topicId = 2;</code>
      */
     public int getTopicId() {
         return topicId_;
     }
 
     /**
-     * <code>int32 leaderId = 3;</code>
+     * <code>optional int32 leaderId = 3;</code>
      */
     public int getLeaderId() {
         return leaderId_;
@@ -315,7 +294,6 @@ public final class PartitionMetadata extends
         for (int i = 0; i < replicas_.size(); i++) {
             output.writeInt32NoTag(replicas_.get(i));
         }
-        unknownFields.writeTo(output);
     }
 
     public int getSerializedSize() {
@@ -349,7 +327,6 @@ public final class PartitionMetadata extends
             }
             replicasMemoizedSerializedSize = dataSize;
         }
-        size += unknownFields.getSerializedSize();
         memoizedSize = size;
         return size;
     }
@@ -373,7 +350,6 @@ public final class PartitionMetadata extends
             == other.getLeaderId());
         result = result && getReplicasList()
             .equals(other.getReplicasList());
-        result = result && unknownFields.equals(other.unknownFields);
         return result;
     }
 
@@ -383,7 +359,7 @@ public final class PartitionMetadata extends
             return memoizedHashCode;
         }
         int hash = 41;
-        hash = (19 * hash) + getDescriptor().hashCode();
+        hash = (19 * hash) + getDescriptorForType().hashCode();
         hash = (37 * hash) + ID_FIELD_NUMBER;
         hash = (53 * hash) + getId();
         hash = (37 * hash) + TOPICID_FIELD_NUMBER;
@@ -519,7 +495,7 @@ public final class PartitionMetadata extends
 
         public Builder setField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            java.lang.Object value) {
+            Object value) {
             return (Builder) super.setField(field, value);
         }
 
@@ -535,13 +511,13 @@ public final class PartitionMetadata extends
 
         public Builder setRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            int index, java.lang.Object value) {
+            int index, Object value) {
             return (Builder) super.setRepeatedField(field, index, value);
         }
 
         public Builder addRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            java.lang.Object value) {
+            Object value) {
             return (Builder) super.addRepeatedField(field, value);
         }
 
@@ -575,7 +551,6 @@ public final class PartitionMetadata extends
                 }
                 onChanged();
             }
-            this.mergeUnknownFields(other.unknownFields);
             onChanged();
             return this;
         }
@@ -603,14 +578,14 @@ public final class PartitionMetadata extends
         }
 
         /**
-         * <code>int32 id = 1;</code>
+         * <code>optional int32 id = 1;</code>
          */
         public int getId() {
             return id_;
         }
 
         /**
-         * <code>int32 id = 1;</code>
+         * <code>optional int32 id = 1;</code>
          */
         public Builder setId(int value) {
 
@@ -620,7 +595,7 @@ public final class PartitionMetadata extends
         }
 
         /**
-         * <code>int32 id = 1;</code>
+         * <code>optional int32 id = 1;</code>
          */
         public Builder clearId() {
 
@@ -630,14 +605,14 @@ public final class PartitionMetadata extends
         }
 
         /**
-         * <code>int32 topicId = 2;</code>
+         * <code>optional int32 topicId = 2;</code>
          */
         public int getTopicId() {
             return topicId_;
         }
 
         /**
-         * <code>int32 topicId = 2;</code>
+         * <code>optional int32 topicId = 2;</code>
          */
         public Builder setTopicId(int value) {
 
@@ -647,7 +622,7 @@ public final class PartitionMetadata extends
         }
 
         /**
-         * <code>int32 topicId = 2;</code>
+         * <code>optional int32 topicId = 2;</code>
          */
         public Builder clearTopicId() {
 
@@ -657,14 +632,14 @@ public final class PartitionMetadata extends
         }
 
         /**
-         * <code>int32 leaderId = 3;</code>
+         * <code>optional int32 leaderId = 3;</code>
          */
         public int getLeaderId() {
             return leaderId_;
         }
 
         /**
-         * <code>int32 leaderId = 3;</code>
+         * <code>optional int32 leaderId = 3;</code>
          */
         public Builder setLeaderId(int value) {
 
@@ -674,7 +649,7 @@ public final class PartitionMetadata extends
         }
 
         /**
-         * <code>int32 leaderId = 3;</code>
+         * <code>optional int32 leaderId = 3;</code>
          */
         public Builder clearLeaderId() {
 
@@ -757,12 +732,12 @@ public final class PartitionMetadata extends
 
         public final Builder setUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
-            return super.setUnknownFieldsProto3(unknownFields);
+            return this;
         }
 
         public final Builder mergeUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
-            return super.mergeUnknownFields(unknownFields);
+            return this;
         }
 
 
