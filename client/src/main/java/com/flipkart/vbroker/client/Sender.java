@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CountDownLatch;
@@ -67,18 +68,22 @@ public class Sender implements Runnable {
         log.info("ClusterNodes: {}", clusterNodes);
 
         clusterNodes.forEach(node -> {
-            RecordBatch recordBatch = accumulator.getRecordBatch(node);
-            int totalNoOfRecords = recordBatch.getTotalNoOfRecords();
-            //if (totalNoOfRecords > 0) {
-            log.info("Total no of records in batch for Node {} are {}", node.getBrokerId(), totalNoOfRecords);
-            CompletionStage<Void> sendStage = sendRecordBatch(node, recordBatch);
-            sendStage
-                .thenAccept(aVoid -> log.info("RecordBatch to node {} is sent successfully", node))
-                .exceptionally(throwable -> {
-                    log.error("RecordBatch to node has failed during send", throwable);
-                    return null;
-                });
+            Optional<RecordBatch> readyRecordBatchOpt = accumulator.getReadyRecordBatch(node);
+            readyRecordBatchOpt.ifPresent(recordBatch -> sendReadyBatch(node, recordBatch));
         });
+    }
+
+    private void sendReadyBatch(Node node, RecordBatch recordBatch) {
+        int totalNoOfRecords = recordBatch.getTotalNoOfRecords();
+        //if (totalNoOfRecords > 0) {
+        log.info("Total no of records in batch for Node {} are {}", node.getBrokerId(), totalNoOfRecords);
+        CompletionStage<Void> sendStage = sendRecordBatch(node, recordBatch);
+        sendStage
+            .thenAccept(aVoid -> log.info("RecordBatch to node {} is sent successfully", node))
+            .exceptionally(throwable -> {
+                log.error("RecordBatch to node has failed during send", throwable);
+                return null;
+            });
     }
 
     /**

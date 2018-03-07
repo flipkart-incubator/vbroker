@@ -28,6 +28,8 @@ public class VBrokerRequestHandler extends SimpleChannelInboundHandler<VRequest>
 
         CompletionStage<VResponse> vResponseFuture = requestHandler.handle(vRequest);
         vResponseFuture.thenAccept(vResponse -> {
+            log.info("Handled request processing of VRequest {} with correlationId {}",
+                vRequest.requestMessageType(), vRequest.correlationId());
             ByteBuf responseByteBuf = Unpooled.wrappedBuffer(vResponse.getByteBuffer());
             Response response = new Response(responseByteBuf.readableBytes(), responseByteBuf);
 

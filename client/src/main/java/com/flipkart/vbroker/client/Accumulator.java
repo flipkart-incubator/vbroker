@@ -55,10 +55,10 @@ public class Accumulator {
      * @param node to get batch for
      * @return the batch
      */
-    public synchronized RecordBatch getRecordBatch(Node node) {
+    private synchronized RecordBatch getRecordBatch(Node node) {
         Optional<RecordBatch> batchOpt = nodeRecordBatchMap.get(node)
             .stream()
-            .filter(recordBatch -> !recordBatch.isFull())
+            .filter(recordBatch -> !recordBatch.isReady())
             .findFirst();
 
         RecordBatch batch;
@@ -73,6 +73,27 @@ public class Accumulator {
         return batch;
     }
 
+    /**
+     * returns the ready batch that is ready to be sent by the Sender
+     *
+     * @param node to get batch for
+     * @return empty if not found and batch if found
+     */
+    public synchronized Optional<RecordBatch> getReadyRecordBatch(Node node) {
+        return nodeRecordBatchMap.get(node)
+            .stream()
+            .filter(RecordBatch::isReady)
+            .findFirst();
+    }
+
+    /**
+     * fetch latest metadata
+     * get the RecordBatch to which a record can be added
+     * add the record
+     *
+     * @param record to add
+     * @return the CompletionStage with promised MessageMetadata
+     */
     public synchronized CompletionStage<MessageMetadata> accumulateRecord(ProducerRecord record) {
         log.info("Adding record {} to accumulator", record.getMessageId());
         Metadata metadata = fetchMetadata();

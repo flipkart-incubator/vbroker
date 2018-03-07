@@ -10,6 +10,8 @@ import com.flipkart.vbroker.proto.ProtoResponse;
 import com.google.flatbuffers.FlatBufferBuilder;
 import com.google.protobuf.InvalidProtocolBufferException;
 
+import static java.util.Objects.nonNull;
+
 public class FlatbufUtils {
 
     public static int buildVStatus(FlatBufferBuilder builder, short statusCode, String message) {
@@ -36,7 +38,7 @@ public class FlatbufUtils {
     public static ProtoRequest getProtoRequest(VRequest vRequest) {
         try {
             ControlRequest controlRequest = (ControlRequest) vRequest.requestMessage(new ControlRequest());
-            //assert nonNull(controlRequest);
+            assert nonNull(controlRequest);
 
             byte[] protoRequestBytes = ByteBufUtils.getBytes(controlRequest.payloadAsByteBuffer());
             return ProtoRequest.parseFrom(protoRequestBytes);

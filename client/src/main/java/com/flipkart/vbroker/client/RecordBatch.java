@@ -56,21 +56,35 @@ public class RecordBatch {
         return topicPartResponseFutureMap.get(topicPartition);
     }
 
-    public boolean isFull() {
+    /**
+     * @return true if batch size configured is reached
+     */
+    private boolean isFull() {
         return partRecordsMap.values().size() >= 1;
     }
 
     /**
      * this determines if this batch can be sent if
-     * 1. batch is full (or)
-     * 2. batch expired
+     * 1. is batch is NOT IN one of the terminated states
+     * 2. batch IS full (or)
+     * 3. batch expired
      *
-     * @return
+     * @return true if above satisfied
      */
     public boolean isReady() {
-        return isFull() || hasExpired();
+        return !isDone() && (isFull() || hasExpired());
     }
 
+    /**
+     * @return true is batch is IN one of the terminated states
+     */
+    private boolean isDone() {
+        return BatchState.DONE_FAILURE.equals(state) || BatchState.DONE_SUCCESS.equals(state);
+    }
+
+    /**
+     * @return true if accumulation time of the batch is breached
+     */
     private boolean hasExpired() {
         return (System.currentTimeMillis() - createdTimeMs) > lingerTimeMs;
     }

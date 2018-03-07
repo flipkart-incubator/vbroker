@@ -8,6 +8,9 @@ import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.handlers.RequestHandlerFactory;
 import com.flipkart.vbroker.services.*;
 import com.flipkart.vbroker.utils.DummyEntities;
+import com.flipkart.vbroker.wrappers.Subscription;
+import com.flipkart.vbroker.wrappers.Topic;
+import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -27,6 +30,8 @@ import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -83,11 +88,23 @@ public class VBrokerServer extends AbstractExecutionThreadService {
         //TODO: now that metadata is created, we need to add actual data to the metadata entries
         //=> populate message groups in topic partitions
 
-        topicService.createTopic(DummyEntities.groupedTopic);
-        topicService.createTopic(DummyEntities.unGroupedTopic);
+        List<Topic> topics = Lists.newArrayList(DummyEntities.groupedTopic, DummyEntities.unGroupedTopic);
+        CompletableFuture[] topicFutures = topics
+            .stream()
+            .map(topic -> topicService.createTopic(topic).toCompletableFuture())
+            .toArray(CompletableFuture[]::new);
+        CompletableFuture.allOf(topicFutures).join();
+        log.info("Created dummy topics");
 
-        subscriptionService.createSubscription(DummyEntities.groupedSubscription);
-        subscriptionService.createSubscription(DummyEntities.unGroupedSubscription);
+        List<Subscription> subscriptions = Lists.newArrayList(
+            DummyEntities.groupedSubscription,
+            DummyEntities.unGroupedSubscription);
+        CompletableFuture[] subscriptionFutures = subscriptions
+            .stream()
+            .map(subscription -> subscriptionService.createSubscription(subscription).toCompletableFuture())
+            .toArray(CompletableFuture[]::new);
+        CompletableFuture.allOf(subscriptionFutures).join();
+        log.info("Created dummy subscriptions");
 
         ProducerService producerService = new ProducerService(topicPartDataManager);
         RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactory(

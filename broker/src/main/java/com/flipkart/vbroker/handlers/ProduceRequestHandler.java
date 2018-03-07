@@ -39,8 +39,10 @@ public class ProduceRequestHandler implements RequestHandler {
         List<TopicPartMessage> messagesToProduce = new LinkedList<>();
 
         return CompletableFuture.supplyAsync(() -> {
+            log.info("Handling ProduceRequest for {} topic requests", produceRequest.topicRequestsLength());
             for (int i = 0; i < produceRequest.topicRequestsLength(); i++) {
                 TopicProduceRequest topicProduceRequest = produceRequest.topicRequests(i);
+                log.info("Received ProduceRequest for topic {}", topicProduceRequest.topicId());
                 Topic topic = topicService.getTopic(topicProduceRequest.topicId()).toCompletableFuture().join();
 
                 for (int j = 0; j < topicProduceRequest.partitionRequestsLength(); j++) {
