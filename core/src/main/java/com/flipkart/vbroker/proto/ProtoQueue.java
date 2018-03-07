@@ -621,6 +621,21 @@ public final class ProtoQueue extends
         /**
          * <code>.proto.ProtoTopic topic = 2;</code>
          */
+        public Builder setTopic(
+            com.flipkart.vbroker.proto.ProtoTopic.Builder builderForValue) {
+            if (topicBuilder_ == null) {
+                topic_ = builderForValue.build();
+                onChanged();
+            } else {
+                topicBuilder_.setMessage(builderForValue.build());
+            }
+
+            return this;
+        }
+
+        /**
+         * <code>.proto.ProtoTopic topic = 2;</code>
+         */
         public Builder setTopic(com.flipkart.vbroker.proto.ProtoTopic value) {
             if (topicBuilder_ == null) {
                 if (value == null) {
@@ -630,21 +645,6 @@ public final class ProtoQueue extends
                 onChanged();
             } else {
                 topicBuilder_.setMessage(value);
-            }
-
-            return this;
-        }
-
-        /**
-         * <code>.proto.ProtoTopic topic = 2;</code>
-         */
-        public Builder setTopic(
-            com.flipkart.vbroker.proto.ProtoTopic.Builder builderForValue) {
-            if (topicBuilder_ == null) {
-                topic_ = builderForValue.build();
-                onChanged();
-            } else {
-                topicBuilder_.setMessage(builderForValue.build());
             }
 
             return this;
@@ -743,6 +743,21 @@ public final class ProtoQueue extends
         /**
          * <code>.proto.ProtoSubscription subscription = 3;</code>
          */
+        public Builder setSubscription(
+            com.flipkart.vbroker.proto.ProtoSubscription.Builder builderForValue) {
+            if (subscriptionBuilder_ == null) {
+                subscription_ = builderForValue.build();
+                onChanged();
+            } else {
+                subscriptionBuilder_.setMessage(builderForValue.build());
+            }
+
+            return this;
+        }
+
+        /**
+         * <code>.proto.ProtoSubscription subscription = 3;</code>
+         */
         public Builder setSubscription(com.flipkart.vbroker.proto.ProtoSubscription value) {
             if (subscriptionBuilder_ == null) {
                 if (value == null) {
@@ -752,21 +767,6 @@ public final class ProtoQueue extends
                 onChanged();
             } else {
                 subscriptionBuilder_.setMessage(value);
-            }
-
-            return this;
-        }
-
-        /**
-         * <code>.proto.ProtoSubscription subscription = 3;</code>
-         */
-        public Builder setSubscription(
-            com.flipkart.vbroker.proto.ProtoSubscription.Builder builderForValue) {
-            if (subscriptionBuilder_ == null) {
-                subscription_ = builderForValue.build();
-                onChanged();
-            } else {
-                subscriptionBuilder_.setMessage(builderForValue.build());
             }
 
             return this;

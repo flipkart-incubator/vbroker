@@ -29,7 +29,9 @@ public class GetSubscriptionLagsRequestHandler implements RequestHandler {
         //TODO messageGroups with no corresponding subscriberGroups? (e.g., in L3?)
 
 
-        GetSubscriptionLagsRequest getSubscriptionLagsRequest = FlatbufUtils.getProtoRequest(vRequest).getGetSubscriptionLagsRequest();
+        GetSubscriptionLagsRequest getSubscriptionLagsRequest = FlatbufUtils
+            .getProtoRequest(vRequest)
+            .getGetSubscriptionLagsRequest();
         List<CompletionStage<SubscriptionLag>> subscriptionLagStages =
             getSubscriptionLagsRequest.getSubscriptionLagRequestsList().stream()
                 .map(subscriptionLagReq -> {
@@ -39,7 +41,8 @@ public class GetSubscriptionLagsRequestHandler implements RequestHandler {
                     return getSubscriptionLag(subscriptionId, topicId, partitionIds);
                 })
                 .collect(Collectors.toList());
-        return CompletionStageUtils.listOfStagesToStageOfList(subscriptionLagStages).thenApply(subscriptionLags -> generateVResponse(subscriptionLags, vRequest.correlationId()));
+        return CompletionStageUtils.listOfStagesToStageOfList(subscriptionLagStages)
+            .thenApply(subscriptionLags -> generateVResponse(subscriptionLags, vRequest.correlationId()));
     }
 
     private CompletionStage<SubscriptionLag> getSubscriptionLag(int subscriptionId,
@@ -64,8 +67,14 @@ public class GetSubscriptionLagsRequestHandler implements RequestHandler {
             .thenCompose(subscription -> subscriptionService.getPartSubscription(subscription, partitionId))
             .thenCompose(subscriptionService::getPartSubscriptionLag)
             .thenApply(lag -> {
-                VStatus vStatus = VStatus.newBuilder().setStatusCode(StatusCode.Success).setMessage("").build();
-                return PartitionLag.newBuilder().setPartitionId(partitionId).setLag(lag).setStatus(vStatus).build();
+                VStatus vStatus = VStatus.newBuilder()
+                    .setStatusCode(StatusCode.Success)
+                    .setMessage("").build();
+                return PartitionLag.newBuilder()
+                    .setPartitionId(partitionId)
+                    .setLag(lag)
+                    .setStatus(vStatus)
+                    .build();
             })
             .exceptionally(throwable -> {
                 log.debug("Catching an exception");

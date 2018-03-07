@@ -561,6 +561,21 @@ public final class GetClusterMetadataResponse extends
         /**
          * <code>.proto.ClusterMetadata clusterMetadata = 1;</code>
          */
+        public Builder setClusterMetadata(
+            com.flipkart.vbroker.proto.ClusterMetadata.Builder builderForValue) {
+            if (clusterMetadataBuilder_ == null) {
+                clusterMetadata_ = builderForValue.build();
+                onChanged();
+            } else {
+                clusterMetadataBuilder_.setMessage(builderForValue.build());
+            }
+
+            return this;
+        }
+
+        /**
+         * <code>.proto.ClusterMetadata clusterMetadata = 1;</code>
+         */
         public Builder setClusterMetadata(com.flipkart.vbroker.proto.ClusterMetadata value) {
             if (clusterMetadataBuilder_ == null) {
                 if (value == null) {
@@ -570,21 +585,6 @@ public final class GetClusterMetadataResponse extends
                 onChanged();
             } else {
                 clusterMetadataBuilder_.setMessage(value);
-            }
-
-            return this;
-        }
-
-        /**
-         * <code>.proto.ClusterMetadata clusterMetadata = 1;</code>
-         */
-        public Builder setClusterMetadata(
-            com.flipkart.vbroker.proto.ClusterMetadata.Builder builderForValue) {
-            if (clusterMetadataBuilder_ == null) {
-                clusterMetadata_ = builderForValue.build();
-                onChanged();
-            } else {
-                clusterMetadataBuilder_.setMessage(builderForValue.build());
             }
 
             return this;
@@ -683,6 +683,21 @@ public final class GetClusterMetadataResponse extends
         /**
          * <code>.proto.VStatus status = 2;</code>
          */
+        public Builder setStatus(
+            com.flipkart.vbroker.proto.VStatus.Builder builderForValue) {
+            if (statusBuilder_ == null) {
+                status_ = builderForValue.build();
+                onChanged();
+            } else {
+                statusBuilder_.setMessage(builderForValue.build());
+            }
+
+            return this;
+        }
+
+        /**
+         * <code>.proto.VStatus status = 2;</code>
+         */
         public Builder setStatus(com.flipkart.vbroker.proto.VStatus value) {
             if (statusBuilder_ == null) {
                 if (value == null) {
@@ -692,21 +707,6 @@ public final class GetClusterMetadataResponse extends
                 onChanged();
             } else {
                 statusBuilder_.setMessage(value);
-            }
-
-            return this;
-        }
-
-        /**
-         * <code>.proto.VStatus status = 2;</code>
-         */
-        public Builder setStatus(
-            com.flipkart.vbroker.proto.VStatus.Builder builderForValue) {
-            if (statusBuilder_ == null) {
-                status_ = builderForValue.build();
-                onChanged();
-            } else {
-                statusBuilder_.setMessage(builderForValue.build());
             }
 
             return this;

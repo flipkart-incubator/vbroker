@@ -57,7 +57,6 @@ public class NetworkClientImpl implements NetworkClient {
             VBrokerException ex = new BrokerUnAvailableException("BrokerNode: " + node + " is not available to connect");
             responseFuture.completeExceptionally(ex);
         } else {
-
             channel.writeAndFlush(request).addListener((ChannelFutureListener) future1 -> {
                 log.info("Finished writing request {} to channel", vRequest.correlationId());
             });

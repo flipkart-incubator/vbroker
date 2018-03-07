@@ -74,7 +74,7 @@ public class AbstractVBrokerBaseTest {
     public void setUp() throws IOException {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             log.info("Handled Shutdown SIGNAL. Shutting down the test suite safely");
-            AbstractVBrokerBaseTest.tearDown();
+            tearDown();
             log.info("Shutdown done safely");
         }));
 

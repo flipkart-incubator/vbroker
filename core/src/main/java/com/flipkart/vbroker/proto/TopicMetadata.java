@@ -608,6 +608,21 @@ public final class TopicMetadata extends
         /**
          * <code>.proto.ProtoTopic topic = 1;</code>
          */
+        public Builder setTopic(
+            com.flipkart.vbroker.proto.ProtoTopic.Builder builderForValue) {
+            if (topicBuilder_ == null) {
+                topic_ = builderForValue.build();
+                onChanged();
+            } else {
+                topicBuilder_.setMessage(builderForValue.build());
+            }
+
+            return this;
+        }
+
+        /**
+         * <code>.proto.ProtoTopic topic = 1;</code>
+         */
         public Builder setTopic(com.flipkart.vbroker.proto.ProtoTopic value) {
             if (topicBuilder_ == null) {
                 if (value == null) {
@@ -617,21 +632,6 @@ public final class TopicMetadata extends
                 onChanged();
             } else {
                 topicBuilder_.setMessage(value);
-            }
-
-            return this;
-        }
-
-        /**
-         * <code>.proto.ProtoTopic topic = 1;</code>
-         */
-        public Builder setTopic(
-            com.flipkart.vbroker.proto.ProtoTopic.Builder builderForValue) {
-            if (topicBuilder_ == null) {
-                topic_ = builderForValue.build();
-                onChanged();
-            } else {
-                topicBuilder_.setMessage(builderForValue.build());
             }
 
             return this;
