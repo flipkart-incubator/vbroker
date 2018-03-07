@@ -8,17 +8,17 @@ public interface TopicMetadataOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional .proto.ProtoTopic topic = 1;</code>
+     * <code>.proto.ProtoTopic topic = 1;</code>
      */
     boolean hasTopic();
 
     /**
-     * <code>optional .proto.ProtoTopic topic = 1;</code>
+     * <code>.proto.ProtoTopic topic = 1;</code>
      */
     com.flipkart.vbroker.proto.ProtoTopic getTopic();
 
     /**
-     * <code>optional .proto.ProtoTopic topic = 1;</code>
+     * <code>.proto.ProtoTopic topic = 1;</code>
      */
     com.flipkart.vbroker.proto.ProtoTopicOrBuilder getTopicOrBuilder();
 

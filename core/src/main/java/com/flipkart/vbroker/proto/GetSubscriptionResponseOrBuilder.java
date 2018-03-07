@@ -8,32 +8,32 @@ public interface GetSubscriptionResponseOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional .proto.ProtoSubscription subscription = 1;</code>
+     * <code>.proto.ProtoSubscription subscription = 1;</code>
      */
     boolean hasSubscription();
 
     /**
-     * <code>optional .proto.ProtoSubscription subscription = 1;</code>
+     * <code>.proto.ProtoSubscription subscription = 1;</code>
      */
     com.flipkart.vbroker.proto.ProtoSubscription getSubscription();
 
     /**
-     * <code>optional .proto.ProtoSubscription subscription = 1;</code>
+     * <code>.proto.ProtoSubscription subscription = 1;</code>
      */
     com.flipkart.vbroker.proto.ProtoSubscriptionOrBuilder getSubscriptionOrBuilder();
 
     /**
-     * <code>optional .proto.VStatus status = 2;</code>
+     * <code>.proto.VStatus status = 2;</code>
      */
     boolean hasStatus();
 
     /**
-     * <code>optional .proto.VStatus status = 2;</code>
+     * <code>.proto.VStatus status = 2;</code>
      */
     com.flipkart.vbroker.proto.VStatus getStatus();
 
     /**
-     * <code>optional .proto.VStatus status = 2;</code>
+     * <code>.proto.VStatus status = 2;</code>
      */
     com.flipkart.vbroker.proto.VStatusOrBuilder getStatusOrBuilder();
 }

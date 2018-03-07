@@ -8,112 +8,167 @@ public interface ProtoRequestOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional .proto.CreateTopicsRequest createTopicsRequest = 1;</code>
+     * <code>.proto.CreateTopicsRequest createTopicsRequest = 1;</code>
+     */
+    boolean hasCreateTopicsRequest();
+
+    /**
+     * <code>.proto.CreateTopicsRequest createTopicsRequest = 1;</code>
      */
     com.flipkart.vbroker.proto.CreateTopicsRequest getCreateTopicsRequest();
 
     /**
-     * <code>optional .proto.CreateTopicsRequest createTopicsRequest = 1;</code>
+     * <code>.proto.CreateTopicsRequest createTopicsRequest = 1;</code>
      */
     com.flipkart.vbroker.proto.CreateTopicsRequestOrBuilder getCreateTopicsRequestOrBuilder();
 
     /**
-     * <code>optional .proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
+     * <code>.proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
+     */
+    boolean hasCreateSubscriptionsRequest();
+
+    /**
+     * <code>.proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
      */
     com.flipkart.vbroker.proto.CreateSubscriptionsRequest getCreateSubscriptionsRequest();
 
     /**
-     * <code>optional .proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
+     * <code>.proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
      */
     com.flipkart.vbroker.proto.CreateSubscriptionsRequestOrBuilder getCreateSubscriptionsRequestOrBuilder();
 
     /**
-     * <code>optional .proto.CreateQueuesRequest createQueuesRequest = 3;</code>
+     * <code>.proto.CreateQueuesRequest createQueuesRequest = 3;</code>
+     */
+    boolean hasCreateQueuesRequest();
+
+    /**
+     * <code>.proto.CreateQueuesRequest createQueuesRequest = 3;</code>
      */
     com.flipkart.vbroker.proto.CreateQueuesRequest getCreateQueuesRequest();
 
     /**
-     * <code>optional .proto.CreateQueuesRequest createQueuesRequest = 3;</code>
+     * <code>.proto.CreateQueuesRequest createQueuesRequest = 3;</code>
      */
     com.flipkart.vbroker.proto.CreateQueuesRequestOrBuilder getCreateQueuesRequestOrBuilder();
 
     /**
-     * <code>optional .proto.GetTopicsRequest getTopicsRequest = 4;</code>
+     * <code>.proto.GetTopicsRequest getTopicsRequest = 4;</code>
+     */
+    boolean hasGetTopicsRequest();
+
+    /**
+     * <code>.proto.GetTopicsRequest getTopicsRequest = 4;</code>
      */
     com.flipkart.vbroker.proto.GetTopicsRequest getGetTopicsRequest();
 
     /**
-     * <code>optional .proto.GetTopicsRequest getTopicsRequest = 4;</code>
+     * <code>.proto.GetTopicsRequest getTopicsRequest = 4;</code>
      */
     com.flipkart.vbroker.proto.GetTopicsRequestOrBuilder getGetTopicsRequestOrBuilder();
 
     /**
-     * <code>optional .proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
+     * <code>.proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
+     */
+    boolean hasGetAllTopicsRequest();
+
+    /**
+     * <code>.proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
      */
     com.flipkart.vbroker.proto.GetAllTopicsRequest getGetAllTopicsRequest();
 
     /**
-     * <code>optional .proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
+     * <code>.proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
      */
     com.flipkart.vbroker.proto.GetAllTopicsRequestOrBuilder getGetAllTopicsRequestOrBuilder();
 
     /**
-     * <code>optional .proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
+     * <code>.proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
+     */
+    boolean hasGetSubscriptionsRequest();
+
+    /**
+     * <code>.proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
      */
     com.flipkart.vbroker.proto.GetSubscriptionsRequest getGetSubscriptionsRequest();
 
     /**
-     * <code>optional .proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
+     * <code>.proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
      */
     com.flipkart.vbroker.proto.GetSubscriptionsRequestOrBuilder getGetSubscriptionsRequestOrBuilder();
 
     /**
-     * <code>optional .proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
+     * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
+     */
+    boolean hasGetAllSubscriptionsForTopicsRequest();
+
+    /**
+     * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
      */
     com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest getGetAllSubscriptionsForTopicsRequest();
 
     /**
-     * <code>optional .proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
+     * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
      */
     com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequestOrBuilder getGetAllSubscriptionsForTopicsRequestOrBuilder();
 
     /**
-     * <code>optional .proto.GetQueuesRequest getQueuesRequest = 8;</code>
+     * <code>.proto.GetQueuesRequest getQueuesRequest = 8;</code>
+     */
+    boolean hasGetQueuesRequest();
+
+    /**
+     * <code>.proto.GetQueuesRequest getQueuesRequest = 8;</code>
      */
     com.flipkart.vbroker.proto.GetQueuesRequest getGetQueuesRequest();
 
     /**
-     * <code>optional .proto.GetQueuesRequest getQueuesRequest = 8;</code>
+     * <code>.proto.GetQueuesRequest getQueuesRequest = 8;</code>
      */
     com.flipkart.vbroker.proto.GetQueuesRequestOrBuilder getGetQueuesRequestOrBuilder();
 
     /**
-     * <code>optional .proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
+     * <code>.proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
+     */
+    boolean hasGetAllQueuesRequest();
+
+    /**
+     * <code>.proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
      */
     com.flipkart.vbroker.proto.GetAllQueuesRequest getGetAllQueuesRequest();
 
     /**
-     * <code>optional .proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
+     * <code>.proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
      */
     com.flipkart.vbroker.proto.GetAllQueuesRequestOrBuilder getGetAllQueuesRequestOrBuilder();
 
     /**
-     * <code>optional .proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
+     * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
+     */
+    boolean hasGetSubscriptionLagsRequest();
+
+    /**
+     * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
      */
     com.flipkart.vbroker.proto.GetSubscriptionLagsRequest getGetSubscriptionLagsRequest();
 
     /**
-     * <code>optional .proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
+     * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
      */
     com.flipkart.vbroker.proto.GetSubscriptionLagsRequestOrBuilder getGetSubscriptionLagsRequestOrBuilder();
 
     /**
-     * <code>optional .proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
+     * <code>.proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
+     */
+    boolean hasGetClusterMetadataRequest();
+
+    /**
+     * <code>.proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
      */
     com.flipkart.vbroker.proto.GetClusterMetadataRequest getGetClusterMetadataRequest();
 
     /**
-     * <code>optional .proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
+     * <code>.proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
      */
     com.flipkart.vbroker.proto.GetClusterMetadataRequestOrBuilder getGetClusterMetadataRequestOrBuilder();
 

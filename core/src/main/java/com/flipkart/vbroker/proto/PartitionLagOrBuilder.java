@@ -8,27 +8,27 @@ public interface PartitionLagOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional int32 partitionId = 1;</code>
+     * <code>int32 partitionId = 1;</code>
      */
     int getPartitionId();
 
     /**
-     * <code>optional int32 lag = 2;</code>
+     * <code>int32 lag = 2;</code>
      */
     int getLag();
 
     /**
-     * <code>optional .proto.VStatus status = 3;</code>
+     * <code>.proto.VStatus status = 3;</code>
      */
     boolean hasStatus();
 
     /**
-     * <code>optional .proto.VStatus status = 3;</code>
+     * <code>.proto.VStatus status = 3;</code>
      */
     com.flipkart.vbroker.proto.VStatus getStatus();
 
     /**
-     * <code>optional .proto.VStatus status = 3;</code>
+     * <code>.proto.VStatus status = 3;</code>
      */
     com.flipkart.vbroker.proto.VStatusOrBuilder getStatusOrBuilder();
 }

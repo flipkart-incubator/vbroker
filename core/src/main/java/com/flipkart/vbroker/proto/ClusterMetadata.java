@@ -48,7 +48,12 @@ public final class ClusterMetadata extends
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
         this();
+        if (extensionRegistry == null) {
+            throw new java.lang.NullPointerException();
+        }
         int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
         try {
             boolean done = false;
             while (!done) {
@@ -58,7 +63,8 @@ public final class ClusterMetadata extends
                         done = true;
                         break;
                     default: {
-                        if (!input.skipField(tag)) {
+                        if (!parseUnknownFieldProto3(
+                            input, unknownFields, extensionRegistry, tag)) {
                             done = true;
                         }
                         break;
@@ -95,6 +101,7 @@ public final class ClusterMetadata extends
             if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
                 nodes_ = java.util.Collections.unmodifiableList(nodes_);
             }
+            this.unknownFields = unknownFields.build();
             makeExtensionsImmutable();
         }
     }
@@ -102,6 +109,19 @@ public final class ClusterMetadata extends
     public static final com.google.protobuf.Descriptors.Descriptor
     getDescriptor() {
         return com.flipkart.vbroker.proto.PEntities.internal_static_proto_ClusterMetadata_descriptor;
+    }
+
+    public static com.flipkart.vbroker.proto.ClusterMetadata parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+    }
+
+    public static com.flipkart.vbroker.proto.ClusterMetadata parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
     }
 
     public static com.flipkart.vbroker.proto.ClusterMetadata parseFrom(
@@ -191,7 +211,7 @@ public final class ClusterMetadata extends
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
-        return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+        return this.unknownFields;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -292,6 +312,7 @@ public final class ClusterMetadata extends
         for (int i = 0; i < nodes_.size(); i++) {
             output.writeMessage(2, nodes_.get(i));
         }
+        unknownFields.writeTo(output);
     }
 
     public int getSerializedSize() {
@@ -307,6 +328,7 @@ public final class ClusterMetadata extends
             size += com.google.protobuf.CodedOutputStream
                 .computeMessageSize(2, nodes_.get(i));
         }
+        size += unknownFields.getSerializedSize();
         memoizedSize = size;
         return size;
     }
@@ -326,6 +348,7 @@ public final class ClusterMetadata extends
             .equals(other.getTopicMetadatasList());
         result = result && getNodesList()
             .equals(other.getNodesList());
+        result = result && unknownFields.equals(other.unknownFields);
         return result;
     }
 
@@ -335,7 +358,7 @@ public final class ClusterMetadata extends
             return memoizedHashCode;
         }
         int hash = 41;
-        hash = (19 * hash) + getDescriptorForType().hashCode();
+        hash = (19 * hash) + getDescriptor().hashCode();
         if (getTopicMetadatasCount() > 0) {
             hash = (37 * hash) + TOPICMETADATAS_FIELD_NUMBER;
             hash = (53 * hash) + getTopicMetadatasList().hashCode();
@@ -487,7 +510,7 @@ public final class ClusterMetadata extends
 
         public Builder setField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            Object value) {
+            java.lang.Object value) {
             return (Builder) super.setField(field, value);
         }
 
@@ -503,13 +526,13 @@ public final class ClusterMetadata extends
 
         public Builder setRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            int index, Object value) {
+            int index, java.lang.Object value) {
             return (Builder) super.setRepeatedField(field, index, value);
         }
 
         public Builder addRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            Object value) {
+            java.lang.Object value) {
             return (Builder) super.addRepeatedField(field, value);
         }
 
@@ -576,6 +599,7 @@ public final class ClusterMetadata extends
                     }
                 }
             }
+            this.mergeUnknownFields(other.unknownFields);
             onChanged();
             return this;
         }
@@ -1112,12 +1136,12 @@ public final class ClusterMetadata extends
 
         public final Builder setUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
-            return this;
+            return super.setUnknownFieldsProto3(unknownFields);
         }
 
         public final Builder mergeUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
-            return this;
+            return super.mergeUnknownFields(unknownFields);
         }
 
 

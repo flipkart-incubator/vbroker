@@ -8,32 +8,32 @@ public interface GetClusterMetadataResponseOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional .proto.ClusterMetadata clusterMetadata = 1;</code>
+     * <code>.proto.ClusterMetadata clusterMetadata = 1;</code>
      */
     boolean hasClusterMetadata();
 
     /**
-     * <code>optional .proto.ClusterMetadata clusterMetadata = 1;</code>
+     * <code>.proto.ClusterMetadata clusterMetadata = 1;</code>
      */
     com.flipkart.vbroker.proto.ClusterMetadata getClusterMetadata();
 
     /**
-     * <code>optional .proto.ClusterMetadata clusterMetadata = 1;</code>
+     * <code>.proto.ClusterMetadata clusterMetadata = 1;</code>
      */
     com.flipkart.vbroker.proto.ClusterMetadataOrBuilder getClusterMetadataOrBuilder();
 
     /**
-     * <code>optional .proto.VStatus status = 2;</code>
+     * <code>.proto.VStatus status = 2;</code>
      */
     boolean hasStatus();
 
     /**
-     * <code>optional .proto.VStatus status = 2;</code>
+     * <code>.proto.VStatus status = 2;</code>
      */
     com.flipkart.vbroker.proto.VStatus getStatus();
 
     /**
-     * <code>optional .proto.VStatus status = 2;</code>
+     * <code>.proto.VStatus status = 2;</code>
      */
     com.flipkart.vbroker.proto.VStatusOrBuilder getStatusOrBuilder();
 }

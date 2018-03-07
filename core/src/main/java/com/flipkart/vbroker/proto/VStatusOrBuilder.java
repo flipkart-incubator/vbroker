@@ -8,17 +8,17 @@ public interface VStatusOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional int32 statusCode = 1;</code>
+     * <code>int32 statusCode = 1;</code>
      */
     int getStatusCode();
 
     /**
-     * <code>optional string message = 2;</code>
+     * <code>string message = 2;</code>
      */
     java.lang.String getMessage();
 
     /**
-     * <code>optional string message = 2;</code>
+     * <code>string message = 2;</code>
      */
     com.google.protobuf.ByteString
     getMessageBytes();

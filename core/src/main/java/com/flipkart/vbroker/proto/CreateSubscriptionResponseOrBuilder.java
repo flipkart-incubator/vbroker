@@ -8,33 +8,33 @@ public interface CreateSubscriptionResponseOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional int32 topicId = 2;</code>
+     * <code>int32 topicId = 2;</code>
      */
     int getTopicId();
 
     /**
-     * <code>optional string name = 3;</code>
+     * <code>string name = 3;</code>
      */
     java.lang.String getName();
 
     /**
-     * <code>optional string name = 3;</code>
+     * <code>string name = 3;</code>
      */
     com.google.protobuf.ByteString
     getNameBytes();
 
     /**
-     * <code>optional .proto.VStatus status = 4;</code>
+     * <code>.proto.VStatus status = 4;</code>
      */
     boolean hasStatus();
 
     /**
-     * <code>optional .proto.VStatus status = 4;</code>
+     * <code>.proto.VStatus status = 4;</code>
      */
     com.flipkart.vbroker.proto.VStatus getStatus();
 
     /**
-     * <code>optional .proto.VStatus status = 4;</code>
+     * <code>.proto.VStatus status = 4;</code>
      */
     com.flipkart.vbroker.proto.VStatusOrBuilder getStatusOrBuilder();
 }

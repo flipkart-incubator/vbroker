@@ -8,17 +8,17 @@ public interface PartitionMetadataOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional int32 id = 1;</code>
+     * <code>int32 id = 1;</code>
      */
     int getId();
 
     /**
-     * <code>optional int32 topicId = 2;</code>
+     * <code>int32 topicId = 2;</code>
      */
     int getTopicId();
 
     /**
-     * <code>optional int32 leaderId = 3;</code>
+     * <code>int32 leaderId = 3;</code>
      */
     int getLeaderId();
 

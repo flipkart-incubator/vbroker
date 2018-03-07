@@ -34,6 +34,7 @@ public final class CreateTopicsRequest extends
 
     private java.util.List<com.flipkart.vbroker.proto.ProtoTopic> topics_;
     private byte memoizedIsInitialized = -1;
+
     // Use CreateTopicsRequest.newBuilder() to construct.
     private CreateTopicsRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
@@ -48,7 +49,12 @@ public final class CreateTopicsRequest extends
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
         this();
+        if (extensionRegistry == null) {
+            throw new java.lang.NullPointerException();
+        }
         int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
         try {
             boolean done = false;
             while (!done) {
@@ -58,7 +64,8 @@ public final class CreateTopicsRequest extends
                         done = true;
                         break;
                     default: {
-                        if (!input.skipField(tag)) {
+                        if (!parseUnknownFieldProto3(
+                            input, unknownFields, extensionRegistry, tag)) {
                             done = true;
                         }
                         break;
@@ -83,6 +90,7 @@ public final class CreateTopicsRequest extends
             if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
                 topics_ = java.util.Collections.unmodifiableList(topics_);
             }
+            this.unknownFields = unknownFields.build();
             makeExtensionsImmutable();
         }
     }
@@ -90,6 +98,19 @@ public final class CreateTopicsRequest extends
     public static final com.google.protobuf.Descriptors.Descriptor
     getDescriptor() {
         return com.flipkart.vbroker.proto.PRequests.internal_static_proto_CreateTopicsRequest_descriptor;
+    }
+
+    public static com.flipkart.vbroker.proto.CreateTopicsRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+    }
+
+    public static com.flipkart.vbroker.proto.CreateTopicsRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
     }
 
     public static com.flipkart.vbroker.proto.CreateTopicsRequest parseFrom(
@@ -179,7 +200,7 @@ public final class CreateTopicsRequest extends
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
-        return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+        return this.unknownFields;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -240,6 +261,7 @@ public final class CreateTopicsRequest extends
         for (int i = 0; i < topics_.size(); i++) {
             output.writeMessage(1, topics_.get(i));
         }
+        unknownFields.writeTo(output);
     }
 
     public int getSerializedSize() {
@@ -251,6 +273,7 @@ public final class CreateTopicsRequest extends
             size += com.google.protobuf.CodedOutputStream
                 .computeMessageSize(1, topics_.get(i));
         }
+        size += unknownFields.getSerializedSize();
         memoizedSize = size;
         return size;
     }
@@ -268,6 +291,7 @@ public final class CreateTopicsRequest extends
         boolean result = true;
         result = result && getTopicsList()
             .equals(other.getTopicsList());
+        result = result && unknownFields.equals(other.unknownFields);
         return result;
     }
 
@@ -277,7 +301,7 @@ public final class CreateTopicsRequest extends
             return memoizedHashCode;
         }
         int hash = 41;
-        hash = (19 * hash) + getDescriptorForType().hashCode();
+        hash = (19 * hash) + getDescriptor().hashCode();
         if (getTopicsCount() > 0) {
             hash = (37 * hash) + TOPICS_FIELD_NUMBER;
             hash = (53 * hash) + getTopicsList().hashCode();
@@ -409,7 +433,7 @@ public final class CreateTopicsRequest extends
 
         public Builder setField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            Object value) {
+            java.lang.Object value) {
             return (Builder) super.setField(field, value);
         }
 
@@ -425,13 +449,13 @@ public final class CreateTopicsRequest extends
 
         public Builder setRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            int index, Object value) {
+            int index, java.lang.Object value) {
             return (Builder) super.setRepeatedField(field, index, value);
         }
 
         public Builder addRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            Object value) {
+            java.lang.Object value) {
             return (Builder) super.addRepeatedField(field, value);
         }
 
@@ -472,6 +496,7 @@ public final class CreateTopicsRequest extends
                     }
                 }
             }
+            this.mergeUnknownFields(other.unknownFields);
             onChanged();
             return this;
         }
@@ -754,12 +779,12 @@ public final class CreateTopicsRequest extends
 
         public final Builder setUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
-            return this;
+            return super.setUnknownFieldsProto3(unknownFields);
         }
 
         public final Builder mergeUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
-            return this;
+            return super.mergeUnknownFields(unknownFields);
         }
 
 

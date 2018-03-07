@@ -8,43 +8,43 @@ public interface ProtoTopicOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional string name = 1;</code>
+     * <code>string name = 1;</code>
      */
     java.lang.String getName();
 
     /**
-     * <code>optional string name = 1;</code>
+     * <code>string name = 1;</code>
      */
     com.google.protobuf.ByteString
     getNameBytes();
 
     /**
-     * <code>optional int32 id = 2;</code>
+     * <code>int32 id = 2;</code>
      */
     int getId();
 
     /**
-     * <code>optional bool grouped = 3;</code>
+     * <code>bool grouped = 3;</code>
      */
     boolean getGrouped();
 
     /**
-     * <code>optional int32 partitions = 4;</code>
+     * <code>int32 partitions = 4;</code>
      */
     int getPartitions();
 
     /**
-     * <code>optional int32 replicationFactor = 5;</code>
+     * <code>int32 replicationFactor = 5;</code>
      */
     int getReplicationFactor();
 
     /**
-     * <code>optional .proto.TopicCategory topicCategory = 6;</code>
+     * <code>.proto.TopicCategory topicCategory = 6;</code>
      */
     int getTopicCategoryValue();
 
     /**
-     * <code>optional .proto.TopicCategory topicCategory = 6;</code>
+     * <code>.proto.TopicCategory topicCategory = 6;</code>
      */
     com.flipkart.vbroker.proto.TopicCategory getTopicCategory();
 }

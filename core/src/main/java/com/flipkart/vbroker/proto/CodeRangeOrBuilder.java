@@ -8,12 +8,12 @@ public interface CodeRangeOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional int32 from = 1;</code>
+     * <code>int32 from = 1;</code>
      */
     int getFrom();
 
     /**
-     * <code>optional int32 to = 2;</code>
+     * <code>int32 to = 2;</code>
      */
     int getTo();
 }

@@ -8,23 +8,23 @@ public interface FilterKeyValuesOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional string key = 1;</code>
+     * <code>string key = 1;</code>
      */
     java.lang.String getKey();
 
     /**
-     * <code>optional string key = 1;</code>
+     * <code>string key = 1;</code>
      */
     com.google.protobuf.ByteString
     getKeyBytes();
 
     /**
-     * <code>optional string values = 2;</code>
+     * <code>string values = 2;</code>
      */
     java.lang.String getValues();
 
     /**
-     * <code>optional string values = 2;</code>
+     * <code>string values = 2;</code>
      */
     com.google.protobuf.ByteString
     getValuesBytes();

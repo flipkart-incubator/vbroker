@@ -36,6 +36,8 @@ public class FlatbufUtils {
     public static ProtoRequest getProtoRequest(VRequest vRequest) {
         try {
             ControlRequest controlRequest = (ControlRequest) vRequest.requestMessage(new ControlRequest());
+            //assert nonNull(controlRequest);
+
             byte[] protoRequestBytes = ByteBufUtils.getBytes(controlRequest.payloadAsByteBuffer());
             return ProtoRequest.parseFrom(protoRequestBytes);
         } catch (InvalidProtocolBufferException e) {

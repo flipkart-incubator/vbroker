@@ -40,6 +40,7 @@ public final class ProtoTopic extends
     private int replicationFactor_;
     private int topicCategory_;
     private byte memoizedIsInitialized = -1;
+
     // Use ProtoTopic.newBuilder() to construct.
     private ProtoTopic(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
@@ -59,7 +60,12 @@ public final class ProtoTopic extends
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
         this();
+        if (extensionRegistry == null) {
+            throw new java.lang.NullPointerException();
+        }
         int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
         try {
             boolean done = false;
             while (!done) {
@@ -69,7 +75,8 @@ public final class ProtoTopic extends
                         done = true;
                         break;
                     default: {
-                        if (!input.skipField(tag)) {
+                        if (!parseUnknownFieldProto3(
+                            input, unknownFields, extensionRegistry, tag)) {
                             done = true;
                         }
                         break;
@@ -114,6 +121,7 @@ public final class ProtoTopic extends
             throw new com.google.protobuf.InvalidProtocolBufferException(
                 e).setUnfinishedMessage(this);
         } finally {
+            this.unknownFields = unknownFields.build();
             makeExtensionsImmutable();
         }
     }
@@ -121,6 +129,19 @@ public final class ProtoTopic extends
     public static final com.google.protobuf.Descriptors.Descriptor
     getDescriptor() {
         return com.flipkart.vbroker.proto.PEntities.internal_static_proto_ProtoTopic_descriptor;
+    }
+
+    public static com.flipkart.vbroker.proto.ProtoTopic parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+    }
+
+    public static com.flipkart.vbroker.proto.ProtoTopic parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
     }
 
     public static com.flipkart.vbroker.proto.ProtoTopic parseFrom(
@@ -210,7 +231,7 @@ public final class ProtoTopic extends
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
-        return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+        return this.unknownFields;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -221,7 +242,7 @@ public final class ProtoTopic extends
     }
 
     /**
-     * <code>optional string name = 1;</code>
+     * <code>string name = 1;</code>
      */
     public java.lang.String getName() {
         java.lang.Object ref = name_;
@@ -237,7 +258,7 @@ public final class ProtoTopic extends
     }
 
     /**
-     * <code>optional string name = 1;</code>
+     * <code>string name = 1;</code>
      */
     public com.google.protobuf.ByteString
     getNameBytes() {
@@ -254,42 +275,42 @@ public final class ProtoTopic extends
     }
 
     /**
-     * <code>optional int32 id = 2;</code>
+     * <code>int32 id = 2;</code>
      */
     public int getId() {
         return id_;
     }
 
     /**
-     * <code>optional bool grouped = 3;</code>
+     * <code>bool grouped = 3;</code>
      */
     public boolean getGrouped() {
         return grouped_;
     }
 
     /**
-     * <code>optional int32 partitions = 4;</code>
+     * <code>int32 partitions = 4;</code>
      */
     public int getPartitions() {
         return partitions_;
     }
 
     /**
-     * <code>optional int32 replicationFactor = 5;</code>
+     * <code>int32 replicationFactor = 5;</code>
      */
     public int getReplicationFactor() {
         return replicationFactor_;
     }
 
     /**
-     * <code>optional .proto.TopicCategory topicCategory = 6;</code>
+     * <code>.proto.TopicCategory topicCategory = 6;</code>
      */
     public int getTopicCategoryValue() {
         return topicCategory_;
     }
 
     /**
-     * <code>optional .proto.TopicCategory topicCategory = 6;</code>
+     * <code>.proto.TopicCategory topicCategory = 6;</code>
      */
     public com.flipkart.vbroker.proto.TopicCategory getTopicCategory() {
         com.flipkart.vbroker.proto.TopicCategory result = com.flipkart.vbroker.proto.TopicCategory.valueOf(topicCategory_);
@@ -325,6 +346,7 @@ public final class ProtoTopic extends
         if (topicCategory_ != com.flipkart.vbroker.proto.TopicCategory.QUEUE.getNumber()) {
             output.writeEnum(6, topicCategory_);
         }
+        unknownFields.writeTo(output);
     }
 
     public int getSerializedSize() {
@@ -355,6 +377,7 @@ public final class ProtoTopic extends
             size += com.google.protobuf.CodedOutputStream
                 .computeEnumSize(6, topicCategory_);
         }
+        size += unknownFields.getSerializedSize();
         memoizedSize = size;
         return size;
     }
@@ -381,6 +404,7 @@ public final class ProtoTopic extends
         result = result && (getReplicationFactor()
             == other.getReplicationFactor());
         result = result && topicCategory_ == other.topicCategory_;
+        result = result && unknownFields.equals(other.unknownFields);
         return result;
     }
 
@@ -390,7 +414,7 @@ public final class ProtoTopic extends
             return memoizedHashCode;
         }
         int hash = 41;
-        hash = (19 * hash) + getDescriptorForType().hashCode();
+        hash = (19 * hash) + getDescriptor().hashCode();
         hash = (37 * hash) + NAME_FIELD_NUMBER;
         hash = (53 * hash) + getName().hashCode();
         hash = (37 * hash) + ID_FIELD_NUMBER;
@@ -529,7 +553,7 @@ public final class ProtoTopic extends
 
         public Builder setField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            Object value) {
+            java.lang.Object value) {
             return (Builder) super.setField(field, value);
         }
 
@@ -545,13 +569,13 @@ public final class ProtoTopic extends
 
         public Builder setRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            int index, Object value) {
+            int index, java.lang.Object value) {
             return (Builder) super.setRepeatedField(field, index, value);
         }
 
         public Builder addRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            Object value) {
+            java.lang.Object value) {
             return (Builder) super.addRepeatedField(field, value);
         }
 
@@ -585,6 +609,7 @@ public final class ProtoTopic extends
             if (other.topicCategory_ != 0) {
                 setTopicCategoryValue(other.getTopicCategoryValue());
             }
+            this.mergeUnknownFields(other.unknownFields);
             onChanged();
             return this;
         }
@@ -612,7 +637,7 @@ public final class ProtoTopic extends
         }
 
         /**
-         * <code>optional string name = 1;</code>
+         * <code>string name = 1;</code>
          */
         public java.lang.String getName() {
             java.lang.Object ref = name_;
@@ -628,7 +653,7 @@ public final class ProtoTopic extends
         }
 
         /**
-         * <code>optional string name = 1;</code>
+         * <code>string name = 1;</code>
          */
         public Builder setName(
             java.lang.String value) {
@@ -642,7 +667,7 @@ public final class ProtoTopic extends
         }
 
         /**
-         * <code>optional string name = 1;</code>
+         * <code>string name = 1;</code>
          */
         public com.google.protobuf.ByteString
         getNameBytes() {
@@ -659,7 +684,7 @@ public final class ProtoTopic extends
         }
 
         /**
-         * <code>optional string name = 1;</code>
+         * <code>string name = 1;</code>
          */
         public Builder setNameBytes(
             com.google.protobuf.ByteString value) {
@@ -674,7 +699,7 @@ public final class ProtoTopic extends
         }
 
         /**
-         * <code>optional string name = 1;</code>
+         * <code>string name = 1;</code>
          */
         public Builder clearName() {
 
@@ -684,14 +709,14 @@ public final class ProtoTopic extends
         }
 
         /**
-         * <code>optional int32 id = 2;</code>
+         * <code>int32 id = 2;</code>
          */
         public int getId() {
             return id_;
         }
 
         /**
-         * <code>optional int32 id = 2;</code>
+         * <code>int32 id = 2;</code>
          */
         public Builder setId(int value) {
 
@@ -701,7 +726,7 @@ public final class ProtoTopic extends
         }
 
         /**
-         * <code>optional int32 id = 2;</code>
+         * <code>int32 id = 2;</code>
          */
         public Builder clearId() {
 
@@ -711,14 +736,14 @@ public final class ProtoTopic extends
         }
 
         /**
-         * <code>optional bool grouped = 3;</code>
+         * <code>bool grouped = 3;</code>
          */
         public boolean getGrouped() {
             return grouped_;
         }
 
         /**
-         * <code>optional bool grouped = 3;</code>
+         * <code>bool grouped = 3;</code>
          */
         public Builder setGrouped(boolean value) {
 
@@ -728,7 +753,7 @@ public final class ProtoTopic extends
         }
 
         /**
-         * <code>optional bool grouped = 3;</code>
+         * <code>bool grouped = 3;</code>
          */
         public Builder clearGrouped() {
 
@@ -738,14 +763,14 @@ public final class ProtoTopic extends
         }
 
         /**
-         * <code>optional int32 partitions = 4;</code>
+         * <code>int32 partitions = 4;</code>
          */
         public int getPartitions() {
             return partitions_;
         }
 
         /**
-         * <code>optional int32 partitions = 4;</code>
+         * <code>int32 partitions = 4;</code>
          */
         public Builder setPartitions(int value) {
 
@@ -755,7 +780,7 @@ public final class ProtoTopic extends
         }
 
         /**
-         * <code>optional int32 partitions = 4;</code>
+         * <code>int32 partitions = 4;</code>
          */
         public Builder clearPartitions() {
 
@@ -765,14 +790,14 @@ public final class ProtoTopic extends
         }
 
         /**
-         * <code>optional int32 replicationFactor = 5;</code>
+         * <code>int32 replicationFactor = 5;</code>
          */
         public int getReplicationFactor() {
             return replicationFactor_;
         }
 
         /**
-         * <code>optional int32 replicationFactor = 5;</code>
+         * <code>int32 replicationFactor = 5;</code>
          */
         public Builder setReplicationFactor(int value) {
 
@@ -782,7 +807,7 @@ public final class ProtoTopic extends
         }
 
         /**
-         * <code>optional int32 replicationFactor = 5;</code>
+         * <code>int32 replicationFactor = 5;</code>
          */
         public Builder clearReplicationFactor() {
 
@@ -792,14 +817,14 @@ public final class ProtoTopic extends
         }
 
         /**
-         * <code>optional .proto.TopicCategory topicCategory = 6;</code>
+         * <code>.proto.TopicCategory topicCategory = 6;</code>
          */
         public int getTopicCategoryValue() {
             return topicCategory_;
         }
 
         /**
-         * <code>optional .proto.TopicCategory topicCategory = 6;</code>
+         * <code>.proto.TopicCategory topicCategory = 6;</code>
          */
         public Builder setTopicCategoryValue(int value) {
             topicCategory_ = value;
@@ -808,7 +833,7 @@ public final class ProtoTopic extends
         }
 
         /**
-         * <code>optional .proto.TopicCategory topicCategory = 6;</code>
+         * <code>.proto.TopicCategory topicCategory = 6;</code>
          */
         public com.flipkart.vbroker.proto.TopicCategory getTopicCategory() {
             com.flipkart.vbroker.proto.TopicCategory result = com.flipkart.vbroker.proto.TopicCategory.valueOf(topicCategory_);
@@ -816,7 +841,7 @@ public final class ProtoTopic extends
         }
 
         /**
-         * <code>optional .proto.TopicCategory topicCategory = 6;</code>
+         * <code>.proto.TopicCategory topicCategory = 6;</code>
          */
         public Builder setTopicCategory(com.flipkart.vbroker.proto.TopicCategory value) {
             if (value == null) {
@@ -829,7 +854,7 @@ public final class ProtoTopic extends
         }
 
         /**
-         * <code>optional .proto.TopicCategory topicCategory = 6;</code>
+         * <code>.proto.TopicCategory topicCategory = 6;</code>
          */
         public Builder clearTopicCategory() {
 
@@ -840,12 +865,12 @@ public final class ProtoTopic extends
 
         public final Builder setUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
-            return this;
+            return super.setUnknownFieldsProto3(unknownFields);
         }
 
         public final Builder mergeUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
-            return this;
+            return super.mergeUnknownFields(unknownFields);
         }
 
 

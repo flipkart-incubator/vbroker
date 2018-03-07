@@ -12,7 +12,7 @@ public interface CreateQueueResponseOrBuilder extends
      * is the same as name of the queue's only topic.
      * </pre>
      * <p>
-     * <code>optional string queueName = 1;</code>
+     * <code>string queueName = 1;</code>
      */
     java.lang.String getQueueName();
 
@@ -21,23 +21,23 @@ public interface CreateQueueResponseOrBuilder extends
      * is the same as name of the queue's only topic.
      * </pre>
      * <p>
-     * <code>optional string queueName = 1;</code>
+     * <code>string queueName = 1;</code>
      */
     com.google.protobuf.ByteString
     getQueueNameBytes();
 
     /**
-     * <code>optional .proto.VStatus status = 2;</code>
+     * <code>.proto.VStatus status = 2;</code>
      */
     boolean hasStatus();
 
     /**
-     * <code>optional .proto.VStatus status = 2;</code>
+     * <code>.proto.VStatus status = 2;</code>
      */
     com.flipkart.vbroker.proto.VStatus getStatus();
 
     /**
-     * <code>optional .proto.VStatus status = 2;</code>
+     * <code>.proto.VStatus status = 2;</code>
      */
     com.flipkart.vbroker.proto.VStatusOrBuilder getStatusOrBuilder();
 }

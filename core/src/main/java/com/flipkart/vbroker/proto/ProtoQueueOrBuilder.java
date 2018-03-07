@@ -8,37 +8,37 @@ public interface ProtoQueueOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional int32 id = 1;</code>
+     * <code>int32 id = 1;</code>
      */
     int getId();
 
     /**
-     * <code>optional .proto.ProtoTopic topic = 2;</code>
+     * <code>.proto.ProtoTopic topic = 2;</code>
      */
     boolean hasTopic();
 
     /**
-     * <code>optional .proto.ProtoTopic topic = 2;</code>
+     * <code>.proto.ProtoTopic topic = 2;</code>
      */
     com.flipkart.vbroker.proto.ProtoTopic getTopic();
 
     /**
-     * <code>optional .proto.ProtoTopic topic = 2;</code>
+     * <code>.proto.ProtoTopic topic = 2;</code>
      */
     com.flipkart.vbroker.proto.ProtoTopicOrBuilder getTopicOrBuilder();
 
     /**
-     * <code>optional .proto.ProtoSubscription subscription = 3;</code>
+     * <code>.proto.ProtoSubscription subscription = 3;</code>
      */
     boolean hasSubscription();
 
     /**
-     * <code>optional .proto.ProtoSubscription subscription = 3;</code>
+     * <code>.proto.ProtoSubscription subscription = 3;</code>
      */
     com.flipkart.vbroker.proto.ProtoSubscription getSubscription();
 
     /**
-     * <code>optional .proto.ProtoSubscription subscription = 3;</code>
+     * <code>.proto.ProtoSubscription subscription = 3;</code>
      */
     com.flipkart.vbroker.proto.ProtoSubscriptionOrBuilder getSubscriptionOrBuilder();
 }

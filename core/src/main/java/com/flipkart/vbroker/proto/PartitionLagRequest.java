@@ -34,6 +34,7 @@ public final class PartitionLagRequest extends
 
     private int partitionId_;
     private byte memoizedIsInitialized = -1;
+
     // Use PartitionLagRequest.newBuilder() to construct.
     private PartitionLagRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
@@ -48,7 +49,12 @@ public final class PartitionLagRequest extends
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
         this();
+        if (extensionRegistry == null) {
+            throw new java.lang.NullPointerException();
+        }
         int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
         try {
             boolean done = false;
             while (!done) {
@@ -58,7 +64,8 @@ public final class PartitionLagRequest extends
                         done = true;
                         break;
                     default: {
-                        if (!input.skipField(tag)) {
+                        if (!parseUnknownFieldProto3(
+                            input, unknownFields, extensionRegistry, tag)) {
                             done = true;
                         }
                         break;
@@ -76,6 +83,7 @@ public final class PartitionLagRequest extends
             throw new com.google.protobuf.InvalidProtocolBufferException(
                 e).setUnfinishedMessage(this);
         } finally {
+            this.unknownFields = unknownFields.build();
             makeExtensionsImmutable();
         }
     }
@@ -83,6 +91,19 @@ public final class PartitionLagRequest extends
     public static final com.google.protobuf.Descriptors.Descriptor
     getDescriptor() {
         return com.flipkart.vbroker.proto.PRequests.internal_static_proto_PartitionLagRequest_descriptor;
+    }
+
+    public static com.flipkart.vbroker.proto.PartitionLagRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+    }
+
+    public static com.flipkart.vbroker.proto.PartitionLagRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
     }
 
     public static com.flipkart.vbroker.proto.PartitionLagRequest parseFrom(
@@ -172,7 +193,7 @@ public final class PartitionLagRequest extends
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
-        return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+        return this.unknownFields;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -183,7 +204,7 @@ public final class PartitionLagRequest extends
     }
 
     /**
-     * <code>optional int32 partitionId = 1;</code>
+     * <code>int32 partitionId = 1;</code>
      */
     public int getPartitionId() {
         return partitionId_;
@@ -203,6 +224,7 @@ public final class PartitionLagRequest extends
         if (partitionId_ != 0) {
             output.writeInt32(1, partitionId_);
         }
+        unknownFields.writeTo(output);
     }
 
     public int getSerializedSize() {
@@ -214,6 +236,7 @@ public final class PartitionLagRequest extends
             size += com.google.protobuf.CodedOutputStream
                 .computeInt32Size(1, partitionId_);
         }
+        size += unknownFields.getSerializedSize();
         memoizedSize = size;
         return size;
     }
@@ -231,6 +254,7 @@ public final class PartitionLagRequest extends
         boolean result = true;
         result = result && (getPartitionId()
             == other.getPartitionId());
+        result = result && unknownFields.equals(other.unknownFields);
         return result;
     }
 
@@ -240,7 +264,7 @@ public final class PartitionLagRequest extends
             return memoizedHashCode;
         }
         int hash = 41;
-        hash = (19 * hash) + getDescriptorForType().hashCode();
+        hash = (19 * hash) + getDescriptor().hashCode();
         hash = (37 * hash) + PARTITIONID_FIELD_NUMBER;
         hash = (53 * hash) + getPartitionId();
         hash = (29 * hash) + unknownFields.hashCode();
@@ -352,7 +376,7 @@ public final class PartitionLagRequest extends
 
         public Builder setField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            Object value) {
+            java.lang.Object value) {
             return (Builder) super.setField(field, value);
         }
 
@@ -368,13 +392,13 @@ public final class PartitionLagRequest extends
 
         public Builder setRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            int index, Object value) {
+            int index, java.lang.Object value) {
             return (Builder) super.setRepeatedField(field, index, value);
         }
 
         public Builder addRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            Object value) {
+            java.lang.Object value) {
             return (Builder) super.addRepeatedField(field, value);
         }
 
@@ -392,6 +416,7 @@ public final class PartitionLagRequest extends
             if (other.getPartitionId() != 0) {
                 setPartitionId(other.getPartitionId());
             }
+            this.mergeUnknownFields(other.unknownFields);
             onChanged();
             return this;
         }
@@ -419,14 +444,14 @@ public final class PartitionLagRequest extends
         }
 
         /**
-         * <code>optional int32 partitionId = 1;</code>
+         * <code>int32 partitionId = 1;</code>
          */
         public int getPartitionId() {
             return partitionId_;
         }
 
         /**
-         * <code>optional int32 partitionId = 1;</code>
+         * <code>int32 partitionId = 1;</code>
          */
         public Builder setPartitionId(int value) {
 
@@ -436,7 +461,7 @@ public final class PartitionLagRequest extends
         }
 
         /**
-         * <code>optional int32 partitionId = 1;</code>
+         * <code>int32 partitionId = 1;</code>
          */
         public Builder clearPartitionId() {
 
@@ -447,12 +472,12 @@ public final class PartitionLagRequest extends
 
         public final Builder setUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
-            return this;
+            return super.setUnknownFieldsProto3(unknownFields);
         }
 
         public final Builder mergeUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
-            return this;
+            return super.mergeUnknownFields(unknownFields);
         }
 
 

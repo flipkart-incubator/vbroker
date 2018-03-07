@@ -73,8 +73,8 @@ public final class PEntities {
                 "om\030\001 \001(\005\022\n\n\002to\030\002 \001(\005\"6\n\016CallbackConfig\022$" +
                 "\n\ncodeRanges\030\001 \003(\0132\020.proto.CodeRange\"\310\003\n" +
                 "\021ProtoSubscription\022\n\n\002id\030\001 \001(\005\022\017\n\007topicI" +
-                "d\030\002 \001(\005\022\014\n\004name\030\003 \001(\t\022\017\n\007grouped\030\004 \001(\010\022\023",
-            "\n\013parallelism\030\005 \001(\005\022\026\n\016requestTimeout\030\006 " +
+                "d\030\002 \001(\005\022\014\n\004name\030\003 \001(\t\022\017\n\007grouped\030\004 \001(\010\022\023" +
+                "\n\013parallelism\030\005 \001(\005\022\026\n\016requestTimeout\030\006 " +
                 "\001(\005\0221\n\020subscriptionType\030\007 \001(\0162\027.proto.Su" +
                 "bscriptionType\022;\n\025subscriptionMechanism\030" +
                 "\010 \001(\0162\034.proto.SubscriptionMechanism\022\017\n\007h" +
@@ -83,8 +83,8 @@ public final class PEntities {
                 "erator\030\014 \001(\0162\025.proto.FilterOperator\0223\n\023f" +
                 "ilterKeyValuesList\030\r \003(\0132\026.proto.FilterK" +
                 "eyValues\022-\n\016callbackConfig\030\016 \001(\0132\025.proto" +
-                ".CallbackConfig\"j\n\nProtoQueue\022\n\n\002id\030\001 \001(",
-            "\005\022 \n\005topic\030\002 \001(\0132\021.proto.ProtoTopic\022.\n\014s" +
+                ".CallbackConfig\"j\n\nProtoQueue\022\n\n\002id\030\001 \001(" +
+                "\005\022 \n\005topic\030\002 \001(\0132\021.proto.ProtoTopic\022.\n\014s" +
                 "ubscription\030\003 \001(\0132\030.proto.ProtoSubscript" +
                 "ion\"<\n\021TopicSubscription\022\026\n\016subscription" +
                 "Id\030\001 \001(\005\022\017\n\007topicId\030\002 \001(\005\":\n\004Node\022\020\n\010bro" +
@@ -93,8 +93,8 @@ public final class PEntities {
                 "\n\007topicId\030\002 \001(\005\022\020\n\010leaderId\030\003 \001(\005\022\020\n\010rep" +
                 "licas\030\004 \003(\005\"g\n\rTopicMetadata\022 \n\005topic\030\001 " +
                 "\001(\0132\021.proto.ProtoTopic\0224\n\022partitionMetad" +
-                "atas\030\002 \003(\0132\030.proto.PartitionMetadata\"[\n\017",
-            "ClusterMetadata\022,\n\016topicMetadatas\030\001 \003(\0132" +
+                "atas\030\002 \003(\0132\030.proto.PartitionMetadata\"[\n\017" +
+                "ClusterMetadata\022,\n\016topicMetadatas\030\001 \003(\0132" +
                 "\024.proto.TopicMetadata\022\032\n\005nodes\030\002 \003(\0132\013.p" +
                 "roto.Node*%\n\rTopicCategory\022\t\n\005QUEUE\020\000\022\t\n" +
                 "\005TOPIC\020\001*6\n\nHttpMethod\022\010\n\004POST\020\000\022\007\n\003PUT\020" +
@@ -184,6 +184,7 @@ public final class PEntities {
             internal_static_proto_ClusterMetadata_descriptor,
             new java.lang.String[]{"TopicMetadatas", "Nodes",});
     }
+
     private PEntities() {
     }
 

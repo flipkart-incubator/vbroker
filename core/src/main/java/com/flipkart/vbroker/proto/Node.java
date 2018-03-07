@@ -51,7 +51,12 @@ public final class Node extends
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
         this();
+        if (extensionRegistry == null) {
+            throw new java.lang.NullPointerException();
+        }
         int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
         try {
             boolean done = false;
             while (!done) {
@@ -61,7 +66,8 @@ public final class Node extends
                         done = true;
                         break;
                     default: {
-                        if (!input.skipField(tag)) {
+                        if (!parseUnknownFieldProto3(
+                            input, unknownFields, extensionRegistry, tag)) {
                             done = true;
                         }
                         break;
@@ -90,6 +96,7 @@ public final class Node extends
             throw new com.google.protobuf.InvalidProtocolBufferException(
                 e).setUnfinishedMessage(this);
         } finally {
+            this.unknownFields = unknownFields.build();
             makeExtensionsImmutable();
         }
     }
@@ -97,6 +104,19 @@ public final class Node extends
     public static final com.google.protobuf.Descriptors.Descriptor
     getDescriptor() {
         return com.flipkart.vbroker.proto.PEntities.internal_static_proto_Node_descriptor;
+    }
+
+    public static com.flipkart.vbroker.proto.Node parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+    }
+
+    public static com.flipkart.vbroker.proto.Node parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
     }
 
     public static com.flipkart.vbroker.proto.Node parseFrom(
@@ -186,7 +206,7 @@ public final class Node extends
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
-        return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+        return this.unknownFields;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -197,14 +217,14 @@ public final class Node extends
     }
 
     /**
-     * <code>optional int32 brokerId = 1;</code>
+     * <code>int32 brokerId = 1;</code>
      */
     public int getBrokerId() {
         return brokerId_;
     }
 
     /**
-     * <code>optional string hostIp = 2;</code>
+     * <code>string hostIp = 2;</code>
      */
     public java.lang.String getHostIp() {
         java.lang.Object ref = hostIp_;
@@ -220,7 +240,7 @@ public final class Node extends
     }
 
     /**
-     * <code>optional string hostIp = 2;</code>
+     * <code>string hostIp = 2;</code>
      */
     public com.google.protobuf.ByteString
     getHostIpBytes() {
@@ -237,7 +257,7 @@ public final class Node extends
     }
 
     /**
-     * <code>optional int32 hostPort = 3;</code>
+     * <code>int32 hostPort = 3;</code>
      */
     public int getHostPort() {
         return hostPort_;
@@ -263,6 +283,7 @@ public final class Node extends
         if (hostPort_ != 0) {
             output.writeInt32(3, hostPort_);
         }
+        unknownFields.writeTo(output);
     }
 
     public int getSerializedSize() {
@@ -281,6 +302,7 @@ public final class Node extends
             size += com.google.protobuf.CodedOutputStream
                 .computeInt32Size(3, hostPort_);
         }
+        size += unknownFields.getSerializedSize();
         memoizedSize = size;
         return size;
     }
@@ -302,6 +324,7 @@ public final class Node extends
             .equals(other.getHostIp());
         result = result && (getHostPort()
             == other.getHostPort());
+        result = result && unknownFields.equals(other.unknownFields);
         return result;
     }
 
@@ -311,7 +334,7 @@ public final class Node extends
             return memoizedHashCode;
         }
         int hash = 41;
-        hash = (19 * hash) + getDescriptorForType().hashCode();
+        hash = (19 * hash) + getDescriptor().hashCode();
         hash = (37 * hash) + BROKERID_FIELD_NUMBER;
         hash = (53 * hash) + getBrokerId();
         hash = (37 * hash) + HOSTIP_FIELD_NUMBER;
@@ -431,7 +454,7 @@ public final class Node extends
 
         public Builder setField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            Object value) {
+            java.lang.Object value) {
             return (Builder) super.setField(field, value);
         }
 
@@ -447,13 +470,13 @@ public final class Node extends
 
         public Builder setRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            int index, Object value) {
+            int index, java.lang.Object value) {
             return (Builder) super.setRepeatedField(field, index, value);
         }
 
         public Builder addRepeatedField(
             com.google.protobuf.Descriptors.FieldDescriptor field,
-            Object value) {
+            java.lang.Object value) {
             return (Builder) super.addRepeatedField(field, value);
         }
 
@@ -478,6 +501,7 @@ public final class Node extends
             if (other.getHostPort() != 0) {
                 setHostPort(other.getHostPort());
             }
+            this.mergeUnknownFields(other.unknownFields);
             onChanged();
             return this;
         }
@@ -505,14 +529,14 @@ public final class Node extends
         }
 
         /**
-         * <code>optional int32 brokerId = 1;</code>
+         * <code>int32 brokerId = 1;</code>
          */
         public int getBrokerId() {
             return brokerId_;
         }
 
         /**
-         * <code>optional int32 brokerId = 1;</code>
+         * <code>int32 brokerId = 1;</code>
          */
         public Builder setBrokerId(int value) {
 
@@ -522,7 +546,7 @@ public final class Node extends
         }
 
         /**
-         * <code>optional int32 brokerId = 1;</code>
+         * <code>int32 brokerId = 1;</code>
          */
         public Builder clearBrokerId() {
 
@@ -532,7 +556,7 @@ public final class Node extends
         }
 
         /**
-         * <code>optional string hostIp = 2;</code>
+         * <code>string hostIp = 2;</code>
          */
         public java.lang.String getHostIp() {
             java.lang.Object ref = hostIp_;
@@ -548,7 +572,7 @@ public final class Node extends
         }
 
         /**
-         * <code>optional string hostIp = 2;</code>
+         * <code>string hostIp = 2;</code>
          */
         public Builder setHostIp(
             java.lang.String value) {
@@ -562,7 +586,7 @@ public final class Node extends
         }
 
         /**
-         * <code>optional string hostIp = 2;</code>
+         * <code>string hostIp = 2;</code>
          */
         public com.google.protobuf.ByteString
         getHostIpBytes() {
@@ -579,7 +603,7 @@ public final class Node extends
         }
 
         /**
-         * <code>optional string hostIp = 2;</code>
+         * <code>string hostIp = 2;</code>
          */
         public Builder setHostIpBytes(
             com.google.protobuf.ByteString value) {
@@ -594,7 +618,7 @@ public final class Node extends
         }
 
         /**
-         * <code>optional string hostIp = 2;</code>
+         * <code>string hostIp = 2;</code>
          */
         public Builder clearHostIp() {
 
@@ -604,14 +628,14 @@ public final class Node extends
         }
 
         /**
-         * <code>optional int32 hostPort = 3;</code>
+         * <code>int32 hostPort = 3;</code>
          */
         public int getHostPort() {
             return hostPort_;
         }
 
         /**
-         * <code>optional int32 hostPort = 3;</code>
+         * <code>int32 hostPort = 3;</code>
          */
         public Builder setHostPort(int value) {
 
@@ -621,7 +645,7 @@ public final class Node extends
         }
 
         /**
-         * <code>optional int32 hostPort = 3;</code>
+         * <code>int32 hostPort = 3;</code>
          */
         public Builder clearHostPort() {
 
@@ -632,12 +656,12 @@ public final class Node extends
 
         public final Builder setUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
-            return this;
+            return super.setUnknownFieldsProto3(unknownFields);
         }
 
         public final Builder mergeUnknownFields(
             final com.google.protobuf.UnknownFieldSet unknownFields) {
-            return this;
+            return super.mergeUnknownFields(unknownFields);
         }
 
 

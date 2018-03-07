@@ -76,8 +76,7 @@ public enum FilterOperator
 
     public static final com.google.protobuf.Descriptors.EnumDescriptor
     getDescriptor() {
-        return com.flipkart.vbroker.proto.PEntities.getDescriptor()
-            .getEnumTypes().get(4);
+        return com.flipkart.vbroker.proto.PEntities.getDescriptor().getEnumTypes().get(4);
     }
 
     public static FilterOperator valueOf(

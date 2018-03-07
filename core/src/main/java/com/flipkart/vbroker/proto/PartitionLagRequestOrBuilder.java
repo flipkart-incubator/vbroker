@@ -8,7 +8,7 @@ public interface PartitionLagRequestOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional int32 partitionId = 1;</code>
+     * <code>int32 partitionId = 1;</code>
      */
     int getPartitionId();
 }

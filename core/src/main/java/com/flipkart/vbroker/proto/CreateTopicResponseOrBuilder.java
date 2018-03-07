@@ -8,28 +8,28 @@ public interface CreateTopicResponseOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional string name = 2;</code>
+     * <code>string name = 2;</code>
      */
     java.lang.String getName();
 
     /**
-     * <code>optional string name = 2;</code>
+     * <code>string name = 2;</code>
      */
     com.google.protobuf.ByteString
     getNameBytes();
 
     /**
-     * <code>optional .proto.VStatus status = 3;</code>
+     * <code>.proto.VStatus status = 3;</code>
      */
     boolean hasStatus();
 
     /**
-     * <code>optional .proto.VStatus status = 3;</code>
+     * <code>.proto.VStatus status = 3;</code>
      */
     com.flipkart.vbroker.proto.VStatus getStatus();
 
     /**
-     * <code>optional .proto.VStatus status = 3;</code>
+     * <code>.proto.VStatus status = 3;</code>
      */
     com.flipkart.vbroker.proto.VStatusOrBuilder getStatusOrBuilder();
 }

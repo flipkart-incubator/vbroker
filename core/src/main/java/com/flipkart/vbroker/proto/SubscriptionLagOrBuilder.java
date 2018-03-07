@@ -8,12 +8,12 @@ public interface SubscriptionLagOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional int32 subscriptionId = 1;</code>
+     * <code>int32 subscriptionId = 1;</code>
      */
     int getSubscriptionId();
 
     /**
-     * <code>optional int32 topicId = 2;</code>
+     * <code>int32 topicId = 2;</code>
      */
     int getTopicId();
 

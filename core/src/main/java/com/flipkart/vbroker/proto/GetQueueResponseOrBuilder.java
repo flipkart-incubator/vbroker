@@ -8,32 +8,32 @@ public interface GetQueueResponseOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional .proto.ProtoQueue queue = 1;</code>
+     * <code>.proto.ProtoQueue queue = 1;</code>
      */
     boolean hasQueue();
 
     /**
-     * <code>optional .proto.ProtoQueue queue = 1;</code>
+     * <code>.proto.ProtoQueue queue = 1;</code>
      */
     com.flipkart.vbroker.proto.ProtoQueue getQueue();
 
     /**
-     * <code>optional .proto.ProtoQueue queue = 1;</code>
+     * <code>.proto.ProtoQueue queue = 1;</code>
      */
     com.flipkart.vbroker.proto.ProtoQueueOrBuilder getQueueOrBuilder();
 
     /**
-     * <code>optional .proto.VStatus status = 2;</code>
+     * <code>.proto.VStatus status = 2;</code>
      */
     boolean hasStatus();
 
     /**
-     * <code>optional .proto.VStatus status = 2;</code>
+     * <code>.proto.VStatus status = 2;</code>
      */
     com.flipkart.vbroker.proto.VStatus getStatus();
 
     /**
-     * <code>optional .proto.VStatus status = 2;</code>
+     * <code>.proto.VStatus status = 2;</code>
      */
     com.flipkart.vbroker.proto.VStatusOrBuilder getStatusOrBuilder();
 }
