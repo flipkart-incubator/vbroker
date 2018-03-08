@@ -13,6 +13,7 @@ subprojects {
     def lombokVersion = "1.16.18"
     def jacksonVersion = "2.9.4"
     def protobufVersion = "3.5.1"
+    def metricsVersion = "4.0.2"
 
     //test dependencies
     //def jUnitVersion = "4.12"
@@ -40,6 +41,9 @@ subprojects {
         //protobuf
         compile "com.google.protobuf:protobuf-java:${protobufVersion}"
         compile "com.google.protobuf:protobuf-java-util:${protobufVersion}"
+
+        //metrics
+        compile "io.dropwizard.metrics:metrics-core:${metricsVersion}"
 
         //testing
         //testCompile "junit:junit:${jUnitVersion}"

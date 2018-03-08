@@ -1,5 +1,6 @@
 package com.flipkart.vbroker.server;
 
+import com.codahale.metrics.MetricRegistry;
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.controller.VBrokerController;
 import com.flipkart.vbroker.data.DataManagerFactory;
@@ -61,9 +62,9 @@ public class VBrokerServer extends AbstractExecutionThreadService {
             new ExponentialBackoffRetry(1000, 5));
         curatorClient.start();
         AsyncCuratorFramework asyncZkClient = AsyncCuratorFramework.wrap(curatorClient);
-
         CuratorService curatorService = new CuratorService(asyncZkClient);
 
+        MetricRegistry metricRegistry = new MetricRegistry();
         EventLoopGroup bossGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("server_boss"));
         EventLoopGroup workerGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("server_worker"));
         EventLoopGroup localGroup = new DefaultEventLoopGroup(1, new DefaultThreadFactory("server_local"));
@@ -133,6 +134,7 @@ public class VBrokerServer extends AbstractExecutionThreadService {
                 }
             });
 
+
             DefaultAsyncHttpClientConfig httpClientConfig = new DefaultAsyncHttpClientConfig
                 .Builder()
                 .setThreadFactory(new DefaultThreadFactory("async_http_client"))
@@ -142,11 +144,13 @@ public class VBrokerServer extends AbstractExecutionThreadService {
                 topicService,
                 subscriptionService,
                 producerService,
-                subPartDataManager);
+                subPartDataManager,
+                metricRegistry);
 
             brokerSubscriber = new BrokerSubscriber(subscriptionService,
                 messageProcessor,
-                config);
+                config,
+                metricRegistry);
             ExecutorService subscriberExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("subscriber"));
             subscriberExecutor.submit(brokerSubscriber);
 

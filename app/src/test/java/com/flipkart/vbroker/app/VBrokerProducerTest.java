@@ -14,6 +14,7 @@ import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.flipkart.vbroker.app.MockHttp.MockURI.URI_200;
 import static com.xebialabs.restito.builder.verify.VerifyHttp.verifyHttp;
 import static com.xebialabs.restito.semantics.Condition.method;
 import static com.xebialabs.restito.semantics.Condition.uri;
@@ -23,7 +24,7 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
 
     @SuppressWarnings("SuspiciousToArrayCall")
     @Test
-    public void shouldProduceAndConsumeMessage() {
+    public void shouldProduceAndConsumeMessages() throws InterruptedException {
 
         log.info("Broker Port: {}", BROKER_PORT);
 
@@ -40,7 +41,7 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
         Topic groupedTopic = DummyEntities.groupedTopic;
         byte[] payload = "This is a sample message".getBytes();
 
-        List<ProducerRecord> records = IntStream.range(0, 1)
+        List<ProducerRecord> records = IntStream.range(0, 5)
             .mapToObj(i -> newProducerRecord(groupedTopic, "group_" + i, payload))
             .collect(Collectors.toList());
 
@@ -64,8 +65,10 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
             resultFuture.join();
         }
 
+        Thread.sleep(10 * 1000);
+
         //Verify the message is consumed
-        verifyHttp(httpServer).once(method(Method.POST),
-            uri("/messages"));
+        verifyHttp(httpServer).times(records.size(), method(Method.POST),
+            uri(URI_200.uri()));
     }
 }

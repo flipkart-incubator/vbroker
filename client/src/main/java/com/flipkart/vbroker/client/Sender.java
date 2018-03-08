@@ -69,31 +69,18 @@ public class Sender implements Runnable {
 
         clusterNodes.forEach(node -> {
             Optional<RecordBatch> readyRecordBatchOpt = accumulator.getReadyRecordBatch(node);
-            readyRecordBatchOpt.ifPresent(recordBatch -> sendReadyBatch(node, recordBatch));
+            readyRecordBatchOpt.ifPresent(recordBatch -> {
+                sendReadyBatch(node, recordBatch);
+            });
         });
     }
 
     private void sendReadyBatch(Node node, RecordBatch recordBatch) {
         int totalNoOfRecords = recordBatch.getTotalNoOfRecords();
-        //if (totalNoOfRecords > 0) {
         log.info("Total no of records in batch for Node {} are {}", node.getBrokerId(), totalNoOfRecords);
-        CompletionStage<Void> sendStage = sendRecordBatch(node, recordBatch);
-        sendStage
-            .thenAccept(aVoid -> log.info("RecordBatch to node {} is sent successfully", node))
-            .exceptionally(throwable -> {
-                log.error("RecordBatch to node has failed during send", throwable);
-                return null;
-            });
-    }
-
-    /**
-     * @param node        to send record to
-     * @param recordBatch that has data to send
-     */
-    private CompletionStage<Void> sendRecordBatch(Node node, RecordBatch recordBatch) {
         VRequest vRequest = newVRequest(recordBatch);
         CompletionStage<VResponse> responseStage = client.send(node, vRequest);
-        return responseStage
+        responseStage
             .thenAccept(vResponse -> {
                 recordBatch.setState(RecordBatch.BatchState.DONE_SUCCESS);
                 log.info("Received vResponse with correlationId {}", vResponse.correlationId());

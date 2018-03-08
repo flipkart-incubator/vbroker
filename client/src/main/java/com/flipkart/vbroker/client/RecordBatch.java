@@ -36,7 +36,7 @@ public class RecordBatch {
     @Getter
     private BatchState state;
 
-    public RecordBatch(Node node, long lingerTimeMs) {
+    private RecordBatch(Node node, long lingerTimeMs) {
         this.node = node;
         this.lingerTimeMs = lingerTimeMs;
         this.createdTimeMs = System.currentTimeMillis();
@@ -60,7 +60,7 @@ public class RecordBatch {
      * @return true if batch size configured is reached
      */
     private boolean isFull() {
-        return partRecordsMap.values().size() >= 1;
+        return partRecordsMap.values().size() >= 100;
     }
 
     /**

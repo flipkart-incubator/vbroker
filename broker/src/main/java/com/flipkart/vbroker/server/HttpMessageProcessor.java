@@ -1,5 +1,7 @@
 package com.flipkart.vbroker.server;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 import com.flipkart.vbroker.MessageConstants;
 import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.core.CallbackConfig;
@@ -31,6 +33,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeoutException;
 
+import static com.codahale.metrics.MetricRegistry.name;
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 
@@ -43,6 +46,24 @@ public class HttpMessageProcessor implements MessageProcessor {
     private final SubscriptionService subscriptionService;
     private final ProducerService producerService;
     private final SubPartDataManager subPartDataManager;
+    //private final MetricRegistry metricRegistry;
+    private final Timer httpResponseTimer;
+
+    public HttpMessageProcessor(AsyncHttpClient httpClient,
+                                TopicService topicService,
+                                SubscriptionService subscriptionService,
+                                ProducerService producerService,
+                                SubPartDataManager subPartDataManager,
+                                MetricRegistry metricRegistry) {
+        this.httpClient = httpClient;
+        this.topicService = topicService;
+        this.subscriptionService = subscriptionService;
+        this.producerService = producerService;
+        this.subPartDataManager = subPartDataManager;
+        //this.metricRegistry = metricRegistry;
+
+        this.httpResponseTimer = metricRegistry.timer(name(HttpMessageProcessor.class, "response.time"));
+    }
 
     @Override
     public CompletionStage<Void> process(IterableMessage iterableMessage) {
@@ -63,6 +84,7 @@ public class HttpMessageProcessor implements MessageProcessor {
             requestBuilder.addHeader(header.key(), header.value());
         }
 
+        Timer.Context context = httpResponseTimer.time();
         Request request = requestBuilder.build();
         log.info("Making httpRequest to httpUri: {} and httpMethod: {}",
             httpUri,
@@ -73,7 +95,12 @@ public class HttpMessageProcessor implements MessageProcessor {
             .toCompletableFuture();
 
         return reqFuture
-            .thenApply(response -> handleResponse(response, iterableMessage).toCompletableFuture())
+            .thenApply(response -> {
+                long httpResponseTimeNs = context.stop();
+                log.info("Time taken to make httpUrl {} call is {}ms",
+                    message.httpUri(), httpResponseTimeNs / Math.pow(10, 6));
+                return handleResponse(response, iterableMessage).toCompletableFuture();
+            })
             .exceptionally(throwable -> {
                 log.error("Exception in handling response: {}", throwable.getMessage());
                 if (throwable instanceof TimeoutException) {

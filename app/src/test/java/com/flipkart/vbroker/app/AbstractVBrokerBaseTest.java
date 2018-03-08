@@ -18,42 +18,19 @@ import org.testng.annotations.BeforeMethod;
 import java.io.IOException;
 import java.util.HashMap;
 
+import static com.flipkart.vbroker.app.MockHttp.*;
 import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
 import static com.xebialabs.restito.semantics.Action.status;
 import static com.xebialabs.restito.semantics.Action.stringContent;
-import static com.xebialabs.restito.semantics.Condition.*;
 
 @Slf4j
 public class AbstractVBrokerBaseTest {
-
-    public static final int MOCK_HTTP_SERVER_PORT = 17230;
-    //http mock uris
-    public static final String URI_200 = "/200";
-    public static final String URI_204 = "/204";
-    public static final String URI_400 = "/400";
-    public static final String URI_404 = "/404";
-    public static final String URI_429 = "/429";
-    public static final String URI_500 = "/500";
-    public static final String URI_504 = "/504";
-    public static final String URI_MOCK_APP = "/url";
-    public static final String URI_MOCK_APP2 = "/url2";
-    public static final String MOCK_APP_200_URL = String.format("http://localhost:%d/200", MOCK_HTTP_SERVER_PORT);
-    public static final String MOCK_APP_204_URL = String.format("http://localhost:%d/204", MOCK_HTTP_SERVER_PORT);
-    public static final String MOCK_APP_400_URL = String.format("http://localhost:%d/400", MOCK_HTTP_SERVER_PORT);
-    public static final String MOCK_APP_404_URL = String.format("http://localhost:%d/404", MOCK_HTTP_SERVER_PORT);
-    public static final String MOCK_APP_429_URL = String.format("http://localhost:%d/429", MOCK_HTTP_SERVER_PORT);
-    public static final String MOCK_APP_DUAL_RESPONSE_URL = String.format("http://localhost:%d/dummy", MOCK_HTTP_SERVER_PORT);
-    public static final String MOCK_APP_500_URL = String.format("http://localhost:%d/500", MOCK_HTTP_SERVER_PORT);
-    public static final String MOCK_APP_504_URL = String.format("http://localhost:%d/504", MOCK_HTTP_SERVER_PORT);
-    public static final String MOCK_APP_SLEEP_200_URL = String.format("http://localhost:%d/sleep200", MOCK_HTTP_SERVER_PORT);
-    public static final String MOCK_APP_SLEEP_404_URL = String.format("http://localhost:%d/sleep404", MOCK_HTTP_SERVER_PORT);
-    public static final String MOCK_APP_URL = String.format("http://localhost:%d/url", MOCK_HTTP_SERVER_PORT);
-    public static final String MOCK_APP_URL2 = String.format("http://localhost:%d/url2", MOCK_HTTP_SERVER_PORT);
-    //http mock bodies
-    public static final String MOCK_RESPONSE_BODY = "hehehaaaaaaa";
     private static final Object shutdownTestSuiteLock = new Object();
+
+    //CONSTANTS
     //broker port
     public static int BROKER_PORT;
+
     private static VBrokerServer server;
     private static boolean cleanedUpDone = false;
     protected StubServer httpServer;
@@ -94,23 +71,22 @@ public class AbstractVBrokerBaseTest {
 
         httpServer = new StubServer(MOCK_HTTP_SERVER_PORT).run();
 
-        whenHttp(httpServer).match(post(URI_200)).then(status(HttpStatus.OK_200), stringContent(MOCK_RESPONSE_BODY));
-        whenHttp(httpServer).match(post(URI_204)).then(status(HttpStatus.NO_CONTENT_204), stringContent(MOCK_RESPONSE_BODY));
-        whenHttp(httpServer).match(post(URI_400)).then(status(HttpStatus.BAD_REQUEST_400), stringContent(MOCK_RESPONSE_BODY));
-        whenHttp(httpServer).match(put(URI_400)).then(status(HttpStatus.BAD_REQUEST_400), stringContent(MOCK_RESPONSE_BODY));
-        whenHttp(httpServer).match(post(URI_404)).then(status(HttpStatus.NOT_FOUND_404), stringContent(MOCK_RESPONSE_BODY));
-        whenHttp(httpServer).match(put(URI_404)).then(status(HttpStatus.NOT_FOUND_404), stringContent(MOCK_RESPONSE_BODY));
-        whenHttp(httpServer).match(post(URI_429)).then(status(HttpStatus.getHttpStatus(429)), stringContent(MOCK_RESPONSE_BODY));
-        whenHttp(httpServer).match(post(URI_500)).then(status(HttpStatus.INTERNAL_SERVER_ERROR_500), stringContent(MOCK_RESPONSE_BODY));
-        whenHttp(httpServer).match(put(URI_500)).then(status(HttpStatus.INTERNAL_SERVER_ERROR_500), stringContent(MOCK_RESPONSE_BODY));
-        whenHttp(httpServer).match(post(URI_504)).then(status(HttpStatus.GATEWAY_TIMEOUT_504), stringContent(MOCK_RESPONSE_BODY));
-        whenHttp(httpServer).match(patch(URI_200)).then(status(HttpStatus.OK_200), stringContent(MOCK_RESPONSE_BODY));
-
+        whenHttp(httpServer).match(post(MockURI.URI_200)).then(status(HttpStatus.OK_200), stringContent(MOCK_RESPONSE_BODY));
+        whenHttp(httpServer).match(post(MockURI.URI_204)).then(status(HttpStatus.NO_CONTENT_204), stringContent(MOCK_RESPONSE_BODY));
+        whenHttp(httpServer).match(post(MockURI.URI_400)).then(status(HttpStatus.BAD_REQUEST_400), stringContent(MOCK_RESPONSE_BODY));
+        whenHttp(httpServer).match(put(MockURI.URI_400)).then(status(HttpStatus.BAD_REQUEST_400), stringContent(MOCK_RESPONSE_BODY));
+        whenHttp(httpServer).match(post(MockURI.URI_404)).then(status(HttpStatus.NOT_FOUND_404), stringContent(MOCK_RESPONSE_BODY));
+        whenHttp(httpServer).match(put(MockURI.URI_404)).then(status(HttpStatus.NOT_FOUND_404), stringContent(MOCK_RESPONSE_BODY));
+        whenHttp(httpServer).match(post(MockURI.URI_429)).then(status(HttpStatus.getHttpStatus(429)), stringContent(MOCK_RESPONSE_BODY));
+        whenHttp(httpServer).match(post(MockURI.URI_500)).then(status(HttpStatus.INTERNAL_SERVER_ERROR_500), stringContent(MOCK_RESPONSE_BODY));
+        whenHttp(httpServer).match(put(MockURI.URI_500)).then(status(HttpStatus.INTERNAL_SERVER_ERROR_500), stringContent(MOCK_RESPONSE_BODY));
+        whenHttp(httpServer).match(post(MockURI.URI_504)).then(status(HttpStatus.GATEWAY_TIMEOUT_504), stringContent(MOCK_RESPONSE_BODY));
+        whenHttp(httpServer).match(patch(MockURI.URI_200)).then(status(HttpStatus.OK_200), stringContent(MOCK_RESPONSE_BODY));
+        whenHttp(httpServer).match(post(MockURI.URI_MOCK_APP)).then(status(HttpStatus.OK_200), stringContent(MOCK_RESPONSE_BODY));
+        whenHttp(httpServer).match(put(MockURI.URI_MOCK_APP2)).then(status(HttpStatus.OK_200), stringContent(MOCK_RESPONSE_BODY));
         //Sleep for 5 seconds
-        whenHttp(httpServer).match(post("/sleep200")).then(status(HttpStatus.OK_200), stringContent(MOCK_RESPONSE_BODY), sleep(6000));
-        whenHttp(httpServer).match(post("/sleep404")).then(status(HttpStatus.NOT_FOUND_404), stringContent(MOCK_RESPONSE_BODY), sleep(1000));
-        whenHttp(httpServer).match(post(URI_MOCK_APP)).then(status(HttpStatus.OK_200), stringContent(MOCK_RESPONSE_BODY));
-        whenHttp(httpServer).match(put(URI_MOCK_APP2)).then(status(HttpStatus.OK_200), stringContent(MOCK_RESPONSE_BODY));
+        whenHttp(httpServer).match(post(MockURI.SLEEP_200)).then(status(HttpStatus.OK_200), stringContent(MOCK_RESPONSE_BODY), sleep(6000));
+        whenHttp(httpServer).match(post(MockURI.SLEEP_404)).then(status(HttpStatus.NOT_FOUND_404), stringContent(MOCK_RESPONSE_BODY), sleep(1000));
     }
 
     protected void clearHttpCalls() {
@@ -141,13 +117,14 @@ public class AbstractVBrokerBaseTest {
             .seqNo(1)
             .topicId(topic.id())
             .attributes(201)
-            .httpUri(String.format("http://localhost:%s/messages", MOCK_HTTP_SERVER_PORT))
+            .httpUri(MockURI.URI_200.url())
             .httpMethod(ProducerRecord.HttpMethod.POST)
-            .callbackTopicId(topic.id())
-            .callbackHttpUri("http://localhost:12000/messages")
+            .callbackTopicId(-1)
+            .callbackHttpUri(MockURI.URI_200.url())
             .callbackHttpMethod(ProducerRecord.HttpMethod.POST)
             .headers(new HashMap<>())
             .payload(payload)
             .build();
     }
+
 }

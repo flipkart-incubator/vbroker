@@ -1,5 +1,6 @@
 package com.flipkart.vbroker.server;
 
+import com.codahale.metrics.MetricRegistry;
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.iterators.SubscriberIterator;
@@ -25,15 +26,18 @@ public class BrokerSubscriber implements Runnable {
     private final SubscriptionService subscriptionService;
     private final MessageProcessor messageProcessor;
     private final VBrokerConfig config;
+    private final MetricRegistry metricRegistry;
     private SubscriberGroupSyncer syncer;
     private volatile AtomicBoolean running = new AtomicBoolean(true);
 
     public BrokerSubscriber(SubscriptionService subscriptionService,
                             MessageProcessor messageProcessor,
-                            VBrokerConfig config) {
+                            VBrokerConfig config,
+                            MetricRegistry metricRegistry) {
         this.subscriptionService = subscriptionService;
         this.messageProcessor = messageProcessor;
         this.config = config;
+        this.metricRegistry = metricRegistry;
     }
 
     public void run() {
@@ -53,7 +57,8 @@ public class BrokerSubscriber implements Runnable {
                 log.info("No of partSubscribers are {}", partSubscribers.size());
                 log.info("PartSubscribers in the current broker are {}", partSubscribers);
                 SubscriberIterator subscriberIterator = new SubscriberIterator(partSubscribers);
-                MessageConsumer messageConsumer = MessageConsumer.newInstance(subscriberIterator, messageProcessor);
+                MessageConsumer messageConsumer = MessageConsumer.
+                    newInstance(subscriberIterator, messageProcessor, metricRegistry);
 
                 long pollTimeMs = config.getSubscriberPollTimeMs();
                 while (running.get()) {
