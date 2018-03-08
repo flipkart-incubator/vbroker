@@ -2,7 +2,7 @@ package com.flipkart.vbroker.utils;
 
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.core.TopicPartition;
-import com.flipkart.vbroker.entities.Subscription;
+import com.flipkart.vbroker.wrappers.Subscription;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -18,10 +18,9 @@ public class SubscriptionUtils {
      *                     subscribed to.
      * @return
      */
-    public static PartSubscription getPartSubscription(Subscription subscription, short partitionId) {
-        return new PartSubscription(partitionId,
-            new TopicPartition(partitionId, subscription.topicId(), subscription.grouped()), subscription.id(),
-            subscription.grouped());
+    public static PartSubscription getPartSubscription(Subscription subscription, int partitionId) {
+        return new PartSubscription(partitionId, new TopicPartition(partitionId, subscription.topicId(), subscription.grouped()),
+            subscription.id(), subscription.grouped());
     }
 
     /**
@@ -32,9 +31,8 @@ public class SubscriptionUtils {
      * @param partitions
      * @return
      */
-    public static List<PartSubscription> getPartSubscriptions(Subscription subscription, short partitions) {
-        // TODO: this shouldn't be a static method - move this to
-        // SubscriptionService
+    public static List<PartSubscription> getPartSubscriptions(Subscription subscription, int partitions) {
+        //TODO: this shouldn't be a static method - move this to SubscriptionService
         List<PartSubscription> partSubscriptions = new ArrayList<>();
         for (short i = 0; i < partitions; i++) {
             partSubscriptions
@@ -44,7 +42,4 @@ public class SubscriptionUtils {
         return partSubscriptions;
     }
 
-    public static Subscription getSubscription(byte[] bytes) {
-        return Subscription.getRootAsSubscription(ByteBuffer.wrap(bytes));
-    }
 }

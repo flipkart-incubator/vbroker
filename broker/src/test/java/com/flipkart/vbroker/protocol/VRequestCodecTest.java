@@ -2,9 +2,10 @@ package com.flipkart.vbroker.protocol;
 
 import com.flipkart.vbroker.client.MessageStore;
 import com.flipkart.vbroker.core.TopicPartition;
-import com.flipkart.vbroker.entities.*;
+import com.flipkart.vbroker.flatbuf.*;
 import com.flipkart.vbroker.utils.DummyEntities;
 import com.flipkart.vbroker.utils.TopicUtils;
+import com.flipkart.vbroker.wrappers.Topic;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

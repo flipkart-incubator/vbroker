@@ -1,9 +1,10 @@
 package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.core.PartSubscription;
-import com.flipkart.vbroker.entities.*;
+import com.flipkart.vbroker.flatbuf.*;
 import com.flipkart.vbroker.protocol.Request;
 import com.flipkart.vbroker.services.SubscriptionService;
+import com.flipkart.vbroker.wrappers.Subscription;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -15,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j

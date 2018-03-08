@@ -6,11 +6,16 @@ repositories {
 
 //src dependencies
 def nettyVersion = "4.1.21.Final"
+def protobufVersion = "3.5.1"
 
 dependencies {
     //networking
     compile "io.netty:netty-common:${nettyVersion}"
     compile "io.netty:netty-codec:${nettyVersion}"
+    //protobuf
+    //not sure why I have to add this here, should work with the main build.gradle file, but doesn't.
+    compile "com.google.protobuf:protobuf-java:${protobufVersion}"
+    compile "com.google.protobuf:protobuf-java-util:${protobufVersion}"
 
     testCompile "junit:junit:4.12"
 }

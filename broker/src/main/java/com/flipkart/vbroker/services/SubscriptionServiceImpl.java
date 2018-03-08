@@ -4,24 +4,20 @@ import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
-import com.flipkart.vbroker.entities.*;
-import com.flipkart.vbroker.entities.Subscription;
-import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.exceptions.SubscriptionCreationException;
 import com.flipkart.vbroker.exceptions.SubscriptionException;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.subscribers.GroupedPartSubscriber;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
 import com.flipkart.vbroker.subscribers.UnGroupedPartSubscriber;
-import com.flipkart.vbroker.utils.ByteBufUtils;
 import com.flipkart.vbroker.utils.IdGenerator;
 import com.flipkart.vbroker.utils.SubscriptionUtils;
-import com.google.flatbuffers.FlatBufferBuilder;
+import com.flipkart.vbroker.wrappers.Subscription;
+import com.flipkart.vbroker.wrappers.Topic;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.CreateMode;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -45,55 +41,18 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     public CompletionStage<Subscription> createSubscription(Subscription subscription) {
         short id = IdGenerator.randomId();
         String path = config.getAdminTasksPath() + "/create_subscription" + "/" + id;
-        Subscription subscriptionWithId = newSubscriptionFromSubscription(id, subscription);
         log.info("Creating subscription with id {} for topicId {} with uri {}", id, subscription.topicId(),
             subscription.httpUri());
         return curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT,
-            ByteBufUtils.getBytes(subscriptionWithId.getByteBuffer()), false).handleAsync((data, exception) -> {
+            subscription.toBytes(), false).handleAsync((data, exception) -> {
             if (exception != null) {
                 log.error("Exception in curator node create and set data stage {} ", exception);
                 throw new SubscriptionCreationException(exception.getMessage());
             } else {
                 log.info("Created subscription with id - " + id);
-                return newSubscriptionFromSubscription(id, subscription);
+                return subscription;
             }
         });
-    }
-
-    private Subscription newSubscriptionFromSubscription(short id, Subscription subscription) {
-        FlatBufferBuilder dataBuilder = new FlatBufferBuilder();
-        int codeRangesLength = subscription.callbackConfig().codeRangesLength();
-        int[] codeRanges = new int[codeRangesLength];
-        for (int i = 0; i < codeRangesLength; i++) {
-            int codeRangeOffset = CodeRange.createCodeRange(dataBuilder,
-                subscription.callbackConfig().codeRanges(i).from(),
-                subscription.callbackConfig().codeRanges(i).to());
-            codeRanges[i] = codeRangeOffset;
-        }
-        int codeRangesVectorOffset = CallbackConfig.createCodeRangesVector(dataBuilder, codeRanges);
-
-        int callbackConfigOffset = CallbackConfig.createCallbackConfig(dataBuilder, codeRangesVectorOffset);
-        int filterOperatorOffset = dataBuilder.createString(subscription.filterOperator());
-
-        int filterKeyValuesLength = subscription.filterKeyValuesListLength();
-        int[] filterKeyValues = new int[filterKeyValuesLength];
-        for (int i = 0; i < filterKeyValuesLength; i++) {
-            int keyOffset = dataBuilder.createString(subscription.filterKeyValuesList(i).key());
-            int valuesOffset = dataBuilder.createString(subscription.filterKeyValuesList(i).values());
-            FilterKeyValues.createFilterKeyValues(dataBuilder, keyOffset, valuesOffset);
-        }
-
-        int filterKeyValuesListOffset = Subscription.createFilterKeyValuesListVector(dataBuilder, filterKeyValues);
-        int subscriptionNameOffset = dataBuilder.createString(subscription.name());
-        int subscriptionEndpointOffset = dataBuilder.createString(subscription.httpUri());
-        int subscriptionHttpMethodOffset = dataBuilder.createString(subscription.httpMethod());
-        int subscriptionOffset = Subscription.createSubscription(dataBuilder, id, subscription.topicId(),
-            subscriptionNameOffset, subscription.grouped(), subscription.parallelism(),
-            subscription.requestTimeout(), subscription.subscriptionType(), subscription.subscriptionMechanism(),
-            subscriptionEndpointOffset, subscriptionHttpMethodOffset, subscription.elastic(), filterOperatorOffset,
-            filterKeyValuesListOffset, callbackConfigOffset);
-        dataBuilder.finish(subscriptionOffset);
-        return Subscription.getRootAsSubscription(dataBuilder.dataBuffer());
     }
 
     @Override
@@ -131,7 +90,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public CompletionStage<PartSubscription> getPartSubscription(Subscription subscription, short partSubscriptionId) {
+    public CompletionStage<PartSubscription> getPartSubscription(Subscription subscription, int partSubscriptionId) {
         return this.getSubscription(subscription.topicId(), subscription.id())
             .handleAsync((existingSubscription, exception) -> {
                 if (exception != null) {
@@ -166,14 +125,14 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public CompletionStage<Subscription> getSubscription(short topicId, short subscriptionId) {
+    public CompletionStage<Subscription> getSubscription(int topicId, int subscriptionId) {
         String subscriptionPath = config.getTopicsPath() + "/" + topicId + "/subscriptions/" + subscriptionId;
         return curatorService.getData(subscriptionPath).handleAsync((data, exception) -> {
             if (exception != null) {
                 log.error("Error in getting susbcription data for {}-{}", topicId, subscriptionId);
                 throw new VBrokerException("Error while fetching topic subscription");
             } else {
-                return Subscription.getRootAsSubscription(ByteBuffer.wrap(data));
+                return Subscription.fromBytes(data);
             }
         });
     }
@@ -251,7 +210,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public CompletionStage<List<Subscription>> getSubscriptionsForTopic(short topicId) {
+    public CompletionStage<List<Subscription>> getSubscriptionsForTopic(int topicId) {
         String path = config.getTopicsPath() + "/" + topicId + "/subscriptions";
 
         return curatorService.getChildren(path).thenCompose((children) -> {
@@ -288,15 +247,14 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     public CompletionStage<Subscription> createSubscriptionAdmin(short id, Subscription subscription) {
         log.info("Call from controller to create subscription with id {} name {}", id, subscription.name());
         String path = config.getTopicsPath() + "/" + subscription.topicId() + "/subscriptions/" + id;
-        Subscription subscriptionWithId = newSubscriptionFromSubscription(id, subscription);
         return curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT,
-            ByteBufUtils.getBytes(subscriptionWithId.getByteBuffer()), false).handleAsync((data, exception) -> {
+            subscription.toBytes(), false).handleAsync((data, exception) -> {
             if (exception != null) {
                 log.error("Exception in curator node create and set data stage {} ", exception);
                 throw new SubscriptionCreationException(exception.getMessage());
             } else {
                 log.info("Created subscription entity with id - " + id);
-                return newSubscriptionFromSubscription(id, subscription);
+                return subscription;
             }
         });
     }

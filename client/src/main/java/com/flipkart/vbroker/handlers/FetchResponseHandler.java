@@ -1,7 +1,8 @@
 package com.flipkart.vbroker.handlers;
 
-import com.flipkart.vbroker.entities.*;
-import com.flipkart.vbroker.entities.HttpMethod;
+import com.flipkart.vbroker.MessageConstants;
+import com.flipkart.vbroker.flatbuf.*;
+import com.flipkart.vbroker.flatbuf.HttpMethod;
 import com.google.common.base.Charsets;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;

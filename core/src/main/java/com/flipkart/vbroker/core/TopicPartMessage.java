@@ -1,6 +1,6 @@
 package com.flipkart.vbroker.core;
 
-import com.flipkart.vbroker.entities.Message;
+import com.flipkart.vbroker.flatbuf.Message;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

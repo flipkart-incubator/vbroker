@@ -1,8 +1,8 @@
 package com.flipkart.vbroker.services;
 
 import com.flipkart.vbroker.core.TopicPartition;
-import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.exceptions.TopicValidationException;
+import com.flipkart.vbroker.wrappers.Topic;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
@@ -34,7 +34,7 @@ public interface TopicService {
      * @param topicPartitionId partitionId of partition to be fetched
      * @return
      */
-    public CompletionStage<TopicPartition> getTopicPartition(Topic topic, short topicPartitionId);
+    public CompletionStage<TopicPartition> getTopicPartition(Topic topic, int topicPartitionId);
 
     /**
      * check if the topic is present
@@ -58,7 +58,7 @@ public interface TopicService {
      * @param topicId id of the topic
      * @return CompletionStage with topic as result.
      */
-    public CompletionStage<Topic> getTopic(short topicId);
+    public CompletionStage<Topic> getTopic(int topicId);
 
     /**
      * Get topic partitions list for the topic

@@ -1,6 +1,6 @@
 package com.flipkart.vbroker.data.redis;
 
-import com.flipkart.vbroker.entities.Message;
+import com.flipkart.vbroker.flatbuf.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.handler.codec.base64.Base64;

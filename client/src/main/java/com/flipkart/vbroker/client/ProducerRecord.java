@@ -2,23 +2,24 @@ package com.flipkart.vbroker.client;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.Map;
 
 @Builder
 @Getter
+@ToString
 public class ProducerRecord {
     private String messageId;
     private String groupId;
     private byte crc;
     private byte version;
     private int seqNo;
-    private short topicId;
-    private short partitionId;
+    private int topicId;
     private int attributes;
     private String httpUri;
     private HttpMethod httpMethod;
-    private short callbackTopicId;
+    private int callbackTopicId;
     private String callbackHttpUri;
     private HttpMethod callbackHttpMethod;
     private Map<String, String> headers;

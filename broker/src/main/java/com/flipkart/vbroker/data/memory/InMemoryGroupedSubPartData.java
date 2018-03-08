@@ -39,7 +39,8 @@ public class InMemoryGroupedSubPartData implements SubPartData {
             //subscriberGroupIteratorMap.put(subscriberGroup, subscriberGroup.iterator());
             groupQTypeIteratorTable.put(subscriberGroup, QType.MAIN, subscriberGroup.iterator());
 
-            return new MessageMetadata(subscriberGroup.getTopicPartition().getTopicId(),
+            //TODO: we should ideally set msg_id
+            return new MessageMetadata(subscriberGroup.getGroupId(), subscriberGroup.getTopicPartition().getTopicId(),
                 subscriberGroup.getTopicPartition().getId(), new Random().nextInt());
         });
     }

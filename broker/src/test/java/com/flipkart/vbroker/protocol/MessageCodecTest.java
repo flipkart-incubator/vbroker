@@ -1,7 +1,7 @@
 package com.flipkart.vbroker.protocol;
 
 import com.flipkart.vbroker.data.redis.RedisMessageCodec;
-import com.flipkart.vbroker.entities.Message;
+import com.flipkart.vbroker.flatbuf.Message;
 import org.redisson.Redisson;
 import org.redisson.api.RList;
 import org.redisson.api.RedissonClient;

@@ -1,19 +1,15 @@
 package com.flipkart.vbroker.curator;
 
 import com.flipkart.vbroker.VBrokerConfig;
-import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.services.CuratorService;
-import com.flipkart.vbroker.utils.ByteBufUtils;
 import com.flipkart.vbroker.utils.DummyEntities;
-
+import com.flipkart.vbroker.wrappers.Topic;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.x.async.AsyncCuratorFramework;
 import org.apache.zookeeper.CreateMode;
 import org.testng.annotations.BeforeClass;
-
-import java.nio.ByteBuffer;
 
 public class GetTopicTest {
 
@@ -36,7 +32,7 @@ public class GetTopicTest {
         String topicPath = config.getTopicsPath() + "/" + "101";
         Topic topic = DummyEntities.groupedTopic;
         curatorService.createNodeAndSetData(topicPath, CreateMode.PERSISTENT,
-            ByteBufUtils.getBytes(topic.getByteBuffer()), true).handleAsync((data, exception) -> {
+            topic.toBytes(), true).handleAsync((data, exception) -> {
             System.out.println("created " + data);
             return null;
         }).toCompletableFuture().get();
@@ -46,7 +42,7 @@ public class GetTopicTest {
     public void testGet() throws Exception {
 
         curatorService.getData("/topics/101").handleAsync((data, exception) -> {
-            Topic t = Topic.getRootAsTopic(ByteBuffer.wrap(data));
+            Topic t = Topic.fromBytes(data);
             System.out.println(t.name());
             System.out.println(t.partitions());
             System.out.println(t.topicCategory());

@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+package proto;
+
+option java_package = "com.flipkart.vbroker.proto";
+option java_outer_classname = "PEntities";
+option java_multiple_files = true;
+
+// common entities
+enum TopicCategory {
+    QUEUE = 0;
+    TOPIC = 1;
+}
+
+message ProtoTopic {
+    string name = 1;
+    int32 id = 2;
+    bool grouped = 3;
+    int32 partitions = 4;
+    int32 replicationFactor = 5;
+    TopicCategory topicCategory = 6;
+}
+
+enum HttpMethod {
+    POST = 0;
+    PUT = 1;
+    DELETE = 2;
+    PATCH = 3;
+}
+
+message FilterKeyValues {
+    string key = 1;
+    string values = 2;
+}
+
+message CodeRange {
+    int32 from = 1;
+    int32 to = 2;
+}
+
+message CallbackConfig {
+    repeated CodeRange codeRanges = 1;
+}
+
+enum SubscriptionType {
+    STATIC = 0;
+    DYNAMIC = 1;
+}
+
+enum SubscriptionMechanism {
+    PUSH = 0;
+    PULL = 1;
+}
+
+enum FilterOperator {
+    OR = 0;
+    NOR = 1;
+    NAND = 2;
+}
+
+message ProtoSubscription {
+    int32 id = 1;
+    int32 topicId = 2;
+    string name = 3;
+    bool grouped = 4;
+    int32 parallelism = 5;
+    int32 requestTimeout = 6;
+    SubscriptionType subscriptionType = 7;
+    SubscriptionMechanism subscriptionMechanism = 8;
+    string httpUri = 9;
+    HttpMethod httpMethod = 10;
+    bool elastic = 11;
+    FilterOperator filterOperator = 12;
+    repeated FilterKeyValues filterKeyValuesList = 13;
+    CallbackConfig callbackConfig = 14;
+}
+
+message ProtoQueue {
+    int32 id = 1;
+    ProtoTopic topic = 2;
+    ProtoSubscription subscription = 3;
+}
+
+message TopicSubscription {
+    int32 subscriptionId = 1;
+    int32 topicId = 2;
+}
+
+message Node {
+    int32 brokerId = 1;
+    string hostIp = 2;
+    int32 hostPort = 3;
+}
+
+message PartitionMetadata {
+    int32 id = 1;
+    int32 topicId = 2;
+    int32 leaderId = 3;
+    repeated int32 replicas = 4;
+}
+
+message TopicMetadata {
+    ProtoTopic topic = 1;
+    repeated PartitionMetadata partitionMetadatas = 2;
+}
+
+message ClusterMetadata {
+    repeated TopicMetadata topicMetadatas = 1;
+    repeated Node nodes = 2;
+}

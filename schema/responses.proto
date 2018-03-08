@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package proto;
+
+option java_package = "com.flipkart.vbroker.proto";
+option java_outer_classname = "PResponses";
+option java_multiple_files = true;
+
+import "entities.proto";
+
+// responses
+message VStatus {
+    int32 statusCode = 1;
+    string message = 2;
+}
+
+// response message types
+message ProtoResponse {
+    oneof protoResponse {
+        CreateTopicsResponse createTopicsResponse = 1;
+        CreateSubscriptionsResponse createSubscriptionsResponse = 2;
+        CreateQueuesResponse createQueuesResponse = 3;
+        GetTopicsResponse getTopicsResponse = 4;
+        GetQueuesResponse getQueuesResponse = 5;
+        GetSubscriptionsResponse getSubscriptionsResponse = 6;
+        GetSubscriptionLagsResponse getSubscriptionLagsResponse = 7;
+    }
+}
+
+// create topics response
+message CreateTopicResponse {
+    string name = 2;
+    VStatus status = 3;
+}
+
+message CreateTopicsResponse {
+    repeated CreateTopicResponse createTopicsResponse = 1;
+}
+
+// subscription create response
+message CreateSubscriptionResponse {
+    int32 topicId = 2;
+    string name = 3;
+    VStatus status = 4;
+}
+
+message CreateSubscriptionsResponse {
+    repeated CreateSubscriptionResponse createSubscriptionResponses = 1;
+}
+
+// create queues response
+message CreateQueueResponse {
+    string queueName = 1; //is the same as name of the queue's only topic.
+    VStatus status = 2;
+}
+
+message CreateQueuesResponse {
+    repeated CreateQueueResponse createQueueResponses = 1;
+}
+
+// get topics response
+message GetTopicResponse {
+    ProtoTopic topic = 1;
+    VStatus status = 2;
+}
+
+message GetTopicsResponse {
+    repeated GetTopicResponse topics = 1;
+}
+
+// get subscriptions response
+message GetSubscriptionResponse {
+    ProtoSubscription subscription = 1;
+    VStatus status = 2;
+}
+
+message GetSubscriptionsResponse {
+    repeated GetSubscriptionResponse subscriptions = 1;
+}
+
+// get queues response
+message GetQueueResponse {
+    ProtoQueue queue = 1;
+    VStatus status = 2;
+}
+
+message GetQueuesResponse {
+    repeated GetQueueResponse queues = 1;
+}
+
+// get lags response
+message PartitionLag {
+    int32 partitionId = 1;
+    int32 lag = 2;
+    VStatus status = 3;
+}
+
+message SubscriptionLag {
+    int32 subscriptionId = 1;
+    int32 topicId = 2;
+    repeated PartitionLag partitionLags = 3;
+}
+
+message GetSubscriptionLagsResponse {
+    repeated SubscriptionLag subscriptionLags = 1;
+}
+
+message GetClusterMetadataResponse {
+    ClusterMetadata clusterMetadata = 1;
+    VStatus status = 2;
+}

@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package proto;
+
+option java_package = "com.flipkart.vbroker.proto";
+option java_outer_classname = "PRequests";
+option java_multiple_files = true;
+
+import "entities.proto";
+
+// requests
+// request message types
+message ProtoRequest {
+    oneof protoRequest {
+        CreateTopicsRequest createTopicsRequest = 1;
+        CreateSubscriptionsRequest createSubscriptionsRequest = 2;
+        CreateQueuesRequest createQueuesRequest = 3;
+        GetTopicsRequest getTopicsRequest = 4;
+        GetSubscriptionsRequest getSubscriptionsRequest = 5;
+        GetQueuesRequest getQueuesRequest = 6;
+        GetSubscriptionLagsRequest getSubscriptionLagsRequest = 7;
+    }
+}
+
+
+// create topics request
+message CreateTopicsRequest {
+    repeated ProtoTopic topics = 1;
+}
+
+// create subscriptions request
+message CreateSubscriptionsRequest {
+    repeated ProtoSubscription subscriptions = 1;
+}
+
+// create queues request
+message CreateQueuesRequest {
+    repeated ProtoQueue queues = 1;
+}
+
+// get queues request
+message GetQueuesRequest {
+    repeated int32 ids = 1;
+}
+
+// get topics request
+message GetTopicsRequest {
+    repeated int32 ids = 1;
+}
+
+// get subscriptions request
+message GetSubscriptionsRequest {
+    repeated TopicSubscription subscriptions = 1;
+}
+
+// get lags request
+message PartitionLagRequest {
+    int32 partitionId = 1;
+}
+
+message SubscriptionLagRequest {
+    TopicSubscription topicSubscription = 1;
+    repeated PartitionLagRequest partitionLags = 2;
+}
+
+message GetSubscriptionLagsRequest {
+    repeated SubscriptionLagRequest subscriptionLagRequests = 1;
+}
+
+
+message GetClusterMetadata {
+    repeated int32 topicIds = 1;
+}

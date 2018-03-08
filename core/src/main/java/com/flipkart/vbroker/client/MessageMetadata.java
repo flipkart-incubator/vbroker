@@ -8,7 +8,8 @@ import lombok.Getter;
 @Getter
 @EqualsAndHashCode
 public class MessageMetadata {
-    private final short topicId;
-    private final short partitionId;
+    private final String messageId;
+    private final int topicId;
+    private final int partitionId;
     private final int memoryLocation; //dummy
 }

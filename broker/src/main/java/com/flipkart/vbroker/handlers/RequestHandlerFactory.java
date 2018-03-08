@@ -1,11 +1,14 @@
 package com.flipkart.vbroker.handlers;
 
-import com.flipkart.vbroker.entities.RequestMessage;
-import com.flipkart.vbroker.entities.VRequest;
+import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.exceptions.VBrokerException;
+import com.flipkart.vbroker.flatbuf.RequestMessage;
+import com.flipkart.vbroker.flatbuf.VRequest;
+import com.flipkart.vbroker.proto.ProtoRequest;
 import com.flipkart.vbroker.services.ProducerService;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
+import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import lombok.extern.slf4j.Slf4j;
@@ -17,9 +20,9 @@ public class RequestHandlerFactory {
 
     private final RequestHandler produceRequestHandler;
     private final RequestHandler fetchRequestHandler;
-    private final RequestHandler topicCreateRequestHandler;
+    private final RequestHandler createTopicsRequestHandler;
     private final RequestHandler subscriptionCreateRequestHandler;
-    private final GetLagsRequestHandler getLagsRequestHandler;
+    private final GetSubscriptionLagsRequestHandler getSubscriptionLagsRequestHandler;
 
     public RequestHandlerFactory(ProducerService producerService,
                                  TopicService topicService,
@@ -36,9 +39,9 @@ public class RequestHandlerFactory {
             topicService,
             subscriptionService,
             directExecutorService);
-        this.topicCreateRequestHandler = new TopicCreateRequestHandler(topicService, adminReqExecutorService);
-        this.subscriptionCreateRequestHandler = new SubscriptionCreateRequestHandler(subscriptionService, adminReqExecutorService);
-        this.getLagsRequestHandler = new GetLagsRequestHandler(subscriptionService);
+        this.createTopicsRequestHandler = new CreateTopicsRequestHandler(topicService, adminReqExecutorService);
+        this.subscriptionCreateRequestHandler = new CreateSubscriptionsRequestHandler(subscriptionService, adminReqExecutorService);
+        this.getSubscriptionLagsRequestHandler = new GetSubscriptionLagsRequestHandler(subscriptionService);
     }
 
     public RequestHandler getRequestHandler(VRequest request) {
@@ -52,18 +55,42 @@ public class RequestHandlerFactory {
                 log.info("Request is of type FetchRequest");
                 requestHandler = fetchRequestHandler;
                 break;
-            case RequestMessage.CreateTopicsRequest:
-                log.info("Request is of type TopicCreateRequest");
-                requestHandler = topicCreateRequestHandler;
-                break;
-            case RequestMessage.CreateSubscriptionsRequest:
-                requestHandler = subscriptionCreateRequestHandler;
-                break;
-            case RequestMessage.GetLagsRequest:
-                requestHandler = getLagsRequestHandler;
+            case RequestMessage.ControlRequest:
+                requestHandler = getProtoRequestHandler(FlatbufUtils.getProtoRequest(request));
                 break;
             default:
                 throw new VBrokerException("Unknown RequestMessageType: " + request.requestMessageType());
+        }
+        return requestHandler;
+    }
+
+    private RequestHandler getProtoRequestHandler(ProtoRequest protoRequest) {
+        RequestHandler requestHandler;
+        switch (protoRequest.getProtoRequestCase()) {
+            case CREATETOPICSREQUEST:
+                log.info("Request is of type TopicCreateRequest");
+                requestHandler = createTopicsRequestHandler;
+                break;
+            case CREATESUBSCRIPTIONSREQUEST:
+                requestHandler = subscriptionCreateRequestHandler;
+                break;
+            case GETSUBSCRIPTIONLAGSREQUEST:
+                requestHandler = getSubscriptionLagsRequestHandler;
+                break;
+            case CREATEQUEUESREQUEST:
+                throw new NotImplementedException();
+//                break;
+            case GETQUEUESREQUEST:
+                throw new NotImplementedException();
+//                break;
+            case GETSUBSCRIPTIONSREQUEST:
+                throw new NotImplementedException();
+//                break;
+            case GETTOPICSREQUEST:
+                throw new NotImplementedException();
+//                break;
+            default:
+                throw new VBrokerException("Unknown ProtoRequestType: " + protoRequest.getProtoRequestCase());
         }
         return requestHandler;
     }

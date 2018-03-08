@@ -13,7 +13,7 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 public class TopicPartition {
-    private final short id;
-    private final short topicId;
+    private final int id;
+    private final int topicId;
     private final boolean grouped;
 }

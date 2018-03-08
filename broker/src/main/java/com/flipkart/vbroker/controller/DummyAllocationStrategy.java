@@ -1,9 +1,9 @@
 package com.flipkart.vbroker.controller;
 
-import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.services.CuratorService;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
+import com.flipkart.vbroker.wrappers.Topic;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.CreateMode;

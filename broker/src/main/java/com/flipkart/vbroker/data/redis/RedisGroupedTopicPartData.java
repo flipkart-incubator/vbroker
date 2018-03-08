@@ -4,8 +4,8 @@ import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.core.MessageGroup;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.TopicPartData;
-import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.exceptions.VBrokerException;
+import com.flipkart.vbroker.flatbuf.Message;
 import com.google.common.collect.PeekingIterator;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.*;
@@ -44,7 +44,11 @@ public class RedisGroupedTopicPartData extends RedisTopicPartData implements Top
             RScript.ReturnType.INTEGER,
             Arrays.asList("{" + topicPartition.toString() + "}" + messageGroup.toString(), topicPartition.toString()), rObjMessage, rObjString)
             .thenApplyAsync(result -> {
-                return new MessageMetadata(message.topicId(), message.partitionId(), new Random().nextInt());
+                return new MessageMetadata(
+                    message.messageId(),
+                    message.topicId(),
+                    message.partitionId(),
+                    new Random().nextInt());
             })
             .exceptionally(exception -> {
                 throw new VBrokerException("Unable to add message to redis : " + exception.getMessage());

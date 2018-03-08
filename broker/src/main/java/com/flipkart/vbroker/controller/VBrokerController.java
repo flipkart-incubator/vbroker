@@ -4,8 +4,8 @@ import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.services.CuratorService;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
-import com.flipkart.vbroker.utils.SubscriptionUtils;
 import com.flipkart.vbroker.utils.TopicUtils;
+import com.flipkart.vbroker.wrappers.Subscription;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.WatchedEvent;
@@ -135,7 +135,7 @@ public class VBrokerController extends AbstractExecutionThreadService {
     private void handleSubscriptionCreation(String fullPath, String child) {
         short subscriptionId = Short.valueOf(child);
         curatorService.getData(fullPath).thenComposeAsync(bytes -> subscriptionService
-            .createSubscriptionAdmin(subscriptionId, SubscriptionUtils.getSubscription(bytes)))
+            .createSubscriptionAdmin(subscriptionId, Subscription.fromBytes(bytes)))
             .toCompletableFuture().join();
 
     }

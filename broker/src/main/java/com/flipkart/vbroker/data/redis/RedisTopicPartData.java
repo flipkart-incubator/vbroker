@@ -1,8 +1,8 @@
 package com.flipkart.vbroker.data.redis;
 
-import com.flipkart.vbroker.entities.HttpHeader;
-import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
+import com.flipkart.vbroker.flatbuf.HttpHeader;
+import com.flipkart.vbroker.flatbuf.Message;
 import com.google.common.collect.PeekingIterator;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.extern.slf4j.Slf4j;

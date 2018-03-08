@@ -5,7 +5,6 @@ import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.data.memory.InMemorySubPartDataManager;
 import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
-import com.flipkart.vbroker.entities.*;
 import com.flipkart.vbroker.protocol.Request;
 import com.flipkart.vbroker.protocol.codecs.VBrokerClientCodec;
 import com.flipkart.vbroker.services.CuratorService;
@@ -72,11 +71,11 @@ public class DummyServiceTests {
 
         int topicName = builder.createString("newTopic2");
 
-        int topic = Topic.createTopic(builder, (short) 202, topicName, true, (short) 1, (short) 3, TopicCategory.TOPIC);
-        int topicCreateRequest = TopicCreateRequest.createTopicCreateRequest(builder, topic);
-        int vRequest = VRequest.createVRequest(builder, (byte) 1, 1002, RequestMessage.CreateTopicsRequest,
-            topicCreateRequest);
-        builder.finish(vRequest);
+//        int topic = Topic.createTopic(builder, (short) 202, topicName, true, (short) 1, (short) 3, TopicCategory.TOPIC);
+//        int topicCreateRequest = TopicCreateRequest.createTopicCreateRequest(builder, topic);
+//        int vRequest = VRequest.createVRequest(builder, (byte) 1, 1002, RequestMessage.CreateTopicsRequest,
+//            topicCreateRequest);
+//        builder.finish(vRequest);
 
         ByteBuffer byteBuffer = builder.dataBuffer();
         ByteBuf byteBuf = Unpooled.wrappedBuffer(byteBuffer);
@@ -102,19 +101,19 @@ public class DummyServiceTests {
         int httpUriOffset = builder.createString("http://localhost:8081");
         int httpMethodOffset = builder.createString("POST");
 
-        int codeRangeOffset = CodeRange.createCodeRange(builder, (short) 200, (short) 299);
-        int codeRangesVectorOffset = CallbackConfig.createCodeRangesVector(builder, new int[]{codeRangeOffset});
-        int callbackConfigOffset = CallbackConfig.createCallbackConfig(builder, codeRangesVectorOffset);
-
-        int filterOperatorOffset = builder.createString("OR");
-        int filterKeyValuesListOffset = builder.createString("");
-        int subscriptionOffset = Subscription.createSubscription(builder, (short) 101, topicId, nameOffset, true,
-            (short) 2, (short) 1000, SubscriptionType.STATIC, SubscriptionMechanism.PUSH, httpUriOffset,
-            httpMethodOffset, false, filterOperatorOffset, filterKeyValuesListOffset, callbackConfigOffset);
-        int subCreateRequest = SubscriptionCreateRequest.createSubscriptionCreateRequest(builder, subscriptionOffset);
-        int vRequest = VRequest.createVRequest(builder, (byte) 1, 1002, RequestMessage.CreateSubscriptionsRequest,
-            subCreateRequest);
-        builder.finish(vRequest);
+//        int codeRangeOffset = CodeRange.createCodeRange(builder, (short) 200, (short) 299);
+//        int codeRangesVectorOffset = CallbackConfig.createCodeRangesVector(builder, new int[]{codeRangeOffset});
+//        int callbackConfigOffset = CallbackConfig.createCallbackConfig(builder, codeRangesVectorOffset);
+//
+//        int filterOperatorOffset = builder.createString("OR");
+//        int filterKeyValuesListOffset = builder.createString("");
+//        int subscriptionOffset = Subscription.createSubscription(builder, (short) 101, topicId, nameOffset, true,
+//            (short) 2, (short) 1000, SubscriptionType.STATIC, SubscriptionMechanism.PUSH, httpUriOffset,
+//            httpMethodOffset, false, filterOperatorOffset, filterKeyValuesListOffset, callbackConfigOffset);
+//        int subCreateRequest = SubscriptionCreateRequest.createSubscriptionCreateRequest(builder, subscriptionOffset);
+//        int vRequest = VRequest.createVRequest(builder, (byte) 1, 1002, RequestMessage.CreateSubscriptionsRequest,
+//            subCreateRequest);
+        //   builder.finish(vRequest);
 
         ByteBuffer byteBuffer = builder.dataBuffer();
         ByteBuf byteBuf = Unpooled.wrappedBuffer(byteBuffer);
@@ -133,14 +132,6 @@ public class DummyServiceTests {
             return null;
         });
 
-        // List<String> ids = new ArrayList<>();
-        // ids.add("11805");
-        // subscriptionService.getSubscriptionsForIds((short) 11238,
-        // ids).handleAsync((data, exception) -> {
-        // System.out.println(data);
-        // System.out.println(exception);
-        // return null;
-        // });
         Thread.sleep(200000);
     }
 
@@ -150,8 +141,8 @@ public class DummyServiceTests {
         protected void initChannel(SocketChannel ch) throws Exception {
             ChannelPipeline pipeline = ch.pipeline();
             pipeline.addLast(new VBrokerClientCodec());
-          //  ResponseHandlerFactory responseHandlerFactory = new ResponseHandlerFactory(null);
-          //  pipeline.addLast(new VBrokerClientInitializer(responseHandlerFactory));
+            //  ResponseHandlerFactory responseHandlerFactory = new ResponseHandlerFactory(null);
+            //  pipeline.addLast(new VBrokerClientInitializer(responseHandlerFactory));
 
         }
     }

@@ -92,7 +92,7 @@ public class CuratorService {
      * @param path
      * @return
      */
-    public AsyncStage<byte[]> getData(String path) {
+    public CompletionStage<byte[]> getData(String path) {
         return asyncZkClient.getData().forPath(path);
     }
 
@@ -111,7 +111,7 @@ public class CuratorService {
      * @param path
      * @return
      */
-    public AsyncStage<List<String>> getChildren(String path) {
+    public CompletionStage<List<String>> getChildren(String path) {
         return asyncZkClient.getChildren().forPath(path);
     }
 

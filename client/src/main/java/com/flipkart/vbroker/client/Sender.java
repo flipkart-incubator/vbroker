@@ -1,79 +1,134 @@
 package com.flipkart.vbroker.client;
 
-import com.flipkart.vbroker.entities.*;
-import com.flipkart.vbroker.protocol.Request;
+import com.flipkart.vbroker.core.TopicPartition;
+import com.flipkart.vbroker.flatbuf.*;
 import com.flipkart.vbroker.utils.FlatBuffers;
 import com.google.common.primitives.Ints;
 import com.google.flatbuffers.FlatBufferBuilder;
-import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.CompletionStage;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class Sender implements Runnable {
 
     private final Accumulator accumulator;
     private final Metadata metadata;
-    private final Bootstrap bootstrap;
+    private final NetworkClient client;
     private final VBClientConfig config;
+    private final CountDownLatch runningLatch;
+    private volatile boolean running;
 
     public Sender(Accumulator accumulator,
                   Metadata metadata,
-                  Bootstrap bootstrap,
+                  NetworkClient client,
                   VBClientConfig config) {
         this.accumulator = accumulator;
         this.metadata = metadata;
-        this.bootstrap = bootstrap;
+        this.client = client;
         this.config = config;
-    }
 
-    public ChannelFuture getChannelFuture(Node node) {
-        return bootstrap.connect(node.getHostIp(), node.getHostPort());
+        running = true;
+        runningLatch = new CountDownLatch(1);
     }
 
     @Override
     public void run() {
-        /*
-         * Logic:
-         * 0. get all cluster nodes from metadata
-         * 1. get all the topic partitions hosted by the node
-         * 2. find the RecordBatch-es which are queued up in accumulator
-         * 3. sum up all the records into a MessageSet within a RecordBatch for a particular topic partition
-         * 5. aggregate the requests at a topic level
-         * 6. prepare the ProduceRequest
-         * 7. map the request to the response and assign the corresponding status code
-         */
+        while (running) {
+            try {
+                send();
+                Thread.sleep(2000);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            } catch (Exception ex) {
+                log.error("Exception in send()", ex);
+            }
+        }
+        runningLatch.countDown();
+    }
+
+    /*
+     * Logic:
+     * 0. get all cluster nodes from metadata
+     * 1. get all the topic partitions hosted by the node
+     * 2. find the RecordBatch-es which are queued up in accumulator
+     * 3. sum up all the records into a MessageSet within a RecordBatch for a particular topic partition
+     * 5. aggregate the requests at a topic level
+     * 6. prepare the ProduceRequest
+     * 7. map the request to the response and assign the corresponding status code
+     */
+    private void send() {
         List<Node> clusterNodes = metadata.getClusterNodes();
-        clusterNodes.stream()
-            .map(node -> {
-                RecordBatch recordBatch = accumulator.getRecordBatch(node);
+        log.info("ClusterNodes: {}", clusterNodes);
 
-                VRequest vRequest = getVRequest(recordBatch);
-                int correlationId = vRequest.correlationId();
+        clusterNodes.forEach(node -> {
+            RecordBatch recordBatch = accumulator.getRecordBatch(node);
+            int totalNoOfRecords = recordBatch.getTotalNoOfRecords();
+            //if (totalNoOfRecords > 0) {
+            log.info("Total no of records in batch for Node {} are {}", node.getBrokerId(), totalNoOfRecords);
+            sendRecordBatch(node, recordBatch);
+            //}
+        });
+    }
 
-                return getChannelFuture(node).addListener((ChannelFutureListener) future -> {
-                    Channel channel = future.channel();
+    private void sendRecordBatch(Node node, RecordBatch recordBatch) {
+        VRequest vRequest = newVRequest(recordBatch);
+        CompletionStage<VResponse> responseStage = client.send(node, vRequest);
+        responseStage
+            .thenAccept(vResponse -> {
+                recordBatch.setState(RecordBatch.BatchState.DONE_SUCCESS);
+                log.info("Received vResponse with correlationId {}", vResponse.correlationId());
 
-                    ByteBuf byteBuf = Unpooled.wrappedBuffer(vRequest.getByteBuffer());
-                    Request request = new Request(byteBuf.readableBytes(), byteBuf);
-
-                    channel.writeAndFlush(request).addListener((ChannelFutureListener) future1 -> {
-
-                    });
-                });
+                parseProduceResponse(vResponse, recordBatch);
+                log.info("Done parsing VResponse with correlationId {}", vResponse.correlationId());
+            })
+            .exceptionally(throwable -> {
+                log.error("Exception in executing request {}: {}", vRequest.correlationId(), throwable.getMessage());
+                recordBatch.setState(RecordBatch.BatchState.DONE_FAILURE);
+                return null;
             });
     }
 
-    private VRequest getVRequest(RecordBatch recordBatch) {
+    private void parseProduceResponse(VResponse vResponse, RecordBatch recordBatch) {
+        ProduceResponse produceResponse = (ProduceResponse) vResponse.responseMessage(new ProduceResponse());
+        assert produceResponse != null;
+
+        for (int i = 0; i < produceResponse.topicResponsesLength(); i++) {
+            TopicProduceResponse topicProduceResponse = produceResponse.topicResponses(i);
+            int topicId = topicProduceResponse.topicId();
+            log.info("Handling ProduceResponse for topic {} with {} partition responses", topicId, topicProduceResponse.partitionResponsesLength());
+            for (int j = 0; j < topicProduceResponse.partitionResponsesLength(); j++) {
+                TopicPartitionProduceResponse partitionProduceResponse = topicProduceResponse.partitionResponses(j);
+                //log.info("ProduceResponse for topic {} at partition {}", topicId, partitionProduceResponse);
+                log.info("Response code for handling produceRequest for topic {} and partition {} is {}",
+                    topicId, partitionProduceResponse.partitionId(), partitionProduceResponse.status().statusCode());
+
+
+                TopicPartition topicPartition = metadata.getTopicPartition(topicProduceResponse.topicId(), partitionProduceResponse.partitionId());
+                recordBatch.setResponse(topicPartition, partitionProduceResponse.status());
+            }
+        }
+    }
+
+    public void stop() {
+        running = false;
+
+        try {
+            runningLatch.await(5000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            log.error("Killing Sender as time elapsed");
+        }
+    }
+
+    private VRequest newVRequest(RecordBatch recordBatch) {
         FlatBufferBuilder builder = FlatBuffers.newBuilder();
 
         List<TopicPartReq> topicPartReqs =
@@ -84,7 +139,7 @@ public class Sender implements Runnable {
                         recordBatch.getRecords(topicPartition)
                             .stream()
                             .filter(record -> recordBatch.isReady())
-                            .map(record -> RecordUtils.flatBuffMsgOffset(builder, record))
+                            .map(record -> RecordUtils.flatBuffMsgOffset(builder, record, topicPartition.getId()))
                             .collect(Collectors.toList());
                     int[] messages = Ints.toArray(msgOffsets);
 
@@ -99,7 +154,7 @@ public class Sender implements Runnable {
                     return new TopicPartReq(topicPartition.getTopicId(), topicPartitionProduceRequest);
                 }).collect(Collectors.toList());
 
-        Map<Short, List<TopicPartReq>> perTopicReqs = topicPartReqs.stream()
+        Map<Integer, List<TopicPartReq>> perTopicReqs = topicPartReqs.stream()
             .collect(Collectors.groupingBy(TopicPartReq::getTopicId));
         List<Integer> topicOffsetList = perTopicReqs.entrySet()
             .stream()
@@ -108,14 +163,13 @@ public class Sender implements Runnable {
                     perTopicReqs.get(entry.getKey()).stream().map(TopicPartReq::getTopicPartProduceReqOffset).collect(Collectors.toList());
                 int[] partReqOffsets = Ints.toArray(topicPartProduceReqOffsets);
                 int partitionRequestsVector = TopicProduceRequest.createPartitionRequestsVector(builder, partReqOffsets);
-
                 return TopicProduceRequest.createTopicProduceRequest(builder, entry.getKey(), partitionRequestsVector);
             }).collect(Collectors.toList());
 
         int[] topicRequests = Ints.toArray(topicOffsetList);
         int topicRequestsVector = ProduceRequest.createTopicRequestsVector(builder, topicRequests);
         int produceRequest = ProduceRequest.createProduceRequest(builder, topicRequestsVector);
-        int correlationId = new Random(10000).nextInt();
+        int correlationId = Math.abs(new Random(10000).nextInt());
         int vRequest = VRequest.createVRequest(builder,
             (byte) 1,
             correlationId,
@@ -129,7 +183,7 @@ public class Sender implements Runnable {
     @AllArgsConstructor
     @Getter
     private class TopicPartReq {
-        private final short topicId;
+        private final int topicId;
         private final int topicPartProduceReqOffset;
     }
 }

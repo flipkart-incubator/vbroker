@@ -24,11 +24,11 @@ public class CallbackConfig {
         this.codeRanges.addAll(codeRanges);
     }
 
-    public static CallbackConfig getCallbackConfig(com.flipkart.vbroker.entities.CallbackConfig callbackConfig) {
+    public static CallbackConfig getCallbackConfig(com.flipkart.vbroker.proto.CallbackConfig callbackConfig) {
         Set<CodeRange> newCodeRanges = new HashSet<>();
-        for (int i = 0; i < callbackConfig.codeRangesLength(); i++) {
-            com.flipkart.vbroker.entities.CodeRange range = callbackConfig.codeRanges(i);
-            newCodeRanges.add(new CodeRange(range.from(), range.to()));
+        for (int i = 0; i < callbackConfig.getCodeRangesCount(); i++) {
+            com.flipkart.vbroker.proto.CodeRange range = callbackConfig.getCodeRanges(i);
+            newCodeRanges.add(new CodeRange(range.getFrom(), range.getTo()));
         }
         return new CallbackConfig(newCodeRanges);
     }

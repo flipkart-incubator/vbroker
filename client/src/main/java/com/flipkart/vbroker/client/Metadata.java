@@ -1,7 +1,7 @@
 package com.flipkart.vbroker.client;
 
 import com.flipkart.vbroker.core.TopicPartition;
-import com.flipkart.vbroker.entities.Topic;
+import com.flipkart.vbroker.wrappers.Topic;
 
 import java.util.List;
 
@@ -9,9 +9,11 @@ public interface Metadata {
 
     public long aliveTimeMs();
 
+    public Topic getTopic(int topicId);
+
     public List<Topic> getTopics();
 
-    public TopicPartition getTopicPartition(short topicId, short partitionId);
+    public TopicPartition getTopicPartition(int topicId, int partitionId);
 
     public List<TopicPartition> getTopicPartitions(short topicId);
 

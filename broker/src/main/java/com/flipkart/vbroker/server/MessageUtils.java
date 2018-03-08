@@ -1,9 +1,9 @@
 package com.flipkart.vbroker.server;
 
-import com.flipkart.vbroker.entities.HttpHeader;
-import com.flipkart.vbroker.entities.Message;
-import com.flipkart.vbroker.entities.MessageConstants;
+import com.flipkart.vbroker.MessageConstants;
 import com.flipkart.vbroker.exceptions.VBrokerException;
+import com.flipkart.vbroker.flatbuf.HttpHeader;
+import com.flipkart.vbroker.flatbuf.Message;
 import com.flipkart.vbroker.subscribers.QType;
 import com.google.common.primitives.Ints;
 import com.google.flatbuffers.FlatBufferBuilder;
@@ -50,13 +50,13 @@ public class MessageUtils {
         int seqNo = message.seqNo();
         short partitionId = 0;
 
-        short topicId = message.callbackTopicId();
+        int topicId = message.callbackTopicId();
         int httpUri = builder.createString(requireNonNull(message.callbackHttpUri()));
-        byte httpMethod = message.callbackHttpMethod();
+        int httpMethod = message.callbackHttpMethod();
 
         short callbackTopicId = -1;
         int callbackHttpUri = builder.createString("dummy");
-        byte callbackHttpMethod = message.callbackHttpMethod();
+        int callbackHttpMethod = message.callbackHttpMethod();
 
         Set<String> toRemoveHeaders = Sets.newHashSet(
             MessageConstants.BRIDGED_COUNT,

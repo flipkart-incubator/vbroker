@@ -2,18 +2,15 @@ package com.flipkart.vbroker.services;
 
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.TopicPartition;
-import com.flipkart.vbroker.entities.Topic;
 import com.flipkart.vbroker.exceptions.*;
-import com.flipkart.vbroker.utils.ByteBufUtils;
 import com.flipkart.vbroker.utils.IdGenerator;
 import com.flipkart.vbroker.utils.TopicUtils;
-import com.google.flatbuffers.FlatBufferBuilder;
+import com.flipkart.vbroker.wrappers.Topic;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -35,16 +32,15 @@ public class TopicServiceImpl implements TopicService {
         log.info("creating topic request with generated id {}, name {}, rf {}, grouped {}", id, topic.name(), topic.replicationFactor(),
             topic.grouped());
         String topicPath = config.getAdminTasksPath() + "/create_topic" + "/" + id;
-        Topic topicWithId = newTopicModelFromTopic(id, topic);
         return curatorService
-            .createNodeAndSetData(topicPath, CreateMode.PERSISTENT, ByteBufUtils.getBytes(topicWithId.getByteBuffer()), false)
+            .createNodeAndSetData(topicPath, CreateMode.PERSISTENT, topic.toBytes(), false)
             .handleAsync((data, exception) -> {
                 if (exception != null) {
                     log.error("Exception in curator node create and set data stage {} ", exception);
                     throw new TopicCreationException(exception.getMessage());
                 } else {
                     log.info("Created topic with id - " + id);
-                    return newTopicModelFromTopic(Short.valueOf(id), topic);
+                    return topic;
                 }
             });
     }
@@ -59,24 +55,8 @@ public class TopicServiceImpl implements TopicService {
         // TODO add validation steps
     }
 
-    /**
-     * Returns a new topic created with id and rest of data from topic.
-     *
-     * @param id
-     * @param topic
-     * @return
-     */
-    private Topic newTopicModelFromTopic(short id, Topic topic) {
-        FlatBufferBuilder topicBuilder = new FlatBufferBuilder();
-        int topicNameOffset = topicBuilder.createString(topic.name());
-        int topicOffset = Topic.createTopic(topicBuilder, id, topicNameOffset, topic.grouped(), topic.partitions(),
-            topic.replicationFactor(), topic.topicCategory());
-        topicBuilder.finish(topicOffset);
-        return Topic.getRootAsTopic(topicBuilder.dataBuffer());
-    }
-
     @Override
-    public CompletionStage<TopicPartition> getTopicPartition(Topic topic, short topicPartitionId) {
+    public CompletionStage<TopicPartition> getTopicPartition(Topic topic, int topicPartitionId) {
         return this.getTopic(topic.id()).handleAsync((topicData, exception) -> {
             if (exception != null) {
                 log.error("Error while getting topic {}", exception);
@@ -114,7 +94,7 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public CompletionStage<Topic> getTopic(short topicId) {
+    public CompletionStage<Topic> getTopic(int topicId) {
         return curatorService.getData(config.getTopicsPath() + "/" + topicId).handleAsync((data, exception) -> {
             if (exception != null) {
                 if (exception instanceof KeeperException) {
@@ -126,10 +106,11 @@ public class TopicServiceImpl implements TopicService {
                 log.error("Error while fethcing topic with id {} - {}", topicId, exception);
                 throw new VBrokerException(exception.getMessage());
             } else {
-                return Topic.getRootAsTopic(ByteBuffer.wrap(data));
+                return Topic.fromBytes(data);
             }
         });
     }
+
 
     @Override
     public List<TopicPartition> getPartitions(Topic topic) {
@@ -169,16 +150,15 @@ public class TopicServiceImpl implements TopicService {
         log.info("creating topic entity in /topics with id {}, name {}, rf {}, grouped {}", id, topic.name(), topic.replicationFactor(),
             topic.grouped());
         String topicPath = config.getTopicsPath() + "/" + id;
-        Topic topicWithId = newTopicModelFromTopic(id, topic);
         return curatorService
-            .createNodeAndSetData(topicPath, CreateMode.PERSISTENT, ByteBufUtils.getBytes(topicWithId.getByteBuffer()), false)
+            .createNodeAndSetData(topicPath, CreateMode.PERSISTENT, topic.toBytes(), false)
             .handleAsync((data, exception) -> {
                 if (exception != null) {
                     log.error("Exception in curator node create and set data stage {} ", exception);
                     throw new TopicCreationException(exception.getMessage());
                 } else {
                     log.info("Created topic entity");
-                    return newTopicModelFromTopic(id, topic);
+                    return topic;
                 }
             });
     }

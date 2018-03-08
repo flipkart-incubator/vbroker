@@ -1,8 +1,8 @@
 package com.flipkart.vbroker.services;
 
 import com.flipkart.vbroker.core.PartSubscription;
-import com.flipkart.vbroker.entities.Subscription;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
+import com.flipkart.vbroker.wrappers.Subscription;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
@@ -31,7 +31,7 @@ public interface SubscriptionService {
      * @param subscriptionId id of the subscription to fetch
      * @return
      */
-    public CompletionStage<Subscription> getSubscription(short topicId, short subscriptionId);
+    public CompletionStage<Subscription> getSubscription(int topicId, int subscriptionId);
 
     /**
      * Gets all subscriptions across all topics
@@ -46,7 +46,7 @@ public interface SubscriptionService {
      * @param topicId id of the topic for which all subscriptions are to be fetched
      * @return
      */
-    public CompletionStage<List<Subscription>> getSubscriptionsForTopic(short topicId);
+    public CompletionStage<List<Subscription>> getSubscriptionsForTopic(int topicId);
 
     /**
      * Gets all subscriptions for a broker.
@@ -63,7 +63,7 @@ public interface SubscriptionService {
      * @param partSubscriptionId
      * @return
      */
-    public CompletionStage<PartSubscription> getPartSubscription(Subscription subscription, short partSubscriptionId);
+    public CompletionStage<PartSubscription> getPartSubscription(Subscription subscription, int partSubscriptionId);
 
     /**
      * Gets PartSubscriber for the given PartSubscription.

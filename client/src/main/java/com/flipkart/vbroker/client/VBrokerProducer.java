@@ -1,93 +1,65 @@
 package com.flipkart.vbroker.client;
 
-import com.flipkart.vbroker.handlers.ResponseHandlerFactory;
-import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioSocketChannel;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Random;
-import java.util.concurrent.CompletableFuture;
+import java.io.IOException;
 import java.util.concurrent.CompletionStage;
-
-import static java.util.Objects.nonNull;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class VBrokerProducer implements Producer {
 
     private final VBClientConfig config;
-    private final Partitioner partitioner;
     private final Accumulator accumulator;
-    private final EventLoopGroup group;
-    private final Bootstrap bootstrap;
-
-    private Channel channel;
+    private final NetworkClient networkClient;
+    private final Sender sender;
+    private final ListeningExecutorService senderExecutor;
+    private final ListeningExecutorService senderCallbackExecutor;
 
     public VBrokerProducer(VBClientConfig config,
-                           Partitioner partitioner,
                            Accumulator accumulator) {
-        this.partitioner = partitioner;
         this.accumulator = accumulator;
-
         this.config = config;
         log.info("Configs: ", config);
-        group = new NioEventLoopGroup();
-        ResponseHandlerFactory responseHandlerFactory = new ResponseHandlerFactory(null);
-        bootstrap = new Bootstrap();
-        bootstrap.group(group)
-            .channel(NioSocketChannel.class)
-            .handler(new VBrokerClientInitializer(responseHandlerFactory));
+        networkClient = new NetworkClientImpl();
+        sender = new Sender(accumulator, accumulator.fetchMetadata(), networkClient, config);
+        senderExecutor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1));
+        senderCallbackExecutor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1));
+        ListenableFuture<?> senderFuture = senderExecutor.submit(sender);
+        senderFuture.addListener(() -> {
+            log.info("Sender is closed");
+        }, senderCallbackExecutor);
     }
 
     public VBrokerProducer(VBClientConfig config) {
-        this(config, new DefaultPartitioner(), new Accumulator(config));
+        this(config, new Accumulator(config, new DefaultPartitioner()));
     }
 
     @Override
-    public CompletionStage<MessageMetadata> produce(ProducerRecord producerRecord) {
-        ProducerRecord record = ProducerRecord.builder()
-            .messageId("msg_123")
-            .groupId("group_123")
-            .build();
-
-        accumulator.addRecord(record);
-
-        assert false;
-        return getResponse(record);
-    }
-
-    private CompletionStage<MessageMetadata> getResponse(ProducerRecord record) {
-        //TODO: fill this up correctly
-        return CompletableFuture.supplyAsync(() ->
-            new MessageMetadata(record.getTopicId(), record.getPartitionId(), new Random().nextInt()));
+    public CompletionStage<MessageMetadata> produce(ProducerRecord record) {
+        return accumulator.accumulateRecord(record);
     }
 
     @Override
     public void close() {
-        if (nonNull(channel)) {
-            try {
-                channel.close().sync();
-            } catch (InterruptedException e) {
-                log.error("Error in closing the channel", e);
-            }
-        }
-    }
+        log.info("Closing VBrokerProducer");
+        sender.stop();
 
-    private CompletableFuture<Channel> convert(ChannelFuture channelFuture) {
-        CompletableFuture<Channel> future = new CompletableFuture<>();
-        channelFuture.addListener((ChannelFutureListener) f -> {
-            if (f.isCancelled()) {
-                future.cancel(false);
-            } else if (f.cause() != null) {
-                future.completeExceptionally(f.cause());
-            } else {
-                future.complete(f.channel());
-            }
-        });
-        return future;
+        try {
+            networkClient.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        MoreExecutors.shutdownAndAwaitTermination(senderExecutor,
+            config.getLingerTimeMs() * 5, TimeUnit.MILLISECONDS);
+        MoreExecutors.shutdownAndAwaitTermination(senderCallbackExecutor,
+            config.getLingerTimeMs() * 5, TimeUnit.MILLISECONDS);
+
+        log.info("VBrokerProducer closed");
     }
 }

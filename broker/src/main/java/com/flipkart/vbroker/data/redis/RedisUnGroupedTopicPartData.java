@@ -3,8 +3,8 @@ package com.flipkart.vbroker.data.redis;
 import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.TopicPartData;
-import com.flipkart.vbroker.entities.Message;
 import com.flipkart.vbroker.exceptions.VBrokerException;
+import com.flipkart.vbroker.flatbuf.Message;
 import com.google.common.collect.PeekingIterator;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RFuture;
@@ -35,7 +35,11 @@ public class RedisUnGroupedTopicPartData extends RedisTopicPartData implements T
         RFuture<Boolean> topicPartitionAddFuture = topicPartitionList.addAsync(rObjMessage);
         return topicPartitionAddFuture.thenApplyAsync(result -> {
             if (result) {
-                return new MessageMetadata(message.topicId(), message.partitionId(), new Random().nextInt());
+                return new MessageMetadata(
+                    message.messageId(),
+                    message.topicId(),
+                    message.partitionId(),
+                    new Random().nextInt());
             } else {
                 throw new VBrokerException("Unable to add message to redis : adding to topicPartitionList or messageGroupList failed");
             }
