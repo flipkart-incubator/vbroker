@@ -5,6 +5,7 @@ import com.flipkart.vbroker.client.MessageStore;
 import com.flipkart.vbroker.client.ProducerRecord;
 import com.flipkart.vbroker.flatbuf.Message;
 import com.flipkart.vbroker.server.VBrokerServer;
+import com.flipkart.vbroker.utils.DummyEntities;
 import com.flipkart.vbroker.wrappers.Topic;
 import com.xebialabs.restito.semantics.Action;
 import com.xebialabs.restito.server.StubServer;
@@ -107,24 +108,11 @@ public class AbstractVBrokerBaseTest {
         return Action.delay((int) sleepTime);
     }
 
-    public ProducerRecord newProducerRecord(Topic topic, String group, byte[] payload) {
-        Message message = MessageStore.getRandomMsg(group);
-        return ProducerRecord.builder()
-            .groupId(message.groupId())
-            .messageId(message.messageId())
-            .crc((byte) 1)
-            .version((byte) 1)
-            .seqNo(1)
-            .topicId(topic.id())
-            .attributes(201)
-            .httpUri(MockURI.URI_200.url())
-            .httpMethod(ProducerRecord.HttpMethod.POST)
-            .callbackTopicId(-1)
-            .callbackHttpUri(MockURI.URI_200.url())
-            .callbackHttpMethod(ProducerRecord.HttpMethod.POST)
-            .headers(new HashMap<>())
-            .payload(payload)
-            .build();
+    public Topic createGroupedTopic() {
+        return DummyEntities.groupedTopic;
     }
 
+    public Topic createUnGroupedTopic() {
+        return DummyEntities.groupedTopic;
+    }
 }
