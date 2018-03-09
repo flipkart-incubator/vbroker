@@ -105,11 +105,11 @@ public class Accumulator {
         CompletableFuture<RecordBatch.TopicPartMetadata> future = recordBatch.addRecord(topicPartition, record);
 
         return future.thenApply(topicPartMetadata ->
-            new MessageMetadata(
-                record.getMessageId(),
-                record.getTopicId(),
-                topicPartMetadata.getPartitionId(),
-                Math.abs(new Random().nextInt()))
+                new MessageMetadata(
+                    record.getMessageId(),
+                    record.getTopicId(),
+                    topicPartMetadata.getPartitionId(),
+                    Math.abs(new Random().nextInt()))
         );
     }
 

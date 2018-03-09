@@ -63,7 +63,7 @@ public class VBrokerProducerClient {
             .seqNo(1)
             .topicId(topic.id())
             .attributes(201)
-            //.httpUri("http://localhost:12000/errors/500")
+                //.httpUri("http://localhost:12000/errors/500")
             .httpUri("http://localhost:12000/messages")
             .httpMethod(ProducerRecord.HttpMethod.POST)
             .callbackTopicId(topic.id())

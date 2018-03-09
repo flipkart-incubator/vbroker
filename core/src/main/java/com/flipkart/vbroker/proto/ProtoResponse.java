@@ -1315,21 +1315,6 @@ public final class ProtoResponse extends
         /**
          * <code>.proto.CreateTopicsResponse createTopicsResponse = 1;</code>
          */
-        public Builder setCreateTopicsResponse(
-            com.flipkart.vbroker.proto.CreateTopicsResponse.Builder builderForValue) {
-            if (createTopicsResponseBuilder_ == null) {
-                protoResponse_ = builderForValue.build();
-                onChanged();
-            } else {
-                createTopicsResponseBuilder_.setMessage(builderForValue.build());
-            }
-            protoResponseCase_ = 1;
-            return this;
-        }
-
-        /**
-         * <code>.proto.CreateTopicsResponse createTopicsResponse = 1;</code>
-         */
         public Builder setCreateTopicsResponse(com.flipkart.vbroker.proto.CreateTopicsResponse value) {
             if (createTopicsResponseBuilder_ == null) {
                 if (value == null) {
@@ -1339,6 +1324,21 @@ public final class ProtoResponse extends
                 onChanged();
             } else {
                 createTopicsResponseBuilder_.setMessage(value);
+            }
+            protoResponseCase_ = 1;
+            return this;
+        }
+
+        /**
+         * <code>.proto.CreateTopicsResponse createTopicsResponse = 1;</code>
+         */
+        public Builder setCreateTopicsResponse(
+            com.flipkart.vbroker.proto.CreateTopicsResponse.Builder builderForValue) {
+            if (createTopicsResponseBuilder_ == null) {
+                protoResponse_ = builderForValue.build();
+                onChanged();
+            } else {
+                createTopicsResponseBuilder_.setMessage(builderForValue.build());
             }
             protoResponseCase_ = 1;
             return this;
@@ -1458,21 +1458,6 @@ public final class ProtoResponse extends
         /**
          * <code>.proto.CreateSubscriptionsResponse createSubscriptionsResponse = 2;</code>
          */
-        public Builder setCreateSubscriptionsResponse(
-            com.flipkart.vbroker.proto.CreateSubscriptionsResponse.Builder builderForValue) {
-            if (createSubscriptionsResponseBuilder_ == null) {
-                protoResponse_ = builderForValue.build();
-                onChanged();
-            } else {
-                createSubscriptionsResponseBuilder_.setMessage(builderForValue.build());
-            }
-            protoResponseCase_ = 2;
-            return this;
-        }
-
-        /**
-         * <code>.proto.CreateSubscriptionsResponse createSubscriptionsResponse = 2;</code>
-         */
         public Builder setCreateSubscriptionsResponse(com.flipkart.vbroker.proto.CreateSubscriptionsResponse value) {
             if (createSubscriptionsResponseBuilder_ == null) {
                 if (value == null) {
@@ -1482,6 +1467,21 @@ public final class ProtoResponse extends
                 onChanged();
             } else {
                 createSubscriptionsResponseBuilder_.setMessage(value);
+            }
+            protoResponseCase_ = 2;
+            return this;
+        }
+
+        /**
+         * <code>.proto.CreateSubscriptionsResponse createSubscriptionsResponse = 2;</code>
+         */
+        public Builder setCreateSubscriptionsResponse(
+            com.flipkart.vbroker.proto.CreateSubscriptionsResponse.Builder builderForValue) {
+            if (createSubscriptionsResponseBuilder_ == null) {
+                protoResponse_ = builderForValue.build();
+                onChanged();
+            } else {
+                createSubscriptionsResponseBuilder_.setMessage(builderForValue.build());
             }
             protoResponseCase_ = 2;
             return this;
@@ -1601,21 +1601,6 @@ public final class ProtoResponse extends
         /**
          * <code>.proto.CreateQueuesResponse createQueuesResponse = 3;</code>
          */
-        public Builder setCreateQueuesResponse(
-            com.flipkart.vbroker.proto.CreateQueuesResponse.Builder builderForValue) {
-            if (createQueuesResponseBuilder_ == null) {
-                protoResponse_ = builderForValue.build();
-                onChanged();
-            } else {
-                createQueuesResponseBuilder_.setMessage(builderForValue.build());
-            }
-            protoResponseCase_ = 3;
-            return this;
-        }
-
-        /**
-         * <code>.proto.CreateQueuesResponse createQueuesResponse = 3;</code>
-         */
         public Builder setCreateQueuesResponse(com.flipkart.vbroker.proto.CreateQueuesResponse value) {
             if (createQueuesResponseBuilder_ == null) {
                 if (value == null) {
@@ -1625,6 +1610,21 @@ public final class ProtoResponse extends
                 onChanged();
             } else {
                 createQueuesResponseBuilder_.setMessage(value);
+            }
+            protoResponseCase_ = 3;
+            return this;
+        }
+
+        /**
+         * <code>.proto.CreateQueuesResponse createQueuesResponse = 3;</code>
+         */
+        public Builder setCreateQueuesResponse(
+            com.flipkart.vbroker.proto.CreateQueuesResponse.Builder builderForValue) {
+            if (createQueuesResponseBuilder_ == null) {
+                protoResponse_ = builderForValue.build();
+                onChanged();
+            } else {
+                createQueuesResponseBuilder_.setMessage(builderForValue.build());
             }
             protoResponseCase_ = 3;
             return this;
@@ -1744,21 +1744,6 @@ public final class ProtoResponse extends
         /**
          * <code>.proto.GetTopicsResponse getTopicsResponse = 4;</code>
          */
-        public Builder setGetTopicsResponse(
-            com.flipkart.vbroker.proto.GetTopicsResponse.Builder builderForValue) {
-            if (getTopicsResponseBuilder_ == null) {
-                protoResponse_ = builderForValue.build();
-                onChanged();
-            } else {
-                getTopicsResponseBuilder_.setMessage(builderForValue.build());
-            }
-            protoResponseCase_ = 4;
-            return this;
-        }
-
-        /**
-         * <code>.proto.GetTopicsResponse getTopicsResponse = 4;</code>
-         */
         public Builder setGetTopicsResponse(com.flipkart.vbroker.proto.GetTopicsResponse value) {
             if (getTopicsResponseBuilder_ == null) {
                 if (value == null) {
@@ -1768,6 +1753,21 @@ public final class ProtoResponse extends
                 onChanged();
             } else {
                 getTopicsResponseBuilder_.setMessage(value);
+            }
+            protoResponseCase_ = 4;
+            return this;
+        }
+
+        /**
+         * <code>.proto.GetTopicsResponse getTopicsResponse = 4;</code>
+         */
+        public Builder setGetTopicsResponse(
+            com.flipkart.vbroker.proto.GetTopicsResponse.Builder builderForValue) {
+            if (getTopicsResponseBuilder_ == null) {
+                protoResponse_ = builderForValue.build();
+                onChanged();
+            } else {
+                getTopicsResponseBuilder_.setMessage(builderForValue.build());
             }
             protoResponseCase_ = 4;
             return this;
@@ -1887,21 +1887,6 @@ public final class ProtoResponse extends
         /**
          * <code>.proto.GetAllTopicsResponse getAllTopicsResponse = 5;</code>
          */
-        public Builder setGetAllTopicsResponse(
-            com.flipkart.vbroker.proto.GetAllTopicsResponse.Builder builderForValue) {
-            if (getAllTopicsResponseBuilder_ == null) {
-                protoResponse_ = builderForValue.build();
-                onChanged();
-            } else {
-                getAllTopicsResponseBuilder_.setMessage(builderForValue.build());
-            }
-            protoResponseCase_ = 5;
-            return this;
-        }
-
-        /**
-         * <code>.proto.GetAllTopicsResponse getAllTopicsResponse = 5;</code>
-         */
         public Builder setGetAllTopicsResponse(com.flipkart.vbroker.proto.GetAllTopicsResponse value) {
             if (getAllTopicsResponseBuilder_ == null) {
                 if (value == null) {
@@ -1911,6 +1896,21 @@ public final class ProtoResponse extends
                 onChanged();
             } else {
                 getAllTopicsResponseBuilder_.setMessage(value);
+            }
+            protoResponseCase_ = 5;
+            return this;
+        }
+
+        /**
+         * <code>.proto.GetAllTopicsResponse getAllTopicsResponse = 5;</code>
+         */
+        public Builder setGetAllTopicsResponse(
+            com.flipkart.vbroker.proto.GetAllTopicsResponse.Builder builderForValue) {
+            if (getAllTopicsResponseBuilder_ == null) {
+                protoResponse_ = builderForValue.build();
+                onChanged();
+            } else {
+                getAllTopicsResponseBuilder_.setMessage(builderForValue.build());
             }
             protoResponseCase_ = 5;
             return this;
@@ -2030,21 +2030,6 @@ public final class ProtoResponse extends
         /**
          * <code>.proto.GetQueuesResponse getQueuesResponse = 6;</code>
          */
-        public Builder setGetQueuesResponse(
-            com.flipkart.vbroker.proto.GetQueuesResponse.Builder builderForValue) {
-            if (getQueuesResponseBuilder_ == null) {
-                protoResponse_ = builderForValue.build();
-                onChanged();
-            } else {
-                getQueuesResponseBuilder_.setMessage(builderForValue.build());
-            }
-            protoResponseCase_ = 6;
-            return this;
-        }
-
-        /**
-         * <code>.proto.GetQueuesResponse getQueuesResponse = 6;</code>
-         */
         public Builder setGetQueuesResponse(com.flipkart.vbroker.proto.GetQueuesResponse value) {
             if (getQueuesResponseBuilder_ == null) {
                 if (value == null) {
@@ -2054,6 +2039,21 @@ public final class ProtoResponse extends
                 onChanged();
             } else {
                 getQueuesResponseBuilder_.setMessage(value);
+            }
+            protoResponseCase_ = 6;
+            return this;
+        }
+
+        /**
+         * <code>.proto.GetQueuesResponse getQueuesResponse = 6;</code>
+         */
+        public Builder setGetQueuesResponse(
+            com.flipkart.vbroker.proto.GetQueuesResponse.Builder builderForValue) {
+            if (getQueuesResponseBuilder_ == null) {
+                protoResponse_ = builderForValue.build();
+                onChanged();
+            } else {
+                getQueuesResponseBuilder_.setMessage(builderForValue.build());
             }
             protoResponseCase_ = 6;
             return this;
@@ -2173,21 +2173,6 @@ public final class ProtoResponse extends
         /**
          * <code>.proto.GetAllQueuesResponse getAllQueuesResponse = 7;</code>
          */
-        public Builder setGetAllQueuesResponse(
-            com.flipkart.vbroker.proto.GetAllQueuesResponse.Builder builderForValue) {
-            if (getAllQueuesResponseBuilder_ == null) {
-                protoResponse_ = builderForValue.build();
-                onChanged();
-            } else {
-                getAllQueuesResponseBuilder_.setMessage(builderForValue.build());
-            }
-            protoResponseCase_ = 7;
-            return this;
-        }
-
-        /**
-         * <code>.proto.GetAllQueuesResponse getAllQueuesResponse = 7;</code>
-         */
         public Builder setGetAllQueuesResponse(com.flipkart.vbroker.proto.GetAllQueuesResponse value) {
             if (getAllQueuesResponseBuilder_ == null) {
                 if (value == null) {
@@ -2197,6 +2182,21 @@ public final class ProtoResponse extends
                 onChanged();
             } else {
                 getAllQueuesResponseBuilder_.setMessage(value);
+            }
+            protoResponseCase_ = 7;
+            return this;
+        }
+
+        /**
+         * <code>.proto.GetAllQueuesResponse getAllQueuesResponse = 7;</code>
+         */
+        public Builder setGetAllQueuesResponse(
+            com.flipkart.vbroker.proto.GetAllQueuesResponse.Builder builderForValue) {
+            if (getAllQueuesResponseBuilder_ == null) {
+                protoResponse_ = builderForValue.build();
+                onChanged();
+            } else {
+                getAllQueuesResponseBuilder_.setMessage(builderForValue.build());
             }
             protoResponseCase_ = 7;
             return this;
@@ -2316,21 +2316,6 @@ public final class ProtoResponse extends
         /**
          * <code>.proto.GetSubscriptionsResponse getSubscriptionsResponse = 8;</code>
          */
-        public Builder setGetSubscriptionsResponse(
-            com.flipkart.vbroker.proto.GetSubscriptionsResponse.Builder builderForValue) {
-            if (getSubscriptionsResponseBuilder_ == null) {
-                protoResponse_ = builderForValue.build();
-                onChanged();
-            } else {
-                getSubscriptionsResponseBuilder_.setMessage(builderForValue.build());
-            }
-            protoResponseCase_ = 8;
-            return this;
-        }
-
-        /**
-         * <code>.proto.GetSubscriptionsResponse getSubscriptionsResponse = 8;</code>
-         */
         public Builder setGetSubscriptionsResponse(com.flipkart.vbroker.proto.GetSubscriptionsResponse value) {
             if (getSubscriptionsResponseBuilder_ == null) {
                 if (value == null) {
@@ -2340,6 +2325,21 @@ public final class ProtoResponse extends
                 onChanged();
             } else {
                 getSubscriptionsResponseBuilder_.setMessage(value);
+            }
+            protoResponseCase_ = 8;
+            return this;
+        }
+
+        /**
+         * <code>.proto.GetSubscriptionsResponse getSubscriptionsResponse = 8;</code>
+         */
+        public Builder setGetSubscriptionsResponse(
+            com.flipkart.vbroker.proto.GetSubscriptionsResponse.Builder builderForValue) {
+            if (getSubscriptionsResponseBuilder_ == null) {
+                protoResponse_ = builderForValue.build();
+                onChanged();
+            } else {
+                getSubscriptionsResponseBuilder_.setMessage(builderForValue.build());
             }
             protoResponseCase_ = 8;
             return this;
@@ -2459,21 +2459,6 @@ public final class ProtoResponse extends
         /**
          * <code>.proto.GetAllSubscriptionsForTopicsResponse getAllSubscriptionsForTopicsResponse = 9;</code>
          */
-        public Builder setGetAllSubscriptionsForTopicsResponse(
-            com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsResponse.Builder builderForValue) {
-            if (getAllSubscriptionsForTopicsResponseBuilder_ == null) {
-                protoResponse_ = builderForValue.build();
-                onChanged();
-            } else {
-                getAllSubscriptionsForTopicsResponseBuilder_.setMessage(builderForValue.build());
-            }
-            protoResponseCase_ = 9;
-            return this;
-        }
-
-        /**
-         * <code>.proto.GetAllSubscriptionsForTopicsResponse getAllSubscriptionsForTopicsResponse = 9;</code>
-         */
         public Builder setGetAllSubscriptionsForTopicsResponse(com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsResponse value) {
             if (getAllSubscriptionsForTopicsResponseBuilder_ == null) {
                 if (value == null) {
@@ -2483,6 +2468,21 @@ public final class ProtoResponse extends
                 onChanged();
             } else {
                 getAllSubscriptionsForTopicsResponseBuilder_.setMessage(value);
+            }
+            protoResponseCase_ = 9;
+            return this;
+        }
+
+        /**
+         * <code>.proto.GetAllSubscriptionsForTopicsResponse getAllSubscriptionsForTopicsResponse = 9;</code>
+         */
+        public Builder setGetAllSubscriptionsForTopicsResponse(
+            com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsResponse.Builder builderForValue) {
+            if (getAllSubscriptionsForTopicsResponseBuilder_ == null) {
+                protoResponse_ = builderForValue.build();
+                onChanged();
+            } else {
+                getAllSubscriptionsForTopicsResponseBuilder_.setMessage(builderForValue.build());
             }
             protoResponseCase_ = 9;
             return this;
@@ -2602,21 +2602,6 @@ public final class ProtoResponse extends
         /**
          * <code>.proto.GetSubscriptionLagsResponse getSubscriptionLagsResponse = 10;</code>
          */
-        public Builder setGetSubscriptionLagsResponse(
-            com.flipkart.vbroker.proto.GetSubscriptionLagsResponse.Builder builderForValue) {
-            if (getSubscriptionLagsResponseBuilder_ == null) {
-                protoResponse_ = builderForValue.build();
-                onChanged();
-            } else {
-                getSubscriptionLagsResponseBuilder_.setMessage(builderForValue.build());
-            }
-            protoResponseCase_ = 10;
-            return this;
-        }
-
-        /**
-         * <code>.proto.GetSubscriptionLagsResponse getSubscriptionLagsResponse = 10;</code>
-         */
         public Builder setGetSubscriptionLagsResponse(com.flipkart.vbroker.proto.GetSubscriptionLagsResponse value) {
             if (getSubscriptionLagsResponseBuilder_ == null) {
                 if (value == null) {
@@ -2626,6 +2611,21 @@ public final class ProtoResponse extends
                 onChanged();
             } else {
                 getSubscriptionLagsResponseBuilder_.setMessage(value);
+            }
+            protoResponseCase_ = 10;
+            return this;
+        }
+
+        /**
+         * <code>.proto.GetSubscriptionLagsResponse getSubscriptionLagsResponse = 10;</code>
+         */
+        public Builder setGetSubscriptionLagsResponse(
+            com.flipkart.vbroker.proto.GetSubscriptionLagsResponse.Builder builderForValue) {
+            if (getSubscriptionLagsResponseBuilder_ == null) {
+                protoResponse_ = builderForValue.build();
+                onChanged();
+            } else {
+                getSubscriptionLagsResponseBuilder_.setMessage(builderForValue.build());
             }
             protoResponseCase_ = 10;
             return this;
@@ -2745,21 +2745,6 @@ public final class ProtoResponse extends
         /**
          * <code>.proto.GetClusterMetadataResponse getClusterMetadataResponse = 11;</code>
          */
-        public Builder setGetClusterMetadataResponse(
-            com.flipkart.vbroker.proto.GetClusterMetadataResponse.Builder builderForValue) {
-            if (getClusterMetadataResponseBuilder_ == null) {
-                protoResponse_ = builderForValue.build();
-                onChanged();
-            } else {
-                getClusterMetadataResponseBuilder_.setMessage(builderForValue.build());
-            }
-            protoResponseCase_ = 11;
-            return this;
-        }
-
-        /**
-         * <code>.proto.GetClusterMetadataResponse getClusterMetadataResponse = 11;</code>
-         */
         public Builder setGetClusterMetadataResponse(com.flipkart.vbroker.proto.GetClusterMetadataResponse value) {
             if (getClusterMetadataResponseBuilder_ == null) {
                 if (value == null) {
@@ -2769,6 +2754,21 @@ public final class ProtoResponse extends
                 onChanged();
             } else {
                 getClusterMetadataResponseBuilder_.setMessage(value);
+            }
+            protoResponseCase_ = 11;
+            return this;
+        }
+
+        /**
+         * <code>.proto.GetClusterMetadataResponse getClusterMetadataResponse = 11;</code>
+         */
+        public Builder setGetClusterMetadataResponse(
+            com.flipkart.vbroker.proto.GetClusterMetadataResponse.Builder builderForValue) {
+            if (getClusterMetadataResponseBuilder_ == null) {
+                protoResponse_ = builderForValue.build();
+                onChanged();
+            } else {
+                getClusterMetadataResponseBuilder_.setMessage(builderForValue.build());
             }
             protoResponseCase_ = 11;
             return this;

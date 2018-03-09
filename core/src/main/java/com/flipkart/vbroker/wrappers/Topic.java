@@ -84,8 +84,8 @@ public class Topic {
     public byte[] toBytes() {
         return protoTopic.toByteArray();
     }
-    
-    public ProtoTopic.Builder fromTopic(){
-    	return protoTopic.toBuilder();
+
+    public ProtoTopic.Builder fromTopic() {
+        return protoTopic.toBuilder();
     }
 }

@@ -692,21 +692,6 @@ public final class CreateSubscriptionResponse extends
         /**
          * <code>.proto.VStatus status = 4;</code>
          */
-        public Builder setStatus(
-            com.flipkart.vbroker.proto.VStatus.Builder builderForValue) {
-            if (statusBuilder_ == null) {
-                status_ = builderForValue.build();
-                onChanged();
-            } else {
-                statusBuilder_.setMessage(builderForValue.build());
-            }
-
-            return this;
-        }
-
-        /**
-         * <code>.proto.VStatus status = 4;</code>
-         */
         public Builder setStatus(com.flipkart.vbroker.proto.VStatus value) {
             if (statusBuilder_ == null) {
                 if (value == null) {
@@ -716,6 +701,21 @@ public final class CreateSubscriptionResponse extends
                 onChanged();
             } else {
                 statusBuilder_.setMessage(value);
+            }
+
+            return this;
+        }
+
+        /**
+         * <code>.proto.VStatus status = 4;</code>
+         */
+        public Builder setStatus(
+            com.flipkart.vbroker.proto.VStatus.Builder builderForValue) {
+            if (statusBuilder_ == null) {
+                status_ = builderForValue.build();
+                onChanged();
+            } else {
+                statusBuilder_.setMessage(builderForValue.build());
             }
 
             return this;

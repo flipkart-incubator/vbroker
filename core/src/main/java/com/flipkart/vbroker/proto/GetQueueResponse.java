@@ -569,21 +569,6 @@ public final class GetQueueResponse extends
         /**
          * <code>.proto.ProtoQueue queue = 1;</code>
          */
-        public Builder setQueue(
-            com.flipkart.vbroker.proto.ProtoQueue.Builder builderForValue) {
-            if (queueBuilder_ == null) {
-                queue_ = builderForValue.build();
-                onChanged();
-            } else {
-                queueBuilder_.setMessage(builderForValue.build());
-            }
-
-            return this;
-        }
-
-        /**
-         * <code>.proto.ProtoQueue queue = 1;</code>
-         */
         public Builder setQueue(com.flipkart.vbroker.proto.ProtoQueue value) {
             if (queueBuilder_ == null) {
                 if (value == null) {
@@ -593,6 +578,21 @@ public final class GetQueueResponse extends
                 onChanged();
             } else {
                 queueBuilder_.setMessage(value);
+            }
+
+            return this;
+        }
+
+        /**
+         * <code>.proto.ProtoQueue queue = 1;</code>
+         */
+        public Builder setQueue(
+            com.flipkart.vbroker.proto.ProtoQueue.Builder builderForValue) {
+            if (queueBuilder_ == null) {
+                queue_ = builderForValue.build();
+                onChanged();
+            } else {
+                queueBuilder_.setMessage(builderForValue.build());
             }
 
             return this;
@@ -691,21 +691,6 @@ public final class GetQueueResponse extends
         /**
          * <code>.proto.VStatus status = 2;</code>
          */
-        public Builder setStatus(
-            com.flipkart.vbroker.proto.VStatus.Builder builderForValue) {
-            if (statusBuilder_ == null) {
-                status_ = builderForValue.build();
-                onChanged();
-            } else {
-                statusBuilder_.setMessage(builderForValue.build());
-            }
-
-            return this;
-        }
-
-        /**
-         * <code>.proto.VStatus status = 2;</code>
-         */
         public Builder setStatus(com.flipkart.vbroker.proto.VStatus value) {
             if (statusBuilder_ == null) {
                 if (value == null) {
@@ -715,6 +700,21 @@ public final class GetQueueResponse extends
                 onChanged();
             } else {
                 statusBuilder_.setMessage(value);
+            }
+
+            return this;
+        }
+
+        /**
+         * <code>.proto.VStatus status = 2;</code>
+         */
+        public Builder setStatus(
+            com.flipkart.vbroker.proto.VStatus.Builder builderForValue) {
+            if (statusBuilder_ == null) {
+                status_ = builderForValue.build();
+                onChanged();
+            } else {
+                statusBuilder_.setMessage(builderForValue.build());
             }
 
             return this;
