@@ -2,7 +2,9 @@ package com.flipkart.vbroker.app;
 
 import com.flipkart.vbroker.client.*;
 import com.flipkart.vbroker.flatbuf.Message;
+import com.flipkart.vbroker.utils.DummyEntities;
 import com.flipkart.vbroker.wrappers.Topic;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.glassfish.grizzly.http.Method;
 import org.testng.annotations.Test;
@@ -33,14 +35,14 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
             .collect(Collectors.toList());
         produceRecords(records);
 
-        Thread.sleep(10 * 1000);
+        Thread.sleep(5 * 1000);
         //Verify the message is consumed
         verifyHttp(httpServer).times(noOfRecords, method(Method.POST),
             uri(URI_200.uri()));
     }
 
     @Test
-    public void shouldProduceAndConsumeMessages_MultipleMessagesOfSameTopic_UnGrouped() throws InterruptedException {
+    public void shouldProduceAndConsumeMessages_MultipleMessagesOfSameTopic_UnGrouped() {
         int noOfRecords = 5;
         Topic topic = createUnGroupedTopic();
         byte[] payload = "This is a sample message".getBytes();
@@ -49,9 +51,31 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
             .collect(Collectors.toList());
         produceRecords(records);
 
-        Thread.sleep(10 * 1000);
+        //Thread.sleep(2 * 1000);
         //Verify the message is consumed
         verifyHttp(httpServer).times(noOfRecords, method(Method.POST),
+            uri(URI_200.uri()));
+    }
+
+    @Test
+    public void shouldProduceAndConsumeMultipleMessages_GroupedAndUnGrouped() throws InterruptedException {
+        int noOfRecords = 5;
+        byte[] payload = "This is a sample message".getBytes();
+        List<ProducerRecord> recordsGrouped = IntStream.range(0, noOfRecords)
+            .mapToObj(i -> newProducerRecord(DummyEntities.groupedTopic, "group_0", payload))
+            .collect(Collectors.toList());
+        List<ProducerRecord> recordsUnGrouped = IntStream.range(0, noOfRecords)
+            .mapToObj(i -> newProducerRecord(DummyEntities.unGroupedTopic, "group_" + i, payload))
+            .collect(Collectors.toList());
+
+        List<ProducerRecord> records = Lists.newArrayList(recordsGrouped);
+        records.addAll(recordsUnGrouped);
+
+        produceRecords(records);
+
+        Thread.sleep(2 * 1000);
+        //Verify the message is consumed
+        verifyHttp(httpServer).times(noOfRecords * 2, method(Method.POST),
             uri(URI_200.uri()));
     }
 

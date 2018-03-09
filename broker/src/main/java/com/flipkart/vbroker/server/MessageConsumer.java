@@ -43,7 +43,7 @@ public class MessageConsumer {
 
             //lock the subscriberGroup and process the message
             if (iterableMessage.lock()) {
-                log.debug("Consuming message with msg_id: {} and group_id: {}", message.messageId(), message.groupId());
+                log.info("Consuming message with msg_id: {} and group_id: {}", message.messageId(), message.groupId());
                 messageProcessor.process(iterableMessage)
                     .thenAccept(aVoid -> {
                         long totalMsgConsumingTimeNs = context.stop();
