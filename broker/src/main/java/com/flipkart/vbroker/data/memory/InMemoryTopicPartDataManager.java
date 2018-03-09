@@ -8,6 +8,7 @@ import com.flipkart.vbroker.data.TopicPartData;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.flatbuf.Message;
+import com.flipkart.vbroker.iterators.VIterator;
 import com.google.common.collect.PeekingIterator;
 import lombok.extern.slf4j.Slf4j;
 
@@ -86,10 +87,9 @@ public class InMemoryTopicPartDataManager implements TopicPartDataManager {
     }
 
     @Override
-    public PeekingIterator<Message> getIterator(TopicPartition topicPartition, int seqNoFrom) {
-        return getTopicPartData(topicPartition)
-            .thenApplyAsync(topicPartData -> topicPartData.iteratorFrom(seqNoFrom))
-            .toCompletableFuture().join();
+    public VIterator<Message> getIterator(TopicPartition topicPartition, int seqNoFrom) {
+        TopicPartData topicPartData = getTopicPartData(topicPartition).toCompletableFuture().join();
+        return topicPartData.iteratorFrom(seqNoFrom);
     }
 
     @Override

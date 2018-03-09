@@ -3,7 +3,8 @@ package com.flipkart.vbroker.data.memory;
 import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.client.MessageStore;
 import com.flipkart.vbroker.flatbuf.Message;
-import com.google.common.collect.PeekingIterator;
+import com.flipkart.vbroker.iterators.VIterator;
+import lombok.extern.slf4j.Slf4j;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -14,6 +15,7 @@ import java.util.stream.IntStream;
 
 import static org.testng.Assert.assertEquals;
 
+@Slf4j
 public class InMemoryUnGroupedTopicPartDataTest {
 
     private InMemoryUnGroupedTopicPartData topicPartData;
@@ -30,9 +32,13 @@ public class InMemoryUnGroupedTopicPartDataTest {
         List<MessageMetadata> messageMetadataList = addPartData(messages);
         assertEquals(messageMetadataList.size(), noOfMessages);
 
+        log.info("Added {} messages", noOfMessages);
+
         int iteratorFromPos = 2;
         int count = 0;
-        PeekingIterator<Message> iterator = topicPartData.iteratorFrom(iteratorFromPos);
+        VIterator<Message> iterator = topicPartData.iteratorFrom(iteratorFromPos);
+
+        log.info("Got iterator {}", iterator.name());
 
         CountDownLatch latch = new CountDownLatch(1);
         int moreNoOfMessages = 4;
@@ -52,6 +58,8 @@ public class InMemoryUnGroupedTopicPartDataTest {
         latch.await();
 
         while (iterator.hasNext()) {
+            Message msg = iterator.peek();
+            log.info("Peeked msg {}", msg.messageId());
             iterator.next();
             count++;
         }

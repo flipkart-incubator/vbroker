@@ -6,6 +6,7 @@ import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.flatbuf.Message;
+import com.flipkart.vbroker.iterators.VIterator;
 import com.google.common.collect.PeekingIterator;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -105,20 +106,20 @@ public class SubscriberGroup implements Iterable<IterableMessage> {
     }
 
     @Override
-    public PeekingIterator<IterableMessage> iterator() {
+    public VIterator<IterableMessage> iterator() {
         return new SubscriberGroupIterator(QType.MAIN, this);
     }
 
-    public PeekingIterator<IterableMessage> sidelineIterator() {
+    public VIterator<IterableMessage> sidelineIterator() {
         return new SubscriberGroupIterator(QType.SIDELINE, this);
     }
 
-    public PeekingIterator<IterableMessage> retryIterator(int retryNo) {
+    public VIterator<IterableMessage> retryIterator(int retryNo) {
         QType qType = QType.retryQType(retryNo);
         return new SubscriberGroupIterator(qType, this);
     }
 
-    public PeekingIterator<IterableMessage> iterator(QType qType) {
+    public VIterator<IterableMessage> iterator(QType qType) {
         return new SubscriberGroupIterator(qType, this);
     }
 
@@ -130,7 +131,7 @@ public class SubscriberGroup implements Iterable<IterableMessage> {
         return this.partSubscription;
     }
 
-    private class SubscriberGroupIterator implements PeekingIterator<IterableMessage> {
+    private class SubscriberGroupIterator implements VIterator<IterableMessage> {
         private QType qType;
         private SubscriberGroup subscriberGroup;
         private PeekingIterator<Message> groupIterator;
@@ -161,6 +162,11 @@ public class SubscriberGroup implements Iterable<IterableMessage> {
         @Override
         public synchronized boolean hasNext() {
             return groupIterator.hasNext();
+        }
+
+        @Override
+        public String name() {
+            return subscriberGroup.getGroupId();
         }
     }
 }

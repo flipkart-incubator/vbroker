@@ -32,7 +32,7 @@ public abstract class BasePartSubscriberTest {
 
     @Test
     public void shouldIterateOver_NewMessages() throws InterruptedException {
-        int noOfMessages = 10;
+        int noOfMessages = 20;
         List<Message> messages = generateMessages(noOfMessages);
         List<com.flipkart.vbroker.client.MessageMetadata> messageMetadataList = addPartData(messages);
         assertEquals(messageMetadataList.size(), noOfMessages);

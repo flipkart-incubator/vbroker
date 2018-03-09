@@ -6,6 +6,7 @@ import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.TopicPartData;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.flatbuf.Message;
+import com.flipkart.vbroker.iterators.VIterator;
 import com.google.common.collect.PeekingIterator;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.*;
@@ -92,7 +93,7 @@ public class RedisGroupedTopicPartData extends RedisTopicPartData implements Top
     }
 
     @Override
-    public PeekingIterator<Message> iteratorFrom(int seqNoFrom) {
+    public VIterator<Message> iteratorFrom(int seqNoFrom) {
         throw new UnsupportedOperationException("You cannot have a global iterator for partition for a grouped topic-partition");
     }
 

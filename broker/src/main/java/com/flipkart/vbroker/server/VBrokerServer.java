@@ -137,6 +137,7 @@ public class VBrokerServer extends AbstractExecutionThreadService {
 
             DefaultAsyncHttpClientConfig httpClientConfig = new DefaultAsyncHttpClientConfig
                 .Builder()
+                .setEventLoopGroup(workerGroup) //using same worker group event loop
                 .setThreadFactory(new DefaultThreadFactory("async_http_client"))
                 .build();
             AsyncHttpClient httpClient = new DefaultAsyncHttpClient(httpClientConfig);

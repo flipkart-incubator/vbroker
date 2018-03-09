@@ -4,22 +4,23 @@ import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.data.TopicPartData;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.flatbuf.Message;
+import com.flipkart.vbroker.iterators.VIterator;
 import com.google.common.collect.PeekingIterator;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public class InMemoryUnGroupedTopicPartData implements TopicPartData {
 
     //private BlockingQueue<Message> messageQueue = new ArrayBlockingQueue<>(10000);
-    private List<Message> messages = new CopyOnWriteArrayList<>();
+    private List<Message> messages = new ArrayList<>();//CopyOnWriteArrayList<>();
 
     @Override
     public CompletionStage<MessageMetadata> addMessage(Message message) {
@@ -49,14 +50,22 @@ public class InMemoryUnGroupedTopicPartData implements TopicPartData {
     }
 
     @Override
-    public PeekingIterator<Message> iteratorFrom(int seqNoFrom) {
-        return new PeekingIterator<Message>() {
+    public VIterator<Message> iteratorFrom(int seqNoFrom) {
+        log.info("Creating new iterator for {}", this.getClass());
+        return new VIterator<Message>() {
+
             AtomicInteger index = new AtomicInteger(seqNoFrom);
+
+            @Override
+            public String name() {
+                //log.info("Messages {}", messages);
+                return "Iterator_un_grouped_with_index_" + index.get() + "_" + this.hashCode();
+            }
 
             @Override
             public Message peek() {
                 Message message = messages.get(index.get());
-                log.trace("Peeking message {}", message.messageId());
+                log.info("Peeking message {} at seqNo {}", message.messageId(), index.get());
                 return message;
             }
 
@@ -74,7 +83,9 @@ public class InMemoryUnGroupedTopicPartData implements TopicPartData {
 
             @Override
             public boolean hasNext() {
-                return index.get() < messages.size();
+                int messagesSize = messages.size();
+                log.debug("Idx is at {} and no of messages are {}", index.get(), messagesSize);
+                return index.get() < messagesSize;
             }
         };
     }

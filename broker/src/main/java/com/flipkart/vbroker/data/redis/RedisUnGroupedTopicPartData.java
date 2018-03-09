@@ -5,6 +5,8 @@ import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.TopicPartData;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.flatbuf.Message;
+import com.flipkart.vbroker.iterators.VBIterators;
+import com.flipkart.vbroker.iterators.VIterator;
 import com.google.common.collect.PeekingIterator;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RFuture;
@@ -64,10 +66,10 @@ public class RedisUnGroupedTopicPartData extends RedisTopicPartData implements T
     }
 
     @Override
-    public PeekingIterator<Message> iteratorFrom(int seqNoFrom) {
+    public VIterator<Message> iteratorFrom(int seqNoFrom) {
         log.info("getting peeking iterator");
         RList<RedisObject> rList = client.getList(topicPartition.toString());
-        return super.iteratorFrom(rList, seqNoFrom);
+        return VBIterators.peekingIterator(super.iteratorFrom(rList, seqNoFrom), "Iterator_redis_un_grouped");
     }
 
     @Override

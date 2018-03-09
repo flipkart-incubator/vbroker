@@ -113,6 +113,6 @@ public class AbstractVBrokerBaseTest {
     }
 
     public Topic createUnGroupedTopic() {
-        return DummyEntities.groupedTopic;
+        return DummyEntities.unGroupedTopic;
     }
 }

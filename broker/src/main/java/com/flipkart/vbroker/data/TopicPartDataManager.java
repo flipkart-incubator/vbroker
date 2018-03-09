@@ -5,6 +5,7 @@ import com.flipkart.vbroker.core.MessageGroup;
 import com.flipkart.vbroker.core.TopicPartMessage;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.flatbuf.Message;
+import com.flipkart.vbroker.iterators.VIterator;
 import com.google.common.collect.PeekingIterator;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public interface TopicPartDataManager {
 
     public CompletionStage<Integer> getCurrentOffset(TopicPartition topicPartition, String group);
 
-    public PeekingIterator<Message> getIterator(TopicPartition topicPartition, int seqNoFrom);
+    public VIterator<Message> getIterator(TopicPartition topicPartition, int seqNoFrom);
 
     CompletionStage<Integer> getCurrentOffset(TopicPartition topicPartition);
 }

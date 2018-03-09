@@ -5,8 +5,8 @@ import com.codahale.metrics.Timer;
 import com.flipkart.vbroker.exceptions.LockFailedException;
 import com.flipkart.vbroker.flatbuf.Message;
 import com.flipkart.vbroker.iterators.SubscriberIterator;
+import com.flipkart.vbroker.iterators.VIterator;
 import com.flipkart.vbroker.subscribers.IterableMessage;
-import com.google.common.collect.PeekingIterator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,7 +36,8 @@ public class MessageConsumer {
     public void consume() throws Exception {
         Timer.Context context = msgConsumeTimer.time();
         if (subscriberIterator.hasNext()) {
-            PeekingIterator<IterableMessage> currIterator = subscriberIterator.getCurrIterator();
+            VIterator<IterableMessage> currIterator = subscriberIterator.getCurrIterator();
+            log.info("CurrIterator name: {}", currIterator.name());
             //peek the message first
             IterableMessage iterableMessage = currIterator.peek();
             Message message = iterableMessage.getMessage();

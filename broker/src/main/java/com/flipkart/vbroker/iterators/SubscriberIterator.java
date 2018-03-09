@@ -3,22 +3,52 @@ package com.flipkart.vbroker.iterators;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
-import com.google.common.collect.PeekingIterator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Queue;
 
+/**
+ * Iterator hierarchy
+ * <p>
+ * Subscriber => []PartSubscribers
+ * a Subscriber is a running thread which consumes messages for given part subscribers
+ * SubscriberIterator is an iterator for the Subscriber
+ * <p>
+ * Ideally and (this is what we do), we should have exactly one SubscriberIterator per broker
+ * <p>
+ * SubscriberIterator -> PartSubscriberIterator -> DataIterator(TopicPartData/SubPartData)
+ * explanation:
+ * <p>
+ * for *grouped*:
+ * SubscriberIterator -> []PartSubscriberIterator
+ * PartSubscriberIterator -> []SubscriberGroupIterator
+ * SubscriberGroupIterator -> DataIterator
+ * <p>
+ * for *un-grouped*:
+ * SubscriberIterator -> []PartSubscriberIterator
+ * PartSubscriberIterator -> DataIterator
+ * <p>
+ * <p>
+ * SubscriberIterator -> an iterator over multiple PartSubscriberIterators (of diff PartSubscriptions)
+ * <p>
+ * if *grouped* PartSubscription,
+ * PartSubscriberIterator -> []SubscriberGroupIterator
+ * PartSubscriberIterator -> an iterator over multiple SubscriberGroups
+ * <p>
+ * if *un-grouped* PartSubscription,
+ * PartSubscriberIterator -> an iterator over direct data queue (MainQ/SQ/UQ)
+ */
 @Slf4j
-public class SubscriberIterator implements PeekingIterator<IterableMessage> {
+public class SubscriberIterator implements VIterator<IterableMessage> {
 
-    private final Queue<PeekingIterator<IterableMessage>> iteratorQueue = new ArrayDeque<>();
-    private PeekingIterator<IterableMessage> currIterator;
+    private final Queue<VIterator<IterableMessage>> iteratorQueue = new ArrayDeque<>();
+    private VIterator<IterableMessage> currIterator;
 
     public SubscriberIterator(List<PartSubscriber> partSubscribers) {
         for (PartSubscriber partSubscriber : partSubscribers) {
-            PeekingIterator<IterableMessage> iterator = partSubscriber.iterator();
+            VIterator<IterableMessage> iterator = partSubscriber.iterator();
             iteratorQueue.add(iterator);
         }
 
@@ -41,7 +71,7 @@ public class SubscriberIterator implements PeekingIterator<IterableMessage> {
         }
 
         for (int i = 0; i < iteratorQueue.size(); i++) {
-            PeekingIterator<IterableMessage> iterator = iteratorQueue.peek();
+            VIterator<IterableMessage> iterator = iteratorQueue.peek();
             if (iterator.hasNext() && iterator.peek().isUnlocked()) {
                 iteratorQueue.add(currIterator);
                 currIterator = iterator;
@@ -52,7 +82,7 @@ public class SubscriberIterator implements PeekingIterator<IterableMessage> {
         return currIterator.hasNext();
     }
 
-    public PeekingIterator<IterableMessage> getCurrIterator() {
+    public VIterator<IterableMessage> getCurrIterator() {
         return currIterator;
     }
 
@@ -66,4 +96,8 @@ public class SubscriberIterator implements PeekingIterator<IterableMessage> {
         currIterator.remove();
     }
 
+    @Override
+    public String name() {
+        return currIterator.name();
+    }
 }

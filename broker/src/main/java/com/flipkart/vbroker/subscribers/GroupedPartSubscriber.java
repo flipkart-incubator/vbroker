@@ -6,7 +6,7 @@ import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.iterators.PartSubscriberIterator;
-import com.google.common.collect.PeekingIterator;
+import com.flipkart.vbroker.iterators.VIterator;
 import com.google.common.collect.Sets;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -38,6 +38,7 @@ public class GroupedPartSubscriber implements PartSubscriber {
     /**
      * Call this method to keep subscriberGroups in sync with messageGroups at any point
      */
+    @Override
     public void refreshSubscriberMetadata() {
         log.debug("Refreshing SubscriberGroups for part-subscriber {} for topic-partition {}",
             partSubscription.getId(), partSubscription.getTopicPartition().getId());
@@ -59,29 +60,29 @@ public class GroupedPartSubscriber implements PartSubscriber {
     }
 
     @Override
-    public PeekingIterator<IterableMessage> iterator() {
+    public VIterator<IterableMessage> iterator() {
         return getIterator(QType.MAIN);
     }
 
     @Override
-    public PeekingIterator<IterableMessage> sidelineIterator() {
+    public VIterator<IterableMessage> sidelineIterator() {
         return getIterator(QType.SIDELINE);
     }
 
     @Override
-    public PeekingIterator<IterableMessage> retryIterator(int retryQNo) {
+    public VIterator<IterableMessage> retryIterator(int retryQNo) {
         QType qType = QType.retryQType(retryQNo);
         return getIterator(qType);
     }
 
-    private PeekingIterator<IterableMessage> getIterator(QType qType) {
+    private VIterator<IterableMessage> getIterator(QType qType) {
         return new PartSubscriberIterator() {
             @Override
-            protected Optional<PeekingIterator<IterableMessage>> nextIterator() {
+            protected Optional<VIterator<IterableMessage>> nextIterator() {
                 log.debug("Getting next iterator for QType {}", qType);
-                Optional<PeekingIterator<IterableMessage>> iterator = subPartDataManager.getIterator(partSubscription, qType);
+                VIterator<IterableMessage> iterator = subPartDataManager.getIterator(partSubscription, qType);
                 log.debug("Next iterator: {}", iterator);
-                return iterator;
+                return Optional.of(iterator);
             }
         };
     }

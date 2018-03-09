@@ -3,7 +3,7 @@ package com.flipkart.vbroker.subscribers;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.iterators.PartSubscriberIterator;
-import com.google.common.collect.PeekingIterator;
+import com.flipkart.vbroker.iterators.VIterator;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -33,33 +33,33 @@ public class UnGroupedPartSubscriber implements PartSubscriber {
     }
 
     @Override
-    public PeekingIterator<IterableMessage> iterator() {
+    public VIterator<IterableMessage> iterator() {
         log.info("Creating UnGroupedPartSubscriber iterator for partSub {}", partSubscription);
+        return subPartDataManager.getIterator(partSubscription, QType.MAIN);
+    }
+
+    @Override
+    public VIterator<IterableMessage> sidelineIterator() {
+        VIterator<IterableMessage> iterator =
+            subPartDataManager.getIterator(partSubscription, QType.SIDELINE);
+
         return new PartSubscriberIterator() {
             @Override
-            protected Optional<PeekingIterator<IterableMessage>> nextIterator() {
-                return subPartDataManager.getIterator(partSubscription, QType.MAIN);
+            protected Optional<VIterator<IterableMessage>> nextIterator() {
+                return Optional.of(iterator);
             }
         };
     }
 
     @Override
-    public PeekingIterator<IterableMessage> sidelineIterator() {
+    public VIterator<IterableMessage> retryIterator(int retryQNo) {
+        QType qType = QType.retryQType(retryQNo);
+        VIterator<IterableMessage> iterator =
+            subPartDataManager.getIterator(partSubscription, qType);
         return new PartSubscriberIterator() {
             @Override
-            protected Optional<PeekingIterator<IterableMessage>> nextIterator() {
-                return subPartDataManager.getIterator(partSubscription, QType.SIDELINE);
-            }
-        };
-    }
-
-    @Override
-    public PeekingIterator<IterableMessage> retryIterator(int retryQNo) {
-        return new PartSubscriberIterator() {
-            @Override
-            protected Optional<PeekingIterator<IterableMessage>> nextIterator() {
-                QType qType = QType.retryQType(retryQNo);
-                return subPartDataManager.getIterator(partSubscription, qType);
+            protected Optional<VIterator<IterableMessage>> nextIterator() {
+                return Optional.of(iterator);
             }
         };
     }

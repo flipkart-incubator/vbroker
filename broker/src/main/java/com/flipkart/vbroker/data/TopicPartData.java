@@ -2,6 +2,7 @@ package com.flipkart.vbroker.data;
 
 import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.flatbuf.Message;
+import com.flipkart.vbroker.iterators.VIterator;
 import com.google.common.collect.PeekingIterator;
 
 import java.util.Set;
@@ -17,7 +18,7 @@ public interface TopicPartData {
 
     public CompletionStage<Integer> getCurrentOffset(String group);
 
-    public PeekingIterator<Message> iteratorFrom(int seqNoFrom);
+    public VIterator<Message> iteratorFrom(int seqNoFrom);
 
     public CompletionStage<Integer> getCurrentOffset();
 }

@@ -7,11 +7,11 @@ import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.flatbuf.Message;
 import com.flipkart.vbroker.iterators.PartSubscriberIterator;
+import com.flipkart.vbroker.iterators.VIterator;
 import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.flipkart.vbroker.subscribers.QType;
 import com.flipkart.vbroker.subscribers.SubscriberGroup;
 import com.flipkart.vbroker.subscribers.UnGroupedIterableMessage;
-import com.google.common.collect.PeekingIterator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -67,32 +67,32 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
     }
 
     @Override
-    public PeekingIterator<IterableMessage> getIterator(String groupId) {
+    public VIterator<IterableMessage> getIterator(String groupId) {
         throw new UnsupportedOperationException("You cannot get groupId level iterator for a un-grouped subscription");
     }
 
     @Override
-    public synchronized Optional<PeekingIterator<IterableMessage>> getIterator(QType qType) {
-        PartSubscriberIterator partSubscriberIterator = new PartSubscriberIterator() {
+    public synchronized VIterator<IterableMessage> getIterator(QType qType) {
+        log.info("Creating new iterator for QType {}", qType);
+        if (QType.MAIN.equals(qType)) {
+            VIterator<Message> msgIterator = topicPartDataManager.getIterator(
+                partSubscription.getTopicPartition(),
+                getCurrSeqNoFor(qType));
+            return newUnGroupedIterator(qType, msgIterator);
+        }
+
+        return new PartSubscriberIterator() {
             @Override
-            protected Optional<PeekingIterator<IterableMessage>> nextIterator() {
-                PeekingIterator<Message> iterator;
-                switch (qType) {
-                    case MAIN:
-                        iterator = topicPartDataManager.getIterator(
-                            partSubscription.getTopicPartition(),
-                            getCurrSeqNoFor(qType));
-                        break;
-                    default:
-                        iterator = new UnGroupedFailedMsgIterator(qType);
-                        break;
-                }
-                UnGroupedIterator unGroupedIterator =
-                    new UnGroupedIterator(qType, partSubscription, iterator);
+            protected Optional<VIterator<IterableMessage>> nextIterator() {
+                VIterator<Message> iterator = new UnGroupedFailedMsgIterator(qType);
+                UnGroupedIterator unGroupedIterator = newUnGroupedIterator(qType, iterator);
                 return Optional.of(unGroupedIterator);
             }
         };
-        return Optional.of(partSubscriberIterator);
+    }
+
+    private UnGroupedIterator newUnGroupedIterator(QType qType, VIterator<Message> msgIterator) {
+        return new UnGroupedIterator(qType, partSubscription, msgIterator);
     }
 
     private int getCurrSeqNoFor(QType qType) {
@@ -115,11 +115,11 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
     }
 
     @AllArgsConstructor
-    class UnGroupedIterator implements PeekingIterator<IterableMessage> {
+    class UnGroupedIterator implements VIterator<IterableMessage> {
 
         private final QType qType;
         private final PartSubscription partSubscription;
-        private final PeekingIterator<Message> iterator;
+        private final VIterator<Message> iterator;
 
         @Override
         public IterableMessage peek() {
@@ -142,10 +142,15 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
         public void remove() {
             throw new NotImplementedException();
         }
+
+        @Override
+        public String name() {
+            return iterator.name();
+        }
     }
 
     @AllArgsConstructor
-    class UnGroupedFailedMsgIterator implements PeekingIterator<Message> {
+    class UnGroupedFailedMsgIterator implements VIterator<Message> {
         private final QType qType;
 
         @Override
@@ -181,6 +186,11 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
             int currIndex = getCurrSeqNo();
             //log.debug("Total failed messages are {} and currIdx is {}", totalSize, currIndex);
             return currIndex < totalSize;
+        }
+
+        @Override
+        public String name() {
+            return "Iterator_" + qType + "_" + peek().messageId();
         }
     }
 }

@@ -109,7 +109,7 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
         properties.setProperty("broker.host", "localhost");
         properties.setProperty("broker.port", BROKER_PORT + "");
         properties.setProperty("batch.size", "10240");
-        properties.setProperty("linger.time.ms", String.valueOf(4000));
+        properties.setProperty("linger.time.ms", String.valueOf(10));
         properties.setProperty("metadata.expiry.time.ms", "6000");
 
         return new VBClientConfig(properties);
