@@ -53,12 +53,12 @@ public class Queue {
         if (obj == this) {
             return true;
         }
-        if (!(obj instanceof ProtoQueue)) {
+        if (!(obj instanceof Queue)) {
             return super.equals(obj);
         }
-        ProtoQueue other = (ProtoQueue) obj;
+        Queue other = (Queue) obj;
 
-        return protoQueue.getId() == other.getId();
+        return protoQueue.getId() == other.id();
     }
 
     @Override

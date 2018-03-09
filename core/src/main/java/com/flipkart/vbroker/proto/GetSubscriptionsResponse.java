@@ -10,7 +10,7 @@ public final class GetSubscriptionsResponse extends
     com.google.protobuf.GeneratedMessageV3 implements
     // @@protoc_insertion_point(message_implements:proto.GetSubscriptionsResponse)
     GetSubscriptionsResponseOrBuilder {
-    public static final int SUBSCRIPTIONS_FIELD_NUMBER = 1;
+    public static final int SUBSCRIPTIONRESPONSES_FIELD_NUMBER = 1;
     private static final long serialVersionUID = 0L;
     // @@protoc_insertion_point(class_scope:proto.GetSubscriptionsResponse)
     private static final com.flipkart.vbroker.proto.GetSubscriptionsResponse DEFAULT_INSTANCE;
@@ -28,15 +28,16 @@ public final class GetSubscriptionsResponse extends
         DEFAULT_INSTANCE = new com.flipkart.vbroker.proto.GetSubscriptionsResponse();
     }
 
-    private java.util.List<com.flipkart.vbroker.proto.GetSubscriptionResponse> subscriptions_;
+    private java.util.List<com.flipkart.vbroker.proto.GetSubscriptionResponse> subscriptionResponses_;
     private byte memoizedIsInitialized = -1;
 
     // Use GetSubscriptionsResponse.newBuilder() to construct.
     private GetSubscriptionsResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
     }
+
     private GetSubscriptionsResponse() {
-        subscriptions_ = java.util.Collections.emptyList();
+        subscriptionResponses_ = java.util.Collections.emptyList();
     }
 
     private GetSubscriptionsResponse(
@@ -67,10 +68,10 @@ public final class GetSubscriptionsResponse extends
                     }
                     case 10: {
                         if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-                            subscriptions_ = new java.util.ArrayList<com.flipkart.vbroker.proto.GetSubscriptionResponse>();
+                            subscriptionResponses_ = new java.util.ArrayList<com.flipkart.vbroker.proto.GetSubscriptionResponse>();
                             mutable_bitField0_ |= 0x00000001;
                         }
-                        subscriptions_.add(
+                        subscriptionResponses_.add(
                             input.readMessage(com.flipkart.vbroker.proto.GetSubscriptionResponse.parser(), extensionRegistry));
                         break;
                     }
@@ -83,7 +84,7 @@ public final class GetSubscriptionsResponse extends
                 e).setUnfinishedMessage(this);
         } finally {
             if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-                subscriptions_ = java.util.Collections.unmodifiableList(subscriptions_);
+                subscriptionResponses_ = java.util.Collections.unmodifiableList(subscriptionResponses_);
             }
             this.unknownFields = unknownFields.build();
             makeExtensionsImmutable();
@@ -206,40 +207,40 @@ public final class GetSubscriptionsResponse extends
     }
 
     /**
-     * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+     * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
      */
-    public java.util.List<com.flipkart.vbroker.proto.GetSubscriptionResponse> getSubscriptionsList() {
-        return subscriptions_;
+    public java.util.List<com.flipkart.vbroker.proto.GetSubscriptionResponse> getSubscriptionResponsesList() {
+        return subscriptionResponses_;
     }
 
     /**
-     * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+     * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
      */
     public java.util.List<? extends com.flipkart.vbroker.proto.GetSubscriptionResponseOrBuilder>
-    getSubscriptionsOrBuilderList() {
-        return subscriptions_;
+    getSubscriptionResponsesOrBuilderList() {
+        return subscriptionResponses_;
     }
 
     /**
-     * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+     * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
      */
-    public int getSubscriptionsCount() {
-        return subscriptions_.size();
+    public int getSubscriptionResponsesCount() {
+        return subscriptionResponses_.size();
     }
 
     /**
-     * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+     * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
      */
-    public com.flipkart.vbroker.proto.GetSubscriptionResponse getSubscriptions(int index) {
-        return subscriptions_.get(index);
+    public com.flipkart.vbroker.proto.GetSubscriptionResponse getSubscriptionResponses(int index) {
+        return subscriptionResponses_.get(index);
     }
 
     /**
-     * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+     * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
      */
-    public com.flipkart.vbroker.proto.GetSubscriptionResponseOrBuilder getSubscriptionsOrBuilder(
+    public com.flipkart.vbroker.proto.GetSubscriptionResponseOrBuilder getSubscriptionResponsesOrBuilder(
         int index) {
-        return subscriptions_.get(index);
+        return subscriptionResponses_.get(index);
     }
 
     public final boolean isInitialized() {
@@ -253,8 +254,8 @@ public final class GetSubscriptionsResponse extends
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
         throws java.io.IOException {
-        for (int i = 0; i < subscriptions_.size(); i++) {
-            output.writeMessage(1, subscriptions_.get(i));
+        for (int i = 0; i < subscriptionResponses_.size(); i++) {
+            output.writeMessage(1, subscriptionResponses_.get(i));
         }
         unknownFields.writeTo(output);
     }
@@ -264,9 +265,9 @@ public final class GetSubscriptionsResponse extends
         if (size != -1) return size;
 
         size = 0;
-        for (int i = 0; i < subscriptions_.size(); i++) {
+        for (int i = 0; i < subscriptionResponses_.size(); i++) {
             size += com.google.protobuf.CodedOutputStream
-                .computeMessageSize(1, subscriptions_.get(i));
+                .computeMessageSize(1, subscriptionResponses_.get(i));
         }
         size += unknownFields.getSerializedSize();
         memoizedSize = size;
@@ -284,8 +285,8 @@ public final class GetSubscriptionsResponse extends
         com.flipkart.vbroker.proto.GetSubscriptionsResponse other = (com.flipkart.vbroker.proto.GetSubscriptionsResponse) obj;
 
         boolean result = true;
-        result = result && getSubscriptionsList()
-            .equals(other.getSubscriptionsList());
+        result = result && getSubscriptionResponsesList()
+            .equals(other.getSubscriptionResponsesList());
         result = result && unknownFields.equals(other.unknownFields);
         return result;
     }
@@ -297,9 +298,9 @@ public final class GetSubscriptionsResponse extends
         }
         int hash = 41;
         hash = (19 * hash) + getDescriptor().hashCode();
-        if (getSubscriptionsCount() > 0) {
-            hash = (37 * hash) + SUBSCRIPTIONS_FIELD_NUMBER;
-            hash = (53 * hash) + getSubscriptionsList().hashCode();
+        if (getSubscriptionResponsesCount() > 0) {
+            hash = (37 * hash) + SUBSCRIPTIONRESPONSES_FIELD_NUMBER;
+            hash = (53 * hash) + getSubscriptionResponsesList().hashCode();
         }
         hash = (29 * hash) + unknownFields.hashCode();
         memoizedHashCode = hash;
@@ -339,10 +340,10 @@ public final class GetSubscriptionsResponse extends
         // @@protoc_insertion_point(builder_implements:proto.GetSubscriptionsResponse)
         com.flipkart.vbroker.proto.GetSubscriptionsResponseOrBuilder {
         private int bitField0_;
-        private java.util.List<com.flipkart.vbroker.proto.GetSubscriptionResponse> subscriptions_ =
+        private java.util.List<com.flipkart.vbroker.proto.GetSubscriptionResponse> subscriptionResponses_ =
             java.util.Collections.emptyList();
         private com.google.protobuf.RepeatedFieldBuilderV3<
-            com.flipkart.vbroker.proto.GetSubscriptionResponse, com.flipkart.vbroker.proto.GetSubscriptionResponse.Builder, com.flipkart.vbroker.proto.GetSubscriptionResponseOrBuilder> subscriptionsBuilder_;
+            com.flipkart.vbroker.proto.GetSubscriptionResponse, com.flipkart.vbroker.proto.GetSubscriptionResponse.Builder, com.flipkart.vbroker.proto.GetSubscriptionResponseOrBuilder> subscriptionResponsesBuilder_;
 
         // Construct using com.flipkart.vbroker.proto.GetSubscriptionsResponse.newBuilder()
         private Builder() {
@@ -370,17 +371,17 @@ public final class GetSubscriptionsResponse extends
         private void maybeForceBuilderInitialization() {
             if (com.google.protobuf.GeneratedMessageV3
                 .alwaysUseFieldBuilders) {
-                getSubscriptionsFieldBuilder();
+                getSubscriptionResponsesFieldBuilder();
             }
         }
 
         public Builder clear() {
             super.clear();
-            if (subscriptionsBuilder_ == null) {
-                subscriptions_ = java.util.Collections.emptyList();
+            if (subscriptionResponsesBuilder_ == null) {
+                subscriptionResponses_ = java.util.Collections.emptyList();
                 bitField0_ = (bitField0_ & ~0x00000001);
             } else {
-                subscriptionsBuilder_.clear();
+                subscriptionResponsesBuilder_.clear();
             }
             return this;
         }
@@ -405,14 +406,14 @@ public final class GetSubscriptionsResponse extends
         public com.flipkart.vbroker.proto.GetSubscriptionsResponse buildPartial() {
             com.flipkart.vbroker.proto.GetSubscriptionsResponse result = new com.flipkart.vbroker.proto.GetSubscriptionsResponse(this);
             int from_bitField0_ = bitField0_;
-            if (subscriptionsBuilder_ == null) {
+            if (subscriptionResponsesBuilder_ == null) {
                 if (((bitField0_ & 0x00000001) == 0x00000001)) {
-                    subscriptions_ = java.util.Collections.unmodifiableList(subscriptions_);
+                    subscriptionResponses_ = java.util.Collections.unmodifiableList(subscriptionResponses_);
                     bitField0_ = (bitField0_ & ~0x00000001);
                 }
-                result.subscriptions_ = subscriptions_;
+                result.subscriptionResponses_ = subscriptionResponses_;
             } else {
-                result.subscriptions_ = subscriptionsBuilder_.build();
+                result.subscriptionResponses_ = subscriptionResponsesBuilder_.build();
             }
             onBuilt();
             return result;
@@ -461,29 +462,29 @@ public final class GetSubscriptionsResponse extends
 
         public Builder mergeFrom(com.flipkart.vbroker.proto.GetSubscriptionsResponse other) {
             if (other == com.flipkart.vbroker.proto.GetSubscriptionsResponse.getDefaultInstance()) return this;
-            if (subscriptionsBuilder_ == null) {
-                if (!other.subscriptions_.isEmpty()) {
-                    if (subscriptions_.isEmpty()) {
-                        subscriptions_ = other.subscriptions_;
+            if (subscriptionResponsesBuilder_ == null) {
+                if (!other.subscriptionResponses_.isEmpty()) {
+                    if (subscriptionResponses_.isEmpty()) {
+                        subscriptionResponses_ = other.subscriptionResponses_;
                         bitField0_ = (bitField0_ & ~0x00000001);
                     } else {
-                        ensureSubscriptionsIsMutable();
-                        subscriptions_.addAll(other.subscriptions_);
+                        ensureSubscriptionResponsesIsMutable();
+                        subscriptionResponses_.addAll(other.subscriptionResponses_);
                     }
                     onChanged();
                 }
             } else {
-                if (!other.subscriptions_.isEmpty()) {
-                    if (subscriptionsBuilder_.isEmpty()) {
-                        subscriptionsBuilder_.dispose();
-                        subscriptionsBuilder_ = null;
-                        subscriptions_ = other.subscriptions_;
+                if (!other.subscriptionResponses_.isEmpty()) {
+                    if (subscriptionResponsesBuilder_.isEmpty()) {
+                        subscriptionResponsesBuilder_.dispose();
+                        subscriptionResponsesBuilder_ = null;
+                        subscriptionResponses_ = other.subscriptionResponses_;
                         bitField0_ = (bitField0_ & ~0x00000001);
-                        subscriptionsBuilder_ =
+                        subscriptionResponsesBuilder_ =
                             com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
-                                getSubscriptionsFieldBuilder() : null;
+                                getSubscriptionResponsesFieldBuilder() : null;
                     } else {
-                        subscriptionsBuilder_.addAllMessages(other.subscriptions_);
+                        subscriptionResponsesBuilder_.addAllMessages(other.subscriptionResponses_);
                     }
                 }
             }
@@ -514,258 +515,258 @@ public final class GetSubscriptionsResponse extends
             return this;
         }
 
-        private void ensureSubscriptionsIsMutable() {
+        private void ensureSubscriptionResponsesIsMutable() {
             if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-                subscriptions_ = new java.util.ArrayList<com.flipkart.vbroker.proto.GetSubscriptionResponse>(subscriptions_);
+                subscriptionResponses_ = new java.util.ArrayList<com.flipkart.vbroker.proto.GetSubscriptionResponse>(subscriptionResponses_);
                 bitField0_ |= 0x00000001;
             }
         }
 
         /**
-         * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+         * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
          */
-        public java.util.List<com.flipkart.vbroker.proto.GetSubscriptionResponse> getSubscriptionsList() {
-            if (subscriptionsBuilder_ == null) {
-                return java.util.Collections.unmodifiableList(subscriptions_);
+        public java.util.List<com.flipkart.vbroker.proto.GetSubscriptionResponse> getSubscriptionResponsesList() {
+            if (subscriptionResponsesBuilder_ == null) {
+                return java.util.Collections.unmodifiableList(subscriptionResponses_);
             } else {
-                return subscriptionsBuilder_.getMessageList();
+                return subscriptionResponsesBuilder_.getMessageList();
             }
         }
 
         /**
-         * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+         * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
          */
-        public int getSubscriptionsCount() {
-            if (subscriptionsBuilder_ == null) {
-                return subscriptions_.size();
+        public int getSubscriptionResponsesCount() {
+            if (subscriptionResponsesBuilder_ == null) {
+                return subscriptionResponses_.size();
             } else {
-                return subscriptionsBuilder_.getCount();
+                return subscriptionResponsesBuilder_.getCount();
             }
         }
 
         /**
-         * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+         * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
          */
-        public com.flipkart.vbroker.proto.GetSubscriptionResponse getSubscriptions(int index) {
-            if (subscriptionsBuilder_ == null) {
-                return subscriptions_.get(index);
+        public com.flipkart.vbroker.proto.GetSubscriptionResponse getSubscriptionResponses(int index) {
+            if (subscriptionResponsesBuilder_ == null) {
+                return subscriptionResponses_.get(index);
             } else {
-                return subscriptionsBuilder_.getMessage(index);
+                return subscriptionResponsesBuilder_.getMessage(index);
             }
         }
 
         /**
-         * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+         * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
          */
-        public Builder setSubscriptions(
+        public Builder setSubscriptionResponses(
             int index, com.flipkart.vbroker.proto.GetSubscriptionResponse value) {
-            if (subscriptionsBuilder_ == null) {
+            if (subscriptionResponsesBuilder_ == null) {
                 if (value == null) {
                     throw new NullPointerException();
                 }
-                ensureSubscriptionsIsMutable();
-                subscriptions_.set(index, value);
+                ensureSubscriptionResponsesIsMutable();
+                subscriptionResponses_.set(index, value);
                 onChanged();
             } else {
-                subscriptionsBuilder_.setMessage(index, value);
+                subscriptionResponsesBuilder_.setMessage(index, value);
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+         * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
          */
-        public Builder setSubscriptions(
+        public Builder setSubscriptionResponses(
             int index, com.flipkart.vbroker.proto.GetSubscriptionResponse.Builder builderForValue) {
-            if (subscriptionsBuilder_ == null) {
-                ensureSubscriptionsIsMutable();
-                subscriptions_.set(index, builderForValue.build());
+            if (subscriptionResponsesBuilder_ == null) {
+                ensureSubscriptionResponsesIsMutable();
+                subscriptionResponses_.set(index, builderForValue.build());
                 onChanged();
             } else {
-                subscriptionsBuilder_.setMessage(index, builderForValue.build());
+                subscriptionResponsesBuilder_.setMessage(index, builderForValue.build());
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+         * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
          */
-        public Builder addSubscriptions(com.flipkart.vbroker.proto.GetSubscriptionResponse value) {
-            if (subscriptionsBuilder_ == null) {
+        public Builder addSubscriptionResponses(com.flipkart.vbroker.proto.GetSubscriptionResponse value) {
+            if (subscriptionResponsesBuilder_ == null) {
                 if (value == null) {
                     throw new NullPointerException();
                 }
-                ensureSubscriptionsIsMutable();
-                subscriptions_.add(value);
+                ensureSubscriptionResponsesIsMutable();
+                subscriptionResponses_.add(value);
                 onChanged();
             } else {
-                subscriptionsBuilder_.addMessage(value);
+                subscriptionResponsesBuilder_.addMessage(value);
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+         * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
          */
-        public Builder addSubscriptions(
+        public Builder addSubscriptionResponses(
             int index, com.flipkart.vbroker.proto.GetSubscriptionResponse value) {
-            if (subscriptionsBuilder_ == null) {
+            if (subscriptionResponsesBuilder_ == null) {
                 if (value == null) {
                     throw new NullPointerException();
                 }
-                ensureSubscriptionsIsMutable();
-                subscriptions_.add(index, value);
+                ensureSubscriptionResponsesIsMutable();
+                subscriptionResponses_.add(index, value);
                 onChanged();
             } else {
-                subscriptionsBuilder_.addMessage(index, value);
+                subscriptionResponsesBuilder_.addMessage(index, value);
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+         * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
          */
-        public Builder addSubscriptions(
+        public Builder addSubscriptionResponses(
             com.flipkart.vbroker.proto.GetSubscriptionResponse.Builder builderForValue) {
-            if (subscriptionsBuilder_ == null) {
-                ensureSubscriptionsIsMutable();
-                subscriptions_.add(builderForValue.build());
+            if (subscriptionResponsesBuilder_ == null) {
+                ensureSubscriptionResponsesIsMutable();
+                subscriptionResponses_.add(builderForValue.build());
                 onChanged();
             } else {
-                subscriptionsBuilder_.addMessage(builderForValue.build());
+                subscriptionResponsesBuilder_.addMessage(builderForValue.build());
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+         * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
          */
-        public Builder addSubscriptions(
+        public Builder addSubscriptionResponses(
             int index, com.flipkart.vbroker.proto.GetSubscriptionResponse.Builder builderForValue) {
-            if (subscriptionsBuilder_ == null) {
-                ensureSubscriptionsIsMutable();
-                subscriptions_.add(index, builderForValue.build());
+            if (subscriptionResponsesBuilder_ == null) {
+                ensureSubscriptionResponsesIsMutable();
+                subscriptionResponses_.add(index, builderForValue.build());
                 onChanged();
             } else {
-                subscriptionsBuilder_.addMessage(index, builderForValue.build());
+                subscriptionResponsesBuilder_.addMessage(index, builderForValue.build());
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+         * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
          */
-        public Builder addAllSubscriptions(
+        public Builder addAllSubscriptionResponses(
             java.lang.Iterable<? extends com.flipkart.vbroker.proto.GetSubscriptionResponse> values) {
-            if (subscriptionsBuilder_ == null) {
-                ensureSubscriptionsIsMutable();
+            if (subscriptionResponsesBuilder_ == null) {
+                ensureSubscriptionResponsesIsMutable();
                 com.google.protobuf.AbstractMessageLite.Builder.addAll(
-                    values, subscriptions_);
+                    values, subscriptionResponses_);
                 onChanged();
             } else {
-                subscriptionsBuilder_.addAllMessages(values);
+                subscriptionResponsesBuilder_.addAllMessages(values);
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+         * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
          */
-        public Builder clearSubscriptions() {
-            if (subscriptionsBuilder_ == null) {
-                subscriptions_ = java.util.Collections.emptyList();
+        public Builder clearSubscriptionResponses() {
+            if (subscriptionResponsesBuilder_ == null) {
+                subscriptionResponses_ = java.util.Collections.emptyList();
                 bitField0_ = (bitField0_ & ~0x00000001);
                 onChanged();
             } else {
-                subscriptionsBuilder_.clear();
+                subscriptionResponsesBuilder_.clear();
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+         * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
          */
-        public Builder removeSubscriptions(int index) {
-            if (subscriptionsBuilder_ == null) {
-                ensureSubscriptionsIsMutable();
-                subscriptions_.remove(index);
+        public Builder removeSubscriptionResponses(int index) {
+            if (subscriptionResponsesBuilder_ == null) {
+                ensureSubscriptionResponsesIsMutable();
+                subscriptionResponses_.remove(index);
                 onChanged();
             } else {
-                subscriptionsBuilder_.remove(index);
+                subscriptionResponsesBuilder_.remove(index);
             }
             return this;
         }
 
         /**
-         * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+         * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
          */
-        public com.flipkart.vbroker.proto.GetSubscriptionResponse.Builder getSubscriptionsBuilder(
+        public com.flipkart.vbroker.proto.GetSubscriptionResponse.Builder getSubscriptionResponsesBuilder(
             int index) {
-            return getSubscriptionsFieldBuilder().getBuilder(index);
+            return getSubscriptionResponsesFieldBuilder().getBuilder(index);
         }
 
         /**
-         * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+         * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
          */
-        public com.flipkart.vbroker.proto.GetSubscriptionResponseOrBuilder getSubscriptionsOrBuilder(
+        public com.flipkart.vbroker.proto.GetSubscriptionResponseOrBuilder getSubscriptionResponsesOrBuilder(
             int index) {
-            if (subscriptionsBuilder_ == null) {
-                return subscriptions_.get(index);
+            if (subscriptionResponsesBuilder_ == null) {
+                return subscriptionResponses_.get(index);
             } else {
-                return subscriptionsBuilder_.getMessageOrBuilder(index);
+                return subscriptionResponsesBuilder_.getMessageOrBuilder(index);
             }
         }
 
         /**
-         * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+         * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
          */
         public java.util.List<? extends com.flipkart.vbroker.proto.GetSubscriptionResponseOrBuilder>
-        getSubscriptionsOrBuilderList() {
-            if (subscriptionsBuilder_ != null) {
-                return subscriptionsBuilder_.getMessageOrBuilderList();
+        getSubscriptionResponsesOrBuilderList() {
+            if (subscriptionResponsesBuilder_ != null) {
+                return subscriptionResponsesBuilder_.getMessageOrBuilderList();
             } else {
-                return java.util.Collections.unmodifiableList(subscriptions_);
+                return java.util.Collections.unmodifiableList(subscriptionResponses_);
             }
         }
 
         /**
-         * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+         * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
          */
-        public com.flipkart.vbroker.proto.GetSubscriptionResponse.Builder addSubscriptionsBuilder() {
-            return getSubscriptionsFieldBuilder().addBuilder(
+        public com.flipkart.vbroker.proto.GetSubscriptionResponse.Builder addSubscriptionResponsesBuilder() {
+            return getSubscriptionResponsesFieldBuilder().addBuilder(
                 com.flipkart.vbroker.proto.GetSubscriptionResponse.getDefaultInstance());
         }
 
         /**
-         * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+         * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
          */
-        public com.flipkart.vbroker.proto.GetSubscriptionResponse.Builder addSubscriptionsBuilder(
+        public com.flipkart.vbroker.proto.GetSubscriptionResponse.Builder addSubscriptionResponsesBuilder(
             int index) {
-            return getSubscriptionsFieldBuilder().addBuilder(
+            return getSubscriptionResponsesFieldBuilder().addBuilder(
                 index, com.flipkart.vbroker.proto.GetSubscriptionResponse.getDefaultInstance());
         }
 
         /**
-         * <code>repeated .proto.GetSubscriptionResponse subscriptions = 1;</code>
+         * <code>repeated .proto.GetSubscriptionResponse subscriptionResponses = 1;</code>
          */
         public java.util.List<com.flipkart.vbroker.proto.GetSubscriptionResponse.Builder>
-        getSubscriptionsBuilderList() {
-            return getSubscriptionsFieldBuilder().getBuilderList();
+        getSubscriptionResponsesBuilderList() {
+            return getSubscriptionResponsesFieldBuilder().getBuilderList();
         }
 
         private com.google.protobuf.RepeatedFieldBuilderV3<
             com.flipkart.vbroker.proto.GetSubscriptionResponse, com.flipkart.vbroker.proto.GetSubscriptionResponse.Builder, com.flipkart.vbroker.proto.GetSubscriptionResponseOrBuilder>
-        getSubscriptionsFieldBuilder() {
-            if (subscriptionsBuilder_ == null) {
-                subscriptionsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+        getSubscriptionResponsesFieldBuilder() {
+            if (subscriptionResponsesBuilder_ == null) {
+                subscriptionResponsesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
                     com.flipkart.vbroker.proto.GetSubscriptionResponse, com.flipkart.vbroker.proto.GetSubscriptionResponse.Builder, com.flipkart.vbroker.proto.GetSubscriptionResponseOrBuilder>(
-                    subscriptions_,
+                    subscriptionResponses_,
                     ((bitField0_ & 0x00000001) == 0x00000001),
                     getParentForChildren(),
                     isClean());
-                subscriptions_ = null;
+                subscriptionResponses_ = null;
             }
-            return subscriptionsBuilder_;
+            return subscriptionResponsesBuilder_;
         }
 
         public final Builder setUnknownFields(

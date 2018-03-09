@@ -68,49 +68,109 @@ public interface ProtoRequestOrBuilder extends
     com.flipkart.vbroker.proto.GetTopicsRequestOrBuilder getGetTopicsRequestOrBuilder();
 
     /**
-     * <code>.proto.GetSubscriptionsRequest getSubscriptionsRequest = 5;</code>
+     * <code>.proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
+     */
+    boolean hasGetAllTopicsRequest();
+
+    /**
+     * <code>.proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
+     */
+    com.flipkart.vbroker.proto.GetAllTopicsRequest getGetAllTopicsRequest();
+
+    /**
+     * <code>.proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
+     */
+    com.flipkart.vbroker.proto.GetAllTopicsRequestOrBuilder getGetAllTopicsRequestOrBuilder();
+
+    /**
+     * <code>.proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
      */
     boolean hasGetSubscriptionsRequest();
 
     /**
-     * <code>.proto.GetSubscriptionsRequest getSubscriptionsRequest = 5;</code>
+     * <code>.proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
      */
     com.flipkart.vbroker.proto.GetSubscriptionsRequest getGetSubscriptionsRequest();
 
     /**
-     * <code>.proto.GetSubscriptionsRequest getSubscriptionsRequest = 5;</code>
+     * <code>.proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
      */
     com.flipkart.vbroker.proto.GetSubscriptionsRequestOrBuilder getGetSubscriptionsRequestOrBuilder();
 
     /**
-     * <code>.proto.GetQueuesRequest getQueuesRequest = 6;</code>
+     * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
+     */
+    boolean hasGetAllSubscriptionsForTopicsRequest();
+
+    /**
+     * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
+     */
+    com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest getGetAllSubscriptionsForTopicsRequest();
+
+    /**
+     * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
+     */
+    com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequestOrBuilder getGetAllSubscriptionsForTopicsRequestOrBuilder();
+
+    /**
+     * <code>.proto.GetQueuesRequest getQueuesRequest = 8;</code>
      */
     boolean hasGetQueuesRequest();
 
     /**
-     * <code>.proto.GetQueuesRequest getQueuesRequest = 6;</code>
+     * <code>.proto.GetQueuesRequest getQueuesRequest = 8;</code>
      */
     com.flipkart.vbroker.proto.GetQueuesRequest getGetQueuesRequest();
 
     /**
-     * <code>.proto.GetQueuesRequest getQueuesRequest = 6;</code>
+     * <code>.proto.GetQueuesRequest getQueuesRequest = 8;</code>
      */
     com.flipkart.vbroker.proto.GetQueuesRequestOrBuilder getGetQueuesRequestOrBuilder();
 
     /**
-     * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 7;</code>
+     * <code>.proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
+     */
+    boolean hasGetAllQueuesRequest();
+
+    /**
+     * <code>.proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
+     */
+    com.flipkart.vbroker.proto.GetAllQueuesRequest getGetAllQueuesRequest();
+
+    /**
+     * <code>.proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
+     */
+    com.flipkart.vbroker.proto.GetAllQueuesRequestOrBuilder getGetAllQueuesRequestOrBuilder();
+
+    /**
+     * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
      */
     boolean hasGetSubscriptionLagsRequest();
 
     /**
-     * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 7;</code>
+     * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
      */
     com.flipkart.vbroker.proto.GetSubscriptionLagsRequest getGetSubscriptionLagsRequest();
 
     /**
-     * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 7;</code>
+     * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
      */
     com.flipkart.vbroker.proto.GetSubscriptionLagsRequestOrBuilder getGetSubscriptionLagsRequestOrBuilder();
+
+    /**
+     * <code>.proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
+     */
+    boolean hasGetClusterMetadataRequest();
+
+    /**
+     * <code>.proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
+     */
+    com.flipkart.vbroker.proto.GetClusterMetadataRequest getGetClusterMetadataRequest();
+
+    /**
+     * <code>.proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
+     */
+    com.flipkart.vbroker.proto.GetClusterMetadataRequestOrBuilder getGetClusterMetadataRequestOrBuilder();
 
     public com.flipkart.vbroker.proto.ProtoRequest.ProtoRequestCase getProtoRequestCase();
 }

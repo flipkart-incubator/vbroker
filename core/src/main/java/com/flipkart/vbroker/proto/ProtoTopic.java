@@ -45,6 +45,7 @@ public final class ProtoTopic extends
     private ProtoTopic(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
     }
+
     private ProtoTopic() {
         name_ = "";
         id_ = 0;

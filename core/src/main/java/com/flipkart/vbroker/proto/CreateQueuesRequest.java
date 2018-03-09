@@ -39,6 +39,7 @@ public final class CreateQueuesRequest extends
     private CreateQueuesRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
     }
+
     private CreateQueuesRequest() {
         queues_ = java.util.Collections.emptyList();
     }

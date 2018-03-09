@@ -38,6 +38,7 @@ public final class CreateSubscriptionResponse extends
     private volatile java.lang.Object name_;
     private com.flipkart.vbroker.proto.VStatus status_;
     private byte memoizedIsInitialized = -1;
+
     // Use CreateSubscriptionResponse.newBuilder() to construct.
     private CreateSubscriptionResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);

@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CountDownLatch;
@@ -23,18 +24,15 @@ public class Sender implements Runnable {
     private final Accumulator accumulator;
     private final Metadata metadata;
     private final NetworkClient client;
-    private final VBClientConfig config;
     private final CountDownLatch runningLatch;
     private volatile boolean running;
 
     public Sender(Accumulator accumulator,
                   Metadata metadata,
-                  NetworkClient client,
-                  VBClientConfig config) {
+                  NetworkClient client) {
         this.accumulator = accumulator;
         this.metadata = metadata;
         this.client = client;
-        this.config = config;
 
         running = true;
         runningLatch = new CountDownLatch(1);
@@ -70,16 +68,16 @@ public class Sender implements Runnable {
         log.info("ClusterNodes: {}", clusterNodes);
 
         clusterNodes.forEach(node -> {
-            RecordBatch recordBatch = accumulator.getRecordBatch(node);
-            int totalNoOfRecords = recordBatch.getTotalNoOfRecords();
-            //if (totalNoOfRecords > 0) {
-            log.info("Total no of records in batch for Node {} are {}", node.getBrokerId(), totalNoOfRecords);
-            sendRecordBatch(node, recordBatch);
-            //}
+            Optional<RecordBatch> readyRecordBatchOpt = accumulator.getReadyRecordBatch(node);
+            readyRecordBatchOpt.ifPresent(recordBatch -> {
+                sendReadyBatch(node, recordBatch);
+            });
         });
     }
 
-    private void sendRecordBatch(Node node, RecordBatch recordBatch) {
+    private void sendReadyBatch(Node node, RecordBatch recordBatch) {
+        int totalNoOfRecords = recordBatch.getTotalNoOfRecords();
+        log.info("Total no of records in batch for Node {} are {}", node.getBrokerId(), totalNoOfRecords);
         VRequest vRequest = newVRequest(recordBatch);
         CompletionStage<VResponse> responseStage = client.send(node, vRequest);
         responseStage

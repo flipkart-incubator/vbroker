@@ -51,7 +51,7 @@ public class VBrokerProducerClient {
         log.info("Done producing. Closing client");
     }
 
-    private static ProducerRecord getProducerRecord(Topic groupedTopic,
+    private static ProducerRecord getProducerRecord(Topic topic,
                                                     String group,
                                                     byte[] payload) {
         Message message = MessageStore.getRandomMsg(group);
@@ -61,11 +61,12 @@ public class VBrokerProducerClient {
             .crc((byte) 1)
             .version((byte) 1)
             .seqNo(1)
-            .topicId(groupedTopic.id())
+            .topicId(topic.id())
             .attributes(201)
+            //.httpUri("http://localhost:12000/errors/500")
             .httpUri("http://localhost:12000/messages")
             .httpMethod(ProducerRecord.HttpMethod.POST)
-            .callbackTopicId(groupedTopic.id())
+            .callbackTopicId(topic.id())
             .callbackHttpUri("http://localhost:12000/messages")
             .callbackHttpMethod(ProducerRecord.HttpMethod.POST)
             .headers(new HashMap<>())

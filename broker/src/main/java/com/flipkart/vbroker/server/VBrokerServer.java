@@ -1,5 +1,6 @@
 package com.flipkart.vbroker.server;
 
+import com.codahale.metrics.MetricRegistry;
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.controller.VBrokerController;
 import com.flipkart.vbroker.data.DataManagerFactory;
@@ -8,6 +9,9 @@ import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.handlers.RequestHandlerFactory;
 import com.flipkart.vbroker.services.*;
 import com.flipkart.vbroker.utils.DummyEntities;
+import com.flipkart.vbroker.wrappers.Subscription;
+import com.flipkart.vbroker.wrappers.Topic;
+import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -27,7 +31,8 @@ import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 
-import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -37,6 +42,8 @@ import static java.util.Objects.nonNull;
 @Slf4j
 public class VBrokerServer extends AbstractExecutionThreadService {
 
+    private final VBrokerConfig config;
+
     private final CountDownLatch mainLatch = new CountDownLatch(1);
     private Channel serverChannel;
     private Channel serverLocalChannel;
@@ -44,19 +51,20 @@ public class VBrokerServer extends AbstractExecutionThreadService {
     private BrokerSubscriber brokerSubscriber;
     private CuratorFramework curatorClient;
 
-    private void startServer() throws IOException {
-        Thread.currentThread().setName("vbroker_server");
+    public VBrokerServer(VBrokerConfig config) {
+        this.config = config;
+    }
 
-        VBrokerConfig config = VBrokerConfig.newConfig("broker.properties");
-        log.info("Configs: {}", config);
+    private void startServer() {
+        Thread.currentThread().setName("vbroker_server");
 
         curatorClient = CuratorFrameworkFactory.newClient(config.getZookeeperUrl(),
             new ExponentialBackoffRetry(1000, 5));
         curatorClient.start();
         AsyncCuratorFramework asyncZkClient = AsyncCuratorFramework.wrap(curatorClient);
-
         CuratorService curatorService = new CuratorService(asyncZkClient);
 
+        MetricRegistry metricRegistry = new MetricRegistry();
         EventLoopGroup bossGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("server_boss"));
         EventLoopGroup workerGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("server_worker"));
         EventLoopGroup localGroup = new DefaultEventLoopGroup(1, new DefaultThreadFactory("server_local"));
@@ -70,6 +78,9 @@ public class VBrokerServer extends AbstractExecutionThreadService {
 
         SubscriptionService subscriptionService = new InMemorySubscriptionService(topicService, topicPartDataManager, subPartDataManager);
 
+        QueueService queueService = null;
+        ClusterMetadataService clusterMetadataService = null;
+
         //global broker controller
         brokerController = new VBrokerController(curatorService, topicService, subscriptionService, config);
         log.info("Starting controller and awaiting it to be ready");
@@ -78,15 +89,27 @@ public class VBrokerServer extends AbstractExecutionThreadService {
         //TODO: now that metadata is created, we need to add actual data to the metadata entries
         //=> populate message groups in topic partitions
 
-        topicService.createTopic(DummyEntities.groupedTopic);
-        topicService.createTopic(DummyEntities.unGroupedTopic);
+        List<Topic> topics = Lists.newArrayList(DummyEntities.groupedTopic, DummyEntities.unGroupedTopic);
+        CompletableFuture[] topicFutures = topics
+            .stream()
+            .map(topic -> topicService.createTopic(topic).toCompletableFuture())
+            .toArray(CompletableFuture[]::new);
+        CompletableFuture.allOf(topicFutures).join();
+        log.info("Created dummy topics");
 
-        subscriptionService.createSubscription(DummyEntities.groupedSubscription);
-        subscriptionService.createSubscription(DummyEntities.unGroupedSubscription);
+        List<Subscription> subscriptions = Lists.newArrayList(
+            DummyEntities.groupedSubscription,
+            DummyEntities.unGroupedSubscription);
+        CompletableFuture[] subscriptionFutures = subscriptions
+            .stream()
+            .map(subscription -> subscriptionService.createSubscription(subscription).toCompletableFuture())
+            .toArray(CompletableFuture[]::new);
+        CompletableFuture.allOf(subscriptionFutures).join();
+        log.info("Created dummy subscriptions");
 
         ProducerService producerService = new ProducerService(topicPartDataManager);
         RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactory(
-            producerService, topicService, subscriptionService);
+            producerService, topicService, subscriptionService, queueService, clusterMetadataService);
 
         //TODO: declare broker as healthy by registering in /brokers/ids for example now that everything is validated
         //the broker can now startServer accepting new requests
@@ -111,6 +134,7 @@ public class VBrokerServer extends AbstractExecutionThreadService {
                 }
             });
 
+
             DefaultAsyncHttpClientConfig httpClientConfig = new DefaultAsyncHttpClientConfig
                 .Builder()
                 .setThreadFactory(new DefaultThreadFactory("async_http_client"))
@@ -120,11 +144,13 @@ public class VBrokerServer extends AbstractExecutionThreadService {
                 topicService,
                 subscriptionService,
                 producerService,
-                subPartDataManager);
+                subPartDataManager,
+                metricRegistry);
 
             brokerSubscriber = new BrokerSubscriber(subscriptionService,
                 messageProcessor,
-                config);
+                config,
+                metricRegistry);
             ExecutorService subscriberExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("subscriber"));
             subscriberExecutor.submit(brokerSubscriber);
 
@@ -236,11 +262,7 @@ public class VBrokerServer extends AbstractExecutionThreadService {
 
     @Override
     protected void run() {
-        try {
-            startServer();
-        } catch (IOException e) {
-            log.error("Exception in starting app", e);
-        }
+        startServer();
     }
 
     @Override

@@ -29,7 +29,9 @@ public class GetSubscriptionLagsRequestHandler implements RequestHandler {
         //TODO messageGroups with no corresponding subscriberGroups? (e.g., in L3?)
 
 
-        GetSubscriptionLagsRequest getSubscriptionLagsRequest = FlatbufUtils.getProtoRequest(vRequest).getGetSubscriptionLagsRequest();
+        GetSubscriptionLagsRequest getSubscriptionLagsRequest = FlatbufUtils
+            .getProtoRequest(vRequest)
+            .getGetSubscriptionLagsRequest();
         List<CompletionStage<SubscriptionLag>> subscriptionLagStages =
             getSubscriptionLagsRequest.getSubscriptionLagRequestsList().stream()
                 .map(subscriptionLagReq -> {
@@ -39,7 +41,8 @@ public class GetSubscriptionLagsRequestHandler implements RequestHandler {
                     return getSubscriptionLag(subscriptionId, topicId, partitionIds);
                 })
                 .collect(Collectors.toList());
-        return CompletionStageUtils.listOfStagesToStageOfList(subscriptionLagStages).thenApply(subscriptionLags -> generateVResponse(subscriptionLags, vRequest.correlationId()));
+        return CompletionStageUtils.listOfStagesToStageOfList(subscriptionLagStages)
+            .thenApply(subscriptionLags -> generateVResponse(subscriptionLags, vRequest.correlationId()));
     }
 
     private CompletionStage<SubscriptionLag> getSubscriptionLag(int subscriptionId,
@@ -47,20 +50,6 @@ public class GetSubscriptionLagsRequestHandler implements RequestHandler {
                                                                 List<Integer> partitionIds) {
         //Get the subscription
         CompletionStage<Subscription> subscriptionStage = subscriptionService.getSubscription(topicId, subscriptionId);
-
-        //For each partition Id, get the corresponding partsubscription and its lag.
-        //NOTE assumes that partitionId = partSubscritptionId.
-//        List<CompletionStage<PartitionLag>> partitionLagStages =
-//            partitionIds.stream()
-//                .map(partitionId ->
-//                    subscriptionStage.thenCompose(subscription -> getPartSubscriberLag(subscription, partitionId)))
-//                .collect(Collectors.toList());
-
-        //Collect them in a list
-//        List<CompletionStage<PartitionLag>> partitionLagStages = partitionLagStages.stream()
-//            .map(partSubStage -> partSubStage.thenCompose(this::getPartSubscriberLag))
-//            .collect(Collectors.toList());
-
 
         List<CompletionStage<PartitionLag>> partitionLagStages = partitionIds.stream()
             .map(partitionId -> getPartSubscriberLag(subscriptionStage, partitionId))
@@ -78,8 +67,14 @@ public class GetSubscriptionLagsRequestHandler implements RequestHandler {
             .thenCompose(subscription -> subscriptionService.getPartSubscription(subscription, partitionId))
             .thenCompose(subscriptionService::getPartSubscriptionLag)
             .thenApply(lag -> {
-                VStatus vStatus = VStatus.newBuilder().setStatusCode(StatusCode.Success).setMessage("").build();
-                return PartitionLag.newBuilder().setPartitionId(partitionId).setLag(lag).setStatus(vStatus).build();
+                VStatus vStatus = VStatus.newBuilder()
+                    .setStatusCode(StatusCode.Success)
+                    .setMessage("").build();
+                return PartitionLag.newBuilder()
+                    .setPartitionId(partitionId)
+                    .setLag(lag)
+                    .setStatus(vStatus)
+                    .build();
             })
             .exceptionally(throwable -> {
                 log.debug("Catching an exception");

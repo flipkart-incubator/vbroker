@@ -1,13 +1,10 @@
 package com.flipkart.vbroker.handlers;
 
-import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.flatbuf.RequestMessage;
 import com.flipkart.vbroker.flatbuf.VRequest;
 import com.flipkart.vbroker.proto.ProtoRequest;
-import com.flipkart.vbroker.services.ProducerService;
-import com.flipkart.vbroker.services.SubscriptionService;
-import com.flipkart.vbroker.services.TopicService;
+import com.flipkart.vbroker.services.*;
 import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -21,12 +18,23 @@ public class RequestHandlerFactory {
     private final RequestHandler produceRequestHandler;
     private final RequestHandler fetchRequestHandler;
     private final RequestHandler createTopicsRequestHandler;
-    private final RequestHandler subscriptionCreateRequestHandler;
+    private final RequestHandler createSubscriptionsRequestHandler;
     private final GetSubscriptionLagsRequestHandler getSubscriptionLagsRequestHandler;
+    private final GetSubscriptionsRequestHandler getSubscriptionsRequestHandler;
+    private final GetTopicsRequestHandler getTopicsRequestHandler;
+    private final GetQueuesRequestHandler getQueuesRequestHandler;
+    private final GetAllTopicsRequestHandler getAllTopicsRequesetHandler;
+    private final GetAllSubscriptionsForTopicsRequestHandler getAllSubscriptionsForTopicsRequestHandler;
+    private final CreateQueuesRequestHandler createQueuesRequestHandler;
+    private final GetAllQueuesRequestHandler getAllQueuesResponse;
+    private final GetClusterMetadataRequestHandler getClusterMetadataRequestHandler;
+
 
     public RequestHandlerFactory(ProducerService producerService,
                                  TopicService topicService,
-                                 SubscriptionService subscriptionService) {
+                                 SubscriptionService subscriptionService,
+                                 QueueService queueService,
+                                 ClusterMetadataService clusterMetadataService) {
         ListeningExecutorService produceReqExecutorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1));
         ListeningExecutorService adminReqExecutorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1));
         ListeningExecutorService directExecutorService = MoreExecutors.listeningDecorator(MoreExecutors.newDirectExecutorService());
@@ -40,8 +48,16 @@ public class RequestHandlerFactory {
             subscriptionService,
             directExecutorService);
         this.createTopicsRequestHandler = new CreateTopicsRequestHandler(topicService, adminReqExecutorService);
-        this.subscriptionCreateRequestHandler = new CreateSubscriptionsRequestHandler(subscriptionService, adminReqExecutorService);
+        this.createSubscriptionsRequestHandler = new CreateSubscriptionsRequestHandler(subscriptionService, adminReqExecutorService);
+        this.createQueuesRequestHandler = new CreateQueuesRequestHandler(queueService);
         this.getSubscriptionLagsRequestHandler = new GetSubscriptionLagsRequestHandler(subscriptionService);
+        this.getSubscriptionsRequestHandler = new GetSubscriptionsRequestHandler(subscriptionService);
+        this.getTopicsRequestHandler = new GetTopicsRequestHandler(topicService);
+        this.getQueuesRequestHandler = new GetQueuesRequestHandler(queueService);
+        this.getAllQueuesResponse = new GetAllQueuesRequestHandler(queueService);
+        this.getAllTopicsRequesetHandler = new GetAllTopicsRequestHandler(topicService);
+        this.getAllSubscriptionsForTopicsRequestHandler = new GetAllSubscriptionsForTopicsRequestHandler(subscriptionService);
+        this.getClusterMetadataRequestHandler = new GetClusterMetadataRequestHandler(clusterMetadataService);
     }
 
     public RequestHandler getRequestHandler(VRequest request) {
@@ -72,23 +88,35 @@ public class RequestHandlerFactory {
                 requestHandler = createTopicsRequestHandler;
                 break;
             case CREATESUBSCRIPTIONSREQUEST:
-                requestHandler = subscriptionCreateRequestHandler;
+                requestHandler = createSubscriptionsRequestHandler;
                 break;
             case GETSUBSCRIPTIONLAGSREQUEST:
                 requestHandler = getSubscriptionLagsRequestHandler;
                 break;
             case CREATEQUEUESREQUEST:
-                throw new NotImplementedException();
-//                break;
+                requestHandler = createQueuesRequestHandler;
+                break;
             case GETQUEUESREQUEST:
-                throw new NotImplementedException();
-//                break;
+                requestHandler = getQueuesRequestHandler;
+                break;
+            case GETALLQUEUESREQUEST:
+                requestHandler = getAllQueuesResponse;
+                break;
             case GETSUBSCRIPTIONSREQUEST:
-                throw new NotImplementedException();
-//                break;
+                requestHandler = getSubscriptionsRequestHandler;
+                break;
+            case GETALLSUBSCRIPTIONSFORTOPICSREQUEST:
+                requestHandler = getAllSubscriptionsForTopicsRequestHandler;
+                break;
             case GETTOPICSREQUEST:
-                throw new NotImplementedException();
-//                break;
+                requestHandler = getTopicsRequestHandler;
+                break;
+            case GETALLTOPICSREQUEST:
+                requestHandler = getAllTopicsRequesetHandler;
+                break;
+            case GETCLUSTERMETADATAREQUEST:
+                requestHandler = getClusterMetadataRequestHandler;
+                break;
             default:
                 throw new VBrokerException("Unknown ProtoRequestType: " + protoRequest.getProtoRequestCase());
         }

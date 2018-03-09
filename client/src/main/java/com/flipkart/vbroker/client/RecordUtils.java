@@ -1,12 +1,16 @@
 package com.flipkart.vbroker.client;
 
+import com.flipkart.vbroker.exceptions.InvalidMessageException;
 import com.flipkart.vbroker.flatbuf.HttpHeader;
 import com.flipkart.vbroker.flatbuf.Message;
+import com.google.common.base.Strings;
 import com.google.common.primitives.Ints;
 import com.google.flatbuffers.FlatBufferBuilder;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.util.Objects.nonNull;
 
 public class RecordUtils {
 
@@ -24,6 +28,22 @@ public class RecordUtils {
         int headersVector = Message.createHeadersVector(builder, headersOffset);
         byte[] payload = record.getPayload();
 
+        if (Strings.isNullOrEmpty(record.getMessageId())) {
+            throw new InvalidMessageException("MessageId cannot be empty/null");
+        }
+
+        if (Strings.isNullOrEmpty(record.getGroupId())) {
+            throw new InvalidMessageException("GroupId cannot be empty/null");
+        }
+
+        //TODO: do remaining validations for uri, method.etc.
+
+        ProducerRecord.HttpMethod callbackHttpMethod = record.getCallbackHttpMethod();
+        byte callbackHttpMethodByte = 0;
+        if (nonNull(callbackHttpMethod)) {
+            callbackHttpMethodByte = callbackHttpMethod.idx();
+        }
+
         return Message.createMessage(
             builder,
             builder.createString(record.getMessageId()),
@@ -38,7 +58,7 @@ public class RecordUtils {
             record.getHttpMethod().idx(),
             record.getCallbackTopicId(),
             builder.createString(record.getCallbackHttpUri()),
-            record.getCallbackHttpMethod().idx(),
+            callbackHttpMethodByte,
             headersVector,
             payload.length,
             builder.createByteVector(payload)

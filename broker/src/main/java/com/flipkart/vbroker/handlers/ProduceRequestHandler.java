@@ -39,18 +39,22 @@ public class ProduceRequestHandler implements RequestHandler {
         List<TopicPartMessage> messagesToProduce = new LinkedList<>();
 
         return CompletableFuture.supplyAsync(() -> {
+            log.info("Handling ProduceRequest for {} topic requests", produceRequest.topicRequestsLength());
             for (int i = 0; i < produceRequest.topicRequestsLength(); i++) {
                 TopicProduceRequest topicProduceRequest = produceRequest.topicRequests(i);
+                log.info("Received ProduceRequest for topic {}", topicProduceRequest.topicId());
                 Topic topic = topicService.getTopic(topicProduceRequest.topicId()).toCompletableFuture().join();
 
                 for (int j = 0; j < topicProduceRequest.partitionRequestsLength(); j++) {
                     TopicPartitionProduceRequest topicPartitionProduceRequest = topicProduceRequest.partitionRequests(j);
-                    log.info("Getting messageSet for topic {} and partition {}", topic.id(), topicPartitionProduceRequest.partitionId());
                     TopicPartition topicPartition = topicService
                         .getTopicPartition(topic, topicPartitionProduceRequest.partitionId())
                         .toCompletableFuture().join();
 
                     MessageSet messageSet = topicPartitionProduceRequest.messageSet();
+                    log.info("MessageSet for topic {} and partition {} has {} messages",
+                        topic.id(), topicPartitionProduceRequest.partitionId(), messageSet.messagesLength());
+
                     for (int m = 0; m < messageSet.messagesLength(); m++) {
                         Message message = messageSet.messages(m);
                         messagesToProduce.add(TopicPartMessage.newInstance(topicPartition, message));

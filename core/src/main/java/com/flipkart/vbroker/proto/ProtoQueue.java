@@ -34,6 +34,7 @@ public final class ProtoQueue extends
     private com.flipkart.vbroker.proto.ProtoTopic topic_;
     private com.flipkart.vbroker.proto.ProtoSubscription subscription_;
     private byte memoizedIsInitialized = -1;
+
     // Use ProtoQueue.newBuilder() to construct.
     private ProtoQueue(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
