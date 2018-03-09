@@ -32,15 +32,16 @@ public class TopicServiceImpl implements TopicService {
         log.info("creating topic request with generated id {}, name {}, rf {}, grouped {}", id, topic.name(), topic.replicationFactor(),
             topic.grouped());
         String topicPath = config.getAdminTasksPath() + "/create_topic" + "/" + id;
+        Topic topicWithId = new Topic(topic.fromTopic().setId(id).build());
         return curatorService
-            .createNodeAndSetData(topicPath, CreateMode.PERSISTENT, topic.toBytes(), false)
+            .createNodeAndSetData(topicPath, CreateMode.PERSISTENT, topicWithId.toBytes(), false)
             .handleAsync((data, exception) -> {
                 if (exception != null) {
                     log.error("Exception in curator node create and set data stage {} ", exception);
                     throw new TopicCreationException(exception.getMessage());
                 } else {
                     log.info("Created topic with id - " + id);
-                    return topic;
+                    return topicWithId;
                 }
             });
     }
@@ -150,15 +151,16 @@ public class TopicServiceImpl implements TopicService {
         log.info("creating topic entity in /topics with id {}, name {}, rf {}, grouped {}", id, topic.name(), topic.replicationFactor(),
             topic.grouped());
         String topicPath = config.getTopicsPath() + "/" + id;
+        Topic topicWithId = new Topic(topic.fromTopic().setId(id).build());
         return curatorService
-            .createNodeAndSetData(topicPath, CreateMode.PERSISTENT, topic.toBytes(), false)
+            .createNodeAndSetData(topicPath, CreateMode.PERSISTENT, topicWithId.toBytes(), false)
             .handleAsync((data, exception) -> {
                 if (exception != null) {
                     log.error("Exception in curator node create and set data stage {} ", exception);
                     throw new TopicCreationException(exception.getMessage());
                 } else {
                     log.info("Created topic entity");
-                    return topic;
+                    return topicWithId;
                 }
             });
     }

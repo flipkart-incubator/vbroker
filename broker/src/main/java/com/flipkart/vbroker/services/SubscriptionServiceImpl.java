@@ -41,16 +41,17 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     public CompletionStage<Subscription> createSubscription(Subscription subscription) {
         short id = IdGenerator.randomId();
         String path = config.getAdminTasksPath() + "/create_subscription" + "/" + id;
+        Subscription subWithId = new Subscription(subscription.fromSubscription().setId(id).build());
         log.info("Creating subscription with id {} for topicId {} with uri {}", id, subscription.topicId(),
             subscription.httpUri());
         return curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT,
-            subscription.toBytes(), false).handleAsync((data, exception) -> {
+        		subWithId.toBytes(), false).handleAsync((data, exception) -> {
             if (exception != null) {
                 log.error("Exception in curator node create and set data stage {} ", exception);
                 throw new SubscriptionCreationException(exception.getMessage());
             } else {
                 log.info("Created subscription with id - " + id);
-                return subscription;
+                return subWithId;
             }
         });
     }
@@ -247,14 +248,15 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     public CompletionStage<Subscription> createSubscriptionAdmin(short id, Subscription subscription) {
         log.info("Call from controller to create subscription with id {} name {}", id, subscription.name());
         String path = config.getTopicsPath() + "/" + subscription.topicId() + "/subscriptions/" + id;
+        Subscription subWithId = new Subscription(subscription.fromSubscription().setId(id).build());
         return curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT,
-            subscription.toBytes(), false).handleAsync((data, exception) -> {
+        		subWithId.toBytes(), false).handleAsync((data, exception) -> {
             if (exception != null) {
                 log.error("Exception in curator node create and set data stage {} ", exception);
                 throw new SubscriptionCreationException(exception.getMessage());
             } else {
                 log.info("Created subscription entity with id - " + id);
-                return subscription;
+                return subWithId;
             }
         });
     }

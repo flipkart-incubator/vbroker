@@ -5,12 +5,18 @@ import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.data.memory.InMemorySubPartDataManager;
 import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
+import com.flipkart.vbroker.flatbuf.VRequest;
+import com.flipkart.vbroker.proto.CreateTopicsRequest;
+import com.flipkart.vbroker.proto.ProtoRequest;
+import com.flipkart.vbroker.proto.ProtoTopic;
+import com.flipkart.vbroker.proto.TopicCategory;
 import com.flipkart.vbroker.protocol.Request;
 import com.flipkart.vbroker.protocol.codecs.VBrokerClientCodec;
 import com.flipkart.vbroker.services.CuratorService;
 import com.flipkart.vbroker.services.SubscriptionServiceImpl;
 import com.flipkart.vbroker.services.TopicService;
 import com.flipkart.vbroker.services.TopicServiceImpl;
+import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -54,6 +60,26 @@ public class DummyServiceTests {
         SubPartDataManager subPartDataManager = new InMemorySubPartDataManager(topicPartDataManager);
         subscriptionService = new SubscriptionServiceImpl(config, curatorService, topicPartDataManager, subPartDataManager, topicService);
 
+    }
+    
+    @Test
+    public void createTopic() throws Exception{
+    	
+    	 EventLoopGroup group = new NioEventLoopGroup();
+         Bootstrap bootstrap = new Bootstrap();
+         bootstrap.group(group).channel(NioSocketChannel.class).handler(new ClientInitializer());
+
+         VBrokerConfig config = VBrokerConfig.newConfig("broker.properties");
+         Channel channel = bootstrap.connect(config.getBrokerHost(), config.getBrokerPort()).sync().channel();
+
+         ProtoTopic topic1 = ProtoTopic.newBuilder().setName("topic11").setGrouped(true).setPartitions(1).setReplicationFactor(3).setTopicCategory(TopicCategory.TOPIC).build();
+         CreateTopicsRequest createTopicsRequest = CreateTopicsRequest.newBuilder().addTopics(topic1).build();
+         ProtoRequest protoRequest = ProtoRequest.newBuilder().setCreateTopicsRequest(createTopicsRequest).build();
+         VRequest vRequest = FlatbufUtils.createVRequest((byte) 1, 101, protoRequest);
+
+         ByteBuf byteBuf = Unpooled.wrappedBuffer(vRequest.getByteBuffer());
+         Request request = new Request(byteBuf.readableBytes(), byteBuf);
+         channel.writeAndFlush(request);
     }
 
     //@Test
