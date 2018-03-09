@@ -18,6 +18,9 @@ public class UnGroupedPartSubscriberTest extends BasePartSubscriberTest {
         InMemoryTopicPartDataManager topicPartDataManager = new InMemoryTopicPartDataManager();
         InMemorySubPartDataManager subPartDataManager = new InMemorySubPartDataManager(topicPartDataManager);
 
+
+        subPartDataManager.getIterator(partSubscription, QType.MAIN);
+
         setPartSubscription(partSubscription);
         setTopicPartDataManager(topicPartDataManager);
         setSubPartDataManager(subPartDataManager);

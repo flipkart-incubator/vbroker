@@ -3,6 +3,7 @@ package com.flipkart.vbroker.iterators;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
+import com.flipkart.vbroker.subscribers.QType;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayDeque;
@@ -48,7 +49,7 @@ public class SubscriberIterator implements VIterator<IterableMessage> {
 
     public SubscriberIterator(List<PartSubscriber> partSubscribers) {
         for (PartSubscriber partSubscriber : partSubscribers) {
-            VIterator<IterableMessage> iterator = partSubscriber.iterator();
+            VIterator<IterableMessage> iterator = partSubscriber.iterator(QType.MAIN);
             iteratorQueue.add(iterator);
         }
 

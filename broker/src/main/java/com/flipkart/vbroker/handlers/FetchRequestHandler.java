@@ -7,6 +7,7 @@ import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
 import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
+import com.flipkart.vbroker.subscribers.QType;
 import com.flipkart.vbroker.wrappers.Subscription;
 import com.flipkart.vbroker.wrappers.Topic;
 import com.google.common.collect.PeekingIterator;
@@ -124,7 +125,7 @@ public class FetchRequestHandler implements RequestHandler {
         List<Integer> messages = new LinkedList<>();
 
         int i = 0;
-        PeekingIterator<IterableMessage> iterator = partSubscriber.iterator();
+        PeekingIterator<IterableMessage> iterator = partSubscriber.iterator(QType.MAIN);
         while (iterator.hasNext() && i < noOfMessagesToFetch) {
             Message message = iterator.peek().getMessage();
             messages.add(buildMessage(builder, message));

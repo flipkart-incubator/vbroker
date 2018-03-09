@@ -60,22 +60,7 @@ public class GroupedPartSubscriber implements PartSubscriber {
     }
 
     @Override
-    public VIterator<IterableMessage> iterator() {
-        return getIterator(QType.MAIN);
-    }
-
-    @Override
-    public VIterator<IterableMessage> sidelineIterator() {
-        return getIterator(QType.SIDELINE);
-    }
-
-    @Override
-    public VIterator<IterableMessage> retryIterator(int retryQNo) {
-        QType qType = QType.retryQType(retryQNo);
-        return getIterator(qType);
-    }
-
-    private VIterator<IterableMessage> getIterator(QType qType) {
+    public VIterator<IterableMessage> iterator(QType qType) {
         return new PartSubscriberIterator() {
             @Override
             protected Optional<VIterator<IterableMessage>> nextIterator() {

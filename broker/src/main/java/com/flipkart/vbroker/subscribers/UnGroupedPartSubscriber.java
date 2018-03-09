@@ -33,34 +33,20 @@ public class UnGroupedPartSubscriber implements PartSubscriber {
     }
 
     @Override
-    public VIterator<IterableMessage> iterator() {
+    public VIterator<IterableMessage> iterator(QType qType) {
         log.info("Creating UnGroupedPartSubscriber iterator for partSub {}", partSubscription);
-        return subPartDataManager.getIterator(partSubscription, QType.MAIN);
-    }
 
-    @Override
-    public VIterator<IterableMessage> sidelineIterator() {
-        VIterator<IterableMessage> iterator =
-            subPartDataManager.getIterator(partSubscription, QType.SIDELINE);
-
-        return new PartSubscriberIterator() {
-            @Override
-            protected Optional<VIterator<IterableMessage>> nextIterator() {
-                return Optional.of(iterator);
-            }
-        };
-    }
-
-    @Override
-    public VIterator<IterableMessage> retryIterator(int retryQNo) {
-        QType qType = QType.retryQType(retryQNo);
-        VIterator<IterableMessage> iterator =
-            subPartDataManager.getIterator(partSubscription, qType);
-        return new PartSubscriberIterator() {
-            @Override
-            protected Optional<VIterator<IterableMessage>> nextIterator() {
-                return Optional.of(iterator);
-            }
-        };
+        if (QType.MAIN.equals(qType)) {
+            return subPartDataManager.getIterator(partSubscription, QType.MAIN);
+        } else {
+            VIterator<IterableMessage> iterator =
+                subPartDataManager.getIterator(partSubscription, QType.SIDELINE);
+            return new PartSubscriberIterator() {
+                @Override
+                protected Optional<VIterator<IterableMessage>> nextIterator() {
+                    return Optional.of(iterator);
+                }
+            };
+        }
     }
 }

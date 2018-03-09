@@ -4,7 +4,15 @@ import com.flipkart.vbroker.client.MessageStore;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
+import com.flipkart.vbroker.data.memory.InMemorySubPartDataManager;
+import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
 import com.flipkart.vbroker.flatbuf.Message;
+import com.flipkart.vbroker.services.InMemorySubscriptionService;
+import com.flipkart.vbroker.services.InMemoryTopicService;
+import com.flipkart.vbroker.services.SubscriptionService;
+import com.flipkart.vbroker.services.TopicService;
+import com.flipkart.vbroker.utils.DummyEntities;
+import com.flipkart.vbroker.utils.SubscriptionUtils;
 import com.google.common.collect.PeekingIterator;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -20,15 +28,31 @@ import static org.testng.Assert.assertEquals;
 
 @Slf4j
 @Setter
-public abstract class BasePartSubscriberTest {
+public class BasePartSubscriberTest {
 
     private PartSubscriber partSubscriber;
     private PartSubscription partSubscription;
     private SubPartDataManager subPartDataManager;
     private TopicPartDataManager topicPartDataManager;
+//
+//    @BeforeMethod
+//    public abstract void setUp();
 
     @BeforeMethod
-    public abstract void setUp();
+    public void setUp() {
+        PartSubscription partSubscription = SubscriptionUtils.getPartSubscription(DummyEntities.unGroupedSubscription, (short) 0);
+        InMemoryTopicPartDataManager topicPartDataManager = new InMemoryTopicPartDataManager();
+        InMemorySubPartDataManager subPartDataManager = new InMemorySubPartDataManager(topicPartDataManager);
+
+        TopicService topicService = new InMemoryTopicService();
+        SubscriptionService subscriptionService = new InMemorySubscriptionService(topicService, topicPartDataManager, subPartDataManager);
+        partSubscriber = subscriptionService.getPartSubscriber(partSubscription).toCompletableFuture().join();
+
+        setPartSubscription(partSubscription);
+        setTopicPartDataManager(topicPartDataManager);
+        setSubPartDataManager(subPartDataManager);
+        setPartSubscriber(new UnGroupedPartSubscriber(subPartDataManager, partSubscription));
+    }
 
     @Test
     public void shouldIterateOver_NewMessages() throws InterruptedException {
@@ -38,7 +62,7 @@ public abstract class BasePartSubscriberTest {
         assertEquals(messageMetadataList.size(), noOfMessages);
 
         int count = 0;
-        PeekingIterator<IterableMessage> iterator = partSubscriber.iterator();
+        PeekingIterator<IterableMessage> iterator = partSubscriber.iterator(QType.MAIN);
         /*
          * now add more messages to topicPartData after creating the iterator
          * the iterator should then traverse these messages as well
@@ -47,7 +71,10 @@ public abstract class BasePartSubscriberTest {
         addMessagesToPartData(moreNoOfMessages);
         partSubscriber.refreshSubscriberMetadata();
 
+
         while (iterator.hasNext()) {
+            IterableMessage iterableMessage = iterator.peek();
+            log.info("Peeking msg {}", iterableMessage.getMessage().messageId());
             iterator.next();
             count++;
         }
@@ -58,8 +85,8 @@ public abstract class BasePartSubscriberTest {
     @Test
     public void shouldIterateOver_SidelinedMessages() throws InterruptedException {
         int count = 0;
-        PeekingIterator<IterableMessage> iterator = partSubscriber.iterator();
-        PeekingIterator<IterableMessage> sidelineIterator = partSubscriber.sidelineIterator();
+        PeekingIterator<IterableMessage> iterator = partSubscriber.iterator(QType.MAIN);
+        PeekingIterator<IterableMessage> sidelineIterator = partSubscriber.iterator(QType.SIDELINE);
 
         int moreNoOfMessages = 5;
         addMessagesToPartData(moreNoOfMessages);
@@ -86,30 +113,30 @@ public abstract class BasePartSubscriberTest {
 
     @Test
     public void shouldIterateOver_RetryMessages_MainQToRQ1() throws InterruptedException {
-        shouldRetryMessagesToCorrespondingQType(1, QType.MAIN);
+        shouldRetryMessagesToCorrespondingQType(QType.RETRY_1, QType.MAIN);
     }
 
     @Test
     public void shouldIterateOver_RetryMessages_RQ1ToRQ2() throws InterruptedException {
-        shouldRetryMessagesToCorrespondingQType(2, QType.RETRY_1);
+        shouldRetryMessagesToCorrespondingQType(QType.RETRY_2, QType.RETRY_1);
     }
 
     @Test
     public void shouldIterateOver_RetryMessages_RQ2ToRQ3() throws InterruptedException {
-        shouldRetryMessagesToCorrespondingQType(3, QType.RETRY_2);
+        shouldRetryMessagesToCorrespondingQType(QType.RETRY_3, QType.RETRY_2);
     }
 
     @Test
     public void shouldIterateOver_MoveFromRQ3ToSQ() throws InterruptedException {
-        PeekingIterator<IterableMessage> iterator = partSubscriber.iterator();
-        PeekingIterator<IterableMessage> sidelineIterator = partSubscriber.sidelineIterator();
+        PeekingIterator<IterableMessage> iterator = partSubscriber.iterator(QType.MAIN);
+        PeekingIterator<IterableMessage> sidelineIterator = partSubscriber.iterator(QType.SIDELINE);
 
         shouldRetryMessages(QType.RETRY_3, iterator, sidelineIterator);
     }
 
-    private void shouldRetryMessagesToCorrespondingQType(int destRetryNo, QType currQType) throws InterruptedException {
-        PeekingIterator<IterableMessage> iterator = partSubscriber.iterator();
-        PeekingIterator<IterableMessage> retryIterator = partSubscriber.retryIterator(destRetryNo);
+    private void shouldRetryMessagesToCorrespondingQType(QType destQType, QType currQType) throws InterruptedException {
+        PeekingIterator<IterableMessage> iterator = partSubscriber.iterator(QType.MAIN);
+        PeekingIterator<IterableMessage> retryIterator = partSubscriber.iterator(destQType);
 
         shouldRetryMessages(currQType, iterator, retryIterator);
     }
