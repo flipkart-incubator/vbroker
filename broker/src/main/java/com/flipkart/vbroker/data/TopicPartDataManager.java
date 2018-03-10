@@ -13,21 +13,21 @@ import java.util.concurrent.CompletionStage;
 
 public interface TopicPartDataManager {
 
-    public CompletionStage<MessageMetadata> addMessage(TopicPartition topicPartition, Message message);
+    CompletionStage<MessageMetadata> addMessage(TopicPartition topicPartition, Message message);
 
-    public CompletionStage<List<MessageMetadata>> addMessages(List<TopicPartMessage> topicPartMessages);
+    CompletionStage<List<MessageMetadata>> addMessages(List<TopicPartMessage> topicPartMessages);
 
-    public CompletionStage<MessageMetadata> addMessageGroup(TopicPartition topicPartition, MessageGroup messageGroup);
+    CompletionStage<MessageMetadata> addMessageGroup(TopicPartition topicPartition, MessageGroup messageGroup);
 
-    public CompletionStage<Set<String>> getUniqueGroups(TopicPartition topicPartition);
+    CompletionStage<Set<String>> getUniqueGroups(TopicPartition topicPartition);
 
-    public MsgIterator<Message> getIterator(TopicPartition topicPartition, String group);
+    MsgIterator<Message> getIterator(TopicPartition topicPartition, String group);
 
-    public MsgIterator<Message> getIterator(TopicPartition topicPartition, String group, int seqNoFrom);
+    MsgIterator<Message> getIterator(TopicPartition topicPartition, String group, int seqNoFrom);
 
-    public CompletionStage<Integer> getCurrentOffset(TopicPartition topicPartition, String group);
+    CompletionStage<Integer> getCurrentOffset(TopicPartition topicPartition, String group);
 
-    public MsgIterator<Message> getIterator(TopicPartition topicPartition, int seqNoFrom);
+    MsgIterator<Message> getIterator(TopicPartition topicPartition, int seqNoFrom);
 
     CompletionStage<Integer> getCurrentOffset(TopicPartition topicPartition);
 }

@@ -45,7 +45,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         log.info("Creating subscription with id {} for topicId {} with uri {}", id, subscription.topicId(),
             subscription.httpUri());
         return curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT,
-        		subWithId.toBytes(), false).handleAsync((data, exception) -> {
+            subWithId.toBytes(), false).handleAsync((data, exception) -> {
             if (exception != null) {
                 log.error("Exception in curator node create and set data stage {} ", exception);
                 throw new SubscriptionCreationException(exception.getMessage());
@@ -250,7 +250,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         String path = config.getTopicsPath() + "/" + subscription.topicId() + "/subscriptions/" + id;
         Subscription subWithId = new Subscription(subscription.fromSubscription().setId(id).build());
         return curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT,
-        		subWithId.toBytes(), false).handleAsync((data, exception) -> {
+            subWithId.toBytes(), false).handleAsync((data, exception) -> {
             if (exception != null) {
                 log.error("Exception in curator node create and set data stage {} ", exception);
                 throw new SubscriptionCreationException(exception.getMessage());

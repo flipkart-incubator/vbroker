@@ -16,12 +16,12 @@ public class RedisTopicPartData {
 
     public MsgIterator<Message> iteratorFrom(RList rList, String groupId, int seqNoFrom) {
         return new MsgIterator<Message>() {
+            AtomicInteger index = new AtomicInteger(seqNoFrom);
+
             @Override
             public String name() {
                 return "Iterator_redis_grouped_" + groupId + "_at_index_" + seqNoFrom;
             }
-
-            AtomicInteger index = new AtomicInteger(seqNoFrom);
 
             @Override
             public boolean hasNext() {

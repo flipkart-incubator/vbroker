@@ -117,8 +117,8 @@ public class Subscription {
     public byte[] toBytes() {
         return protoSubscription.toByteArray();
     }
-    
-    public ProtoSubscription.Builder fromSubscription(){
-    	return protoSubscription.toBuilder();
+
+    public ProtoSubscription.Builder fromSubscription() {
+        return protoSubscription.toBuilder();
     }
 }

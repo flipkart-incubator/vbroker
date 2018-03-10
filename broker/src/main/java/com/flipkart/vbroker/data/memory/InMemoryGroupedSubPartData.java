@@ -133,11 +133,25 @@ public class InMemoryGroupedSubPartData implements SubPartData {
             .findFirst();
     }
 
+    @Override
+    public CompletionStage<Integer> getLag() {
+        return getUniqueGroups().thenCompose(groups -> {
+            List<CompletionStage<Integer>> lagStages = groups.stream()
+                .map(subscriberGroupsMap::get)
+                .map(SubscriberGroup::getLag)
+                .collect(Collectors.toList());
+
+            return CompletionStageUtils.listOfStagesToStageOfList(lagStages).thenApply(lags ->
+                lags.stream()
+                    .reduce(0, (lag1, lag2) -> lag1 + lag2));
+        });
+    }
+
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     @AllArgsConstructor
     private class DataIteratorImpl implements DataIterator<IterableMessage> {
-        private Optional<SubscriberGroup.SubscriberGroupIterator> iteratorOpt;
         private final QType qType;
+        private Optional<SubscriberGroup.SubscriberGroupIterator> iteratorOpt;
 
         DataIteratorImpl(QType qType) {
             this.qType = qType;
@@ -183,19 +197,5 @@ public class InMemoryGroupedSubPartData implements SubPartData {
         public void remove() {
             iteratorOpt.ifPresent(SubscriberGroup.SubscriberGroupIterator::remove);
         }
-    }
-
-    @Override
-    public CompletionStage<Integer> getLag() {
-        return getUniqueGroups().thenCompose(groups -> {
-            List<CompletionStage<Integer>> lagStages = groups.stream()
-                .map(subscriberGroupsMap::get)
-                .map(SubscriberGroup::getLag)
-                .collect(Collectors.toList());
-
-            return CompletionStageUtils.listOfStagesToStageOfList(lagStages).thenApply(lags ->
-                lags.stream()
-                    .reduce(0, (lag1, lag2) -> lag1 + lag2));
-        });
     }
 }

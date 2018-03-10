@@ -8,6 +8,22 @@ public class MockHttp {
     public static final int MOCK_HTTP_SERVER_PORT = 17230;
     public static final String MOCK_RESPONSE_BODY = "{\"msg\":\"mock message\"}";
 
+    public static ConditionWithApplicables post(MockURI mockURI) {
+        return com.xebialabs.restito.semantics.ConditionWithApplicables.post(mockURI.uri());
+    }
+
+    public static ConditionWithApplicables put(MockURI mockURI) {
+        return com.xebialabs.restito.semantics.ConditionWithApplicables.post(mockURI.uri());
+    }
+
+    public static ConditionWithApplicables patch(MockURI mockURI) {
+        return com.xebialabs.restito.semantics.ConditionWithApplicables.post(mockURI.uri());
+    }
+
+    public static void main(String args[]) {
+        log.info("Equals: {}", MockURI.URI_200.uri().equals("/200"));
+    }
+
     public enum MockURI {
         URI_200("/200"),
         URI_204("/204"),
@@ -34,21 +50,5 @@ public class MockHttp {
         public String url() {
             return String.format("http://localhost:%d%s", MOCK_HTTP_SERVER_PORT, uri);
         }
-    }
-
-    public static ConditionWithApplicables post(MockURI mockURI) {
-        return com.xebialabs.restito.semantics.ConditionWithApplicables.post(mockURI.uri());
-    }
-
-    public static ConditionWithApplicables put(MockURI mockURI) {
-        return com.xebialabs.restito.semantics.ConditionWithApplicables.post(mockURI.uri());
-    }
-
-    public static ConditionWithApplicables patch(MockURI mockURI) {
-        return com.xebialabs.restito.semantics.ConditionWithApplicables.post(mockURI.uri());
-    }
-
-    public static void main(String args[]) {
-        log.info("Equals: {}", MockURI.URI_200.uri().equals("/200"));
     }
 }

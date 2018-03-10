@@ -1,9 +1,6 @@
 package com.flipkart.vbroker.app;
 
 import com.flipkart.vbroker.VBrokerConfig;
-import com.flipkart.vbroker.client.MessageStore;
-import com.flipkart.vbroker.client.ProducerRecord;
-import com.flipkart.vbroker.flatbuf.Message;
 import com.flipkart.vbroker.server.VBrokerServer;
 import com.flipkart.vbroker.utils.DummyEntities;
 import com.flipkart.vbroker.wrappers.Topic;
@@ -17,7 +14,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import static com.flipkart.vbroker.app.MockHttp.*;
 import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;

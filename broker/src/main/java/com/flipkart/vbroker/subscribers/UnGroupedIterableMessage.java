@@ -11,13 +11,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 public class UnGroupedIterableMessage implements IterableMessage {
+    private static final Map<Message, AtomicBoolean> messageLockMap = new ConcurrentHashMap<>();
     @Getter
     private final Message message;
     private final PartSubscription partSubscription;
     private QType qType;
-
-    private static final Map<Message, AtomicBoolean> messageLockMap = new ConcurrentHashMap<>();
-
     private volatile AtomicBoolean lock;
 
     public UnGroupedIterableMessage(Message message,
