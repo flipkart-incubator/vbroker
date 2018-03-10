@@ -8,9 +8,7 @@ import com.flipkart.vbroker.data.TopicPartData;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.flatbuf.Message;
-import com.flipkart.vbroker.iterators.VBIterators;
-import com.flipkart.vbroker.iterators.VIterator;
-import com.google.common.collect.PeekingIterator;
+import com.flipkart.vbroker.iterators.MsgIterator;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RedissonClient;
 
@@ -75,12 +73,12 @@ public class RedisTopicPartDataManager implements TopicPartDataManager {
     }
 
     @Override
-    public PeekingIterator<Message> getIterator(TopicPartition topicPartition, String group) {
+    public MsgIterator<Message> getIterator(TopicPartition topicPartition, String group) {
         throw new NotImplementedException("Not yet implemented");
     }
 
     @Override
-    public PeekingIterator<Message> getIterator(TopicPartition topicPartition, String group, int seqNoFrom) {
+    public MsgIterator<Message> getIterator(TopicPartition topicPartition, String group, int seqNoFrom) {
         //TODO: change this to make it non blocking
         return getTopicPartData(topicPartition)
             .thenApplyAsync(topicPartData -> topicPartData.iteratorFrom(group, seqNoFrom))
@@ -93,11 +91,10 @@ public class RedisTopicPartDataManager implements TopicPartDataManager {
     }
 
     @Override
-    public VIterator<Message> getIterator(TopicPartition topicPartition, int seqNoFrom) {
-        return VBIterators.peekingIterator(
-            getTopicPartData(topicPartition)
-                .thenApplyAsync(topicPartData -> topicPartData.iteratorFrom(seqNoFrom))
-                .toCompletableFuture().join(), "Iterator_redis_" + topicPartition.getTopicId() + "__" + topicPartition.getId());
+    public MsgIterator<Message> getIterator(TopicPartition topicPartition, int seqNoFrom) {
+        return getTopicPartData(topicPartition)
+            .thenApplyAsync(topicPartData -> topicPartData.iteratorFrom(seqNoFrom))
+            .toCompletableFuture().join();
     }
 
     @Override

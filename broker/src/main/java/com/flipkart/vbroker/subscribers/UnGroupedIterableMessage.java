@@ -3,31 +3,52 @@ package com.flipkart.vbroker.subscribers;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.flatbuf.Message;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+@Slf4j
 public class UnGroupedIterableMessage implements IterableMessage {
     @Getter
     private final Message message;
     private final PartSubscription partSubscription;
     private QType qType;
 
-    public UnGroupedIterableMessage(Message message, PartSubscription partSubscription) {
+    private static final Map<Message, AtomicBoolean> messageLockMap = new ConcurrentHashMap<>();
+
+    private volatile AtomicBoolean lock;
+
+    public UnGroupedIterableMessage(Message message,
+                                    PartSubscription partSubscription,
+                                    AtomicBoolean lock) {
         this.message = message;
         this.partSubscription = partSubscription;
         this.qType = QType.MAIN;
+        this.lock = lock;
+    }
+
+    public static UnGroupedIterableMessage getInstance(Message message, PartSubscription partSubscription) {
+        messageLockMap.computeIfAbsent(message, message1 -> new AtomicBoolean(false));
+        return new UnGroupedIterableMessage(message, partSubscription, messageLockMap.get(message));
     }
 
     @Override
-    public boolean isUnlocked() {
-        return true;
+    public synchronized boolean isUnlocked() {
+        return !lock.get();
     }
 
     @Override
-    public boolean lock() {
-        return true;
+    public synchronized boolean lock() {
+        log.info("CurrLockState for msg {}: {}", message.messageId(), lock.get());
+        return lock.compareAndSet(false, true);
     }
 
     @Override
-    public void unlock() {
+    public synchronized void unlock() {
+        log.info("Unlocked msg {}", message.messageId());
+        lock.set(false);
     }
 
     @Override

@@ -7,7 +7,7 @@ import com.google.common.collect.PeekingIterator;
  *
  * @param <E>
  */
-public interface VIterator<E> extends PeekingIterator<E> {
+public interface MsgIterator<E> extends PeekingIterator<E> {
 
     /**
      * @return the name

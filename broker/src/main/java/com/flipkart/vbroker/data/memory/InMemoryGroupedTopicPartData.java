@@ -4,8 +4,7 @@ import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.data.TopicPartData;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.flatbuf.Message;
-import com.flipkart.vbroker.iterators.VIterator;
-import com.google.common.collect.PeekingIterator;
+import com.flipkart.vbroker.iterators.MsgIterator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
@@ -34,14 +33,19 @@ public class InMemoryGroupedTopicPartData implements TopicPartData {
         return CompletableFuture.supplyAsync(topicPartitionData::keySet);
     }
 
-    public PeekingIterator<Message> iteratorFrom(String group, int seqNoFrom) {
-        return new PeekingIterator<Message>() {
+    public MsgIterator<Message> iteratorFrom(String group, int seqNoFrom) {
+        return new MsgIterator<Message>() {
             AtomicInteger index = new AtomicInteger(seqNoFrom);
+
+            @Override
+            public String name() {
+                return "Iterator_grouped_" + group + "_at_index_" + index;
+            }
 
             @Override
             public Message peek() {
                 Message message = topicPartitionData.get(group).get(index.get());
-                log.trace("Peeking message {}", message.messageId());
+                log.info("Peeking message {} at seqNo {}", message.messageId(), index);
                 return message;
             }
 
@@ -72,7 +76,7 @@ public class InMemoryGroupedTopicPartData implements TopicPartData {
     }
 
     @Override
-    public VIterator<Message> iteratorFrom(int seqNoFrom) {
+    public MsgIterator<Message> iteratorFrom(int seqNoFrom) {
         throw new UnsupportedOperationException("You cannot have a global iterator for partition for a grouped topic-partition");
     }
 

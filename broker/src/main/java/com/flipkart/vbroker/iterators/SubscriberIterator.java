@@ -42,14 +42,14 @@ import java.util.Queue;
  * PartSubscriberIterator -> an iterator over direct data queue (MainQ/SQ/UQ)
  */
 @Slf4j
-public class SubscriberIterator implements VIterator<IterableMessage> {
+public class SubscriberIterator implements MsgIterator<IterableMessage> {
 
-    private final Queue<VIterator<IterableMessage>> iteratorQueue = new ArrayDeque<>();
-    private VIterator<IterableMessage> currIterator;
+    private final Queue<MsgIterator<IterableMessage>> iteratorQueue = new ArrayDeque<>();
+    private MsgIterator<IterableMessage> currIterator;
 
     public SubscriberIterator(List<PartSubscriber> partSubscribers) {
         for (PartSubscriber partSubscriber : partSubscribers) {
-            VIterator<IterableMessage> iterator = partSubscriber.iterator(QType.MAIN);
+            MsgIterator<IterableMessage> iterator = partSubscriber.iterator(QType.MAIN);
             iteratorQueue.add(iterator);
         }
 
@@ -61,34 +61,42 @@ public class SubscriberIterator implements VIterator<IterableMessage> {
 
     @Override
     public IterableMessage peek() {
+        log.info("Peeking message");
         return currIterator.peek();
     }
 
     @Override
     public boolean hasNext() {
         log.trace("CurrIterator {} hasNext {}", currIterator, currIterator.hasNext());
-        if (currIterator.hasNext() && currIterator.peek().isUnlocked()) {
+        if (isIteratorHavingNext(currIterator)) {
             return true;
         }
 
         for (int i = 0; i < iteratorQueue.size(); i++) {
-            VIterator<IterableMessage> iterator = iteratorQueue.peek();
-            if (iterator.hasNext() && iterator.peek().isUnlocked()) {
+            MsgIterator<IterableMessage> iterator = iteratorQueue.peek();
+            if (isIteratorHavingNext(iterator)) {
                 iteratorQueue.add(currIterator);
                 currIterator = iterator;
                 break;
             }
             iteratorQueue.add(iteratorQueue.poll());
         }
-        return currIterator.hasNext();
+        return isIteratorHavingNext(currIterator);
     }
 
-    public VIterator<IterableMessage> getCurrIterator() {
+    private boolean isIteratorHavingNext(MsgIterator<IterableMessage> iterator) {
+        //TODO: validate the commenting of checking isUnlocked()
+        //the logic being that locking is checked in the sub iterators of this
+        return iterator.hasNext(); // && iterator.peek().isUnlocked();
+    }
+
+    public MsgIterator<IterableMessage> getCurrIterator() {
         return currIterator;
     }
 
     @Override
     public IterableMessage next() {
+        log.info("Moving to next message");
         return currIterator.next();
     }
 

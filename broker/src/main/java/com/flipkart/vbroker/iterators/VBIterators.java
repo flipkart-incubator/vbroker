@@ -8,12 +8,46 @@ import java.util.Iterator;
 
 public class VBIterators {
 
-    public static <T> VIterator<T> peekingIterator(Iterator<? extends T> iterator, String name) {
+    public static <T> MsgIterator<T> peekingIterator(Iterator<? extends T> iterator, String name) {
         return new VBPeekingIteratorImpl<>(Iterators.peekingIterator(iterator), name);
     }
 
+    public static <T> DataIterator<T> dataIterator(MsgIterator<T> iterator) {
+        return new DataIteratorImpl<>(iterator);
+    }
+
     @AllArgsConstructor
-    private static class VBPeekingIteratorImpl<T> implements VIterator<T> {
+    private static class DataIteratorImpl<T> implements DataIterator<T> {
+        private final MsgIterator<T> iterator;
+
+        @Override
+        public String name() {
+            return iterator.name();
+        }
+
+        @Override
+        public T peek() {
+            return iterator.peek();
+        }
+
+        @Override
+        public T next() {
+            return iterator.next();
+        }
+
+        @Override
+        public void remove() {
+            iterator.remove();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return iterator.hasNext();
+        }
+    }
+
+    @AllArgsConstructor
+    private static class VBPeekingIteratorImpl<T> implements MsgIterator<T> {
         private final PeekingIterator<T> peekingIterator;
         private final String name;
 

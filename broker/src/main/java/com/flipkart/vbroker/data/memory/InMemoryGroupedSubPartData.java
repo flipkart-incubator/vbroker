@@ -3,14 +3,15 @@ package com.flipkart.vbroker.data.memory;
 import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.data.SubPartData;
-import com.flipkart.vbroker.iterators.PartSubscriberIterator;
-import com.flipkart.vbroker.iterators.VIterator;
+import com.flipkart.vbroker.iterators.DataIterator;
+import com.flipkart.vbroker.iterators.VBIterators;
 import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.flipkart.vbroker.subscribers.QType;
 import com.flipkart.vbroker.subscribers.SubscriberGroup;
 import com.flipkart.vbroker.utils.CompletionStageUtils;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,7 +27,7 @@ public class InMemoryGroupedSubPartData implements SubPartData {
     private final PartSubscription partSubscription;
     private final Map<String, SubscriberGroup> subscriberGroupsMap = new LinkedHashMap<>();
     private final Map<QType, List<String>> failedGroups = new LinkedHashMap<>();
-    private final Table<SubscriberGroup, QType, VIterator<IterableMessage>> groupQTypeIteratorTable = HashBasedTable.create();
+    private final Table<SubscriberGroup, QType, SubscriberGroup.SubscriberGroupIterator> groupQTypeIteratorTable = HashBasedTable.create();
 
     public InMemoryGroupedSubPartData(PartSubscription partSubscription) {
         this.partSubscription = partSubscription;
@@ -37,7 +38,7 @@ public class InMemoryGroupedSubPartData implements SubPartData {
         return CompletableFuture.supplyAsync(() -> {
             subscriberGroupsMap.put(subscriberGroup.getGroupId(), subscriberGroup);
             //subscriberGroupIteratorMap.put(subscriberGroup, subscriberGroup.iterator());
-            groupQTypeIteratorTable.put(subscriberGroup, QType.MAIN, subscriberGroup.iterator());
+            groupQTypeIteratorTable.put(subscriberGroup, QType.MAIN, subscriberGroup.iterator(QType.MAIN));
 
             //TODO: we should ideally set msg_id
             return new MessageMetadata(subscriberGroup.getGroupId(), subscriberGroup.getTopicPartition().getTopicId(),
@@ -85,15 +86,20 @@ public class InMemoryGroupedSubPartData implements SubPartData {
     }
 
     @Override
-    public VIterator<IterableMessage> getIterator(String groupId) {
+    public DataIterator<IterableMessage> getIterator(String groupId) {
         SubscriberGroup subscriberGroup = subscriberGroupsMap.get(groupId);
-        return groupQTypeIteratorTable.get(subscriberGroup, QType.MAIN);
+        return VBIterators.dataIterator(groupQTypeIteratorTable.get(subscriberGroup, QType.MAIN));
     }
 
     @Override
-    public VIterator<IterableMessage> getIterator(QType qType) {
-        CompletionStage<List<String>> values;
+    public DataIterator<IterableMessage> getIterator(QType qType) {
+        //Optional<SubscriberGroup.SubscriberGroupIterator> iteratorOpt = fetchIterator(qType);
+        return new DataIteratorImpl(qType);
+    }
 
+    private Optional<SubscriberGroup.SubscriberGroupIterator> fetchIterator(QType qType) {
+        log.info("Re-fetching iterator for qType {}", qType);
+        CompletionStage<List<String>> values;
         switch (qType) {
             case MAIN:
                 values = CompletableFuture.supplyAsync(() -> subscriberGroupsMap.values()
@@ -116,7 +122,7 @@ public class InMemoryGroupedSubPartData implements SubPartData {
             log.debug("SubscriberGroupsMap values for qType {} are: {}", qType, Collections.singletonList(groupIds));
         }
 
-        Optional<VIterator<IterableMessage>> iterator = valuesComputed
+        return valuesComputed
             .stream()
             .map(subscriberGroupsMap::get)
             .filter(group -> !group.isLocked())
@@ -125,13 +131,58 @@ public class InMemoryGroupedSubPartData implements SubPartData {
             .map(subscriberGroup -> groupQTypeIteratorTable.get(subscriberGroup, qType))
             .filter(Iterator::hasNext)
             .findFirst();
+    }
 
-        return new PartSubscriberIterator() {
-            @Override
-            protected Optional<VIterator<IterableMessage>> nextIterator() {
-                return iterator;
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    @AllArgsConstructor
+    private class DataIteratorImpl implements DataIterator<IterableMessage> {
+        private Optional<SubscriberGroup.SubscriberGroupIterator> iteratorOpt;
+        private final QType qType;
+
+        DataIteratorImpl(QType qType) {
+            this.qType = qType;
+            iteratorOpt = fetchIterator(qType);
+        }
+
+        @Override
+        public String name() {
+            return iteratorOpt
+                .map(SubscriberGroup.SubscriberGroupIterator::name)
+                .orElse("data_iterator_impl_qType_" + qType);
+        }
+
+        @Override
+        public IterableMessage peek() {
+            return iteratorOpt
+                .map(SubscriberGroup.SubscriberGroupIterator::peek)
+                .orElse(null);
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (!hasNext2()) {
+                iteratorOpt = fetchIterator(qType);
             }
-        };
+            return hasNext2();
+        }
+
+        private boolean hasNext2() {
+            return iteratorOpt
+                .map(SubscriberGroup.SubscriberGroupIterator::hasNext)
+                .orElse(false);
+        }
+
+        @Override
+        public IterableMessage next() {
+            return iteratorOpt
+                .map(SubscriberGroup.SubscriberGroupIterator::next)
+                .orElse(null);
+        }
+
+        @Override
+        public void remove() {
+            iteratorOpt.ifPresent(SubscriberGroup.SubscriberGroupIterator::remove);
+        }
     }
 
     @Override

@@ -8,10 +8,10 @@ import java.util.Optional;
 import static java.util.Objects.nonNull;
 
 @Slf4j
-public abstract class PartSubscriberIterator implements VIterator<IterableMessage> {
-    private VIterator<IterableMessage> currIterator;
+public abstract class PartSubscriberIterator implements MsgIterator<IterableMessage> {
+    private MsgIterator<IterableMessage> currIterator;
 
-    protected abstract Optional<VIterator<IterableMessage>> nextIterator();
+    protected abstract Optional<MsgIterator<IterableMessage>> nextIterator();
 
     @Override
     public String name() {
@@ -20,7 +20,9 @@ public abstract class PartSubscriberIterator implements VIterator<IterableMessag
 
     @Override
     public IterableMessage peek() {
-        return currIterator.peek();
+        IterableMessage msg = currIterator.peek();
+        log.info("Peeking msg {}", msg.getMessage().messageId());
+        return msg;
     }
 
     @Override
@@ -36,9 +38,8 @@ public abstract class PartSubscriberIterator implements VIterator<IterableMessag
     @Override
     public boolean hasNext() {
         try {
-            if (isIteratorActive()) return true;
-
-            Optional<VIterator<IterableMessage>> iteratorOpt = nextIterator();
+            //if (isIteratorActive()) return true;
+            Optional<MsgIterator<IterableMessage>> iteratorOpt = nextIterator();
             if (iteratorOpt.isPresent()) {
                 currIterator = iteratorOpt.get();
                 return currIterator.hasNext();

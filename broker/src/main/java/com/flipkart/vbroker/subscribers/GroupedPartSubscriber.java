@@ -5,8 +5,8 @@ import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
+import com.flipkart.vbroker.iterators.MsgIterator;
 import com.flipkart.vbroker.iterators.PartSubscriberIterator;
-import com.flipkart.vbroker.iterators.VIterator;
 import com.google.common.collect.Sets;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -50,6 +50,7 @@ public class GroupedPartSubscriber implements PartSubscriber {
             Sets.SetView<String> difference = Sets.difference(uniqueMsgGroups, uniqueSubscriberGroups);
 
             difference.forEach(group -> {
+                log.info("Adding diff group {} for topic-partition {}", group, topicPartition);
                 MessageGroup messageGroup = new MessageGroup(group, topicPartition);
                 SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, partSubscription, topicPartDataManager);
                 //subscriberGroupsMap.put(group, subscriberGroup);
@@ -60,12 +61,16 @@ public class GroupedPartSubscriber implements PartSubscriber {
     }
 
     @Override
-    public VIterator<IterableMessage> iterator(QType qType) {
+    public PartSubscriberIterator iterator(QType qType) {
+//        if (QType.MAIN.equals(qType)) {
+//            return subPartDataManager.getIterator(partSubscription, qType);
+//        }
+
         return new PartSubscriberIterator() {
             @Override
-            protected Optional<VIterator<IterableMessage>> nextIterator() {
+            protected Optional<MsgIterator<IterableMessage>> nextIterator() {
                 log.debug("Getting next iterator for QType {}", qType);
-                VIterator<IterableMessage> iterator = subPartDataManager.getIterator(partSubscription, qType);
+                MsgIterator<IterableMessage> iterator = subPartDataManager.getIterator(partSubscription, qType);
                 log.debug("Next iterator: {}", iterator);
                 return Optional.of(iterator);
             }

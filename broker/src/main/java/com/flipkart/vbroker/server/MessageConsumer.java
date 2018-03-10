@@ -5,7 +5,7 @@ import com.codahale.metrics.Timer;
 import com.flipkart.vbroker.exceptions.LockFailedException;
 import com.flipkart.vbroker.flatbuf.Message;
 import com.flipkart.vbroker.iterators.SubscriberIterator;
-import com.flipkart.vbroker.iterators.VIterator;
+import com.flipkart.vbroker.iterators.MsgIterator;
 import com.flipkart.vbroker.subscribers.IterableMessage;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +36,7 @@ public class MessageConsumer {
     public void consume() throws Exception {
         Timer.Context context = msgConsumeTimer.time();
         if (subscriberIterator.hasNext()) {
-            VIterator<IterableMessage> currIterator = subscriberIterator.getCurrIterator();
+            MsgIterator<IterableMessage> currIterator = subscriberIterator.getCurrIterator();
             log.info("CurrIterator name: {}", currIterator.name());
             //peek the message first
             IterableMessage iterableMessage = currIterator.peek();
@@ -47,11 +47,12 @@ public class MessageConsumer {
                 log.info("Consuming message with msg_id: {} and group_id: {}", message.messageId(), message.groupId());
                 messageProcessor.process(iterableMessage)
                     .thenAccept(aVoid -> {
+                        currIterator.next();
+                        iterableMessage.unlock();
+
                         long totalMsgConsumingTimeNs = context.stop();
                         log.info("Done processing the message {} in {}ms..moving to next message",
                             iterableMessage.getMessage().messageId(), totalMsgConsumingTimeNs / Math.pow(10, 6));
-                        currIterator.next();
-                        iterableMessage.unlock();
                     });
             } else {
                 throw new LockFailedException("Failed to acquire an already acquired lock for group: " + message.groupId());

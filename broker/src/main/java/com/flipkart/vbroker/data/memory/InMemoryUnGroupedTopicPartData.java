@@ -4,8 +4,7 @@ import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.data.TopicPartData;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.flatbuf.Message;
-import com.flipkart.vbroker.iterators.VIterator;
-import com.google.common.collect.PeekingIterator;
+import com.flipkart.vbroker.iterators.MsgIterator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -24,14 +23,17 @@ public class InMemoryUnGroupedTopicPartData implements TopicPartData {
 
     @Override
     public CompletionStage<MessageMetadata> addMessage(Message message) {
-        return CompletableFuture.supplyAsync(() -> {
-            messages.add(message);
-            return new MessageMetadata(
-                message.messageId(),
-                message.topicId(),
-                message.partitionId(),
-                new Random().nextInt());
-        });
+        CompletableFuture<MessageMetadata> future = new CompletableFuture<>();
+
+        messages.add(message);
+        MessageMetadata messageMetadata = new MessageMetadata(
+            message.messageId(),
+            message.topicId(),
+            message.partitionId(),
+            new Random().nextInt());
+
+        future.complete(messageMetadata);
+        return future;
     }
 
     @Override
@@ -40,7 +42,7 @@ public class InMemoryUnGroupedTopicPartData implements TopicPartData {
     }
 
     @Override
-    public PeekingIterator<Message> iteratorFrom(String group, int seqNoFrom) {
+    public MsgIterator<Message> iteratorFrom(String group, int seqNoFrom) {
         throw new UnsupportedOperationException("For an un-grouped queue, you cannot have a group level iterator");
     }
 
@@ -50,9 +52,9 @@ public class InMemoryUnGroupedTopicPartData implements TopicPartData {
     }
 
     @Override
-    public VIterator<Message> iteratorFrom(int seqNoFrom) {
+    public MsgIterator<Message> iteratorFrom(int seqNoFrom) {
         log.info("Creating new iterator for {}", this.getClass());
-        return new VIterator<Message>() {
+        return new MsgIterator<Message>() {
 
             AtomicInteger index = new AtomicInteger(seqNoFrom);
 
@@ -72,7 +74,7 @@ public class InMemoryUnGroupedTopicPartData implements TopicPartData {
             @Override
             public Message next() {
                 Message message = messages.get(index.getAndIncrement());
-                log.trace("Next message {}", message.messageId());
+                log.info("Next message {} and updated index {}", message.messageId(), index);
                 return message;
             }
 

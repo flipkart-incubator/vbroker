@@ -6,8 +6,8 @@ import com.flipkart.vbroker.data.SubPartData;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.flatbuf.Message;
-import com.flipkart.vbroker.iterators.PartSubscriberIterator;
-import com.flipkart.vbroker.iterators.VIterator;
+import com.flipkart.vbroker.iterators.DataIterator;
+import com.flipkart.vbroker.iterators.MsgIterator;
 import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.flipkart.vbroker.subscribers.QType;
 import com.flipkart.vbroker.subscribers.SubscriberGroup;
@@ -15,7 +15,10 @@ import com.flipkart.vbroker.subscribers.UnGroupedIterableMessage;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ConcurrentHashMap;
@@ -67,31 +70,25 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
     }
 
     @Override
-    public VIterator<IterableMessage> getIterator(String groupId) {
+    public DataIterator<IterableMessage> getIterator(String groupId) {
         throw new UnsupportedOperationException("You cannot get groupId level iterator for a un-grouped subscription");
     }
 
     @Override
-    public synchronized VIterator<IterableMessage> getIterator(QType qType) {
+    public synchronized DataIterator<IterableMessage> getIterator(QType qType) {
         log.info("Creating new iterator for QType {}", qType);
         if (QType.MAIN.equals(qType)) {
-            VIterator<Message> msgIterator = topicPartDataManager.getIterator(
+            MsgIterator<Message> msgIterator = topicPartDataManager.getIterator(
                 partSubscription.getTopicPartition(),
                 getCurrSeqNoFor(qType));
             return newUnGroupedIterator(qType, msgIterator);
         }
 
-        return new PartSubscriberIterator() {
-            @Override
-            protected Optional<VIterator<IterableMessage>> nextIterator() {
-                VIterator<Message> iterator = new UnGroupedFailedMsgIterator(qType);
-                UnGroupedIterator unGroupedIterator = newUnGroupedIterator(qType, iterator);
-                return Optional.of(unGroupedIterator);
-            }
-        };
+        MsgIterator<Message> iterator = new UnGroupedFailedMsgIterator(qType);
+        return newUnGroupedIterator(qType, iterator);
     }
 
-    private UnGroupedIterator newUnGroupedIterator(QType qType, VIterator<Message> msgIterator) {
+    private UnGroupedIterator newUnGroupedIterator(QType qType, MsgIterator<Message> msgIterator) {
         return new UnGroupedIterator(qType, partSubscription, msgIterator);
     }
 
@@ -115,15 +112,15 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
     }
 
     @AllArgsConstructor
-    class UnGroupedIterator implements VIterator<IterableMessage> {
+    class UnGroupedIterator implements DataIterator<IterableMessage> {
 
         private final QType qType;
         private final PartSubscription partSubscription;
-        private final VIterator<Message> iterator;
+        private final MsgIterator<Message> iterator;
 
         @Override
         public IterableMessage peek() {
-            return new UnGroupedIterableMessage(iterator.peek(), partSubscription);
+            return UnGroupedIterableMessage.getInstance(iterator.peek(), partSubscription);
         }
 
         @Override
@@ -133,7 +130,7 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
 
         @Override
         public synchronized IterableMessage next() {
-            IterableMessage iterableMessage = new UnGroupedIterableMessage(iterator.next(), partSubscription);
+            IterableMessage iterableMessage = UnGroupedIterableMessage.getInstance(iterator.next(), partSubscription);
             incrementCurrSeqNo(qType);
             return iterableMessage;
         }
@@ -150,7 +147,7 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
     }
 
     @AllArgsConstructor
-    class UnGroupedFailedMsgIterator implements VIterator<Message> {
+    class UnGroupedFailedMsgIterator implements DataIterator<Message> {
         private final QType qType;
 
         @Override

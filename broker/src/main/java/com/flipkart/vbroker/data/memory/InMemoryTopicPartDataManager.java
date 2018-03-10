@@ -8,8 +8,7 @@ import com.flipkart.vbroker.data.TopicPartData;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.flatbuf.Message;
-import com.flipkart.vbroker.iterators.VIterator;
-import com.google.common.collect.PeekingIterator;
+import com.flipkart.vbroker.iterators.MsgIterator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedHashMap;
@@ -25,21 +24,20 @@ public class InMemoryTopicPartDataManager implements TopicPartDataManager {
 
     private final Map<TopicPartition, TopicPartData> allPartitionsDataMap = new LinkedHashMap<>();
 
-    protected synchronized CompletionStage<TopicPartData> getTopicPartData(TopicPartition topicPartition) {
-        return CompletableFuture.supplyAsync(() -> {
-            allPartitionsDataMap.computeIfAbsent(topicPartition, topicPartition1 -> {
-                TopicPartData topicPartData;
-                if (topicPartition1.isGrouped()) {
-                    topicPartData = new InMemoryGroupedTopicPartData();
-                } else {
-                    topicPartData = new InMemoryUnGroupedTopicPartData();
-                }
-                log.info("TopicPartData: {} for TopicPartition: {}", topicPartData, topicPartition1);
-                return topicPartData;
-            });
-            //allPartitionsDataMap.putIfAbsent(topicPartition, new InMemoryGroupedTopicPartData());
-            return allPartitionsDataMap.get(topicPartition);
+    private synchronized CompletionStage<TopicPartData> getTopicPartData(TopicPartition topicPartition) {
+        CompletableFuture<TopicPartData> future = new CompletableFuture<>();
+        allPartitionsDataMap.computeIfAbsent(topicPartition, topicPartition1 -> {
+            TopicPartData topicPartData;
+            if (topicPartition1.isGrouped()) {
+                topicPartData = new InMemoryGroupedTopicPartData();
+            } else {
+                topicPartData = new InMemoryUnGroupedTopicPartData();
+            }
+            log.info("TopicPartData: {} for TopicPartition: {}", topicPartData, topicPartition1);
+            return topicPartData;
         });
+        future.complete(allPartitionsDataMap.get(topicPartition));
+        return future;
     }
 
     @Override
@@ -69,12 +67,12 @@ public class InMemoryTopicPartDataManager implements TopicPartDataManager {
     }
 
     @Override
-    public PeekingIterator<Message> getIterator(TopicPartition topicPartition, String group) {
+    public MsgIterator<Message> getIterator(TopicPartition topicPartition, String group) {
         throw new NotImplementedException("Not yet implemented");
     }
 
     @Override
-    public PeekingIterator<Message> getIterator(TopicPartition topicPartition, String group, int seqNoFrom) {
+    public MsgIterator<Message> getIterator(TopicPartition topicPartition, String group, int seqNoFrom) {
         //TODO: change this to make it non blocking
         return getTopicPartData(topicPartition)
             .thenApplyAsync(topicPartData -> topicPartData.iteratorFrom(group, seqNoFrom))
@@ -87,7 +85,7 @@ public class InMemoryTopicPartDataManager implements TopicPartDataManager {
     }
 
     @Override
-    public VIterator<Message> getIterator(TopicPartition topicPartition, int seqNoFrom) {
+    public MsgIterator<Message> getIterator(TopicPartition topicPartition, int seqNoFrom) {
         TopicPartData topicPartData = getTopicPartData(topicPartition).toCompletableFuture().join();
         return topicPartData.iteratorFrom(seqNoFrom);
     }

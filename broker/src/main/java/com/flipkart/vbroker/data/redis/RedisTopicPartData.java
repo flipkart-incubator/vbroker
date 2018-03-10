@@ -3,7 +3,7 @@ package com.flipkart.vbroker.data.redis;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.flatbuf.HttpHeader;
 import com.flipkart.vbroker.flatbuf.Message;
-import com.google.common.collect.PeekingIterator;
+import com.flipkart.vbroker.iterators.MsgIterator;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RList;
@@ -14,8 +14,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class RedisTopicPartData {
 
-    public PeekingIterator<Message> iteratorFrom(RList rList, int seqNoFrom) {
-        return new PeekingIterator<Message>() {
+    public MsgIterator<Message> iteratorFrom(RList rList, String groupId, int seqNoFrom) {
+        return new MsgIterator<Message>() {
+            @Override
+            public String name() {
+                return "Iterator_redis_grouped_" + groupId + "_at_index_" + seqNoFrom;
+            }
+
             AtomicInteger index = new AtomicInteger(seqNoFrom);
 
             @Override

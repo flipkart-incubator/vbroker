@@ -9,8 +9,8 @@ import org.testng.annotations.BeforeMethod;
 
 public class GroupedPartSubscriberTest extends BasePartSubscriberTest {
     @Override
-    public void shouldIterateOver_NewMessages() throws InterruptedException {
-        super.shouldIterateOver_NewMessages();
+    public void shouldIterateOver_NewMessages_DiffGroups() throws InterruptedException {
+        super.shouldIterateOver_NewMessages_DiffGroups();
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.flipkart.vbroker.data.memory;
 import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.client.MessageStore;
 import com.flipkart.vbroker.flatbuf.Message;
-import com.flipkart.vbroker.iterators.VIterator;
+import com.flipkart.vbroker.iterators.MsgIterator;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -36,7 +36,7 @@ public class InMemoryUnGroupedTopicPartDataTest {
 
         int iteratorFromPos = 2;
         int count = 0;
-        VIterator<Message> iterator = topicPartData.iteratorFrom(iteratorFromPos);
+        MsgIterator<Message> iterator = topicPartData.iteratorFrom(iteratorFromPos);
 
         log.info("Got iterator {}", iterator.name());
 

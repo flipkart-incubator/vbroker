@@ -2,8 +2,9 @@ package com.flipkart.vbroker.subscribers;
 
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.data.SubPartDataManager;
+import com.flipkart.vbroker.iterators.DataIterator;
+import com.flipkart.vbroker.iterators.MsgIterator;
 import com.flipkart.vbroker.iterators.PartSubscriberIterator;
-import com.flipkart.vbroker.iterators.VIterator;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -33,20 +34,17 @@ public class UnGroupedPartSubscriber implements PartSubscriber {
     }
 
     @Override
-    public VIterator<IterableMessage> iterator(QType qType) {
+    public PartSubscriberIterator iterator(QType qType) {
         log.info("Creating UnGroupedPartSubscriber iterator for partSub {}", partSubscription);
 
-        if (QType.MAIN.equals(qType)) {
-            return subPartDataManager.getIterator(partSubscription, QType.MAIN);
-        } else {
-            VIterator<IterableMessage> iterator =
-                subPartDataManager.getIterator(partSubscription, QType.SIDELINE);
-            return new PartSubscriberIterator() {
-                @Override
-                protected Optional<VIterator<IterableMessage>> nextIterator() {
-                    return Optional.of(iterator);
-                }
-            };
-        }
+        //TODO: validate if across QType's a cached dataIterator like below works or not
+        DataIterator<IterableMessage> dataIterator =
+            subPartDataManager.getIterator(partSubscription, QType.MAIN);
+        return new PartSubscriberIterator() {
+            @Override
+            protected Optional<MsgIterator<IterableMessage>> nextIterator() {
+                return Optional.of(dataIterator);
+            }
+        };
     }
 }

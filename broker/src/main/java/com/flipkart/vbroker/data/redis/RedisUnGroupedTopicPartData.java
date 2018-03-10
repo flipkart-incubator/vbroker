@@ -5,9 +5,7 @@ import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.TopicPartData;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.flatbuf.Message;
-import com.flipkart.vbroker.iterators.VBIterators;
-import com.flipkart.vbroker.iterators.VIterator;
-import com.google.common.collect.PeekingIterator;
+import com.flipkart.vbroker.iterators.MsgIterator;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RFuture;
 import org.redisson.api.RList;
@@ -56,7 +54,7 @@ public class RedisUnGroupedTopicPartData extends RedisTopicPartData implements T
     }
 
     @Override
-    public PeekingIterator<Message> iteratorFrom(String group, int seqNoFrom) {
+    public MsgIterator<Message> iteratorFrom(String group, int seqNoFrom) {
         throw new UnsupportedOperationException("For an un-grouped queue, you cannot have a group level iterator");
     }
 
@@ -66,10 +64,9 @@ public class RedisUnGroupedTopicPartData extends RedisTopicPartData implements T
     }
 
     @Override
-    public VIterator<Message> iteratorFrom(int seqNoFrom) {
-        log.info("getting peeking iterator");
+    public MsgIterator<Message> iteratorFrom(int seqNoFrom) {
         RList<RedisObject> rList = client.getList(topicPartition.toString());
-        return VBIterators.peekingIterator(super.iteratorFrom(rList, seqNoFrom), "Iterator_redis_un_grouped");
+        return super.iteratorFrom(rList, "un_grouped", seqNoFrom);
     }
 
     @Override
