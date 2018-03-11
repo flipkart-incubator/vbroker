@@ -6,7 +6,7 @@ import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.TopicPartData;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.flatbuf.Message;
-import com.flipkart.vbroker.iterators.MsgIterator;
+import com.flipkart.vbroker.iterators.DataIterator;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.*;
 
@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class RedisGroupedTopicPartData extends RedisTopicPartData implements TopicPartData {
 
-    private static RedissonClient client;
-    private TopicPartition topicPartition;
+    private final RedissonClient client;
+    private final TopicPartition topicPartition;
 
     public RedisGroupedTopicPartData(RedissonClient client,
                                      TopicPartition topicPartition) {
@@ -76,7 +76,7 @@ public class RedisGroupedTopicPartData extends RedisTopicPartData implements Top
     }
 
     @Override
-    public MsgIterator<Message> iteratorFrom(String groupId, int seqNoFrom) {
+    public DataIterator<Message> iteratorFrom(String groupId, int seqNoFrom) {
         log.info("getting peeking iterator");
         MessageGroup messageGroup = new MessageGroup(groupId, topicPartition);
         RList<RedisObject> rList = client.getList("{" + topicPartition.toString() + "}" + messageGroup.toString());
@@ -92,7 +92,7 @@ public class RedisGroupedTopicPartData extends RedisTopicPartData implements Top
     }
 
     @Override
-    public MsgIterator<Message> iteratorFrom(int seqNoFrom) {
+    public DataIterator<Message> iteratorFrom(int seqNoFrom) {
         throw new UnsupportedOperationException("You cannot have a global iterator for partition for a grouped topic-partition");
     }
 

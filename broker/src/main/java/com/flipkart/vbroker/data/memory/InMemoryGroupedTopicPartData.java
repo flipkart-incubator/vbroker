@@ -4,7 +4,7 @@ import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.data.TopicPartData;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.flatbuf.Message;
-import com.flipkart.vbroker.iterators.MsgIterator;
+import com.flipkart.vbroker.iterators.DataIterator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
@@ -33,8 +33,8 @@ public class InMemoryGroupedTopicPartData implements TopicPartData {
         return CompletableFuture.supplyAsync(topicPartitionData::keySet);
     }
 
-    public MsgIterator<Message> iteratorFrom(String group, int seqNoFrom) {
-        return new MsgIterator<Message>() {
+    public DataIterator<Message> iteratorFrom(String group, int seqNoFrom) {
+        return new DataIterator<Message>() {
             AtomicInteger index = new AtomicInteger(seqNoFrom);
 
             @Override
@@ -76,7 +76,7 @@ public class InMemoryGroupedTopicPartData implements TopicPartData {
     }
 
     @Override
-    public MsgIterator<Message> iteratorFrom(int seqNoFrom) {
+    public DataIterator<Message> iteratorFrom(int seqNoFrom) {
         throw new UnsupportedOperationException("You cannot have a global iterator for partition for a grouped topic-partition");
     }
 

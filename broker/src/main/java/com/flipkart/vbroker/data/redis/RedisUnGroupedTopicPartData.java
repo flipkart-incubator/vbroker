@@ -5,7 +5,7 @@ import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.TopicPartData;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.flatbuf.Message;
-import com.flipkart.vbroker.iterators.MsgIterator;
+import com.flipkart.vbroker.iterators.DataIterator;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RFuture;
 import org.redisson.api.RList;
@@ -18,8 +18,8 @@ import java.util.concurrent.CompletionStage;
 
 @Slf4j
 public class RedisUnGroupedTopicPartData extends RedisTopicPartData implements TopicPartData {
-    private static RedissonClient client;
-    private TopicPartition topicPartition;
+    private final RedissonClient client;
+    private final TopicPartition topicPartition;
 
     public RedisUnGroupedTopicPartData(RedissonClient client,
                                        TopicPartition topicPartition) {
@@ -54,7 +54,7 @@ public class RedisUnGroupedTopicPartData extends RedisTopicPartData implements T
     }
 
     @Override
-    public MsgIterator<Message> iteratorFrom(String group, int seqNoFrom) {
+    public DataIterator<Message> iteratorFrom(String group, int seqNoFrom) {
         throw new UnsupportedOperationException("For an un-grouped queue, you cannot have a group level iterator");
     }
 
@@ -64,7 +64,7 @@ public class RedisUnGroupedTopicPartData extends RedisTopicPartData implements T
     }
 
     @Override
-    public MsgIterator<Message> iteratorFrom(int seqNoFrom) {
+    public DataIterator<Message> iteratorFrom(int seqNoFrom) {
         RList<RedisObject> rList = client.getList(topicPartition.toString());
         return super.iteratorFrom(rList, "un_grouped", seqNoFrom);
     }

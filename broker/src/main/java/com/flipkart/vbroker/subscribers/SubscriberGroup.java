@@ -6,7 +6,8 @@ import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.flatbuf.Message;
-import com.flipkart.vbroker.iterators.MsgIterator;
+import com.flipkart.vbroker.iterators.DataIterator;
+import com.flipkart.vbroker.iterators.SubscriberGroupIterator;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -105,9 +106,9 @@ public class SubscriberGroup {
             .thenApply(offset -> offset - getCurrSeqNo(QType.MAIN));
     }
 
-    public SubscriberGroupIterator iterator(QType qType) {
+    public SubscriberGroupIterator<IterableMessage> iterator(QType qType) {
         log.info("Creating a new SubGroupIterator for qType {} and group {}", qType, getGroupId());
-        return new SubscriberGroupIterator(qType, this);
+        return new SubscriberGroupIteratorImpl(qType, this);
     }
 
     public String getGroupId() {
@@ -118,12 +119,12 @@ public class SubscriberGroup {
         return this.partSubscription;
     }
 
-    public class SubscriberGroupIterator implements MsgIterator<IterableMessage> {
+    public class SubscriberGroupIteratorImpl implements SubscriberGroupIterator<IterableMessage> {
         private QType qType;
         private SubscriberGroup subscriberGroup;
-        private MsgIterator<Message> groupIterator;
+        private DataIterator<Message> groupIterator;
 
-        public SubscriberGroupIterator(QType qType, SubscriberGroup subscriberGroup) {
+        SubscriberGroupIteratorImpl(QType qType, SubscriberGroup subscriberGroup) {
             log.info("Creating new subscriberGroupIterator for qType {} and group {}", qType, subscriberGroup.getGroupId());
             this.qType = qType;
             this.subscriberGroup = subscriberGroup;

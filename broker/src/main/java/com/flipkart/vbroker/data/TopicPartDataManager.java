@@ -1,11 +1,10 @@
 package com.flipkart.vbroker.data;
 
 import com.flipkart.vbroker.client.MessageMetadata;
-import com.flipkart.vbroker.core.MessageGroup;
 import com.flipkart.vbroker.core.TopicPartMessage;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.flatbuf.Message;
-import com.flipkart.vbroker.iterators.MsgIterator;
+import com.flipkart.vbroker.iterators.DataIterator;
 
 import java.util.List;
 import java.util.Set;
@@ -17,17 +16,15 @@ public interface TopicPartDataManager {
 
     CompletionStage<List<MessageMetadata>> addMessages(List<TopicPartMessage> topicPartMessages);
 
-    CompletionStage<MessageMetadata> addMessageGroup(TopicPartition topicPartition, MessageGroup messageGroup);
-
     CompletionStage<Set<String>> getUniqueGroups(TopicPartition topicPartition);
 
-    MsgIterator<Message> getIterator(TopicPartition topicPartition, String group);
+    DataIterator<Message> getIterator(TopicPartition topicPartition, String group);
 
-    MsgIterator<Message> getIterator(TopicPartition topicPartition, String group, int seqNoFrom);
+    DataIterator<Message> getIterator(TopicPartition topicPartition, String group, int seqNoFrom);
+
+    DataIterator<Message> getIterator(TopicPartition topicPartition, int seqNoFrom);
 
     CompletionStage<Integer> getCurrentOffset(TopicPartition topicPartition, String group);
-
-    MsgIterator<Message> getIterator(TopicPartition topicPartition, int seqNoFrom);
 
     CompletionStage<Integer> getCurrentOffset(TopicPartition topicPartition);
 }

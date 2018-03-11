@@ -78,17 +78,17 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
     public synchronized DataIterator<IterableMessage> getIterator(QType qType) {
         log.info("Creating new iterator for QType {}", qType);
         if (QType.MAIN.equals(qType)) {
-            MsgIterator<Message> msgIterator = topicPartDataManager.getIterator(
+            DataIterator<Message> msgIterator = topicPartDataManager.getIterator(
                 partSubscription.getTopicPartition(),
                 getCurrSeqNoFor(qType));
             return newUnGroupedIterator(qType, msgIterator);
         }
 
-        MsgIterator<Message> iterator = new UnGroupedFailedMsgIterator(qType);
+        DataIterator<Message> iterator = new UnGroupedFailedMsgIterator(qType);
         return newUnGroupedIterator(qType, iterator);
     }
 
-    private UnGroupedIterator newUnGroupedIterator(QType qType, MsgIterator<Message> msgIterator) {
+    private UnGroupedIterator newUnGroupedIterator(QType qType, DataIterator<Message> msgIterator) {
         return new UnGroupedIterator(qType, partSubscription, msgIterator);
     }
 
@@ -113,7 +113,6 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
 
     @AllArgsConstructor
     class UnGroupedIterator implements DataIterator<IterableMessage> {
-
         private final QType qType;
         private final PartSubscription partSubscription;
         private final MsgIterator<Message> iterator;

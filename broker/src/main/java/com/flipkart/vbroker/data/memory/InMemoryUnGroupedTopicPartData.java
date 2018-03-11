@@ -4,7 +4,7 @@ import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.data.TopicPartData;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.flatbuf.Message;
-import com.flipkart.vbroker.iterators.MsgIterator;
+import com.flipkart.vbroker.iterators.DataIterator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class InMemoryUnGroupedTopicPartData implements TopicPartData {
     }
 
     @Override
-    public MsgIterator<Message> iteratorFrom(String group, int seqNoFrom) {
+    public DataIterator<Message> iteratorFrom(String group, int seqNoFrom) {
         throw new UnsupportedOperationException("For an un-grouped queue, you cannot have a group level iterator");
     }
 
@@ -52,9 +52,9 @@ public class InMemoryUnGroupedTopicPartData implements TopicPartData {
     }
 
     @Override
-    public MsgIterator<Message> iteratorFrom(int seqNoFrom) {
+    public DataIterator<Message> iteratorFrom(int seqNoFrom) {
         log.info("Creating new iterator for {}", this.getClass());
-        return new MsgIterator<Message>() {
+        return new DataIterator<Message>() {
 
             AtomicInteger index = new AtomicInteger(seqNoFrom);
 

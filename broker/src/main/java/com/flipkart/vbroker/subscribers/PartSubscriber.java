@@ -8,5 +8,5 @@ public interface PartSubscriber {
 
     void refreshSubscriberMetadata();
 
-    PartSubscriberIterator iterator(QType qType);
+    PartSubscriberIterator<IterableMessage> iterator(QType qType);
 }

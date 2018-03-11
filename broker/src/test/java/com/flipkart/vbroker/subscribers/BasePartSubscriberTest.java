@@ -4,17 +4,9 @@ import com.flipkart.vbroker.client.MessageStore;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
-import com.flipkart.vbroker.data.memory.InMemorySubPartDataManager;
-import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
 import com.flipkart.vbroker.flatbuf.Message;
 import com.flipkart.vbroker.iterators.MsgIterator;
 import com.flipkart.vbroker.iterators.PartSubscriberIterator;
-import com.flipkart.vbroker.services.InMemorySubscriptionService;
-import com.flipkart.vbroker.services.InMemoryTopicService;
-import com.flipkart.vbroker.services.SubscriptionService;
-import com.flipkart.vbroker.services.TopicService;
-import com.flipkart.vbroker.utils.DummyEntities;
-import com.flipkart.vbroker.utils.SubscriptionUtils;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.annotations.BeforeMethod;
@@ -29,33 +21,33 @@ import static org.testng.Assert.assertEquals;
 
 @Slf4j
 @Setter
-public class BasePartSubscriberTest {
+public abstract class BasePartSubscriberTest {
 
     private PartSubscriber partSubscriber;
     private PartSubscription partSubscription;
     private SubPartDataManager subPartDataManager;
     private TopicPartDataManager topicPartDataManager;
-//
-//    @BeforeMethod
-//    public abstract void setUp();
 
     @BeforeMethod
-    public void setUp() {
-        //PartSubscription partSubscription = SubscriptionUtils.getPartSubscription(DummyEntities.unGroupedSubscription, (short) 0);
-        PartSubscription partSubscription = SubscriptionUtils.getPartSubscription(DummyEntities.groupedSubscription, (short) 0);
-        InMemoryTopicPartDataManager topicPartDataManager = new InMemoryTopicPartDataManager();
-        InMemorySubPartDataManager subPartDataManager = new InMemorySubPartDataManager(topicPartDataManager);
+    public abstract void setUp();
 
-        TopicService topicService = new InMemoryTopicService();
-        SubscriptionService subscriptionService = new InMemorySubscriptionService(topicService, topicPartDataManager, subPartDataManager);
-        partSubscriber = subscriptionService.getPartSubscriber(partSubscription).toCompletableFuture().join();
-
-        setPartSubscription(partSubscription);
-        setTopicPartDataManager(topicPartDataManager);
-        setSubPartDataManager(subPartDataManager);
-        //setPartSubscriber(new UnGroupedPartSubscriber(subPartDataManager, partSubscription));
-        setPartSubscriber(new GroupedPartSubscriber(topicPartDataManager, subPartDataManager, partSubscription));
-    }
+//    @BeforeMethod
+//    public void setUp() {
+//        //PartSubscription partSubscription = SubscriptionUtils.getPartSubscription(DummyEntities.unGroupedSubscription, (short) 0);
+//        PartSubscription partSubscription = SubscriptionUtils.getPartSubscription(DummyEntities.groupedSubscription, (short) 0);
+//        InMemoryTopicPartDataManager topicPartDataManager = new InMemoryTopicPartDataManager();
+//        InMemorySubPartDataManager subPartDataManager = new InMemorySubPartDataManager(topicPartDataManager);
+//
+//        TopicService topicService = new InMemoryTopicService();
+//        SubscriptionService subscriptionService = new InMemorySubscriptionService(topicService, topicPartDataManager, subPartDataManager);
+//        partSubscriber = subscriptionService.getPartSubscriber(partSubscription).toCompletableFuture().join();
+//
+//        setPartSubscription(partSubscription);
+//        setTopicPartDataManager(topicPartDataManager);
+//        setSubPartDataManager(subPartDataManager);
+//        //setPartSubscriber(new UnGroupedPartSubscriber(subPartDataManager, partSubscription));
+//        setPartSubscriber(new GroupedPartSubscriber(topicPartDataManager, subPartDataManager, partSubscription));
+//    }
 
     @Test
     public void shouldIterateOver_NewMessages_DiffGroups() throws InterruptedException {

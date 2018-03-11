@@ -1,12 +1,11 @@
 package com.flipkart.vbroker.data;
 
 import com.flipkart.vbroker.client.MessageMetadata;
-import com.flipkart.vbroker.core.MessageGroup;
 import com.flipkart.vbroker.core.TopicPartMessage;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.flatbuf.Message;
-import com.flipkart.vbroker.iterators.MsgIterator;
+import com.flipkart.vbroker.iterators.DataIterator;
 
 import java.util.List;
 import java.util.Set;
@@ -34,23 +33,18 @@ public abstract class DefaultTopicPartDataManager implements TopicPartDataManage
     }
 
     @Override
-    public CompletionStage<MessageMetadata> addMessageGroup(TopicPartition topicPartition, MessageGroup messageGroup) {
-        throw new NotImplementedException("adding messageGroup to topicPartition is not yet implemented");
-    }
-
-    @Override
     public CompletionStage<Set<String>> getUniqueGroups(TopicPartition topicPartition) {
         return getTopicPartData(topicPartition)
             .thenCompose(TopicPartData::getUniqueGroups);
     }
 
     @Override
-    public MsgIterator<Message> getIterator(TopicPartition topicPartition, String group) {
+    public DataIterator<Message> getIterator(TopicPartition topicPartition, String group) {
         throw new NotImplementedException("Not yet implemented");
     }
 
     @Override
-    public MsgIterator<Message> getIterator(TopicPartition topicPartition, String group, int seqNoFrom) {
+    public DataIterator<Message> getIterator(TopicPartition topicPartition, String group, int seqNoFrom) {
         //TODO: change this to make it non blocking
         return getTopicPartData(topicPartition)
             .thenApplyAsync(topicPartData -> topicPartData.iteratorFrom(group, seqNoFrom))
@@ -63,7 +57,7 @@ public abstract class DefaultTopicPartDataManager implements TopicPartDataManage
     }
 
     @Override
-    public MsgIterator<Message> getIterator(TopicPartition topicPartition, int seqNoFrom) {
+    public DataIterator<Message> getIterator(TopicPartition topicPartition, int seqNoFrom) {
         TopicPartData topicPartData = getTopicPartData(topicPartition).toCompletableFuture().join();
         return topicPartData.iteratorFrom(seqNoFrom);
     }

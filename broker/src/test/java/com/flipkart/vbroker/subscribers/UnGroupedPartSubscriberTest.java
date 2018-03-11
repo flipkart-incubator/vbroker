@@ -29,6 +29,11 @@ public class UnGroupedPartSubscriberTest extends BasePartSubscriberTest {
     }
 
     @Override
+    public void shouldIterateOver_NewMessages_SameGroup() throws InterruptedException {
+        super.shouldIterateOver_NewMessages_SameGroup();
+    }
+
+    @Override
     public void shouldIterateOver_NewMessages_DiffGroups() throws InterruptedException {
         super.shouldIterateOver_NewMessages_DiffGroups();
     }
