@@ -41,7 +41,7 @@ public class SubscriberGroup {
     private SubscriberGroup(MessageGroup messageGroup,
                             PartSubscription partSubscription,
                             TopicPartDataManager topicPartDataManager) {
-        log.info("Creating new group {}", messageGroup.getGroupId());
+        log.trace("Creating new group {}", messageGroup.getGroupId());
         this.messageGroup = messageGroup;
         this.topicPartition = messageGroup.getTopicPartition();
         this.partSubscription = partSubscription;
@@ -107,7 +107,7 @@ public class SubscriberGroup {
     }
 
     public SubscriberGroupIterator<IterableMessage> iterator(QType qType) {
-        log.info("Creating a new SubGroupIterator for qType {} and group {}", qType, getGroupId());
+        log.trace("Creating a new SubGroupIterator for qType {} and group {}", qType, getGroupId());
         return new SubscriberGroupIteratorImpl(qType, this);
     }
 
@@ -125,7 +125,7 @@ public class SubscriberGroup {
         private DataIterator<Message> groupIterator;
 
         SubscriberGroupIteratorImpl(QType qType, SubscriberGroup subscriberGroup) {
-            log.info("Creating new subscriberGroupIterator for qType {} and group {}", qType, subscriberGroup.getGroupId());
+            log.trace("Creating new subscriberGroupIterator for qType {} and group {}", qType, subscriberGroup.getGroupId());
             this.qType = qType;
             this.subscriberGroup = subscriberGroup;
             this.groupIterator = topicPartDataManager.getIterator(topicPartition, getGroupId(), getCurrSeqNo(qType));
@@ -134,13 +134,13 @@ public class SubscriberGroup {
         @Override
         public synchronized GroupedIterableMessage peek() {
             Message msg = groupIterator.peek();
-            log.info("Peeking msg {}", msg.messageId());
+            log.debug("Peeking msg {}", msg.messageId());
             return GroupedIterableMessage.newInstance(msg, subscriberGroup);
         }
 
         @Override
         public synchronized GroupedIterableMessage next() {
-            log.info("Moving to next message");
+            log.debug("Moving to next message");
             GroupedIterableMessage messageWithGroup = GroupedIterableMessage.newInstance(groupIterator.next(), subscriberGroup);
             incrementCurrSeqNo(qType);
             return messageWithGroup;

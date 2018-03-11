@@ -42,6 +42,34 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
     }
 
     @Test
+    public void shouldProduceAndConsumeMessages_MultipleMessagesOfSameTopic_MultipleGroups() throws InterruptedException {
+        int noOfRecords = 3;
+        Topic topic = createGroupedTopic();
+        byte[] payload = "This is a sample message".getBytes();
+        List<ProducerRecord> records_1 = IntStream.range(0, noOfRecords)
+            .mapToObj(i -> newProducerRecord(topic, "group_1", payload))
+            .collect(Collectors.toList());
+        List<ProducerRecord> records_2 = IntStream.range(0, noOfRecords)
+            .mapToObj(i -> newProducerRecord(topic, "group_2", payload))
+            .collect(Collectors.toList());
+        List<ProducerRecord> records_3 = IntStream.range(0, noOfRecords)
+            .mapToObj(i -> newProducerRecord(topic, "group_3", payload))
+            .collect(Collectors.toList());
+
+        List<ProducerRecord> records = Lists.newArrayList();
+        records.addAll(records_1);
+        records.addAll(records_2);
+        records.addAll(records_3);
+
+        produceRecords(records);
+
+        Thread.sleep(4 * 1000);
+        //Verify the message is consumed
+        verifyHttp(httpServer).times(noOfRecords * 3, method(Method.POST),
+            uri(URI_200.uri()));
+    }
+
+    @Test
     public void shouldProduceAndConsumeMessages_MultipleMessagesOfSameTopic_UnGrouped() throws InterruptedException {
         int noOfRecords = 5;
         Topic topic = createUnGroupedTopic();

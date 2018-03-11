@@ -44,12 +44,12 @@ import java.util.Queue;
 @Slf4j
 public class SubscriberIterator implements MsgIterator<IterableMessage> {
 
-    private final Queue<MsgIterator<IterableMessage>> iteratorQueue = new ArrayDeque<>();
-    private MsgIterator<IterableMessage> currIterator;
+    private final Queue<PartSubscriberIterator<IterableMessage>> iteratorQueue = new ArrayDeque<>();
+    private PartSubscriberIterator<IterableMessage> currIterator;
 
     public SubscriberIterator(List<PartSubscriber> partSubscribers) {
         for (PartSubscriber partSubscriber : partSubscribers) {
-            MsgIterator<IterableMessage> iterator = partSubscriber.iterator(QType.MAIN);
+            PartSubscriberIterator<IterableMessage> iterator = partSubscriber.iterator(QType.MAIN);
             iteratorQueue.add(iterator);
         }
 
@@ -61,7 +61,6 @@ public class SubscriberIterator implements MsgIterator<IterableMessage> {
 
     @Override
     public IterableMessage peek() {
-        log.info("Peeking message");
         return currIterator.peek();
     }
 
@@ -73,7 +72,7 @@ public class SubscriberIterator implements MsgIterator<IterableMessage> {
         }
 
         for (int i = 0; i < iteratorQueue.size(); i++) {
-            MsgIterator<IterableMessage> iterator = iteratorQueue.peek();
+            PartSubscriberIterator<IterableMessage> iterator = iteratorQueue.peek();
             if (isIteratorHavingNext(iterator)) {
                 iteratorQueue.add(currIterator);
                 currIterator = iterator;
@@ -84,19 +83,19 @@ public class SubscriberIterator implements MsgIterator<IterableMessage> {
         return isIteratorHavingNext(currIterator);
     }
 
-    private boolean isIteratorHavingNext(MsgIterator<IterableMessage> iterator) {
+    private boolean isIteratorHavingNext(PartSubscriberIterator<IterableMessage> iterator) {
         //TODO: validate the commenting of checking isUnlocked()
         //the logic being that locking is checked in the sub iterators of this
         return iterator.hasNext(); // && iterator.peek().isUnlocked();
     }
 
-    public MsgIterator<IterableMessage> getCurrIterator() {
+    public PartSubscriberIterator<IterableMessage> getCurrIterator() {
         return currIterator;
     }
 
     @Override
     public IterableMessage next() {
-        log.info("Moving to next message");
+        log.debug("Moving to next message");
         return currIterator.next();
     }
 

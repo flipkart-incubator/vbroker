@@ -58,7 +58,7 @@ public class Subscriber implements Runnable {
 
                 long pollTimeMs = config.getSubscriberPollTimeMs();
                 while (running.get()) {
-                    log.info("Polling for new messages");
+                    log.debug("Polling for new messages");
                     try {
                         messageConsumer.consume();
                         Thread.sleep(pollTimeMs);

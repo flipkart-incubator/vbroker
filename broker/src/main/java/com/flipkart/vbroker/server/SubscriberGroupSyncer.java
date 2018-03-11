@@ -23,7 +23,7 @@ public class SubscriberGroupSyncer implements Runnable {
                     break;
                 }
 
-                log.info("Refreshing subscriber metadata");
+                log.debug("Refreshing subscriber metadata");
                 partSubscriber.refreshSubscriberMetadata();
             }
             try {

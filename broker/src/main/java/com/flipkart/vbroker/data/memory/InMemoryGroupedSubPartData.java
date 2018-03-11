@@ -102,7 +102,7 @@ public class InMemoryGroupedSubPartData implements SubPartData {
     }
 
     private Optional<SubscriberGroupIterator<IterableMessage>> fetchIterator(QType qType) {
-        log.info("Re-fetching iterator for qType {}", qType);
+        log.debug("Re-fetching iterator for qType {}", qType);
         CompletionStage<List<String>> values;
         switch (qType) {
             case MAIN:
