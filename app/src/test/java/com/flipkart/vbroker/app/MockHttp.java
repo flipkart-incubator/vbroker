@@ -26,6 +26,8 @@ public class MockHttp {
 
     public enum MockURI {
         URI_200("/200"),
+        URI_201("/201"),
+        URI_202("/202"),
         URI_204("/204"),
         URI_400("/400"),
         URI_404("/404"),
