@@ -25,6 +25,11 @@ public class MsgIterators {
         private final MsgIterator<T> iterator;
 
         @Override
+        public boolean isUnlocked() {
+            return iterator.isUnlocked();
+        }
+
+        @Override
         public String name() {
             return iterator.name();
         }
@@ -53,6 +58,11 @@ public class MsgIterators {
     @AllArgsConstructor
     private static class DataIteratorImpl<T> implements DataIterator<T> {
         private final MsgIterator<T> iterator;
+
+        @Override
+        public boolean isUnlocked() {
+            return iterator.isUnlocked();
+        }
 
         @Override
         public String name() {

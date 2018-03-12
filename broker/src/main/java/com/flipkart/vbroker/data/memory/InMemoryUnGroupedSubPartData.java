@@ -24,6 +24,8 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.util.Objects.nonNull;
+
 @Slf4j
 public class InMemoryUnGroupedSubPartData implements SubPartData {
 
@@ -116,10 +118,25 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
         private final QType qType;
         private final PartSubscription partSubscription;
         private final MsgIterator<Message> iterator;
+        private IterableMessage lastPeekedMsg;
+
+        UnGroupedIterator(QType qType,
+                          PartSubscription partSubscription,
+                          MsgIterator<Message> iterator) {
+            this.qType = qType;
+            this.partSubscription = partSubscription;
+            this.iterator = iterator;
+        }
+
+        @Override
+        public boolean isUnlocked() {
+            return !nonNull(lastPeekedMsg) || lastPeekedMsg.isUnlocked();
+        }
 
         @Override
         public IterableMessage peek() {
-            return UnGroupedIterableMessage.getInstance(iterator.peek(), partSubscription);
+            lastPeekedMsg = UnGroupedIterableMessage.getInstance(iterator.peek(), partSubscription);
+            return lastPeekedMsg;
         }
 
         @Override

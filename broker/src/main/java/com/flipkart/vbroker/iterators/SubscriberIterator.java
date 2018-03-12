@@ -86,7 +86,8 @@ public class SubscriberIterator implements MsgIterator<IterableMessage> {
     private boolean isIteratorHavingNext(PartSubscriberIterator<IterableMessage> iterator) {
         //TODO: validate the commenting of checking isUnlocked()
         //the logic being that locking is checked in the sub iterators of this
-        return iterator.hasNext(); // && iterator.peek().isUnlocked();
+        //here check for isUnlocked is required as we don't have to re-peek the message under execution
+        return iterator.hasNext() && iterator.isUnlocked();
     }
 
     public PartSubscriberIterator<IterableMessage> getCurrIterator() {

@@ -37,6 +37,8 @@ public class MockHttp {
         URI_MOCK_APP("/url"),
         URI_MOCK_APP2("/url2"),
         SLEEP_200("/sleep200"),
+        SLEEP_201("/sleep201"),
+        SLEEP_202("/sleep202"),
         SLEEP_404("/sleep404");
 
         private final String uri;

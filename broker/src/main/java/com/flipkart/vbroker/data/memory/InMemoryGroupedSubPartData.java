@@ -21,6 +21,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.nonNull;
+
 @Slf4j
 public class InMemoryGroupedSubPartData implements SubPartData {
 
@@ -156,10 +158,16 @@ public class InMemoryGroupedSubPartData implements SubPartData {
     private class DataIteratorImpl implements DataIterator<IterableMessage> {
         private final QType qType;
         private Optional<SubscriberGroupIterator<IterableMessage>> iteratorOpt;
+        private IterableMessage lastPeekedMsg;
 
         DataIteratorImpl(QType qType) {
             this.qType = qType;
             iteratorOpt = fetchIterator(qType);
+        }
+
+        @Override
+        public boolean isUnlocked() {
+            return !nonNull(lastPeekedMsg) || lastPeekedMsg.isUnlocked();
         }
 
         @Override
@@ -171,9 +179,10 @@ public class InMemoryGroupedSubPartData implements SubPartData {
 
         @Override
         public IterableMessage peek() {
-            return iteratorOpt
+            lastPeekedMsg = iteratorOpt
                 .map(SubscriberGroupIterator<IterableMessage>::peek)
                 .orElse(null);
+            return lastPeekedMsg;
         }
 
         @Override
