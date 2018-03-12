@@ -2,7 +2,7 @@ package com.flipkart.vbroker.data.memory;
 
 import com.flipkart.vbroker.client.MessageStore;
 import com.flipkart.vbroker.flatbuf.Message;
-import com.google.common.collect.PeekingIterator;
+import com.flipkart.vbroker.iterators.MsgIterator;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -27,7 +27,7 @@ public class InMemoryGroupedTopicPartDataTest {
         Message message_1 = MessageStore.getRandomMsg(groupId);
         topicPartData.addMessage(message_1).toCompletableFuture().join();
 
-        PeekingIterator<Message> iterator = topicPartData.iteratorFrom(groupId, 0);
+        MsgIterator<Message> iterator = topicPartData.iteratorFrom(groupId, 0);
 
         new Thread(() -> {
             Message message_2 = MessageStore.getRandomMsg(groupId);

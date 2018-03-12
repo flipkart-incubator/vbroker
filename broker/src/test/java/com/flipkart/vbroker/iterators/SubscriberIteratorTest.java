@@ -7,12 +7,12 @@ import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.data.memory.InMemorySubPartDataManager;
 import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
 import com.flipkart.vbroker.flatbuf.Message;
+import com.flipkart.vbroker.subscribers.GroupedPartSubscriber;
 import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
-import com.flipkart.vbroker.subscribers.UnGroupedPartSubscriber;
 import com.flipkart.vbroker.utils.DummyEntities;
 import com.flipkart.vbroker.utils.SubscriptionUtils;
-import com.google.common.collect.PeekingIterator;
+import lombok.extern.slf4j.Slf4j;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.testng.collections.Lists;
@@ -24,34 +24,39 @@ import java.util.stream.IntStream;
 
 import static org.testng.Assert.assertEquals;
 
+@Slf4j
 public class SubscriberIteratorTest {
 
     private SubscriberIterator subscriberIterator;
     private TopicPartDataManager topicPartDataManager;
-    private PartSubscription unGroupedPartSubscription;
-    private SubPartDataManager subPartDataManager;
+    private PartSubscription partSubscription;
+    private PartSubscriber partSubscriber;
 
     @BeforeMethod
     public void setUp() {
         topicPartDataManager = new InMemoryTopicPartDataManager();
-        unGroupedPartSubscription = SubscriptionUtils.getPartSubscription(DummyEntities.unGroupedSubscription, (short) 0);
-        subPartDataManager = new InMemorySubPartDataManager(topicPartDataManager);
+        //partSubscription = SubscriptionUtils.getPartSubscription(DummyEntities.unGroupedSubscription, (short) 0);
+        partSubscription = SubscriptionUtils.getPartSubscription(DummyEntities.groupedSubscription, (short) 0);
+        SubPartDataManager subPartDataManager = new InMemorySubPartDataManager(topicPartDataManager);
 
-        PartSubscriber partSubscriber = new UnGroupedPartSubscriber(subPartDataManager, unGroupedPartSubscription);
+        //PartSubscriber partSubscriber = new UnGroupedPartSubscriber(subPartDataManager, partSubscription);
+        partSubscriber = new GroupedPartSubscriber(topicPartDataManager, subPartDataManager, partSubscription);
         List<PartSubscriber> partSubscribers = Lists.newArrayList(partSubscriber);
         subscriberIterator = new SubscriberIterator(partSubscribers);
     }
 
     @Test
-    public void shouldIterate_OverUnGroupedMessages() throws InterruptedException {
+    public void shouldIterate_OverMessages() throws InterruptedException {
         int noOfMessages = 10;
         List<Message> messages = generateMessages(noOfMessages);
         List<com.flipkart.vbroker.client.MessageMetadata> messageMetadataList = addPartData(messages);
         assertEquals(messageMetadataList.size(), noOfMessages);
 
         int count = 0;
-        PeekingIterator<IterableMessage> iterator = subscriberIterator;
+        MsgIterator<IterableMessage> iterator = subscriberIterator;
         while (iterator.hasNext()) {
+            IterableMessage iterableMessage = iterator.peek();
+            log.info("Peeking msg {}", iterableMessage.getMessage().messageId());
             iterator.next();
             count++;
         }
@@ -72,8 +77,11 @@ public class SubscriberIteratorTest {
         }).start();
 
         latch.await();
+        partSubscriber.refreshSubscriberMetadata();
 
         while (iterator.hasNext()) {
+            IterableMessage iterableMessage = iterator.peek();
+            log.info("Peeking msg {}", iterableMessage.getMessage().messageId());
             iterator.next();
             count++;
         }
@@ -83,7 +91,7 @@ public class SubscriberIteratorTest {
 
     private List<com.flipkart.vbroker.client.MessageMetadata> addPartData(List<Message> messages) {
         return messages.stream()
-            .map(message -> topicPartDataManager.addMessage(unGroupedPartSubscription.getTopicPartition(), message)
+            .map(message -> topicPartDataManager.addMessage(partSubscription.getTopicPartition(), message)
                 .toCompletableFuture().join())
             .collect(Collectors.toList());
     }

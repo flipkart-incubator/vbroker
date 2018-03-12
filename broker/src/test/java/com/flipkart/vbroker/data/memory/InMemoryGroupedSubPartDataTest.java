@@ -3,8 +3,8 @@ package com.flipkart.vbroker.data.memory;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.SubPartData;
+import com.flipkart.vbroker.subscribers.QType;
 import com.flipkart.vbroker.subscribers.SubscriberGroup;
-import com.google.common.collect.PeekingIterator;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -50,7 +50,7 @@ public class InMemoryGroupedSubPartDataTest {
         when(group.getGroupId()).thenReturn(groupId);
         when(group.getLag()).thenReturn(CompletableFuture.completedFuture(lag));
         when(group.getTopicPartition()).thenReturn(topicPartition);
-        when(group.iterator()).thenReturn(mock(PeekingIterator.class));
+        when(group.iterator(QType.MAIN)).thenReturn(mock(SubscriberGroup.SubscriberGroupIteratorImpl.class));
         return group;
     }
 

@@ -1,10 +1,12 @@
 package com.flipkart.vbroker.server;
 
 import com.flipkart.vbroker.subscribers.PartSubscriber;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
 //TODO: this is temporary for now until we implement eventing
+@Slf4j
 public class SubscriberGroupSyncer implements Runnable {
     private final List<PartSubscriber> partSubscribers;
     private volatile boolean active = true;
@@ -20,6 +22,8 @@ public class SubscriberGroupSyncer implements Runnable {
                 if (!active) {
                     break;
                 }
+
+                log.debug("Refreshing subscriber metadata");
                 partSubscriber.refreshSubscriberMetadata();
             }
             try {

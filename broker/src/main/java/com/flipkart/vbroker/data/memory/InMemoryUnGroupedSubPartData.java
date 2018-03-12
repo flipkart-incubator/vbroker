@@ -6,20 +6,25 @@ import com.flipkart.vbroker.data.SubPartData;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.flatbuf.Message;
-import com.flipkart.vbroker.iterators.PartSubscriberIterator;
+import com.flipkart.vbroker.iterators.DataIterator;
+import com.flipkart.vbroker.iterators.MsgIterator;
 import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.flipkart.vbroker.subscribers.QType;
 import com.flipkart.vbroker.subscribers.SubscriberGroup;
 import com.flipkart.vbroker.subscribers.UnGroupedIterableMessage;
-import com.google.common.collect.PeekingIterator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static java.util.Objects.nonNull;
 
 @Slf4j
 public class InMemoryUnGroupedSubPartData implements SubPartData {
@@ -67,32 +72,26 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
     }
 
     @Override
-    public PeekingIterator<IterableMessage> getIterator(String groupId) {
+    public DataIterator<IterableMessage> getIterator(String groupId) {
         throw new UnsupportedOperationException("You cannot get groupId level iterator for a un-grouped subscription");
     }
 
     @Override
-    public synchronized Optional<PeekingIterator<IterableMessage>> getIterator(QType qType) {
-        PartSubscriberIterator partSubscriberIterator = new PartSubscriberIterator() {
-            @Override
-            protected Optional<PeekingIterator<IterableMessage>> nextIterator() {
-                PeekingIterator<Message> iterator;
-                switch (qType) {
-                    case MAIN:
-                        iterator = topicPartDataManager.getIterator(
-                            partSubscription.getTopicPartition(),
-                            getCurrSeqNoFor(qType));
-                        break;
-                    default:
-                        iterator = new UnGroupedFailedMsgIterator(qType);
-                        break;
-                }
-                UnGroupedIterator unGroupedIterator =
-                    new UnGroupedIterator(qType, partSubscription, iterator);
-                return Optional.of(unGroupedIterator);
-            }
-        };
-        return Optional.of(partSubscriberIterator);
+    public synchronized DataIterator<IterableMessage> getIterator(QType qType) {
+        log.info("Creating new iterator for QType {}", qType);
+        if (QType.MAIN.equals(qType)) {
+            DataIterator<Message> msgIterator = topicPartDataManager.getIterator(
+                partSubscription.getTopicPartition(),
+                getCurrSeqNoFor(qType));
+            return newUnGroupedIterator(qType, msgIterator);
+        }
+
+        DataIterator<Message> iterator = new UnGroupedFailedMsgIterator(qType);
+        return newUnGroupedIterator(qType, iterator);
+    }
+
+    private UnGroupedIterator newUnGroupedIterator(QType qType, DataIterator<Message> msgIterator) {
+        return new UnGroupedIterator(qType, partSubscription, msgIterator);
     }
 
     private int getCurrSeqNoFor(QType qType) {
@@ -115,15 +114,29 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
     }
 
     @AllArgsConstructor
-    class UnGroupedIterator implements PeekingIterator<IterableMessage> {
-
+    class UnGroupedIterator implements DataIterator<IterableMessage> {
         private final QType qType;
         private final PartSubscription partSubscription;
-        private final PeekingIterator<Message> iterator;
+        private final MsgIterator<Message> iterator;
+        private IterableMessage lastPeekedMsg;
+
+        UnGroupedIterator(QType qType,
+                          PartSubscription partSubscription,
+                          MsgIterator<Message> iterator) {
+            this.qType = qType;
+            this.partSubscription = partSubscription;
+            this.iterator = iterator;
+        }
+
+        @Override
+        public boolean isUnlocked() {
+            return !nonNull(lastPeekedMsg) || lastPeekedMsg.isUnlocked();
+        }
 
         @Override
         public IterableMessage peek() {
-            return new UnGroupedIterableMessage(iterator.peek(), partSubscription);
+            lastPeekedMsg = UnGroupedIterableMessage.getInstance(iterator.peek(), partSubscription);
+            return lastPeekedMsg;
         }
 
         @Override
@@ -133,7 +146,7 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
 
         @Override
         public synchronized IterableMessage next() {
-            IterableMessage iterableMessage = new UnGroupedIterableMessage(iterator.next(), partSubscription);
+            IterableMessage iterableMessage = UnGroupedIterableMessage.getInstance(iterator.next(), partSubscription);
             incrementCurrSeqNo(qType);
             return iterableMessage;
         }
@@ -142,10 +155,15 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
         public void remove() {
             throw new NotImplementedException();
         }
+
+        @Override
+        public String name() {
+            return iterator.name();
+        }
     }
 
     @AllArgsConstructor
-    class UnGroupedFailedMsgIterator implements PeekingIterator<Message> {
+    class UnGroupedFailedMsgIterator implements DataIterator<Message> {
         private final QType qType;
 
         @Override
@@ -181,6 +199,11 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
             int currIndex = getCurrSeqNo();
             //log.debug("Total failed messages are {} and currIdx is {}", totalSize, currIndex);
             return currIndex < totalSize;
+        }
+
+        @Override
+        public String name() {
+            return "Iterator_" + qType + "_" + peek().messageId();
         }
     }
 }

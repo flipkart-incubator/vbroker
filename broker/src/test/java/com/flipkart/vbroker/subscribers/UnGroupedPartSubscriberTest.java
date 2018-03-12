@@ -18,6 +18,9 @@ public class UnGroupedPartSubscriberTest extends BasePartSubscriberTest {
         InMemoryTopicPartDataManager topicPartDataManager = new InMemoryTopicPartDataManager();
         InMemorySubPartDataManager subPartDataManager = new InMemorySubPartDataManager(topicPartDataManager);
 
+
+        subPartDataManager.getIterator(partSubscription, QType.MAIN);
+
         setPartSubscription(partSubscription);
         setTopicPartDataManager(topicPartDataManager);
         setSubPartDataManager(subPartDataManager);
@@ -26,8 +29,13 @@ public class UnGroupedPartSubscriberTest extends BasePartSubscriberTest {
     }
 
     @Override
-    public void shouldIterateOver_NewMessages() throws InterruptedException {
-        super.shouldIterateOver_NewMessages();
+    public void shouldIterateOver_NewMessages_SameGroup() throws InterruptedException {
+        super.shouldIterateOver_NewMessages_SameGroup();
+    }
+
+    @Override
+    public void shouldIterateOver_NewMessages_DiffGroups() throws InterruptedException {
+        super.shouldIterateOver_NewMessages_DiffGroups();
     }
 
     @Override

@@ -1,16 +1,12 @@
 package com.flipkart.vbroker.subscribers;
 
 import com.flipkart.vbroker.core.PartSubscription;
-import com.google.common.collect.PeekingIterator;
+import com.flipkart.vbroker.iterators.PartSubscriberIterator;
 
-public interface PartSubscriber extends Iterable<IterableMessage> {
+public interface PartSubscriber {
     PartSubscription getPartSubscription();
 
     void refreshSubscriberMetadata();
 
-    PeekingIterator<IterableMessage> iterator();
-
-    PeekingIterator<IterableMessage> sidelineIterator();
-
-    PeekingIterator<IterableMessage> retryIterator(int retryQNo);
+    PartSubscriberIterator<IterableMessage> iterator(QType qType);
 }

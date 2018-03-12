@@ -43,7 +43,7 @@ public class Sender implements Runnable {
         while (running) {
             try {
                 send();
-                Thread.sleep(2000);
+                Thread.sleep(200);
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
             } catch (Exception ex) {
@@ -65,11 +65,12 @@ public class Sender implements Runnable {
      */
     private void send() {
         List<Node> clusterNodes = metadata.getClusterNodes();
-        log.info("ClusterNodes: {}", clusterNodes);
+        log.debug("ClusterNodes: {}", clusterNodes);
 
         clusterNodes.forEach(node -> {
             Optional<RecordBatch> readyRecordBatchOpt = accumulator.getReadyRecordBatch(node);
             readyRecordBatchOpt.ifPresent(recordBatch -> {
+                log.info("Records ready to be send for node {}", node);
                 sendReadyBatch(node, recordBatch);
             });
         });

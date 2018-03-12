@@ -20,7 +20,7 @@ import static java.util.Objects.nonNull;
  * this can be across many topic-partitions spanning across different topics
  */
 @Slf4j
-public class BrokerSubscriber implements Runnable {
+public class Subscriber implements Runnable {
 
     private final SubscriptionService subscriptionService;
     private final MessageProcessor messageProcessor;
@@ -29,10 +29,10 @@ public class BrokerSubscriber implements Runnable {
     private SubscriberGroupSyncer syncer;
     private volatile AtomicBoolean running = new AtomicBoolean(true);
 
-    public BrokerSubscriber(SubscriptionService subscriptionService,
-                            MessageProcessor messageProcessor,
-                            VBrokerConfig config,
-                            MetricRegistry metricRegistry) {
+    public Subscriber(SubscriptionService subscriptionService,
+                      MessageProcessor messageProcessor,
+                      VBrokerConfig config,
+                      MetricRegistry metricRegistry) {
         this.subscriptionService = subscriptionService;
         this.messageProcessor = messageProcessor;
         this.config = config;
@@ -41,14 +41,10 @@ public class BrokerSubscriber implements Runnable {
 
     public void run() {
         this.running.set(true);
-        log.info("BrokerSubscriber now running");
+        log.info("Subscriber now running");
 
         while (running.get()) {
             try {
-                long timeMs = 1000;
-                log.info("Sleeping for {} milli secs before connecting to server", timeMs);
-                Thread.sleep(timeMs);
-
                 List<PartSubscriber> partSubscribers = getPartSubscribersForCurrentBroker();
                 syncer = new SubscriberGroupSyncer(partSubscribers);
                 new Thread(syncer).start();
@@ -56,6 +52,7 @@ public class BrokerSubscriber implements Runnable {
                 log.info("No of partSubscribers are {}", partSubscribers.size());
                 log.info("PartSubscribers in the current broker are {}", partSubscribers);
                 SubscriberIterator subscriberIterator = new SubscriberIterator(partSubscribers);
+                log.info("Created subscriberIterator");
                 MessageConsumer messageConsumer = MessageConsumer.
                     newInstance(subscriberIterator, messageProcessor, metricRegistry);
 
@@ -70,7 +67,8 @@ public class BrokerSubscriber implements Runnable {
                         Thread.sleep(pollTimeMs);
                     }
                 }
-            } catch (InterruptedException ignored) {
+            } catch (Exception ex) {
+                log.error("Exception in subscriber", ex);
             }
         }
     }

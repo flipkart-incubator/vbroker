@@ -4,7 +4,6 @@ import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.wrappers.Subscription;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
