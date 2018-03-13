@@ -4,11 +4,12 @@ import com.flipkart.vbroker.flatbuf.VRequest;
 import com.flipkart.vbroker.flatbuf.VResponse;
 import com.flipkart.vbroker.proto.*;
 import com.flipkart.vbroker.utils.FlatbufUtils;
-import com.flipkart.vbroker.wrappers.Topic;
+import com.flipkart.vbroker.wrappers.Queue;
 import com.google.protobuf.InvalidProtocolBufferException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.PortUnreachableException;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CompletionStage;
@@ -16,57 +17,57 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Created by kaushal.hooda on 09/03/18.
+ * Created by kaushal.hooda on 12/03/18.
  */
-@Slf4j
 @AllArgsConstructor
-public class TopicClient {
-    private final NetworkClient networkClient;
+@Slf4j
+public class QueueClient {
     private final Metadata metadata;
+    private final NetworkClient networkClient;
 
-    public CompletionStage<List<CreateTopicResponse>> createTopics(List<Topic> topics) {
-        List<ProtoTopic> protoTopics = topics.stream()
-            .map(topic -> {
+    public CompletionStage<List<CreateQueueResponse>> createQueues(List<Queue> queues){
+        List<ProtoQueue> protoQueues = queues.stream()
+            .map(queue -> {
                 try {
-                    return ProtoTopic.parseFrom(topic.toBytes());
+                    return ProtoQueue.parseFrom(queue.toBytes());
                 } catch (InvalidProtocolBufferException e) {
                     throw new RuntimeException(e);
                 }
             })
             .collect(Collectors.toList());
-        CreateTopicsRequest topicsRequest = CreateTopicsRequest.newBuilder()
-            .addAllTopics(protoTopics)
+
+        CreateQueuesRequest createQueuesRequest = CreateQueuesRequest.newBuilder()
+            .addAllQueues(protoQueues)
             .build();
 
         ProtoRequest protoRequest = ProtoRequest.newBuilder()
-            .setCreateTopicsRequest(topicsRequest)
+            .setCreateQueuesRequest(createQueuesRequest)
             .build();
 
         VRequest vRequest = FlatbufUtils.createVRequest(protoRequest);
 
-        return networkClient.send(getNode(), vRequest)
-            .thenApply(response -> {
-                ProtoResponse protoResponse = FlatbufUtils.getProtoResponse(response);
-                assert protoResponse.hasCreateTopicsResponse();
-                return protoResponse.getCreateTopicsResponse().getCreateTopicsResponseList();
-            });
+        return networkClient.send(getNode(), vRequest).thenApply(response -> FlatbufUtils
+            .getProtoResponse(response)
+            .getCreateQueuesResponse()
+            .getCreateQueueResponsesList());
+
     }
 
-    public CompletionStage<List<GetTopicResponse>> getTopics(List<Integer> topicIds){
-        GetTopicsRequest getTopicsRequest = GetTopicsRequest.newBuilder()
-            .addAllIds(topicIds)
+    public CompletionStage<List<GetQueueResponse>> getQueues(List<Integer> queueIds){
+        GetQueuesRequest getQueuesRequest = GetQueuesRequest.newBuilder()
+            .addAllIds(queueIds)
             .build();
 
         ProtoRequest protoRequest = ProtoRequest.newBuilder()
-            .setGetTopicsRequest(getTopicsRequest)
+            .setGetQueuesRequest(getQueuesRequest)
             .build();
 
         VRequest vRequest = FlatbufUtils.createVRequest(protoRequest);
 
         return networkClient.send(getNode(), vRequest).thenApply(response -> {
             ProtoResponse protoResponse = FlatbufUtils.getProtoResponse(response);
-            assert protoResponse.hasGetTopicsResponse();
-            return protoResponse.getGetTopicsResponse().getTopicResponsesList();
+            assert protoResponse.hasGetQueuesResponse();
+            return protoResponse.getGetQueuesResponse().getQueueResponsesList();
         });
     }
 
