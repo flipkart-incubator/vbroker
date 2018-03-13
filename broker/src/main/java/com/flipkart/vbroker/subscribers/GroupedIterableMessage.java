@@ -21,7 +21,7 @@ public class GroupedIterableMessage implements IterableMessage {
 
     @Override
     public boolean isUnlocked() {
-        return !subscriberGroup.isLocked();
+        return subscriberGroup.isUnlocked();
     }
 
     @Override
@@ -33,8 +33,7 @@ public class GroupedIterableMessage implements IterableMessage {
     @Override
     public void unlock() {
         log.info("Unlocking the group {}", subscriberGroup.getGroupId());
-        subscriberGroup.forceUnlock();
-        subscriberGroup.advanceIterator();
+        subscriberGroup.forceUnlockAndAdvanceIterator();
     }
 
     @Override

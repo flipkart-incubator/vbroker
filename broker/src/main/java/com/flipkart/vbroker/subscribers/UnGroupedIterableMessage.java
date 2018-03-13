@@ -18,9 +18,9 @@ public class UnGroupedIterableMessage implements IterableMessage {
     private QType qType;
     private volatile AtomicBoolean lock;
 
-    public UnGroupedIterableMessage(Message message,
-                                    PartSubscription partSubscription,
-                                    AtomicBoolean lock) {
+    private UnGroupedIterableMessage(Message message,
+                                     PartSubscription partSubscription,
+                                     AtomicBoolean lock) {
         this.message = message;
         this.partSubscription = partSubscription;
         this.qType = QType.MAIN;
@@ -33,18 +33,18 @@ public class UnGroupedIterableMessage implements IterableMessage {
     }
 
     @Override
-    public synchronized boolean isUnlocked() {
+    public boolean isUnlocked() {
         return !lock.get();
     }
 
     @Override
-    public synchronized boolean lock() {
+    public boolean lock() {
         log.info("CurrLockState for msg {}: {}", message.messageId(), lock.get());
         return lock.compareAndSet(false, true);
     }
 
     @Override
-    public synchronized void unlock() {
+    public void unlock() {
         log.info("Unlocked msg {}", message.messageId());
         lock.set(false);
     }

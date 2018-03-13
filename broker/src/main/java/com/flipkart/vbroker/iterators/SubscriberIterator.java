@@ -93,10 +93,6 @@ public class SubscriberIterator implements MsgIterator<IterableMessage> {
         return iterator.hasNext() && iterator.isUnlocked();
     }
 
-    public synchronized PartSubscriberIterator<IterableMessage> getCurrIterator() {
-        return currIterator;
-    }
-
     @Override
     public synchronized IterableMessage next() {
         log.debug("Moving to next message");

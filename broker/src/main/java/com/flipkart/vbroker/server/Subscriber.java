@@ -58,8 +58,8 @@ public class Subscriber implements Runnable {
 
                 long pollTimeMs = config.getSubscriberPollTimeMs();
 
-                int nonConsumedCountThreshold = 100000;
-                int notConsumedCount = 0;
+                long nonConsumedCountThreshold = (long) Math.pow(10, 9);
+                long notConsumedCount = 0;
                 while (running.get()) {
                     log.debug("Polling for new messages");
                     try {

@@ -25,32 +25,32 @@ public class MsgIterators {
         private final MsgIterator<T> iterator;
 
         @Override
-        public synchronized boolean isUnlocked() {
+        public boolean isUnlocked() {
             return iterator.isUnlocked();
         }
 
         @Override
-        public synchronized String name() {
+        public String name() {
             return iterator.name();
         }
 
         @Override
-        public synchronized T peek() {
+        public T peek() {
             return iterator.peek();
         }
 
         @Override
-        public synchronized T next() {
+        public T next() {
             return iterator.next();
         }
 
         @Override
-        public synchronized void remove() {
+        public void remove() {
             iterator.remove();
         }
 
         @Override
-        public synchronized boolean hasNext() {
+        public boolean hasNext() {
             return iterator.hasNext();
         }
     }

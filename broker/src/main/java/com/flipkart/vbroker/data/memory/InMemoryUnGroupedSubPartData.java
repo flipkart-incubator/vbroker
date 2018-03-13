@@ -110,7 +110,6 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
     @Override
     public CompletionStage<Integer> getLag() {
         return topicPartDataManager.getCurrentOffset(partSubscription.getTopicPartition());
-
     }
 
     @AllArgsConstructor
