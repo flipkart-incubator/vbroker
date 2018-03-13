@@ -45,7 +45,7 @@ public class InMemoryGroupedTopicPartData implements TopicPartData {
             @Override
             public Message peek() {
                 Message message = topicPartitionData.get(group).get(index.get());
-                log.info("Peeking message {} at seqNo {}", message.messageId(), index);
+                log.info("Peeking message {} with group {} at seqNo {}", message.messageId(), message.groupId(), index);
                 return message;
             }
 

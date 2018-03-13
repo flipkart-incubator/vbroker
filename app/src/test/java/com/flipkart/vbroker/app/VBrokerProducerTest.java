@@ -21,7 +21,9 @@ import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.flipkart.vbroker.app.MockHttp.MockURI.*;
+import static com.flipkart.vbroker.app.MockHttp.MOCK_HTTP_SERVER_PORT;
+import static com.flipkart.vbroker.app.MockHttp.MockURI.URI_200;
+import static com.flipkart.vbroker.app.MockHttp.MockURI.URI_201;
 import static com.xebialabs.restito.builder.verify.VerifyHttp.verifyHttp;
 import static com.xebialabs.restito.semantics.Condition.*;
 import static org.testng.Assert.assertTrue;
@@ -82,36 +84,42 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
         return String.format("%s_msg_%s", payloadPrefix, i);
     }
 
-    @Test
+    @Test(invocationCount = 15)
     public void shouldProduceAndConsumeMessages_MultipleMessagesOfSameTopic_MultipleGroups() throws InterruptedException {
-        int noOfRecords = 3;
+        int noOfRecords = 10;
+        int noOfGroups = 50;
+
         Topic topic = createGroupedTopic();
         byte[] payload = "This is a sample message".getBytes();
-        List<ProducerRecord> records_1 = IntStream.range(0, noOfRecords)
-            .mapToObj(i -> newProducerRecord(topic, "group_1", MockURI.URI_200, payload))
-            .collect(Collectors.toList());
-        List<ProducerRecord> records_2 = IntStream.range(0, noOfRecords)
-            .mapToObj(i -> newProducerRecord(topic, "group_2", MockURI.URI_201, payload))
-            .collect(Collectors.toList());
-        List<ProducerRecord> records_3 = IntStream.range(0, noOfRecords)
-            .mapToObj(i -> newProducerRecord(topic, "group_3", URI_202, payload))
-            .collect(Collectors.toList());
 
-        List<ProducerRecord> records = Lists.newArrayList();
-        records.addAll(records_1);
-        records.addAll(records_2);
-        records.addAll(records_3);
+        List<ProducerRecord> allRecords = Lists.newArrayList();
+        IntStream.range(0, noOfGroups)
+            .forEachOrdered(groupIdx -> {
+                List<ProducerRecord> records = IntStream.range(0, noOfRecords)
+                    .mapToObj(i -> newProducerRecordWithCallback(topic, "group_" + groupIdx, getUrl(groupIdx),
+                        -1, getUrl(groupIdx), payload))
+                    .collect(Collectors.toList());
+                allRecords.addAll(records);
+            });
 
-        produceRecords(records);
+        produceRecords(allRecords);
+        Thread.sleep(2 * 1000);
 
-        //Thread.sleep(1000);
-        //Verify the message is consumed
-        verifyHttp(httpServer).times(noOfRecords, method(Method.POST),
-            uri(URI_200.uri()));
-        verifyHttp(httpServer).times(noOfRecords, method(Method.POST),
-            uri(URI_201.uri()));
-        verifyHttp(httpServer).times(noOfRecords, method(Method.POST),
-            uri(URI_202.uri()));
+        IntStream.range(0, noOfGroups)
+            .forEachOrdered(groupIdx -> {
+                log.info("GroupIdx {}", groupIdx);
+                verifyHttp(httpServer).times(noOfRecords, method(Method.POST),
+                    uri(getUri(groupIdx)));
+            });
+    }
+
+    private String getUri(int groupIdx) {
+        return "/" + String.valueOf(250 + groupIdx);
+    }
+
+    private String getUrl(int groupIdx) {
+        String uri = getUri(groupIdx);
+        return String.format("http://localhost:%d%s", MOCK_HTTP_SERVER_PORT, uri);
     }
 
     @Test
@@ -230,9 +238,9 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
 
     private ProducerRecord newProducerRecordWithCallback(Topic topic,
                                                          String group,
-                                                         MockURI mockURI,
+                                                         String mockURI,
                                                          int callbackTopicId,
-                                                         MockURI callbackMockURI,
+                                                         String callbackMockURI,
                                                          byte[] payload) {
         Message message = MessageStore.getRandomMsg(group);
         return ProducerRecord.builder()
@@ -243,13 +251,23 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
             .seqNo(1)
             .topicId(topic.id())
             .attributes(201)
-            .httpUri(mockURI.url())
+            .httpUri(mockURI)
             .httpMethod(ProducerRecord.HttpMethod.POST)
             .callbackTopicId(callbackTopicId)
-            .callbackHttpUri(callbackMockURI.url())
+            .callbackHttpUri(callbackMockURI)
             .callbackHttpMethod(ProducerRecord.HttpMethod.POST)
             .headers(new HashMap<>())
             .payload(payload)
             .build();
     }
+
+    private ProducerRecord newProducerRecordWithCallback(Topic topic,
+                                                         String group,
+                                                         MockURI mockURI,
+                                                         int callbackTopicId,
+                                                         MockURI callbackMockURI,
+                                                         byte[] payload) {
+        return newProducerRecordWithCallback(topic, group, mockURI.uri(), callbackTopicId, callbackMockURI.uri(), payload);
+    }
+
 }
