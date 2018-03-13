@@ -84,10 +84,10 @@ public class SubscriberGroup {
      * method to both unlock the group and advance the iterator for the qType
      * this is required to handle the case where QType is changed while unlocking
      */
-    public void forceUnlockAndAdvanceIterator() {
+    public void advanceIteratorAndUnlockGroup() {
         synchronized (qTypeChangeMonitor) {
-            forceUnlock();
             advanceIterator();
+            forceUnlock();
         }
     }
 
@@ -103,7 +103,7 @@ public class SubscriberGroup {
      */
     private void advanceIterator() {
         //TODO: there can be a case where qType gets mutated when iterator next is about to be performed. Validate it
-        log.info("Advancing iterator to next for QType {}", qType);
+        log.info("Advancing iterator to next for group {} and QType {}", getGroupId(), qType);
         iterator(qType).next();
     }
 

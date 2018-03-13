@@ -103,7 +103,7 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
             });
 
         produceRecords(allRecords);
-        Thread.sleep(2 * 1000);
+        Thread.sleep(4 * 1000);
 
         IntStream.range(0, noOfGroups)
             .forEachOrdered(groupIdx -> {
