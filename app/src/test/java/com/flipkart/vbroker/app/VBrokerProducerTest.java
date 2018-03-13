@@ -37,7 +37,7 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
 
     @Test
     public void shouldProduceAndConsumeMessage_InOrderForSameGroup_WithSlowDestinations() throws InterruptedException, MalformedURLException {
-        produceAndConsumeMessages_ValidateConsumingSequence(MockURI.SLEEP_200, 2000);
+        produceAndConsumeMessages_ValidateConsumingSequence(MockURI.SLEEP_200, 4000);
     }
 
     private void produceAndConsumeMessages_ValidateConsumingSequence(MockURI mockURI, int sleepTimeMs) throws InterruptedException, MalformedURLException {
@@ -104,7 +104,7 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
 
         produceRecords(records);
 
-        Thread.sleep(4 * 1000);
+        //Thread.sleep(1000);
         //Verify the message is consumed
         verifyHttp(httpServer).times(noOfRecords, method(Method.POST),
             uri(URI_200.uri()));
@@ -116,7 +116,7 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
 
     @Test
     public void shouldProduceAndConsumeMessages_WithCallback() throws InterruptedException {
-        int noOfRecords = 5;
+        int noOfRecords = 3;
         Topic topic = createGroupedTopic();
 
         List<ProducerRecord> records = IntStream.range(0, noOfRecords)

@@ -6,5 +6,5 @@ import java.util.concurrent.CompletionStage;
 
 public interface MessageProcessor {
 
-    CompletionStage<Void> process(IterableMessage messageWithGroup) throws Exception;
+    CompletionStage<Void> process(IterableMessage messageWithGroup);
 }

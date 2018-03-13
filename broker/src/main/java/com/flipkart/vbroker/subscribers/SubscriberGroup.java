@@ -32,6 +32,7 @@ public class SubscriberGroup {
     private final PartSubscription partSubscription;
     private final TopicPartDataManager topicPartDataManager;
     private final Map<QType, AtomicInteger> currSeqNoMap = new ConcurrentHashMap<>();
+    private final Map<QType, SubscriberGroupIterator<IterableMessage>> iteratorMap = new ConcurrentHashMap<>();
     @Getter
     @Setter
     private QType qType = QType.MAIN;
@@ -80,6 +81,16 @@ public class SubscriberGroup {
     }
 
     /**
+     * advance the seqNo to the next message
+     * this is currently a stop-gap solution for concurrency cases. Need to better design this
+     */
+    public void advanceIterator() {
+        //TODO: there can be a case where qType gets mutated when iterator next is about to be performed. Validate it
+        log.info("Advancing iterator to next for QType {}", qType);
+        iterator(qType).next();
+    }
+
+    /**
      * @return locked status
      */
     public boolean isLocked() {
@@ -92,7 +103,7 @@ public class SubscriberGroup {
         return currSeqNoMap.get(qType).get();
     }
 
-    private void incrementCurrSeqNo(QType qType) {
+    private synchronized void incrementCurrSeqNo(QType qType) {
         currSeqNoMap.putIfAbsent(qType, new AtomicInteger(0));
         //currSeqNoMap.computeIfAbsent(qType, qType1 -> new AtomicInteger(0));
         currSeqNoMap.get(qType).incrementAndGet();
@@ -107,8 +118,11 @@ public class SubscriberGroup {
     }
 
     public SubscriberGroupIterator<IterableMessage> iterator(QType qType) {
-        log.trace("Creating a new SubGroupIterator for qType {} and group {}", qType, getGroupId());
-        return new SubscriberGroupIteratorImpl(qType, this);
+        if (!iteratorMap.containsKey(qType)) {
+            log.trace("Creating a new SubGroupIterator for qType {} and group {}", qType, getGroupId());
+            iteratorMap.putIfAbsent(qType, new SubscriberGroupIteratorImpl(qType, this));
+        }
+        return iteratorMap.get(qType);
     }
 
     public String getGroupId() {
@@ -120,15 +134,21 @@ public class SubscriberGroup {
     }
 
     public class SubscriberGroupIteratorImpl implements SubscriberGroupIterator<IterableMessage> {
-        private QType qType;
-        private SubscriberGroup subscriberGroup;
-        private DataIterator<Message> groupIterator;
+        private final QType qType;
+        private final SubscriberGroup subscriberGroup;
+        private final DataIterator<Message> groupIterator;
 
         SubscriberGroupIteratorImpl(QType qType, SubscriberGroup subscriberGroup) {
             log.trace("Creating new subscriberGroupIterator for qType {} and group {}", qType, subscriberGroup.getGroupId());
             this.qType = qType;
             this.subscriberGroup = subscriberGroup;
             this.groupIterator = topicPartDataManager.getIterator(topicPartition, getGroupId(), getCurrSeqNo(qType));
+        }
+
+        @Override
+        public boolean isUnlocked() {
+            log.debug("SubscriberGroup {} iterator isUnlocked: {}", getGroupId(), !subscriberGroup.isLocked());
+            return !subscriberGroup.isLocked();
         }
 
         @Override
@@ -143,6 +163,7 @@ public class SubscriberGroup {
             log.debug("Moving to next message");
             GroupedIterableMessage messageWithGroup = GroupedIterableMessage.newInstance(groupIterator.next(), subscriberGroup);
             incrementCurrSeqNo(qType);
+            log.info("Incremented seqNo for group {} to {}", subscriberGroup.getGroupId(), getCurrSeqNo(qType));
             return messageWithGroup;
         }
 

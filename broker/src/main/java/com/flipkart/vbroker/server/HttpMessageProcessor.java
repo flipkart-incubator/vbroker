@@ -31,6 +31,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeoutException;
 
 import static com.codahale.metrics.MetricRegistry.name;
@@ -46,6 +47,7 @@ public class HttpMessageProcessor implements MessageProcessor {
     private final SubscriptionService subscriptionService;
     private final ProducerService producerService;
     private final SubPartDataManager subPartDataManager;
+    private final ExecutorService callbackExecutor;
     //private final MetricRegistry metricRegistry;
     private final Timer httpResponseTimer;
 
@@ -54,12 +56,14 @@ public class HttpMessageProcessor implements MessageProcessor {
                                 SubscriptionService subscriptionService,
                                 ProducerService producerService,
                                 SubPartDataManager subPartDataManager,
+                                ExecutorService callbackExecutor,
                                 MetricRegistry metricRegistry) {
         this.httpClient = httpClient;
         this.topicService = topicService;
         this.subscriptionService = subscriptionService;
         this.producerService = producerService;
         this.subPartDataManager = subPartDataManager;
+        this.callbackExecutor = callbackExecutor;
         //this.metricRegistry = metricRegistry;
 
         this.httpResponseTimer = metricRegistry.timer(name(HttpMessageProcessor.class, "response.time"));
@@ -90,9 +94,7 @@ public class HttpMessageProcessor implements MessageProcessor {
             httpUri,
             HttpMethod.name(message.httpMethod()));
 
-        CompletableFuture<Response> reqFuture = httpClient
-            .executeRequest(request)
-            .toCompletableFuture();
+        CompletableFuture<Response> reqFuture = httpClient.executeRequest(request).toCompletableFuture();
 
         return reqFuture
             .thenApply(response -> {
@@ -148,9 +150,11 @@ public class HttpMessageProcessor implements MessageProcessor {
                             return makeCallback(iterableMessage, response);
                         }
                         return null;
-                    }));
+                    }), callbackExecutor);
+            } else {
+                log.info("Callback is NOT enabled for this message {}", iterableMessage.getMessage().messageId());
             }
-        });
+        }, callbackExecutor);
     }
 
     private CompletionStage<Void> sideline(IterableMessage iterableMessage) {

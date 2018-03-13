@@ -21,8 +21,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
-import static java.util.Objects.nonNull;
-
 @Slf4j
 public class InMemoryGroupedSubPartData implements SubPartData {
 
@@ -103,7 +101,7 @@ public class InMemoryGroupedSubPartData implements SubPartData {
         return new DataIteratorImpl(qType);
     }
 
-    private Optional<SubscriberGroupIterator<IterableMessage>> fetchIterator(QType qType) {
+    private synchronized Optional<SubscriberGroupIterator<IterableMessage>> fetchIterator(QType qType) {
         log.debug("Re-fetching iterator for qType {}", qType);
         CompletionStage<List<String>> values;
         switch (qType) {
@@ -135,7 +133,7 @@ public class InMemoryGroupedSubPartData implements SubPartData {
             .filter(group -> qType.equals(group.getQType()))
             .filter(group -> groupQTypeIteratorTable.contains(group, qType))
             .map(subscriberGroup -> groupQTypeIteratorTable.get(subscriberGroup, qType))
-            .filter(Iterator::hasNext)
+            .filter(iterator -> iterator.hasNext() && iterator.isUnlocked())
             .findFirst();
     }
 
@@ -166,19 +164,20 @@ public class InMemoryGroupedSubPartData implements SubPartData {
         }
 
         @Override
-        public boolean isUnlocked() {
-            return !nonNull(lastPeekedMsg) || lastPeekedMsg.isUnlocked();
+        public synchronized boolean isUnlocked() {
+            //return !nonNull(lastPeekedMsg) || lastPeekedMsg.isUnlocked();
+            return true;
         }
 
         @Override
-        public String name() {
+        public synchronized String name() {
             return iteratorOpt
                 .map(SubscriberGroupIterator<IterableMessage>::name)
                 .orElse("data_iterator_impl_qType_" + qType);
         }
 
         @Override
-        public IterableMessage peek() {
+        public synchronized IterableMessage peek() {
             lastPeekedMsg = iteratorOpt
                 .map(SubscriberGroupIterator<IterableMessage>::peek)
                 .orElse(null);
@@ -186,21 +185,24 @@ public class InMemoryGroupedSubPartData implements SubPartData {
         }
 
         @Override
-        public boolean hasNext() {
+        public synchronized boolean hasNext() {
             if (!hasNext2()) {
                 iteratorOpt = fetchIterator(qType);
+                iteratorOpt.ifPresent(it -> log.info("Changed iterator to {}", it.name()));
             }
             return hasNext2();
         }
 
-        private boolean hasNext2() {
+        private synchronized boolean hasNext2() {
             return iteratorOpt
-                .map(SubscriberGroupIterator<IterableMessage>::hasNext)
+                .map(iterator -> iterator.isUnlocked() && iterator.hasNext())
+                //.map(SubscriberGroupIterator<IterableMessage>::hasNext)
                 .orElse(false);
         }
 
         @Override
-        public IterableMessage next() {
+        public synchronized IterableMessage next() {
+            log.info("Moving to next message for group {}", peek().getGroupId());
             return iteratorOpt
                 .map(SubscriberGroupIterator<IterableMessage>::next)
                 .orElse(null);

@@ -7,37 +7,40 @@ import com.flipkart.vbroker.wrappers.Topic;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.*;
+
 
 public class InMemoryTopicService implements TopicService {
 
+    private final ExecutorService executorService;
     private final ConcurrentMap<Integer, Topic> topicsMap = new ConcurrentHashMap<>();
+
+    public InMemoryTopicService(ExecutorService executorService) {
+        this.executorService = executorService;
+    }
 
     @Override
     public synchronized CompletionStage<Topic> createTopic(Topic topic) throws TopicValidationException {
         return CompletableFuture.supplyAsync(() -> {
             topicsMap.putIfAbsent(topic.id(), topic);
             return topic;
-        });
+        }, executorService);
     }
 
     @Override
     public CompletionStage<TopicPartition> getTopicPartition(Topic topic, int topicPartitionId) {
         return getTopic(topic.id())
-            .thenApplyAsync(topic1 -> new TopicPartition(topicPartitionId, topic.id(), topic.grouped()));
+            .thenApplyAsync(topic1 -> new TopicPartition(topicPartitionId, topic.id(), topic.grouped()), executorService);
     }
 
     @Override
     public CompletionStage<Boolean> isTopicPresent(short topicId) {
-        return CompletableFuture.supplyAsync(() -> topicsMap.containsKey(topicId));
+        return CompletableFuture.supplyAsync(() -> topicsMap.containsKey(topicId), executorService);
     }
 
     @Override
     public CompletionStage<Topic> getTopic(int topicId) {
-        return CompletableFuture.supplyAsync(() -> topicsMap.get(topicId));
+        return CompletableFuture.supplyAsync(() -> topicsMap.get(topicId), executorService);
     }
 
     @Override
@@ -47,7 +50,7 @@ public class InMemoryTopicService implements TopicService {
 
     @Override
     public CompletionStage<List<Topic>> getAllTopics() {
-        return CompletableFuture.supplyAsync(() -> new ArrayList<>(topicsMap.values()));
+        return CompletableFuture.supplyAsync(() -> new ArrayList<>(topicsMap.values()), executorService);
     }
 
     @Override

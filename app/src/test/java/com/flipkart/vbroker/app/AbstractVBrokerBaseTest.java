@@ -70,8 +70,8 @@ public class AbstractVBrokerBaseTest {
         httpServer.setRegisterCalls(true);
 
         whenHttp(httpServer).match(post(MockURI.URI_200)).then(status(HttpStatus.OK_200), stringContent(MOCK_RESPONSE_BODY));
-        whenHttp(httpServer).match(post(MockURI.URI_201)).then(status(HttpStatus.NO_CONTENT_204), stringContent(MOCK_RESPONSE_BODY));
-        whenHttp(httpServer).match(post(MockURI.URI_202)).then(status(HttpStatus.NO_CONTENT_204), stringContent(MOCK_RESPONSE_BODY));
+        whenHttp(httpServer).match(post(MockURI.URI_201)).then(status(HttpStatus.CREATED_201), stringContent(MOCK_RESPONSE_BODY));
+        whenHttp(httpServer).match(post(MockURI.URI_202)).then(status(HttpStatus.ACCEPTED_202), stringContent(MOCK_RESPONSE_BODY));
         whenHttp(httpServer).match(post(MockURI.URI_204)).then(status(HttpStatus.NO_CONTENT_204), stringContent(MOCK_RESPONSE_BODY));
         whenHttp(httpServer).match(post(MockURI.URI_400)).then(status(HttpStatus.BAD_REQUEST_400), stringContent(MOCK_RESPONSE_BODY));
         whenHttp(httpServer).match(put(MockURI.URI_400)).then(status(HttpStatus.BAD_REQUEST_400), stringContent(MOCK_RESPONSE_BODY));

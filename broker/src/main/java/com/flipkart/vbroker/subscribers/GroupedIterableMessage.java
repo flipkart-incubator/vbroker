@@ -34,6 +34,7 @@ public class GroupedIterableMessage implements IterableMessage {
     public void unlock() {
         log.info("Unlocking the group {}", subscriberGroup.getGroupId());
         subscriberGroup.forceUnlock();
+        subscriberGroup.advanceIterator();
     }
 
     @Override
