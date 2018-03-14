@@ -60,7 +60,8 @@ public class RecordBatch {
      * @return true if batch size configured is reached
      */
     private boolean isFull() {
-        return partRecordsMap.values().size() >= 100;
+        //TODO: validate this and fix this
+        return partRecordsMap.values().size() >= Integer.MAX_VALUE;
     }
 
     /**

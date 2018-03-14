@@ -14,6 +14,7 @@ import com.flipkart.vbroker.wrappers.Topic;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.DefaultEventLoopGroup;
@@ -49,6 +50,7 @@ public class VBrokerServer extends AbstractExecutionThreadService {
 
     private Subscriber subscriber;
     private ExecutorService subscriberExecutor;
+    private ExecutorService coordinatorExecutor;//used for curator, in-memory topic/subscription services
 
     private CuratorFramework curatorClient;
 
@@ -71,13 +73,19 @@ public class VBrokerServer extends AbstractExecutionThreadService {
         EventLoopGroup localGroup = new DefaultEventLoopGroup(1, new DefaultThreadFactory("server_local"));
 
         //TopicService topicService = new TopicServiceImpl(config, curatorService);
-        TopicService topicService = new InMemoryTopicService();
+        ThreadFactory coordinatorThreadFactory = new ThreadFactoryBuilder().setNameFormat("coordinator_pool-%d").build();
+        coordinatorExecutor = Executors.newCachedThreadPool(coordinatorThreadFactory);
+        TopicService topicService = new InMemoryTopicService(coordinatorExecutor);
 
         DataManagerFactory dataManagerFactory = new DataManagerFactory(config, workerGroup);
         TopicPartDataManager topicPartDataManager = dataManagerFactory.getTopicDataManager();
         SubPartDataManager subPartDataManager = dataManagerFactory.getSubPartDataManager(topicPartDataManager);
 
-        SubscriptionService subscriptionService = new InMemorySubscriptionService(topicService, topicPartDataManager, subPartDataManager);
+        SubscriptionService subscriptionService = new InMemorySubscriptionService(
+            topicService,
+            topicPartDataManager,
+            subPartDataManager,
+            coordinatorExecutor);
 
         QueueService queueService = null;
         ClusterMetadataService clusterMetadataService = null;
@@ -114,8 +122,9 @@ public class VBrokerServer extends AbstractExecutionThreadService {
 
         DefaultAsyncHttpClientConfig httpClientConfig = new DefaultAsyncHttpClientConfig
             .Builder()
-            .setEventLoopGroup(workerGroup) //using same worker group event loop
-            .setThreadFactory(new DefaultThreadFactory("async_http_client"))
+            //.setEventLoopGroup(workerGroup) //using same worker group event loop
+            //.setThreadFactory(new DefaultThreadFactory("async_http_client"))
+            .setThreadFactory(new ThreadFactoryBuilder().setNameFormat("async_http_client-%d").build())
             .build();
         AsyncHttpClient httpClient = new DefaultAsyncHttpClient(httpClientConfig);
         MessageProcessor messageProcessor = new HttpMessageProcessor(httpClient,
@@ -123,6 +132,7 @@ public class VBrokerServer extends AbstractExecutionThreadService {
             subscriptionService,
             producerService,
             subPartDataManager,
+            coordinatorExecutor,
             metricRegistry);
 
         subscriber = new Subscriber(subscriptionService,
@@ -148,7 +158,8 @@ public class VBrokerServer extends AbstractExecutionThreadService {
                     //TODO: declare broker as healthy by registering in /brokers/ids for example now that everything is validated
 
                     log.info("Starting subscriber");
-                    subscriberExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("subscriber"));
+                    ThreadFactory subscriberThreadFactory = new ThreadFactoryBuilder().setNameFormat("subscriber_pool-%d").build();
+                    subscriberExecutor = Executors.newCachedThreadPool(subscriberThreadFactory);
                     subscriberExecutor.submit(subscriber);
 
                     serverChannel.closeFuture().sync();
@@ -220,6 +231,7 @@ public class VBrokerServer extends AbstractExecutionThreadService {
             subscriber.stop();
         }
 
+        log.info("Stopping Subscriber ExecutorService");
         subscriberExecutor.shutdown();
         MoreExecutors.shutdownAndAwaitTermination(
             subscriberExecutor, 2, TimeUnit.SECONDS);
@@ -228,6 +240,12 @@ public class VBrokerServer extends AbstractExecutionThreadService {
             log.info("Closing zookeeper client");
             curatorClient.close();
         }
+
+        log.info("Stopping Coordinator ExecutorService");
+        coordinatorExecutor.shutdown();
+        MoreExecutors.shutdownAndAwaitTermination(
+            coordinatorExecutor, 1, TimeUnit.SECONDS);
+
         log.info("Yay! Clean stop of VBrokerServer is successful");
     }
 

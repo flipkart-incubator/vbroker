@@ -57,11 +57,22 @@ public class Subscriber implements Runnable {
                     newInstance(subscriberIterator, messageProcessor, metricRegistry);
 
                 long pollTimeMs = config.getSubscriberPollTimeMs();
+
+                long nonConsumedCountThreshold = (long) Math.pow(10, 9);
+                long notConsumedCount = 0;
                 while (running.get()) {
                     log.debug("Polling for new messages");
                     try {
-                        messageConsumer.consume();
-                        Thread.sleep(pollTimeMs);
+                        boolean consumed = messageConsumer.consume();
+                        if (!consumed) {
+                            notConsumedCount++;
+                            if (notConsumedCount >= nonConsumedCountThreshold) {
+                                log.info("Sleeping for {}ms as in {} tries no messages were consumed",
+                                    pollTimeMs, nonConsumedCountThreshold);
+                                notConsumedCount = 0;
+                                Thread.sleep(pollTimeMs);
+                            }
+                        }
                     } catch (Exception e) {
                         log.error("Exception in consuming the message {}. Sleeping for {} ms", e, pollTimeMs);
                         Thread.sleep(pollTimeMs);

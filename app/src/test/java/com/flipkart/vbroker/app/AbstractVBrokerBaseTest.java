@@ -14,6 +14,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
 import java.io.IOException;
+import java.util.stream.IntStream;
 
 import static com.flipkart.vbroker.app.MockHttp.*;
 import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
@@ -69,9 +70,16 @@ public class AbstractVBrokerBaseTest {
         httpServer = new StubServer(MOCK_HTTP_SERVER_PORT).run();
         httpServer.setRegisterCalls(true);
 
+        IntStream.range(250, 300)
+            .forEachOrdered(code -> {
+                whenHttp(httpServer).match(com.xebialabs.restito.semantics.ConditionWithApplicables.post("/" + code))
+                    .then(status(HttpStatus.newHttpStatus(code, "test_success_code_" + code)),
+                        stringContent(MOCK_RESPONSE_BODY));
+            });
+
         whenHttp(httpServer).match(post(MockURI.URI_200)).then(status(HttpStatus.OK_200), stringContent(MOCK_RESPONSE_BODY));
-        whenHttp(httpServer).match(post(MockURI.URI_201)).then(status(HttpStatus.NO_CONTENT_204), stringContent(MOCK_RESPONSE_BODY));
-        whenHttp(httpServer).match(post(MockURI.URI_202)).then(status(HttpStatus.NO_CONTENT_204), stringContent(MOCK_RESPONSE_BODY));
+        whenHttp(httpServer).match(post(MockURI.URI_201)).then(status(HttpStatus.CREATED_201), stringContent(MOCK_RESPONSE_BODY));
+        whenHttp(httpServer).match(post(MockURI.URI_202)).then(status(HttpStatus.ACCEPTED_202), stringContent(MOCK_RESPONSE_BODY));
         whenHttp(httpServer).match(post(MockURI.URI_204)).then(status(HttpStatus.NO_CONTENT_204), stringContent(MOCK_RESPONSE_BODY));
         whenHttp(httpServer).match(post(MockURI.URI_400)).then(status(HttpStatus.BAD_REQUEST_400), stringContent(MOCK_RESPONSE_BODY));
         whenHttp(httpServer).match(put(MockURI.URI_400)).then(status(HttpStatus.BAD_REQUEST_400), stringContent(MOCK_RESPONSE_BODY));

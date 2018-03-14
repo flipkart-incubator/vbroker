@@ -12,10 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.*;
 
 @Slf4j
 public class InMemorySubscriptionService implements SubscriptionService {
@@ -25,23 +22,27 @@ public class InMemorySubscriptionService implements SubscriptionService {
     private final ConcurrentMap<Integer, Subscription> subscriptionsMap = new ConcurrentHashMap<>();
     private final ConcurrentMap<PartSubscription, PartSubscriber> subscriberMap = new ConcurrentHashMap<>();
     private final SubPartDataManager subPartDataManager;
+    private final ExecutorService executorService;
 
     public InMemorySubscriptionService(TopicService topicService,
                                        TopicPartDataManager topicPartDataManager,
-                                       SubPartDataManager subPartDataManager) {
+                                       SubPartDataManager subPartDataManager,
+                                       ExecutorService executorService) {
         this.topicService = topicService;
         this.topicPartDataManager = topicPartDataManager;
         this.subPartDataManager = subPartDataManager;
+        this.executorService = executorService;
     }
 
     @Override
     public CompletionStage<Subscription> createSubscription(Subscription subscription) {
-        return CompletableFuture.supplyAsync(() -> subscriptionsMap.putIfAbsent(subscription.id(), subscription));
+        return CompletableFuture.supplyAsync(
+            () -> subscriptionsMap.putIfAbsent(subscription.id(), subscription), executorService);
     }
 
     @Override
     public CompletionStage<List<Subscription>> getAllSubscriptions() {
-        return CompletableFuture.supplyAsync(() -> new ArrayList<>(subscriptionsMap.values()));
+        return CompletableFuture.supplyAsync(() -> new ArrayList<>(subscriptionsMap.values()), executorService);
     }
 
     @Override
@@ -53,7 +54,7 @@ public class InMemorySubscriptionService implements SubscriptionService {
                 return SubscriptionUtils.getPartSubscription(existingSub, partSubscriptionId);
             }
             return null;
-        });
+        }, executorService);
     }
 
     @Override
@@ -74,28 +75,28 @@ public class InMemorySubscriptionService implements SubscriptionService {
                 return partSubscriber;
             });
             return subscriberMap.get(partSubscription);
-        });
+        }, executorService);
     }
 
     @Override
     public CompletionStage<Subscription> getSubscription(int topicId, int subscriptionId) {
-        return CompletableFuture.supplyAsync(() -> subscriptionsMap.get(subscriptionId));
+        return CompletableFuture.supplyAsync(() -> subscriptionsMap.get(subscriptionId), executorService);
     }
 
     @Override
     public CompletionStage<List<Subscription>> getSubscriptionsForTopic(int topicId) {
-        return CompletableFuture.supplyAsync(() -> new ArrayList<>(subscriptionsMap.values()));
+        return CompletableFuture.supplyAsync(() -> new ArrayList<>(subscriptionsMap.values()), executorService);
     }
 
     @Override
     public CompletionStage<List<Subscription>> getAllSubscriptionsForBroker(String brokerId) {
-        return CompletableFuture.supplyAsync(() -> new ArrayList<>(subscriptionsMap.values()));
+        return CompletableFuture.supplyAsync(() -> new ArrayList<>(subscriptionsMap.values()), executorService);
     }
 
     @Override
     public CompletionStage<List<PartSubscription>> getPartSubscriptions(Subscription subscription) {
         return topicService.getTopic(subscription.topicId())
-            .thenApplyAsync(topic -> SubscriptionUtils.getPartSubscriptions(subscription, topic.partitions()));
+            .thenApplyAsync(topic -> SubscriptionUtils.getPartSubscriptions(subscription, topic.partitions()), executorService);
     }
 
     @Override

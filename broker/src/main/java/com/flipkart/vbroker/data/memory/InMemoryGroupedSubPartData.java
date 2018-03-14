@@ -16,12 +16,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
-
-import static java.util.Objects.nonNull;
 
 @Slf4j
 public class InMemoryGroupedSubPartData implements SubPartData {
@@ -131,11 +130,11 @@ public class InMemoryGroupedSubPartData implements SubPartData {
         return valuesComputed
             .stream()
             .map(subscriberGroupsMap::get)
-            .filter(group -> !group.isLocked())
+            .filter(group -> group.isUnlocked())
             .filter(group -> qType.equals(group.getQType()))
             .filter(group -> groupQTypeIteratorTable.contains(group, qType))
             .map(subscriberGroup -> groupQTypeIteratorTable.get(subscriberGroup, qType))
-            .filter(Iterator::hasNext)
+            .filter(iterator -> iterator.hasNext() && iterator.isUnlocked())
             .findFirst();
     }
 
@@ -155,6 +154,7 @@ public class InMemoryGroupedSubPartData implements SubPartData {
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     @AllArgsConstructor
+    @NotThreadSafe
     private class DataIteratorImpl implements DataIterator<IterableMessage> {
         private final QType qType;
         private Optional<SubscriberGroupIterator<IterableMessage>> iteratorOpt;
@@ -167,7 +167,8 @@ public class InMemoryGroupedSubPartData implements SubPartData {
 
         @Override
         public boolean isUnlocked() {
-            return !nonNull(lastPeekedMsg) || lastPeekedMsg.isUnlocked();
+            //return !nonNull(lastPeekedMsg) || lastPeekedMsg.isUnlocked();
+            return true;
         }
 
         @Override
@@ -189,18 +190,21 @@ public class InMemoryGroupedSubPartData implements SubPartData {
         public boolean hasNext() {
             if (!hasNext2()) {
                 iteratorOpt = fetchIterator(qType);
+                iteratorOpt.ifPresent(it -> log.info("Changed iterator to {}", it.name()));
             }
             return hasNext2();
         }
 
         private boolean hasNext2() {
             return iteratorOpt
-                .map(SubscriberGroupIterator<IterableMessage>::hasNext)
+                .map(iterator -> iterator.isUnlocked() && iterator.hasNext())
+                //.map(SubscriberGroupIterator<IterableMessage>::hasNext)
                 .orElse(false);
         }
 
         @Override
         public IterableMessage next() {
+            log.info("Moving to next message for group {}", peek().getGroupId());
             return iteratorOpt
                 .map(SubscriberGroupIterator<IterableMessage>::next)
                 .orElse(null);

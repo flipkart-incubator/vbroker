@@ -6,9 +6,9 @@ import com.flipkart.vbroker.subscribers.PartSubscriber;
 import com.flipkart.vbroker.subscribers.QType;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * Iterator hierarchy
@@ -44,8 +44,9 @@ import java.util.Queue;
 @Slf4j
 public class SubscriberIterator implements MsgIterator<IterableMessage> {
 
-    private final Queue<PartSubscriberIterator<IterableMessage>> iteratorQueue = new ArrayDeque<>();
-    private PartSubscriberIterator<IterableMessage> currIterator;
+    //TODO: configure the bound limit, idea is that the no of subscribers wont be >100 on a node, but change this
+    private final Queue<PartSubscriberIterator<IterableMessage>> iteratorQueue = new ArrayBlockingQueue<>(100);
+    private volatile PartSubscriberIterator<IterableMessage> currIterator;
 
     public SubscriberIterator(List<PartSubscriber> partSubscribers) {
         for (PartSubscriber partSubscriber : partSubscribers) {
@@ -60,20 +61,22 @@ public class SubscriberIterator implements MsgIterator<IterableMessage> {
     }
 
     @Override
-    public IterableMessage peek() {
+    public synchronized IterableMessage peek() {
         return currIterator.peek();
     }
 
     @Override
-    public boolean hasNext() {
-        log.trace("CurrIterator {} hasNext {}", currIterator, currIterator.hasNext());
+    public synchronized boolean hasNext() {
+        log.debug("CurrIterator {} hasNext {}", currIterator, currIterator.hasNext());
         if (isIteratorHavingNext(currIterator)) {
             return true;
         }
 
+        log.debug("IteratorQ size: {}", iteratorQueue.size());
         for (int i = 0; i < iteratorQueue.size(); i++) {
             PartSubscriberIterator<IterableMessage> iterator = iteratorQueue.peek();
             if (isIteratorHavingNext(iterator)) {
+                log.debug("Changing currIterator {} to iterator {}", currIterator.name(), iterator.name());
                 iteratorQueue.add(currIterator);
                 currIterator = iterator;
                 break;
@@ -83,19 +86,15 @@ public class SubscriberIterator implements MsgIterator<IterableMessage> {
         return isIteratorHavingNext(currIterator);
     }
 
-    private boolean isIteratorHavingNext(PartSubscriberIterator<IterableMessage> iterator) {
+    private synchronized boolean isIteratorHavingNext(PartSubscriberIterator<IterableMessage> iterator) {
         //TODO: validate the commenting of checking isUnlocked()
         //the logic being that locking is checked in the sub iterators of this
         //here check for isUnlocked is required as we don't have to re-peek the message under execution
         return iterator.hasNext() && iterator.isUnlocked();
     }
 
-    public PartSubscriberIterator<IterableMessage> getCurrIterator() {
-        return currIterator;
-    }
-
     @Override
-    public IterableMessage next() {
+    public synchronized IterableMessage next() {
         log.debug("Moving to next message");
         return currIterator.next();
     }
@@ -106,7 +105,7 @@ public class SubscriberIterator implements MsgIterator<IterableMessage> {
     }
 
     @Override
-    public String name() {
+    public synchronized String name() {
         return currIterator.name();
     }
 }
