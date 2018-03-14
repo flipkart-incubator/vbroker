@@ -44,7 +44,7 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
 
     private void produceAndConsumeMessages_ValidateConsumingSequence(MockURI mockURI, int sleepTimeMs) throws InterruptedException, MalformedURLException {
         int noOfRecords = 3;
-        Topic topic = createGroupedTopic();
+        Topic topic = createRandomTopic(true);
 
         List<ProducerRecord> records = IntStream.range(0, noOfRecords)
             .mapToObj(i -> newProducerRecord(topic, "group_0", mockURI, getMsgBody(payloadPrefix, i).getBytes()))
@@ -89,7 +89,7 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
         int noOfRecords = 10;
         int noOfGroups = 50;
 
-        Topic topic = createGroupedTopic();
+        Topic topic = createRandomTopic(true);
         byte[] payload = "This is a sample message".getBytes();
 
         List<ProducerRecord> allRecords = Lists.newArrayList();
@@ -125,7 +125,7 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
     @Test
     public void shouldProduceAndConsumeMessages_WithCallback() throws InterruptedException {
         int noOfRecords = 3;
-        Topic topic = createGroupedTopic();
+        Topic topic = createRandomTopic(true);
 
         List<ProducerRecord> records = IntStream.range(0, noOfRecords)
             .mapToObj(i -> newProducerRecordWithCallback(topic, "group_0",

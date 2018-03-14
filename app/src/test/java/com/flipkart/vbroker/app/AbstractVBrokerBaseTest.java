@@ -1,6 +1,11 @@
 package com.flipkart.vbroker.app;
 
 import com.flipkart.vbroker.VBrokerConfig;
+import com.flipkart.vbroker.client.*;
+import com.flipkart.vbroker.proto.CreateTopicResponse;
+import com.flipkart.vbroker.proto.CreateTopicsRequest;
+import com.flipkart.vbroker.proto.ProtoTopic;
+import com.flipkart.vbroker.proto.TopicCategory;
 import com.flipkart.vbroker.server.VBrokerServer;
 import com.flipkart.vbroker.utils.DummyEntities;
 import com.flipkart.vbroker.wrappers.Topic;
@@ -14,6 +19,10 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 import static com.flipkart.vbroker.app.MockHttp.*;
@@ -32,6 +41,7 @@ public class AbstractVBrokerBaseTest {
     private static VBrokerServer server;
     private static boolean cleanedUpDone = false;
     protected StubServer httpServer;
+    private VBrokerConfig config;
 
     @AfterClass
     public static void tearDown() {
@@ -56,7 +66,7 @@ public class AbstractVBrokerBaseTest {
         log.info("Starting VBroker test suite");
 
         String configFile = "test-broker.properties";
-        VBrokerConfig config = VBrokerConfig.newConfig(configFile);
+        config = VBrokerConfig.newConfig(configFile);
 
         BROKER_PORT = config.getBrokerPort();
         server = new VBrokerServer(config);
@@ -117,8 +127,25 @@ public class AbstractVBrokerBaseTest {
         return Action.delay((int) sleepTime);
     }
 
-    public Topic createGroupedTopic() {
-        return DummyEntities.groupedTopic;
+    public Topic createRandomTopic(boolean grouped) {
+        ProtoTopic protoTopic = ProtoTopic.newBuilder()
+            .setId(new Random().nextInt())
+            .setName(UUID.randomUUID().toString())
+            .setGrouped(grouped)
+            .setTopicCategory(TopicCategory.TOPIC)
+            .setPartitions(3)
+            .setReplicationFactor(1)
+            .build();
+        Topic topic = new Topic(protoTopic);
+
+        try {
+            TopicClient topicClient = new TopicClient(new NetworkClientImpl(), new MetadataImpl(VBClientConfig.newConfig("client.properties")));
+            List<CreateTopicResponse> createTopicResponses = topicClient.createTopics(Collections.singletonList(topic)).toCompletableFuture().join();
+            return topic;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public Topic createUnGroupedTopic() {
