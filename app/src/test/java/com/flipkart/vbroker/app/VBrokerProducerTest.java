@@ -32,7 +32,7 @@ import static org.testng.Assert.assertTrue;
 public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
     private static final String payloadPrefix = "SampleMsg_";
 
-    @Test(invocationCount = 5)
+    @Test(invocationCount = 1)
     public void shouldProduceAndConsumeMessages_MultipleMessagesOfSameTopic_Grouped() throws InterruptedException, MalformedURLException {
         produceAndConsumeMessages_ValidateConsumingSequence(MockURI.URI_200, 0);
     }
@@ -84,7 +84,7 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
         return String.format("%s_msg_%s", payloadPrefix, i);
     }
 
-    @Test(invocationCount = 15)
+    @Test(invocationCount = 1)
     public void shouldProduceAndConsumeMessages_MultipleMessagesOfSameTopic_MultipleGroups() throws InterruptedException {
         int noOfRecords = 10;
         int noOfGroups = 50;
@@ -136,7 +136,7 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
             .collect(Collectors.toList());
         produceRecords(records);
 
-        Thread.sleep(4 * 1000);
+        //Thread.sleep(4 * 1000);
 
         //verify forward messages
         log.info("Verify forward messages at consuming end");
@@ -238,9 +238,9 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
 
     private ProducerRecord newProducerRecordWithCallback(Topic topic,
                                                          String group,
-                                                         String mockURI,
+                                                         String httpUrl,
                                                          int callbackTopicId,
-                                                         String callbackMockURI,
+                                                         String callbackHttpUrl,
                                                          byte[] payload) {
         Message message = MessageStore.getRandomMsg(group);
         return ProducerRecord.builder()
@@ -251,10 +251,10 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
             .seqNo(1)
             .topicId(topic.id())
             .attributes(201)
-            .httpUri(mockURI)
+            .httpUri(httpUrl)
             .httpMethod(ProducerRecord.HttpMethod.POST)
             .callbackTopicId(callbackTopicId)
-            .callbackHttpUri(callbackMockURI)
+            .callbackHttpUri(callbackHttpUrl)
             .callbackHttpMethod(ProducerRecord.HttpMethod.POST)
             .headers(new HashMap<>())
             .payload(payload)
@@ -267,7 +267,7 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
                                                          int callbackTopicId,
                                                          MockURI callbackMockURI,
                                                          byte[] payload) {
-        return newProducerRecordWithCallback(topic, group, mockURI.uri(), callbackTopicId, callbackMockURI.uri(), payload);
+        return newProducerRecordWithCallback(topic, group, mockURI.url(), callbackTopicId, callbackMockURI.url(), payload);
     }
 
 }
