@@ -26,6 +26,8 @@ public class MockHttp {
 
     public enum MockURI {
         URI_200("/200"),
+        URI_201("/201"),
+        URI_202("/202"),
         URI_204("/204"),
         URI_400("/400"),
         URI_404("/404"),
@@ -35,6 +37,8 @@ public class MockHttp {
         URI_MOCK_APP("/url"),
         URI_MOCK_APP2("/url2"),
         SLEEP_200("/sleep200"),
+        SLEEP_201("/sleep201"),
+        SLEEP_202("/sleep202"),
         SLEEP_404("/sleep404");
 
         private final String uri;

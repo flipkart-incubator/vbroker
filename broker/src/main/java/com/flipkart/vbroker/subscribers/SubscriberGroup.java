@@ -6,7 +6,8 @@ import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.flatbuf.Message;
-import com.google.common.collect.PeekingIterator;
+import com.flipkart.vbroker.iterators.DataIterator;
+import com.flipkart.vbroker.iterators.SubscriberGroupIterator;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 @EqualsAndHashCode(exclude = {"qType", "currSeqNoMap", "topicPartDataManager", "locked"})
 //TODO: crude implementation of seqNo. Handle the concurrency here correctly
-public class SubscriberGroup implements Iterable<IterableMessage> {
+public class SubscriberGroup {
     private final MessageGroup messageGroup;
     @Getter
     private final TopicPartition topicPartition;
@@ -40,6 +41,7 @@ public class SubscriberGroup implements Iterable<IterableMessage> {
     private SubscriberGroup(MessageGroup messageGroup,
                             PartSubscription partSubscription,
                             TopicPartDataManager topicPartDataManager) {
+        log.trace("Creating new group {}", messageGroup.getGroupId());
         this.messageGroup = messageGroup;
         this.topicPartition = messageGroup.getTopicPartition();
         this.partSubscription = partSubscription;
@@ -57,7 +59,7 @@ public class SubscriberGroup implements Iterable<IterableMessage> {
      * false if already locked
      */
     public boolean lock() {
-        log.debug("Locking the subscriberGroup {} for topic-partition {}", getGroupId(), topicPartition);
+        log.info("Locking the subscriberGroup {} for topic-partition {}", getGroupId(), topicPartition);
         return locked.compareAndSet(false, true);
     }
 
@@ -73,7 +75,7 @@ public class SubscriberGroup implements Iterable<IterableMessage> {
      * forcefully set the state as unlocked
      */
     public void forceUnlock() {
-        log.debug("Forcefully unlocking the subscriberGroup {} for topic-partition {}", getGroupId(), topicPartition);
+        log.info("Forcefully unlocking the subscriberGroup {} for topic-partition {}", getGroupId(), topicPartition);
         locked.set(false);
     }
 
@@ -104,22 +106,9 @@ public class SubscriberGroup implements Iterable<IterableMessage> {
             .thenApply(offset -> offset - getCurrSeqNo(QType.MAIN));
     }
 
-    @Override
-    public PeekingIterator<IterableMessage> iterator() {
-        return new SubscriberGroupIterator(QType.MAIN, this);
-    }
-
-    public PeekingIterator<IterableMessage> sidelineIterator() {
-        return new SubscriberGroupIterator(QType.SIDELINE, this);
-    }
-
-    public PeekingIterator<IterableMessage> retryIterator(int retryNo) {
-        QType qType = QType.retryQType(retryNo);
-        return new SubscriberGroupIterator(qType, this);
-    }
-
-    public PeekingIterator<IterableMessage> iterator(QType qType) {
-        return new SubscriberGroupIterator(qType, this);
+    public SubscriberGroupIterator<IterableMessage> iterator(QType qType) {
+        log.trace("Creating a new SubGroupIterator for qType {} and group {}", qType, getGroupId());
+        return new SubscriberGroupIteratorImpl(qType, this);
     }
 
     public String getGroupId() {
@@ -130,12 +119,13 @@ public class SubscriberGroup implements Iterable<IterableMessage> {
         return this.partSubscription;
     }
 
-    private class SubscriberGroupIterator implements PeekingIterator<IterableMessage> {
+    public class SubscriberGroupIteratorImpl implements SubscriberGroupIterator<IterableMessage> {
         private QType qType;
         private SubscriberGroup subscriberGroup;
-        private PeekingIterator<Message> groupIterator;
+        private DataIterator<Message> groupIterator;
 
-        public SubscriberGroupIterator(QType qType, SubscriberGroup subscriberGroup) {
+        SubscriberGroupIteratorImpl(QType qType, SubscriberGroup subscriberGroup) {
+            log.trace("Creating new subscriberGroupIterator for qType {} and group {}", qType, subscriberGroup.getGroupId());
             this.qType = qType;
             this.subscriberGroup = subscriberGroup;
             this.groupIterator = topicPartDataManager.getIterator(topicPartition, getGroupId(), getCurrSeqNo(qType));
@@ -143,11 +133,14 @@ public class SubscriberGroup implements Iterable<IterableMessage> {
 
         @Override
         public synchronized GroupedIterableMessage peek() {
-            return GroupedIterableMessage.newInstance(groupIterator.peek(), subscriberGroup);
+            Message msg = groupIterator.peek();
+            log.debug("Peeking msg {}", msg.messageId());
+            return GroupedIterableMessage.newInstance(msg, subscriberGroup);
         }
 
         @Override
         public synchronized GroupedIterableMessage next() {
+            log.debug("Moving to next message");
             GroupedIterableMessage messageWithGroup = GroupedIterableMessage.newInstance(groupIterator.next(), subscriberGroup);
             incrementCurrSeqNo(qType);
             return messageWithGroup;
@@ -161,6 +154,11 @@ public class SubscriberGroup implements Iterable<IterableMessage> {
         @Override
         public synchronized boolean hasNext() {
             return groupIterator.hasNext();
+        }
+
+        @Override
+        public String name() {
+            return subscriberGroup.getGroupId();
         }
     }
 }

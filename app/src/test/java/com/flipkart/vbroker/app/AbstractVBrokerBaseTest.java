@@ -1,9 +1,6 @@
 package com.flipkart.vbroker.app;
 
 import com.flipkart.vbroker.VBrokerConfig;
-import com.flipkart.vbroker.client.MessageStore;
-import com.flipkart.vbroker.client.ProducerRecord;
-import com.flipkart.vbroker.flatbuf.Message;
 import com.flipkart.vbroker.server.VBrokerServer;
 import com.flipkart.vbroker.utils.DummyEntities;
 import com.flipkart.vbroker.wrappers.Topic;
@@ -17,7 +14,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import static com.flipkart.vbroker.app.MockHttp.*;
 import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
@@ -71,8 +67,11 @@ public class AbstractVBrokerBaseTest {
         server.awaitRunning();
 
         httpServer = new StubServer(MOCK_HTTP_SERVER_PORT).run();
+        httpServer.setRegisterCalls(true);
 
         whenHttp(httpServer).match(post(MockURI.URI_200)).then(status(HttpStatus.OK_200), stringContent(MOCK_RESPONSE_BODY));
+        whenHttp(httpServer).match(post(MockURI.URI_201)).then(status(HttpStatus.NO_CONTENT_204), stringContent(MOCK_RESPONSE_BODY));
+        whenHttp(httpServer).match(post(MockURI.URI_202)).then(status(HttpStatus.NO_CONTENT_204), stringContent(MOCK_RESPONSE_BODY));
         whenHttp(httpServer).match(post(MockURI.URI_204)).then(status(HttpStatus.NO_CONTENT_204), stringContent(MOCK_RESPONSE_BODY));
         whenHttp(httpServer).match(post(MockURI.URI_400)).then(status(HttpStatus.BAD_REQUEST_400), stringContent(MOCK_RESPONSE_BODY));
         whenHttp(httpServer).match(put(MockURI.URI_400)).then(status(HttpStatus.BAD_REQUEST_400), stringContent(MOCK_RESPONSE_BODY));
@@ -86,7 +85,9 @@ public class AbstractVBrokerBaseTest {
         whenHttp(httpServer).match(post(MockURI.URI_MOCK_APP)).then(status(HttpStatus.OK_200), stringContent(MOCK_RESPONSE_BODY));
         whenHttp(httpServer).match(put(MockURI.URI_MOCK_APP2)).then(status(HttpStatus.OK_200), stringContent(MOCK_RESPONSE_BODY));
         //Sleep for 5 seconds
-        whenHttp(httpServer).match(post(MockURI.SLEEP_200)).then(status(HttpStatus.OK_200), stringContent(MOCK_RESPONSE_BODY), sleep(6000));
+        whenHttp(httpServer).match(post(MockURI.SLEEP_200)).then(status(HttpStatus.OK_200), stringContent(MOCK_RESPONSE_BODY), sleep(1000));
+        whenHttp(httpServer).match(post(MockURI.SLEEP_201)).then(status(HttpStatus.CREATED_201), stringContent(MOCK_RESPONSE_BODY), sleep(2000));
+        whenHttp(httpServer).match(post(MockURI.SLEEP_202)).then(status(HttpStatus.ACCEPTED_202), stringContent(MOCK_RESPONSE_BODY), sleep(3000));
         whenHttp(httpServer).match(post(MockURI.SLEEP_404)).then(status(HttpStatus.NOT_FOUND_404), stringContent(MOCK_RESPONSE_BODY), sleep(1000));
     }
 
@@ -113,6 +114,6 @@ public class AbstractVBrokerBaseTest {
     }
 
     public Topic createUnGroupedTopic() {
-        return DummyEntities.groupedTopic;
+        return DummyEntities.unGroupedTopic;
     }
 }

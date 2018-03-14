@@ -5,15 +5,15 @@ import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
+import com.flipkart.vbroker.iterators.DataIterator;
 import com.flipkart.vbroker.iterators.PartSubscriberIterator;
-import com.google.common.collect.PeekingIterator;
+import com.flipkart.vbroker.iterators.MsgIterators;
 import com.google.common.collect.Sets;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -38,6 +38,7 @@ public class GroupedPartSubscriber implements PartSubscriber {
     /**
      * Call this method to keep subscriberGroups in sync with messageGroups at any point
      */
+    @Override
     public void refreshSubscriberMetadata() {
         log.debug("Refreshing SubscriberGroups for part-subscriber {} for topic-partition {}",
             partSubscription.getId(), partSubscription.getTopicPartition().getId());
@@ -49,6 +50,7 @@ public class GroupedPartSubscriber implements PartSubscriber {
             Sets.SetView<String> difference = Sets.difference(uniqueMsgGroups, uniqueSubscriberGroups);
 
             difference.forEach(group -> {
+                log.info("Adding diff group {} for topic-partition {}", group, topicPartition);
                 MessageGroup messageGroup = new MessageGroup(group, topicPartition);
                 SubscriberGroup subscriberGroup = SubscriberGroup.newGroup(messageGroup, partSubscription, topicPartDataManager);
                 //subscriberGroupsMap.put(group, subscriberGroup);
@@ -59,30 +61,8 @@ public class GroupedPartSubscriber implements PartSubscriber {
     }
 
     @Override
-    public PeekingIterator<IterableMessage> iterator() {
-        return getIterator(QType.MAIN);
-    }
-
-    @Override
-    public PeekingIterator<IterableMessage> sidelineIterator() {
-        return getIterator(QType.SIDELINE);
-    }
-
-    @Override
-    public PeekingIterator<IterableMessage> retryIterator(int retryQNo) {
-        QType qType = QType.retryQType(retryQNo);
-        return getIterator(qType);
-    }
-
-    private PeekingIterator<IterableMessage> getIterator(QType qType) {
-        return new PartSubscriberIterator() {
-            @Override
-            protected Optional<PeekingIterator<IterableMessage>> nextIterator() {
-                log.debug("Getting next iterator for QType {}", qType);
-                Optional<PeekingIterator<IterableMessage>> iterator = subPartDataManager.getIterator(partSubscription, qType);
-                log.debug("Next iterator: {}", iterator);
-                return iterator;
-            }
-        };
+    public PartSubscriberIterator<IterableMessage> iterator(QType qType) {
+        DataIterator<IterableMessage> dataIterator = subPartDataManager.getIterator(partSubscription, qType);
+        return MsgIterators.partSubscriberIterator(dataIterator);
     }
 }

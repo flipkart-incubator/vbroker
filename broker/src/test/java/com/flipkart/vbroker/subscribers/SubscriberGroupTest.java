@@ -7,8 +7,8 @@ import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.data.memory.InMemoryTopicPartDataManager;
 import com.flipkart.vbroker.flatbuf.Message;
+import com.flipkart.vbroker.iterators.MsgIterator;
 import com.flipkart.vbroker.utils.DummyEntities;
-import com.google.common.collect.PeekingIterator;
 import lombok.extern.slf4j.Slf4j;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -43,7 +43,7 @@ public class SubscriberGroupTest {
 
     @Test(invocationCount = 20)
     public void shouldIterateMessages_ForSameGroup_CheckConsistencyOverMultipleRuns() {
-        PeekingIterator<IterableMessage> iterator = subscriberGroup.iterator();
+        MsgIterator<IterableMessage> iterator = subscriberGroup.iterator(QType.MAIN);
         int count = 0;
         while (iterator.hasNext()) {
             iterator.next();

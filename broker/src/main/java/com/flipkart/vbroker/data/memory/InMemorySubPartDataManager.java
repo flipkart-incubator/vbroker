@@ -5,16 +5,15 @@ import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.data.SubPartData;
 import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
+import com.flipkart.vbroker.iterators.DataIterator;
 import com.flipkart.vbroker.server.MessageUtils;
 import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.flipkart.vbroker.subscribers.QType;
 import com.flipkart.vbroker.subscribers.SubscriberGroup;
-import com.google.common.collect.PeekingIterator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -70,13 +69,13 @@ public class InMemorySubPartDataManager implements SubPartDataManager {
     }
 
     @Override
-    public PeekingIterator<IterableMessage> getIterator(PartSubscription partSubscription, String groupId) {
+    public DataIterator<IterableMessage> getIterator(PartSubscription partSubscription, String groupId) {
         return getSubPartDataAsync(partSubscription).thenApplyAsync(subPartData -> subPartData.getIterator(groupId))
             .toCompletableFuture().join(); //TODO: fix this!
     }
 
     @Override
-    public Optional<PeekingIterator<IterableMessage>> getIterator(PartSubscription partSubscription, QType qType) {
+    public DataIterator<IterableMessage> getIterator(PartSubscription partSubscription, QType qType) {
         return getSubPartDataAsync(partSubscription).thenApplyAsync(subPartData -> subPartData.getIterator(qType))
             .toCompletableFuture().join(); //TODO: fix this!
     }

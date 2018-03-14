@@ -13,6 +13,7 @@ import com.flipkart.vbroker.wrappers.Subscription;
 import com.flipkart.vbroker.wrappers.Topic;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
+import com.google.common.util.concurrent.MoreExecutors;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.DefaultEventLoopGroup;
@@ -32,10 +33,7 @@ import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 import static java.util.Objects.nonNull;
 
@@ -48,7 +46,10 @@ public class VBrokerServer extends AbstractExecutionThreadService {
     private Channel serverChannel;
     private Channel serverLocalChannel;
     private VBrokerController brokerController;
-    private BrokerSubscriber brokerSubscriber;
+
+    private Subscriber subscriber;
+    private ExecutorService subscriberExecutor;
+
     private CuratorFramework curatorClient;
 
     public VBrokerServer(VBrokerConfig config) {
@@ -111,8 +112,24 @@ public class VBrokerServer extends AbstractExecutionThreadService {
         RequestHandlerFactory requestHandlerFactory = new RequestHandlerFactory(
             producerService, topicService, subscriptionService, queueService, clusterMetadataService);
 
-        //TODO: declare broker as healthy by registering in /brokers/ids for example now that everything is validated
-        //the broker can now startServer accepting new requests
+        DefaultAsyncHttpClientConfig httpClientConfig = new DefaultAsyncHttpClientConfig
+            .Builder()
+            .setEventLoopGroup(workerGroup) //using same worker group event loop
+            .setThreadFactory(new DefaultThreadFactory("async_http_client"))
+            .build();
+        AsyncHttpClient httpClient = new DefaultAsyncHttpClient(httpClientConfig);
+        MessageProcessor messageProcessor = new HttpMessageProcessor(httpClient,
+            topicService,
+            subscriptionService,
+            producerService,
+            subPartDataManager,
+            metricRegistry);
+
+        subscriber = new Subscriber(subscriptionService,
+            messageProcessor,
+            config,
+            metricRegistry);
+
         CountDownLatch latch = new CountDownLatch(1);
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
@@ -127,6 +144,13 @@ public class VBrokerServer extends AbstractExecutionThreadService {
                     serverChannel = serverBootstrap.bind(config.getBrokerHost(), config.getBrokerPort()).sync().channel();
                     log.info("Broker now listening on port {}", config.getBrokerPort());
 
+                    //the broker can now startServer accepting new requests
+                    //TODO: declare broker as healthy by registering in /brokers/ids for example now that everything is validated
+
+                    log.info("Starting subscriber");
+                    subscriberExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("subscriber"));
+                    subscriberExecutor.submit(subscriber);
+
                     serverChannel.closeFuture().sync();
                     latch.countDown();
                 } catch (InterruptedException e) {
@@ -134,25 +158,6 @@ public class VBrokerServer extends AbstractExecutionThreadService {
                 }
             });
 
-
-            DefaultAsyncHttpClientConfig httpClientConfig = new DefaultAsyncHttpClientConfig
-                .Builder()
-                .setThreadFactory(new DefaultThreadFactory("async_http_client"))
-                .build();
-            AsyncHttpClient httpClient = new DefaultAsyncHttpClient(httpClientConfig);
-            MessageProcessor messageProcessor = new HttpMessageProcessor(httpClient,
-                topicService,
-                subscriptionService,
-                producerService,
-                subPartDataManager,
-                metricRegistry);
-
-            brokerSubscriber = new BrokerSubscriber(subscriptionService,
-                messageProcessor,
-                config,
-                metricRegistry);
-            ExecutorService subscriberExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory("subscriber"));
-            subscriberExecutor.submit(brokerSubscriber);
 
 //            LocalAddress address = new LocalAddress(new Random().nextInt(60000) + "");
 //            setupLocalSubscribers(localGroup, workerGroup, address, subscriptionService);
@@ -210,10 +215,14 @@ public class VBrokerServer extends AbstractExecutionThreadService {
             brokerController.stopAsync().awaitTerminated();
         }
 
-        if (nonNull(brokerSubscriber)) {
-            log.info("Stopping BrokerSubscriber");
-            brokerSubscriber.stop();
+        if (nonNull(subscriber)) {
+            log.info("Stopping Subscriber");
+            subscriber.stop();
         }
+
+        subscriberExecutor.shutdown();
+        MoreExecutors.shutdownAndAwaitTermination(
+            subscriberExecutor, 2, TimeUnit.SECONDS);
 
         if (nonNull(curatorClient)) {
             log.info("Closing zookeeper client");

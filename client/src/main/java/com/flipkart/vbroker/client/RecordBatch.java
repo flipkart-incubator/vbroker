@@ -2,7 +2,7 @@ package com.flipkart.vbroker.client;
 
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.flatbuf.VStatus;
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import lombok.AllArgsConstructor;
@@ -28,7 +28,7 @@ public class RecordBatch {
     private final Node node;
     private final long lingerTimeMs;
     private final long createdTimeMs;
-    private final Multimap<TopicPartition, ProducerRecord> partRecordsMap = HashMultimap.create();
+    private final Multimap<TopicPartition, ProducerRecord> partRecordsMap = ArrayListMultimap.create();
     private final Map<TopicPartition, CompletableFuture<TopicPartMetadata>> topicPartResponseFutureMap = new HashMap<>();
     //map which stores the responses for the batch sent
     private final Map<TopicPartition, VStatus> statusMap = new HashMap<>();

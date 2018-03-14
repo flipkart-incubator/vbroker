@@ -21,6 +21,7 @@ dependencies {
     compile project(':client')
 
     //testing
+    //testCompile 'io.rest-assured:rest-assured:3.0.7'
     testCompile("com.xebialabs.restito:restito:${restitoVersion}") {
         exclude group: 'junit', module: 'junit'
         exclude group: 'org.slf4j', module: 'slf4j-api'
