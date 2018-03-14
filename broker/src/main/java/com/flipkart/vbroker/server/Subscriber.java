@@ -60,6 +60,8 @@ public class Subscriber implements Runnable {
 
                 long nonConsumedCountThreshold = (long) Math.pow(10, 9);
                 long notConsumedCount = 0;
+
+                log.info("Subscriber running now and polling for messages...");
                 while (running.get()) {
                     log.debug("Polling for new messages");
                     try {

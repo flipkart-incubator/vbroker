@@ -1,24 +1,23 @@
+//src dependencies
+def flatBuffersVersion = "1.8.0"
+def slf4jVersion = "1.7.13"
+def logbackVersion = "1.2.3"
+def guavaVersion = "23.6-jre"
+def lombokVersion = "1.16.18"
+def jacksonVersion = "2.9.4"
+def protobufVersion = "3.5.1"
+def metricsVersion = "4.0.2"
+
+//test dependencies
+def testngVersion = "6.14.2"
+def mockitoVersion = "2.15.0"
+
 subprojects {
     apply plugin: 'java'
 
     repositories {
         mavenCentral()
     }
-
-    //src dependencies
-    def flatBuffersVersion = "1.8.0"
-    def slf4jVersion = "1.7.13"
-    def logbackVersion = "1.2.3"
-    def guavaVersion = "23.6-jre"
-    def lombokVersion = "1.16.18"
-    def jacksonVersion = "2.9.4"
-    def protobufVersion = "3.5.1"
-    def metricsVersion = "4.0.2"
-
-    //test dependencies
-    //def jUnitVersion = "4.12"
-    def testngVersion = "6.14.2"
-    def mockitoVersion = "2.15.0"
 
     dependencies {
         //logging
@@ -49,15 +48,9 @@ subprojects {
         //testCompile "junit:junit:${jUnitVersion}"
         testCompile "org.testng:testng:${testngVersion}"
         testCompile "org.mockito:mockito-core:${mockitoVersion}"
-
     }
-
-//    test{
-//        useTestNG()
-//    }
 }
 
 allprojects {
     task hello << { task -> println "Current project is $task.project.name" }
 }
-

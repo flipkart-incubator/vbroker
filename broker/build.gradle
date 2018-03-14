@@ -1,3 +1,7 @@
+plugins {
+    id "nebula.ospackage" version "4.8.0"
+}
+
 apply plugin: 'application'
 apply plugin: 'java'
 
@@ -6,6 +10,7 @@ sourceCompatibility = '1.8'
 mainClassName = "com.flipkart.vbroker.VBrokerApp"
 
 //src dependencies
+
 def nettyVersion = "4.1.21.Final"
 def asyncHttpClientVersion = "2.3.0"
 def curatorXAsyncVersion = "4.0.0"
@@ -15,6 +20,75 @@ def redissonVersion = "3.6.0"
 //test dependencies
 def restitoVersion = "0.9.3"
 def testNgVersion = "6.14.2"
+
+task copyLibs(type: Copy) {
+    into "$buildDir/dependencies/"
+    from configurations.runtime
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "com.flipkart.vbroker.VBrokerApp"
+        //attributes "Class-Path": configurations.compile.collect { it.getName() }.join(' ')
+    }
+}
+
+ospackage {
+    packageName = 'vbroker-broker'
+    version = '0.2'
+    release = '1'
+
+    installUtils file('pkg/deb/utils.sh')
+    preInstall file('pkg/deb/preInstall.sh')
+    postInstall file('pkg/deb/postInstall.sh')
+    preUninstall file('pkg/deb/preUninstall.sh')
+    postUninstall file('pkg/deb/postUninstall.sh')
+
+    requires('oracle-java8-jdk')
+
+    into '/tmp/vbroker'
+
+    from(jar.outputs.files) {
+        into 'lib'
+    }
+    from(configurations.runtime) {
+        into 'lib'
+    }
+    from('lib') {
+        into 'lib'
+    }
+    from('pkg/scripts') {
+        into 'bin'
+        exclude 'database'
+        fileMode = 0550
+    }
+    from('src/main/resources') {
+        fileType CONFIG | NOREPLACE
+        into 'conf'
+    }
+
+    customField 'Build-Host', 'localhost'
+    customField([
+        'Commit-ID': 'deadbeef',
+        'Owner'    : 'Varadhi-Dev <varadhi-dev@flipkart.com>'
+    ])
+    customFields << [
+        'langugage' : 'java',
+        'frameworks': 'netty'
+    ]
+}
+
+buildDeb {
+    arch = I386
+    os = LINUX
+    maintainer = "varadhi-dev@flipkart.com"
+    packager = maintainer
+}
+
+//buildDeb {
+//    requires('oracle-java8-installer', '8u161-1~webupd8~0')
+//    //link('/etc/init.d/foo', '/opt/foo/bin/foo.upstart')
+//}
 
 dependencies {
     //networking
@@ -72,5 +146,4 @@ dependencies {
         exclude group: 'org.slf4j', module: 'slf4j-api'
     }
     testCompile "org.testng:testng:${testNgVersion}"
-
 }
