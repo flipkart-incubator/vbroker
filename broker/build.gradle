@@ -20,6 +20,7 @@ def redissonVersion = "3.6.0"
 //test dependencies
 def restitoVersion = "0.9.3"
 def testNgVersion = "6.14.2"
+def embeddedRedisversion = "0.7.0"
 
 task copyLibs(type: Copy) {
     into "$buildDir/dependencies/"
@@ -146,4 +147,5 @@ dependencies {
         exclude group: 'org.slf4j', module: 'slf4j-api'
     }
     testCompile "org.testng:testng:${testNgVersion}"
+    testCompile "it.ozimov:embedded-redis:${embeddedRedisversion}"
 }
