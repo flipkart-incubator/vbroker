@@ -58,7 +58,7 @@ public class FlatbufUtils {
         return VRequest.getRootAsVRequest(builder.dataBuffer());
     }
 
-    public static VRequest createVRequest(ProtoRequest protoRequest){
+    public static VRequest createVRequest(ProtoRequest protoRequest) {
         return createVRequest((byte) 1, new Random().nextInt(), protoRequest);
     }
 

@@ -1,13 +1,14 @@
 package com.flipkart.vbroker.app;
 
 import com.flipkart.vbroker.VBrokerConfig;
-import com.flipkart.vbroker.client.*;
+import com.flipkart.vbroker.client.MetadataImpl;
+import com.flipkart.vbroker.client.NetworkClientImpl;
+import com.flipkart.vbroker.client.TopicClient;
+import com.flipkart.vbroker.client.VBClientConfig;
 import com.flipkart.vbroker.proto.CreateTopicResponse;
-import com.flipkart.vbroker.proto.CreateTopicsRequest;
 import com.flipkart.vbroker.proto.ProtoTopic;
 import com.flipkart.vbroker.proto.TopicCategory;
 import com.flipkart.vbroker.server.VBrokerServer;
-import com.flipkart.vbroker.utils.DummyEntities;
 import com.flipkart.vbroker.wrappers.Topic;
 import com.xebialabs.restito.semantics.Action;
 import com.xebialabs.restito.server.StubServer;
@@ -30,6 +31,7 @@ import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
 import static com.xebialabs.restito.semantics.Action.status;
 import static com.xebialabs.restito.semantics.Action.stringContent;
 
+
 @Slf4j
 public class AbstractVBrokerBaseTest {
     private static final Object shutdownTestSuiteLock = new Object();
@@ -41,7 +43,6 @@ public class AbstractVBrokerBaseTest {
     private static VBrokerServer server;
     private static boolean cleanedUpDone = false;
     protected StubServer httpServer;
-    private VBrokerConfig config;
 
     @AfterClass
     public static void tearDown() {
@@ -66,8 +67,7 @@ public class AbstractVBrokerBaseTest {
         log.info("Starting VBroker test suite");
 
         String configFile = "test-broker.properties";
-        config = VBrokerConfig.newConfig(configFile);
-
+        VBrokerConfig config = VBrokerConfig.newConfig(configFile);
         BROKER_PORT = config.getBrokerPort();
         server = new VBrokerServer(config);
         server.startAsync().awaitRunning();
@@ -145,10 +145,5 @@ public class AbstractVBrokerBaseTest {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-    }
-
-    public Topic createUnGroupedTopic() {
-        return DummyEntities.unGroupedTopic;
     }
 }

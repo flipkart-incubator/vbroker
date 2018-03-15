@@ -151,7 +151,7 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
     @Test
     public void shouldProduceAndConsumeMessages_MultipleMessagesOfSameTopic_UnGrouped() throws InterruptedException {
         int noOfRecords = 5;
-        Topic topic = createUnGroupedTopic();
+        Topic topic = createRandomTopic(false);
         byte[] payload = "This is a sample message".getBytes();
         List<ProducerRecord> records = IntStream.range(0, noOfRecords)
             .mapToObj(i -> newProducerRecord(topic, "group_" + i, payload))
