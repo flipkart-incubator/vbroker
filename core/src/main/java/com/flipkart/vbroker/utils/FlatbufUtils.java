@@ -10,6 +10,8 @@ import com.flipkart.vbroker.proto.ProtoResponse;
 import com.google.flatbuffers.FlatBufferBuilder;
 import com.google.protobuf.InvalidProtocolBufferException;
 
+import java.util.Random;
+
 import static java.util.Objects.nonNull;
 
 public class FlatbufUtils {
@@ -54,6 +56,10 @@ public class FlatbufUtils {
         int vRequestOffset = VRequest.createVRequest(builder, apiVersion, correlationId, RequestMessage.ControlRequest, controlRequestOffset);
         builder.finish(vRequestOffset);
         return VRequest.getRootAsVRequest(builder.dataBuffer());
+    }
+
+    public static VRequest createVRequest(ProtoRequest protoRequest) {
+        return createVRequest((byte) 1, new Random().nextInt(), protoRequest);
     }
 
     public static VResponse createVResponse(int correlationId, ProtoResponse protoResponse) {
