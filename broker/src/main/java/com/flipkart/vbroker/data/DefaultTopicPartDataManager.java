@@ -6,10 +6,10 @@ import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.flatbuf.Message;
 import com.flipkart.vbroker.iterators.DataIterator;
+import com.flipkart.vbroker.utils.CompletionStageUtils;
 
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
@@ -25,11 +25,11 @@ public abstract class DefaultTopicPartDataManager implements TopicPartDataManage
 
     @Override
     public CompletionStage<List<MessageMetadata>> addMessages(List<TopicPartMessage> topicPartMessages) {
-        return CompletableFuture.supplyAsync(() -> topicPartMessages.stream()
+        List<CompletionStage<MessageMetadata>> stages = topicPartMessages.stream()
             .map(topicPartMessage -> getTopicPartData(topicPartMessage.getTopicPartition())
-                .thenCompose(topicPartData -> topicPartData.addMessage(topicPartMessage.getMessage()))
-                .toCompletableFuture().join() //TODO: fix this
-            ).collect(Collectors.toList()));
+                .thenCompose(topicPartData -> topicPartData.addMessage(topicPartMessage.getMessage())))
+            .collect(Collectors.toList());
+        return CompletionStageUtils.listOfStagesToStageOfList(stages);
     }
 
     @Override
@@ -45,15 +45,14 @@ public abstract class DefaultTopicPartDataManager implements TopicPartDataManage
 
     @Override
     public DataIterator<Message> getIterator(TopicPartition topicPartition, String group, int seqNoFrom) {
-        //TODO: change this to make it non blocking
-        return getTopicPartData(topicPartition)
-            .thenApplyAsync(topicPartData -> topicPartData.iteratorFrom(group, seqNoFrom))
-            .toCompletableFuture().join();
+        TopicPartData topicPartData = getTopicPartData(topicPartition).toCompletableFuture().join();
+        return topicPartData.iteratorFrom(group, seqNoFrom);
     }
 
     @Override
     public CompletionStage<Integer> getCurrentOffset(TopicPartition topicPartition, String group) {
-        return getTopicPartData(topicPartition).thenCompose((topicPartitionData) -> topicPartitionData.getCurrentOffset(group));
+        return getTopicPartData(topicPartition)
+            .thenCompose((topicPartitionData) -> topicPartitionData.getCurrentOffset(group));
     }
 
     @Override
@@ -64,6 +63,7 @@ public abstract class DefaultTopicPartDataManager implements TopicPartDataManage
 
     @Override
     public CompletionStage<Integer> getCurrentOffset(TopicPartition topicPartition) {
-        return getTopicPartData(topicPartition).thenCompose(TopicPartData::getCurrentOffset);
+        return getTopicPartData(topicPartition)
+            .thenCompose(TopicPartData::getCurrentOffset);
     }
 }
