@@ -55,10 +55,10 @@ public class InMemoryGroupedSubPartData implements SubPartData {
     }
 
     private CompletionStage<List<String>> getFailedGroups(QType qType) {
-        return CompletableFuture.supplyAsync(() -> {
-            return failedGroups.computeIfAbsent(qType, qType1 -> new LinkedList<>());
-            //return failedGroups.get(qType);
-        });
+        CompletableFuture<List<String>> future = new CompletableFuture<>();
+        List<String> currFailedGroups = failedGroups.computeIfAbsent(qType, qType1 -> new LinkedList<>());
+        future.complete(currFailedGroups);
+        return future;
     }
 
     @Override
@@ -117,7 +117,8 @@ public class InMemoryGroupedSubPartData implements SubPartData {
                 break;
         }
 
-        List<String> valuesComputed = values.toCompletableFuture().join();  //FIX this!
+        //reviewed - this is a blocking call but mostly safe
+        List<String> valuesComputed = values.toCompletableFuture().join();
         if (log.isDebugEnabled()) {
             List<String> groupIds = valuesComputed //FIX this!!
                 .stream()
@@ -130,7 +131,7 @@ public class InMemoryGroupedSubPartData implements SubPartData {
         return valuesComputed
             .stream()
             .map(subscriberGroupsMap::get)
-            .filter(group -> group.isUnlocked())
+            .filter(SubscriberGroup::isUnlocked)
             .filter(group -> qType.equals(group.getQType()))
             .filter(group -> groupQTypeIteratorTable.contains(group, qType))
             .map(subscriberGroup -> groupQTypeIteratorTable.get(subscriberGroup, qType))

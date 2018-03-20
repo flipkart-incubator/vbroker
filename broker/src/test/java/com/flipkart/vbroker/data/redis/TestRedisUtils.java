@@ -1,10 +1,6 @@
 package com.flipkart.vbroker.data.redis;
 
-import com.google.common.collect.Lists;
-import redis.embedded.RedisExecProvider;
 import redis.embedded.RedisServer;
-import redis.embedded.util.Architecture;
-import redis.embedded.util.OS;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,6 +19,7 @@ public class TestRedisUtils {
             e.printStackTrace();
         }
     }
+
     public static String getRedisUrl() {
         return redisUrl;
     }

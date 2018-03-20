@@ -61,12 +61,12 @@ public class SubscriberIterator implements MsgIterator<IterableMessage> {
     }
 
     @Override
-    public synchronized IterableMessage peek() {
+    public IterableMessage peek() {
         return currIterator.peek();
     }
 
     @Override
-    public synchronized boolean hasNext() {
+    public boolean hasNext() {
         log.debug("CurrIterator {} hasNext {}", currIterator, currIterator.hasNext());
         if (isIteratorHavingNext(currIterator)) {
             return true;
@@ -86,7 +86,7 @@ public class SubscriberIterator implements MsgIterator<IterableMessage> {
         return isIteratorHavingNext(currIterator);
     }
 
-    private synchronized boolean isIteratorHavingNext(PartSubscriberIterator<IterableMessage> iterator) {
+    private boolean isIteratorHavingNext(PartSubscriberIterator<IterableMessage> iterator) {
         //TODO: validate the commenting of checking isUnlocked()
         //the logic being that locking is checked in the sub iterators of this
         //here check for isUnlocked is required as we don't have to re-peek the message under execution
@@ -94,7 +94,7 @@ public class SubscriberIterator implements MsgIterator<IterableMessage> {
     }
 
     @Override
-    public synchronized IterableMessage next() {
+    public IterableMessage next() {
         log.debug("Moving to next message");
         return currIterator.next();
     }
@@ -105,7 +105,7 @@ public class SubscriberIterator implements MsgIterator<IterableMessage> {
     }
 
     @Override
-    public synchronized String name() {
+    public String name() {
         return currIterator.name();
     }
 }

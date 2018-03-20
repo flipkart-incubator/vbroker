@@ -33,9 +33,9 @@ public class CompletionStageUtils {
     public static <T> CompletableFuture<List<T>> listOfFuturesToFutureOfList(List<CompletableFuture<T>> futures) {
         return CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()]))
             .thenApply(v -> futures.stream()
-                    .map(CompletionStage::toCompletableFuture)
-                    .map(CompletableFuture::join)
-                    .collect(toList())
+                .map(CompletionStage::toCompletableFuture)
+                .map(CompletableFuture::join)
+                .collect(toList())
             );
     }
 }

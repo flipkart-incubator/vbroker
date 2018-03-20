@@ -1,7 +1,6 @@
 package com.flipkart.vbroker.client;
 
 import com.flipkart.vbroker.flatbuf.VRequest;
-import com.flipkart.vbroker.flatbuf.VResponse;
 import com.flipkart.vbroker.proto.*;
 import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.flipkart.vbroker.wrappers.Topic;
@@ -10,9 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.CompletionStage;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -52,7 +49,7 @@ public class TopicClient {
             });
     }
 
-    public CompletionStage<List<GetTopicResponse>> getTopics(List<Integer> topicIds){
+    public CompletionStage<List<GetTopicResponse>> getTopics(List<Integer> topicIds) {
         GetTopicsRequest getTopicsRequest = GetTopicsRequest.newBuilder()
             .addAllIds(topicIds)
             .build();

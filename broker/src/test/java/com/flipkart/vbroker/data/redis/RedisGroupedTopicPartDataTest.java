@@ -10,7 +10,9 @@ import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.ClusterServersConfig;
 import org.redisson.config.Config;
-import org.testng.annotations.*;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.util.Set;
@@ -68,7 +70,7 @@ public class RedisGroupedTopicPartDataTest {
         Set<String> groups = groupsFuture.toCompletableFuture().join();
         assertNotNull(groups);
         assertTrue(groups.contains(groupId));
-        assertTrue(groups.size()==1);
+        assertTrue(groups.size() == 1);
     }
 
     @AfterClass

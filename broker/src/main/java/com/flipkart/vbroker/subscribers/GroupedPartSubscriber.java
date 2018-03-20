@@ -6,8 +6,8 @@ import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.iterators.DataIterator;
-import com.flipkart.vbroker.iterators.PartSubscriberIterator;
 import com.flipkart.vbroker.iterators.MsgIterators;
+import com.flipkart.vbroker.iterators.PartSubscriberIterator;
 import com.google.common.collect.Sets;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -37,6 +37,7 @@ public class GroupedPartSubscriber implements PartSubscriber {
 
     /**
      * Call this method to keep subscriberGroups in sync with messageGroups at any point
+     * Note: This is blocking code internally and it is not part of the subscriber loop
      */
     @Override
     public void refreshSubscriberMetadata() {

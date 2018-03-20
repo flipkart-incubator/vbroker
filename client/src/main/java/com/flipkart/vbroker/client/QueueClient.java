@@ -1,7 +1,6 @@
 package com.flipkart.vbroker.client;
 
 import com.flipkart.vbroker.flatbuf.VRequest;
-import com.flipkart.vbroker.flatbuf.VResponse;
 import com.flipkart.vbroker.proto.*;
 import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.flipkart.vbroker.wrappers.Queue;
@@ -9,11 +8,8 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.net.PortUnreachableException;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.CompletionStage;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -25,7 +21,7 @@ public class QueueClient {
     private final Metadata metadata;
     private final NetworkClient networkClient;
 
-    public CompletionStage<List<CreateQueueResponse>> createQueues(List<Queue> queues){
+    public CompletionStage<List<CreateQueueResponse>> createQueues(List<Queue> queues) {
         List<ProtoQueue> protoQueues = queues.stream()
             .map(queue -> {
                 try {
@@ -53,7 +49,7 @@ public class QueueClient {
 
     }
 
-    public CompletionStage<List<GetQueueResponse>> getQueues(List<Integer> queueIds){
+    public CompletionStage<List<GetQueueResponse>> getQueues(List<Integer> queueIds) {
         GetQueuesRequest getQueuesRequest = GetQueuesRequest.newBuilder()
             .addAllIds(queueIds)
             .build();

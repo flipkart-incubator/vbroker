@@ -1,7 +1,6 @@
 package com.flipkart.vbroker.client;
 
 import com.flipkart.vbroker.flatbuf.VRequest;
-import com.flipkart.vbroker.flatbuf.VResponse;
 import com.flipkart.vbroker.proto.*;
 import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.flipkart.vbroker.wrappers.Subscription;
@@ -10,9 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.CompletionStage;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -25,7 +22,7 @@ public class SubscriptionClient {
     private final NetworkClient networkClient;
     private final Metadata metadata;
 
-    public CompletionStage<List<CreateSubscriptionResponse>> createSubscriptions(List<Subscription> subscriptions){
+    public CompletionStage<List<CreateSubscriptionResponse>> createSubscriptions(List<Subscription> subscriptions) {
         List<ProtoSubscription> protoSubscriptions = subscriptions.stream()
             .map(subscription -> {
                 try {
@@ -54,7 +51,7 @@ public class SubscriptionClient {
             });
     }
 
-    public CompletionStage<List<GetSubscriptionResponse>> getSubscriptions(List<TopicSubscription> topicSubscriptions){
+    public CompletionStage<List<GetSubscriptionResponse>> getSubscriptions(List<TopicSubscription> topicSubscriptions) {
         GetSubscriptionsRequest subscriptionsRequest = GetSubscriptionsRequest.newBuilder()
             .addAllSubscriptions(topicSubscriptions)
             .build();

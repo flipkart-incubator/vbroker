@@ -33,11 +33,11 @@ public class SubscriberGroup {
     private final TopicPartDataManager topicPartDataManager;
     private final Map<QType, AtomicInteger> currSeqNoMap = new ConcurrentHashMap<>();
     private final Map<QType, SubscriberGroupIterator<IterableMessage>> iteratorMap = new ConcurrentHashMap<>();
+    private final Object qTypeChangeMonitor = new Object();
     @Getter
     private volatile QType qType = QType.MAIN;
     @Getter
     private volatile AtomicBoolean locked = new AtomicBoolean(false);
-    private final Object qTypeChangeMonitor = new Object();
 
     private SubscriberGroup(MessageGroup messageGroup,
                             PartSubscription partSubscription,

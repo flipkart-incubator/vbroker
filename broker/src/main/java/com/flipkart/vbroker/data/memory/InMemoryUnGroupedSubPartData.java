@@ -53,10 +53,8 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
     }
 
     private CompletionStage<List<IterableMessage>> getFailedMessages(QType qType) {
-        return CompletableFuture.supplyAsync(() -> {
-            failedMessagesMap.computeIfAbsent(qType, qType1 -> new LinkedList<>());
-            return failedMessagesMap.get(qType);
-        });
+        return CompletableFuture.supplyAsync(() ->
+            failedMessagesMap.computeIfAbsent(qType, qType1 -> new LinkedList<>()));
     }
 
     @Override
@@ -102,7 +100,7 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
         currSeqNoMap.computeIfAbsent(qType, qType1 -> new AtomicInteger(0)).incrementAndGet();
     }
 
-    private IterableMessage getMessage(QType qType, int seqNo) {
+    private IterableMessage getFailedMessage(QType qType, int seqNo) {
         return getFailedMessages(qType).thenApply(iterableMessages -> iterableMessages.get(seqNo))
             .toCompletableFuture().join();
     }
@@ -171,7 +169,7 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
         }
 
         private IterableMessage getIterableMessage(int indexNo) {
-            return getMessage(qType, indexNo);
+            return getFailedMessage(qType, indexNo);
         }
 
         @Override
