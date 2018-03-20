@@ -21,15 +21,19 @@ public final class TopicPartitionFetchRequest extends Table {
 
     public static int createTopicPartitionFetchRequest(FlatBufferBuilder builder,
                                                        int partitionId,
-                                                       int noOfMessages) {
-        builder.startObject(2);
+                                                       int noOfMessages,
+                                                       int qType,
+                                                       int timeOutMs) {
+        builder.startObject(4);
+        TopicPartitionFetchRequest.addTimeOutMs(builder, timeOutMs);
+        TopicPartitionFetchRequest.addQType(builder, qType);
         TopicPartitionFetchRequest.addNoOfMessages(builder, noOfMessages);
         TopicPartitionFetchRequest.addPartitionId(builder, partitionId);
         return TopicPartitionFetchRequest.endTopicPartitionFetchRequest(builder);
     }
 
     public static void startTopicPartitionFetchRequest(FlatBufferBuilder builder) {
-        builder.startObject(2);
+        builder.startObject(4);
     }
 
     public static void addPartitionId(FlatBufferBuilder builder, int partitionId) {
@@ -38,6 +42,14 @@ public final class TopicPartitionFetchRequest extends Table {
 
     public static void addNoOfMessages(FlatBufferBuilder builder, int noOfMessages) {
         builder.addInt(1, noOfMessages, 0);
+    }
+
+    public static void addQType(FlatBufferBuilder builder, int qType) {
+        builder.addInt(2, qType, 0);
+    }
+
+    public static void addTimeOutMs(FlatBufferBuilder builder, int timeOutMs) {
+        builder.addInt(3, timeOutMs, 0);
     }
 
     public static int endTopicPartitionFetchRequest(FlatBufferBuilder builder) {
@@ -62,6 +74,16 @@ public final class TopicPartitionFetchRequest extends Table {
 
     public int noOfMessages() {
         int o = __offset(6);
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
+    }
+
+    public int qType() {
+        int o = __offset(8);
+        return o != 0 ? bb.getInt(o + bb_pos) : 0;
+    }
+
+    public int timeOutMs() {
+        int o = __offset(10);
         return o != 0 ? bb.getInt(o + bb_pos) : 0;
     }
 }

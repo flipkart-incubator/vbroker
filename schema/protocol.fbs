@@ -101,9 +101,13 @@ table ProduceRequest {
 
 // fetch request
 
+enum ProtoQType:int32 {MAIN=0, SIDELINE=1, RETRY_1=2, RETRY_2=3, RETRY_3=4}
+
 table TopicPartitionFetchRequest {
 	partitionId:int32;
 	noOfMessages:int32;
+	qType:ProtoQType;
+	timeOutMs:int32;
 }
 
 table TopicFetchRequest {

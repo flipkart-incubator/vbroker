@@ -81,6 +81,17 @@ public class SubscriberGroup {
     }
 
     /**
+     * @return the offset of the group for the current qType
+     */
+    public Integer getOffset() {
+        return currSeqNoMap.get(qType).get();
+    }
+
+    public void setOffset(int offset) {
+        currSeqNoMap.get(qType).set(offset);
+    }
+
+    /**
      * method to both unlock the group and advance the iterator for the qType
      * this is required to handle the case where QType is changed while unlocking
      */
@@ -142,6 +153,10 @@ public class SubscriberGroup {
         return iteratorMap.get(qType);
     }
 
+    public SubscriberGroupIterator<IterableMessage> newIterator(QType qType, int seqNoFrom) {
+        return new SubscriberGroupIteratorImpl(qType, this, seqNoFrom);
+    }
+
     public String getGroupId() {
         return messageGroup.getGroupId();
     }
@@ -155,12 +170,22 @@ public class SubscriberGroup {
         private final QType qType;
         private final SubscriberGroup subscriberGroup;
         private final DataIterator<Message> groupIterator;
+        private final boolean manualSeqNoManagement;
 
         SubscriberGroupIteratorImpl(QType qType, SubscriberGroup subscriberGroup) {
             log.trace("Creating new subscriberGroupIterator for qType {} and group {}", qType, subscriberGroup.getGroupId());
             this.qType = qType;
             this.subscriberGroup = subscriberGroup;
             this.groupIterator = topicPartDataManager.getIterator(topicPartition, getGroupId(), getCurrSeqNo(qType));
+            this.manualSeqNoManagement = false;
+        }
+
+        SubscriberGroupIteratorImpl(QType qType, SubscriberGroup subscriberGroup, int seqNoFrom) {
+            log.trace("Creating new subscriberGroupIterator for qType {} and group {}", qType, subscriberGroup.getGroupId());
+            this.qType = qType;
+            this.subscriberGroup = subscriberGroup;
+            this.groupIterator = topicPartDataManager.getIterator(topicPartition, getGroupId(), seqNoFrom);
+            this.manualSeqNoManagement = true;
         }
 
         @Override
@@ -180,8 +205,10 @@ public class SubscriberGroup {
         public GroupedIterableMessage next() {
             log.debug("Moving to next message");
             GroupedIterableMessage messageWithGroup = GroupedIterableMessage.newInstance(groupIterator.next(), subscriberGroup);
-            incrementCurrSeqNo(qType);
-            log.info("Incremented seqNo for group {} to {}", subscriberGroup.getGroupId(), getCurrSeqNo(qType));
+            if (manualSeqNoManagement) {
+                incrementCurrSeqNo(qType);
+                log.info("Incremented seqNo for group {} to {}", subscriberGroup.getGroupId(), getCurrSeqNo(qType));
+            }
             return messageWithGroup;
         }
 

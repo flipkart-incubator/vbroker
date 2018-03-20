@@ -13,6 +13,7 @@ import com.flipkart.vbroker.subscribers.SubscriberGroup;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -78,6 +79,24 @@ public class InMemorySubPartDataManager implements SubPartDataManager {
     public DataIterator<IterableMessage> getIterator(PartSubscription partSubscription, QType qType) {
         return getSubPartDataAsync(partSubscription).thenApplyAsync(subPartData -> subPartData.getIterator(qType))
             .toCompletableFuture().join(); //TODO: fix this!
+    }
+
+    @Override
+    public List<IterableMessage> poll(PartSubscription partSubscription, QType qType, int maxRecords, long pollTimeMs) {
+        return getSubPartDataAsync(partSubscription).thenApply(subPartData ->
+            subPartData.poll(qType, maxRecords, pollTimeMs)).toCompletableFuture().join();
+    }
+
+    @Override
+    public CompletionStage<Void> commitOffset(PartSubscription partSubscription, String group, int offset) {
+        return getSubPartDataAsync(partSubscription).thenApply(subPartData ->
+            subPartData.commitOffset(group, offset)).toCompletableFuture().join();
+    }
+
+    @Override
+    public CompletionStage<Integer> getOffset(PartSubscription partSubscription, String group) {
+        return getSubPartDataAsync(partSubscription).thenApply(subPartData ->
+            subPartData.getOffset(group)).toCompletableFuture().join();
     }
 
     @Override

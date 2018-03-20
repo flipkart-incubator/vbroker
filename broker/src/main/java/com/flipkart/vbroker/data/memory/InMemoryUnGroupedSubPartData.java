@@ -88,6 +88,21 @@ public class InMemoryUnGroupedSubPartData implements SubPartData {
         return newUnGroupedIterator(qType, iterator);
     }
 
+    @Override
+    public List<IterableMessage> poll(QType qType, int maxRecords, long pollTimeMs) {
+        throw new NotImplementedException("Not yet implemented for unGrouped");
+    }
+
+    @Override
+    public CompletionStage<Void> commitOffset(String group, int offset) {
+        throw new NotImplementedException("Not yet implemented for unGrouped");
+    }
+
+    @Override
+    public CompletionStage<Integer> getOffset(String group) {
+        throw new NotImplementedException("Not yet implemented for unGrouped");
+    }
+
     private UnGroupedIterator newUnGroupedIterator(QType qType, DataIterator<Message> msgIterator) {
         return new UnGroupedIterator(qType, partSubscription, msgIterator);
     }

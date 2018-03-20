@@ -3,7 +3,6 @@ package com.flipkart.vbroker.handlers;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.flatbuf.*;
-import com.flipkart.vbroker.iterators.MsgIterator;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
 import com.flipkart.vbroker.subscribers.IterableMessage;
@@ -18,10 +17,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.ByteBuffer;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
@@ -104,7 +103,11 @@ public class FetchRequestHandler implements RequestHandler {
         log.info("Handling FetchRequest for {} messages for topic {} and partition {}",
             noOfMessagesToFetch, topic.id(), partitionId);
 
-        int[] messages = buildMessages(builder, partSubscription, noOfMessagesToFetch);
+        int[] messages = buildMessages(builder,
+            partSubscription,
+            getQType(topicPartitionFetchRequest.qType()),
+            noOfMessagesToFetch,
+            topicPartitionFetchRequest.timeOutMs());
         log.debug("Writing {} messages for topic {} and partition {} in FetchResponse",
             messages.length, topicPartition.getId(), partitionId);
         int messagesVector = MessageSet.createMessagesVector(builder, messages);
@@ -118,21 +121,29 @@ public class FetchRequestHandler implements RequestHandler {
             messageSet);
     }
 
+    private QType getQType(int protoQType) {
+        return QType.getQType(protoQType);
+    }
+
     private int[] buildMessages(FlatBufferBuilder builder,
                                 PartSubscription partSubscription,
-                                int noOfMessagesToFetch) {
+                                QType qType,
+                                int noOfMessagesToFetch,
+                                int reqPollTimeoutMs) {
         PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription).toCompletableFuture().join();
-        List<Integer> messages = new LinkedList<>();
+        int actualPollTimeoutMs = getPollTimeoutMs(reqPollTimeoutMs);
+        List<IterableMessage> iterableMessages = partSubscriber.poll(qType, noOfMessagesToFetch, actualPollTimeoutMs);
+        List<Integer> messagePosList = iterableMessages.stream()
+            .map(iterableMessage -> buildMessage(builder, iterableMessage.getMessage()))
+            .collect(Collectors.toList());
+        return Ints.toArray(messagePosList);
+    }
 
-        int i = 0;
-        MsgIterator<IterableMessage> iterator = partSubscriber.iterator(QType.MAIN);
-        while (iterator.hasNext() && i < noOfMessagesToFetch) {
-            Message message = iterator.peek().getMessage();
-            messages.add(buildMessage(builder, message));
-            iterator.next();
-        }
-
-        return Ints.toArray(messages);
+    private int getPollTimeoutMs(int reqPollTimeoutMs) {
+        final int maxPollTimeoutMs = 5000;
+        int actualPollTimeoutMs = Math.min(maxPollTimeoutMs, reqPollTimeoutMs);
+        actualPollTimeoutMs = Math.max(actualPollTimeoutMs, 1); //should be at-least 1ms
+        return actualPollTimeoutMs;
     }
 
     private int buildMessage(FlatBufferBuilder builder, Message message) {

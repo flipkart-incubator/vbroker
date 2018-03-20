@@ -70,7 +70,9 @@ public class SubscriberDaemon implements Runnable {
                             int topicPartitionFetchRequest = TopicPartitionFetchRequest.createTopicPartitionFetchRequest(
                                 builder,
                                 partSubscriptions.get(ps).getId(),
-                                reqNoOfMessages);
+                                reqNoOfMessages,
+                                ProtoQType.MAIN,
+                                100);
                             tpFetchRequests[ps] = topicPartitionFetchRequest;
                         }
 

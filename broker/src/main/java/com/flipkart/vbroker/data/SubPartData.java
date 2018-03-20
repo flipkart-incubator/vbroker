@@ -6,6 +6,7 @@ import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.flipkart.vbroker.subscribers.QType;
 import com.flipkart.vbroker.subscribers.SubscriberGroup;
 
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletionStage;
 
@@ -22,6 +23,20 @@ public interface SubPartData {
     DataIterator<IterableMessage> getIterator(String groupId);
 
     DataIterator<IterableMessage> getIterator(QType qType);
+
+    /**
+     * blocking call to poll messages
+     *
+     * @param qType      to get messages for
+     * @param maxRecords to consume
+     * @param pollTimeMs to poll - either of maxRecords or pollTimeMs will bound the poll call
+     * @return the list of messages polled
+     */
+    List<IterableMessage> poll(QType qType, int maxRecords, long pollTimeMs);
+
+    CompletionStage<Void> commitOffset(String group, int offset);
+
+    CompletionStage<Integer> getOffset(String group);
 
     CompletionStage<Integer> getLag();
 }
