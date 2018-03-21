@@ -9,6 +9,7 @@ import com.flipkart.vbroker.proto.CreateTopicResponse;
 import com.flipkart.vbroker.proto.ProtoTopic;
 import com.flipkart.vbroker.proto.TopicCategory;
 import com.flipkart.vbroker.server.VBrokerServer;
+import com.flipkart.vbroker.utils.DummyEntities;
 import com.flipkart.vbroker.wrappers.Topic;
 import com.xebialabs.restito.semantics.Action;
 import com.xebialabs.restito.server.StubServer;
@@ -20,10 +21,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import static com.flipkart.vbroker.app.MockHttp.*;
@@ -127,6 +125,25 @@ public class AbstractVBrokerBaseTest {
         return Action.delay((int) sleepTime);
     }
 
+    VBClientConfig getVbClientConfig() {
+        Properties properties = new Properties();
+
+        properties.setProperty("broker.host", "localhost");
+        properties.setProperty("broker.port", BROKER_PORT + "");
+        properties.setProperty("batch.size", "10240");
+        properties.setProperty("linger.time.ms", String.valueOf(10));
+        properties.setProperty("metadata.expiry.time.ms", "6000");
+
+        return new VBClientConfig(properties);
+    }
+
+    public Topic createTopic(boolean grouped) {
+        if (grouped) {
+            return DummyEntities.groupedTopic;
+        }
+        return DummyEntities.unGroupedTopic;
+    }
+
     public Topic createRandomTopic(boolean grouped) {
         ProtoTopic protoTopic = ProtoTopic.newBuilder()
             .setId(new Random().nextInt())
@@ -138,12 +155,8 @@ public class AbstractVBrokerBaseTest {
             .build();
         Topic topic = new Topic(protoTopic);
 
-        try {
-            TopicClient topicClient = new TopicClient(new NetworkClientImpl(), new MetadataImpl(VBClientConfig.newConfig("client.properties")));
-            List<CreateTopicResponse> createTopicResponses = topicClient.createTopics(Collections.singletonList(topic)).toCompletableFuture().join();
-            return topic;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        TopicClient topicClient = new TopicClient(new NetworkClientImpl(), new MetadataImpl(getVbClientConfig()));
+        List<CreateTopicResponse> createTopicResponses = topicClient.createTopics(Collections.singletonList(topic)).toCompletableFuture().join();
+        return topic;
     }
 }

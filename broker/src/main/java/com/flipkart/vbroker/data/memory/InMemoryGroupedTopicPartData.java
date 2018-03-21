@@ -5,28 +5,81 @@ import com.flipkart.vbroker.data.TopicPartData;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.flatbuf.Message;
 import com.flipkart.vbroker.iterators.DataIterator;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
+import static java.util.Objects.nonNull;
 
 @Slf4j
 public class InMemoryGroupedTopicPartData implements TopicPartData {
-    private final Map<String, List<Message>> topicPartitionData = new LinkedHashMap<>();
+    private final ConcurrentMap<String, List<Message>> topicPartitionData = new ConcurrentHashMap<>();
 
-    public synchronized CompletionStage<MessageMetadata> addMessage(Message message) {
-        return CompletableFuture.supplyAsync(() -> {
-            getMessages(message.groupId()).add(message);
-            log.trace("Added message with msg_id {} and group_id {} to the map", message.messageId(), message.groupId());
-            log.trace("Group messages: {}", topicPartitionData.get(message.groupId()));
-            return new MessageMetadata(message.messageId(),
-                message.topicId(),
-                message.partitionId(),
-                new Random().nextInt());
-        });
+    private final BlockingQueue<MessageWithFuture> incomingMsgQueue = new ArrayBlockingQueue<>(10000);
+    private volatile boolean isQueueRunning = true;
+    private final CountDownLatch queueRunningLatch = new CountDownLatch(1);
+
+    @AllArgsConstructor
+    @Getter
+    private class MessageWithFuture {
+        private final Message message;
+        private final CompletableFuture<MessageMetadata> future;
+    }
+
+    InMemoryGroupedTopicPartData() {
+        new Thread(() -> {
+            MessageWithFuture messageWithFuture;
+            while (isQueueRunning) {
+                while (nonNull(messageWithFuture = incomingMsgQueue.peek())) {
+                    Message message = messageWithFuture.getMessage();
+                    log.info("En-queued up message with msg_id {} and group_id {} to the map", message.messageId(), message.groupId());
+                    try {
+                        MessageMetadata messageMetadata = addMessageBlocking(message);
+                        messageWithFuture.getFuture().complete(messageMetadata);
+                    } catch (Throwable throwable) {
+                        messageWithFuture.getFuture().completeExceptionally(throwable);
+                    }
+                    incomingMsgQueue.poll();
+                }
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    log.error("Error in sleeping", e);
+                }
+            }
+            queueRunningLatch.countDown();
+        }).start();
+    }
+
+    @Override
+    public void close() throws Exception {
+        isQueueRunning = false;
+        queueRunningLatch.await();
+    }
+
+    public CompletionStage<MessageMetadata> addMessage(Message message) {
+        MessageWithFuture messageWithFuture = new MessageWithFuture(message, new CompletableFuture<>());
+        incomingMsgQueue.offer(messageWithFuture);
+        log.info("En-queued up message with msg_id {} and group_id {} to the map", message.messageId(), message.groupId());
+        return messageWithFuture.getFuture();
+    }
+
+    private MessageMetadata addMessageBlocking(Message message) {
+        getMessages(message.groupId()).add(message);
+        log.info("Added message with msg_id {} and group_id {} to the map", message.messageId(), message.groupId());
+        return new MessageMetadata(message.messageId(),
+            message.topicId(),
+            message.partitionId(),
+            new Random().nextInt());
     }
 
     public CompletionStage<Set<String>> getUniqueGroups() {
@@ -45,6 +98,10 @@ public class InMemoryGroupedTopicPartData implements TopicPartData {
             @Override
             public Message peek() {
                 Message message = topicPartitionData.get(group).get(index.get());
+                log.info("Group {} messages: {}", message.groupId(),
+                    topicPartitionData.get(group).stream()
+                        .map(Message::messageId).collect(Collectors.toList())
+                );
                 log.info("Peeking message {} with group {} at seqNo {}", message.messageId(), message.groupId(), index);
                 return message;
             }
@@ -85,7 +142,7 @@ public class InMemoryGroupedTopicPartData implements TopicPartData {
         throw new UnsupportedOperationException("Global offset is not defined for grouped topic-partition");
     }
 
-    private synchronized List<Message> getMessages(String group) {
-        return topicPartitionData.computeIfAbsent(group, key -> new CopyOnWriteArrayList<>());
+    private List<Message> getMessages(String group) {
+        return topicPartitionData.computeIfAbsent(group, group1 -> new ArrayList<>());
     }
 }

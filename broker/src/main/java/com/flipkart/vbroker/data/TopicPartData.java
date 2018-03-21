@@ -7,7 +7,7 @@ import com.flipkart.vbroker.iterators.DataIterator;
 import java.util.Set;
 import java.util.concurrent.CompletionStage;
 
-public interface TopicPartData {
+public interface TopicPartData extends AutoCloseable {
 
     CompletionStage<MessageMetadata> addMessage(Message message);
 
@@ -20,4 +20,9 @@ public interface TopicPartData {
     DataIterator<Message> iteratorFrom(int seqNoFrom);
 
     CompletionStage<Integer> getCurrentOffset();
+
+    @Override
+    default void close() throws Exception {
+        //do nothing
+    }
 }

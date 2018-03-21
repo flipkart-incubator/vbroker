@@ -15,7 +15,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
@@ -39,12 +38,12 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
 
     @Test
     public void shouldProduceAndConsumeMessage_InOrderForSameGroup_WithSlowDestinations() throws InterruptedException, MalformedURLException {
-        produceAndConsumeMessages_ValidateConsumingSequence(MockURI.SLEEP_200, 4000);
+        produceAndConsumeMessages_ValidateConsumingSequence(MockURI.SLEEP_200, 6000);
     }
 
     private void produceAndConsumeMessages_ValidateConsumingSequence(MockURI mockURI, int sleepTimeMs) throws InterruptedException, MalformedURLException {
         int noOfRecords = 3;
-        Topic topic = createRandomTopic(true);
+        Topic topic = createTopic(true);
 
         List<ProducerRecord> records = IntStream.range(0, noOfRecords)
             .mapToObj(i -> newProducerRecord(topic, "group_0", mockURI, getMsgBody(payloadPrefix, i).getBytes()))
@@ -89,7 +88,7 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
         int noOfRecords = 10;
         int noOfGroups = 50;
 
-        Topic topic = createRandomTopic(true);
+        Topic topic = createTopic(true);
         byte[] payload = "This is a sample message".getBytes();
 
         List<ProducerRecord> allRecords = Lists.newArrayList();
@@ -125,7 +124,7 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
     @Test
     public void shouldProduceAndConsumeMessages_WithCallback() throws InterruptedException {
         int noOfRecords = 3;
-        Topic topic = createRandomTopic(true);
+        Topic topic = createTopic(true);
 
         List<ProducerRecord> records = IntStream.range(0, noOfRecords)
             .mapToObj(i -> newProducerRecordWithCallback(topic, "group_0",
@@ -151,7 +150,7 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
     @Test
     public void shouldProduceAndConsumeMessages_MultipleMessagesOfSameTopic_UnGrouped() throws InterruptedException {
         int noOfRecords = 5;
-        Topic topic = createRandomTopic(false);
+        Topic topic = createTopic(false);
         byte[] payload = "This is a sample message".getBytes();
         List<ProducerRecord> records = IntStream.range(0, noOfRecords)
             .mapToObj(i -> newProducerRecord(topic, "group_" + i, payload))
@@ -208,18 +207,6 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
 
             resultFuture.join();
         }
-    }
-
-    private VBClientConfig getVbClientConfig() {
-        Properties properties = new Properties();
-
-        properties.setProperty("broker.host", "localhost");
-        properties.setProperty("broker.port", BROKER_PORT + "");
-        properties.setProperty("batch.size", "10240");
-        properties.setProperty("linger.time.ms", String.valueOf(10));
-        properties.setProperty("metadata.expiry.time.ms", "6000");
-
-        return new VBClientConfig(properties);
     }
 
     private ProducerRecord newProducerRecord(Topic topic,

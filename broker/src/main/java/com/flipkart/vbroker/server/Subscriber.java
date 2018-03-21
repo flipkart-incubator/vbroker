@@ -70,7 +70,7 @@ public class Subscriber implements Runnable {
                         if (!consumed) {
                             notConsumedCount++;
                             if (notConsumedCount >= nonConsumedCountThreshold) {
-                                log.info("Sleeping for {}ms as in {} tries no messages were consumed",
+                                log.debug("Sleeping for {}ms as in {} tries no messages were consumed",
                                     pollTimeMs, nonConsumedCountThreshold);
                                 notConsumedCount = 0;
                                 Thread.sleep(pollTimeMs);
