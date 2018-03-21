@@ -1,5 +1,6 @@
 package com.flipkart.vbroker.client;
 
+import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.wrappers.Topic;
 
@@ -15,11 +16,14 @@ public interface Metadata {
 
     public TopicPartition getTopicPartition(int topicId, int partitionId);
 
-    public List<TopicPartition> getTopicPartitions(short topicId);
+    public List<TopicPartition> getTopicPartitions(int topicId);
 
     public List<TopicPartition> getTopicPartitions(Node node);
 
     public List<Node> getClusterNodes();
 
     public Node getLeaderNode(TopicPartition topicPartition);
+
+    //subscriptions
+    public List<PartSubscription> getPartSubscriptions(int topicId, int subscriptionId);
 }

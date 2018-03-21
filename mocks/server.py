@@ -37,6 +37,11 @@ def error_messages():
     # print request.data
     return "error", status.HTTP_500_INTERNAL_SERVER_ERROR
 
+@app.route("/errors/404", methods=['POST'])
+def error_messages_404():
+    # print request.data
+    return "error", status.HTTP_404_NOT_FOUND
+
 if __name__ == '__main__':
     http_server = HTTPServer(WSGIContainer(app))
     port = 12000

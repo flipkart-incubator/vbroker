@@ -64,4 +64,17 @@ public class RecordUtils {
             builder.createByteVector(payload)
         );
     }
+
+    public static ConsumerRecord newConsumerRecord(Message message) {
+        return ConsumerRecord.builder()
+            .messageId(message.messageId())
+            .groupId(message.groupId())
+            .crc(message.crc())
+            .version(message.version())
+            .seqNo(message.seqNo())
+            .topicId(message.topicId())
+            .attributes(message.attributes())
+            .payload(message.bodyPayloadAsByteBuffer())
+            .build();
+    }
 }

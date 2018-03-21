@@ -22,10 +22,14 @@ public class VBrokerProducerClient {
         log.info("Configs: ", config);
 
         Topic groupedTopic = DummyEntities.groupedTopic;
+        produceDummyMessages(config, groupedTopic, "http://localhost:12000/messages");
+    }
+
+    public static void produceDummyMessages(VBClientConfig config, Topic topic, String httpUrl) {
         byte[] payload = "This is a sample message".getBytes();
 
         List<ProducerRecord> records = IntStream.range(0, 1)
-            .mapToObj(i -> getProducerRecord(groupedTopic, "group_" + i, payload))
+            .mapToObj(i -> getProducerRecord(topic, "group_" + i, httpUrl, payload))
             .collect(Collectors.toList());
 
         try (Producer producer = new VBrokerProducer(config)) {
@@ -53,6 +57,7 @@ public class VBrokerProducerClient {
 
     private static ProducerRecord getProducerRecord(Topic topic,
                                                     String group,
+                                                    String httpUrl,
                                                     byte[] payload) {
         Message message = MessageStore.getRandomMsg(group);
         return ProducerRecord.builder()
@@ -63,8 +68,9 @@ public class VBrokerProducerClient {
             .seqNo(1)
             .topicId(topic.id())
             .attributes(201)
+            .httpUri(httpUrl)
             //.httpUri("http://localhost:12000/errors/500")
-            .httpUri("http://localhost:12000/messages")
+            //.httpUri("http://localhost:12000/messages")
             .httpMethod(ProducerRecord.HttpMethod.POST)
             .callbackTopicId(topic.id())
             .callbackHttpUri("http://localhost:12000/messages")
