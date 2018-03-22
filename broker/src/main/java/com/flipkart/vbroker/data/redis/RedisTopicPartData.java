@@ -4,6 +4,7 @@ import com.flipkart.vbroker.exceptions.NotImplementedException;
 import com.flipkart.vbroker.flatbuf.HttpHeader;
 import com.flipkart.vbroker.flatbuf.Message;
 import com.flipkart.vbroker.iterators.DataIterator;
+import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RList;
@@ -46,7 +47,7 @@ public class RedisTopicPartData {
     }
 
     ByteBuffer buildMessage(Message message) {
-        FlatBufferBuilder builder = new FlatBufferBuilder();
+        FlatBufferBuilder builder = FlatbufUtils.newBuilder();
         int httpHeader = HttpHeader.createHttpHeader(builder,
             builder.createString(message.headers(0).key()),
             builder.createString(message.headers(0).value()));

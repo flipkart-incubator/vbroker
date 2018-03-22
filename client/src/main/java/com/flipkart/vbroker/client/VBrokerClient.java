@@ -5,6 +5,7 @@ import com.flipkart.vbroker.flatbuf.*;
 import com.flipkart.vbroker.handlers.ResponseHandlerFactory;
 import com.flipkart.vbroker.protocol.Request;
 import com.flipkart.vbroker.utils.DummyEntities;
+import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.flipkart.vbroker.utils.TopicUtils;
 import com.flipkart.vbroker.wrappers.Topic;
 import com.google.flatbuffers.FlatBufferBuilder;
@@ -41,7 +42,7 @@ public class VBrokerClient {
 
             Channel channel = bootstrap.connect(config.getBrokerHost(), config.getBrokerPort()).sync().channel();
 
-            FlatBufferBuilder builder = new FlatBufferBuilder();
+            FlatBufferBuilder builder = FlatbufUtils.newBuilder();
 
             List<Topic> topics = new LinkedList<>();
             topics.add(DummyEntities.unGroupedTopic);

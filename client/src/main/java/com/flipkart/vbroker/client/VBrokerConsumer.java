@@ -2,6 +2,7 @@ package com.flipkart.vbroker.client;
 
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.flatbuf.*;
+import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.flipkart.vbroker.utils.RandomUtils;
 import com.flipkart.vbroker.wrappers.Subscription;
 import com.google.common.base.Charsets;
@@ -45,11 +46,16 @@ public class VBrokerConsumer implements Consumer {
 
     @Override
     public CompletionStage<List<ConsumerRecord>> poll(int maxRecords, int timeoutMs) {
-        FlatBufferBuilder builder = new FlatBufferBuilder();
-        int[] topicFetchRequests = new int[1];
+        FlatBufferBuilder builder = FlatbufUtils.newBuilder();
 
-        for (int s = 0; s < subscriptions.size(); s++) {
-            Subscription subscription = subscriptions.get(s);
+        //copying the subscriptions for each poll() as we don't want an update to subscriptions affecting the current poll()
+        //essentially making it immutable
+        List<Subscription> currSubscriptions = Lists.newArrayList();
+        currSubscriptions.addAll(subscriptions);
+
+        int[] topicFetchRequests = new int[currSubscriptions.size()];
+        for (int s = 0; s < currSubscriptions.size(); s++) {
+            Subscription subscription = currSubscriptions.get(s);
             List<PartSubscription> partSubscriptions = metadata.getPartSubscriptions(subscription.topicId(), subscription.id());
 
             int[] tpFetchRequests = new int[partSubscriptions.size()];

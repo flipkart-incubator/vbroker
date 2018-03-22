@@ -2,7 +2,7 @@ package com.flipkart.vbroker.client;
 
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.flatbuf.*;
-import com.flipkart.vbroker.utils.FlatBuffers;
+import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.flipkart.vbroker.utils.RandomUtils;
 import com.google.common.primitives.Ints;
 import com.google.flatbuffers.FlatBufferBuilder;
@@ -128,7 +128,7 @@ public class Sender implements Runnable {
     }
 
     private VRequest newVRequest(RecordBatch recordBatch) {
-        FlatBufferBuilder builder = FlatBuffers.newBuilder();
+        FlatBufferBuilder builder = FlatbufUtils.newBuilder();
 
         List<TopicPartReq> topicPartReqs =
             recordBatch.getTopicPartitionsWithRecords()

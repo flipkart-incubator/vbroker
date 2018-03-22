@@ -93,7 +93,7 @@ public class DummyServiceTests {
 
         Channel channel = bootstrap.connect(config.getBrokerHost(), config.getBrokerPort()).sync().channel();
 
-        FlatBufferBuilder builder = new FlatBufferBuilder();
+        FlatBufferBuilder builder = FlatbufUtils.newBuilder();
 
         int topicName = builder.createString("newTopic2");
 
@@ -122,7 +122,7 @@ public class DummyServiceTests {
 
         Channel channel = bootstrap.connect(config.getBrokerHost(), config.getBrokerPort()).sync().channel();
 
-        FlatBufferBuilder builder = new FlatBufferBuilder();
+        FlatBufferBuilder builder = FlatbufUtils.newBuilder();
         int nameOffset = builder.createString("varadhi-sub2");
         int httpUriOffset = builder.createString("http://localhost:8081");
         int httpMethodOffset = builder.createString("POST");

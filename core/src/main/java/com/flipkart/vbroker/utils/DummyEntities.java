@@ -14,7 +14,7 @@ public class DummyEntities {
     public static Subscription unGroupedSubscription;
 
     static {
-        FlatBufferBuilder topicBuilder = new FlatBufferBuilder();
+        FlatBufferBuilder topicBuilder = FlatbufUtils.newBuilder();
         groupedTopic = new Topic(ProtoTopic.newBuilder()
             .setId(101)
             .setName("grouped_topic_1")

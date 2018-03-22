@@ -4,6 +4,7 @@ import com.flipkart.vbroker.client.MessageStore;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.flatbuf.*;
 import com.flipkart.vbroker.utils.DummyEntities;
+import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.flipkart.vbroker.utils.TopicUtils;
 import com.flipkart.vbroker.wrappers.Topic;
 import com.google.flatbuffers.FlatBufferBuilder;
@@ -29,7 +30,7 @@ public class VRequestCodecTest {
 
     private ByteBuffer getSampleProduceRequestAsFlatbuf() {
 
-        FlatBufferBuilder builder = new FlatBufferBuilder();
+        FlatBufferBuilder builder = FlatbufUtils.newBuilder();
 
         List<Topic> topics = new LinkedList<>();
         topics.add(DummyEntities.groupedTopic);

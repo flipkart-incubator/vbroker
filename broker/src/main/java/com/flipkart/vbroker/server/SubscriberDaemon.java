@@ -4,6 +4,7 @@ import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.flatbuf.*;
 import com.flipkart.vbroker.protocol.Request;
 import com.flipkart.vbroker.services.SubscriptionService;
+import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.flipkart.vbroker.wrappers.Subscription;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.bootstrap.Bootstrap;
@@ -53,7 +54,7 @@ public class SubscriberDaemon implements Runnable {
                 while (running.get()) {
                     Thread.sleep(pollTimeMs);
 
-                    FlatBufferBuilder builder = new FlatBufferBuilder();
+                    FlatBufferBuilder builder = FlatbufUtils.newBuilder();
 
                     List<Subscription> subscriptionSet = subscriptionService.getAllSubscriptions().toCompletableFuture().join();
                     List<Subscription> subscriptions = new ArrayList<>(subscriptionSet);

@@ -24,15 +24,8 @@ public class InMemoryGroupedTopicPartData implements TopicPartData {
     private final ConcurrentMap<String, List<Message>> topicPartitionData = new ConcurrentHashMap<>();
 
     private final BlockingQueue<MessageWithFuture> incomingMsgQueue = new ArrayBlockingQueue<>(10000);
-    private volatile boolean isQueueRunning = true;
     private final CountDownLatch queueRunningLatch = new CountDownLatch(1);
-
-    @AllArgsConstructor
-    @Getter
-    private class MessageWithFuture {
-        private final Message message;
-        private final CompletableFuture<MessageMetadata> future;
-    }
+    private volatile boolean isQueueRunning = true;
 
     InMemoryGroupedTopicPartData() {
         new Thread(() -> {
@@ -154,5 +147,12 @@ public class InMemoryGroupedTopicPartData implements TopicPartData {
 
     private List<Message> getMessages(String group) {
         return topicPartitionData.computeIfAbsent(group, group1 -> new ArrayList<>());
+    }
+
+    @AllArgsConstructor
+    @Getter
+    private class MessageWithFuture {
+        private final Message message;
+        private final CompletableFuture<MessageMetadata> future;
     }
 }

@@ -2,6 +2,7 @@ package com.flipkart.vbroker.client;
 
 import com.flipkart.vbroker.flatbuf.Message;
 import com.flipkart.vbroker.flatbuf.MessageSet;
+import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.google.common.io.Files;
 import com.google.flatbuffers.FlatBufferBuilder;
 import io.netty.buffer.Unpooled;
@@ -21,7 +22,7 @@ public class MessageStoreTest {
 
     @Test
     public void shouldEncodeAndDecodeReturnSameMsg() throws Exception {
-        FlatBufferBuilder builder_1 = new FlatBufferBuilder();
+        FlatBufferBuilder builder_1 = FlatbufUtils.newBuilder();
         builder_1.finish(MessageStore.getSampleMsg(builder_1));
         ByteBuffer byteBuffer = builder_1.dataBuffer();
 
@@ -60,12 +61,12 @@ public class MessageStoreTest {
 
     @Test
     public void shouldReEncodeFinishedFlatBuff_IntoNewFlatBuff() {
-        FlatBufferBuilder builder_1 = new FlatBufferBuilder();
+        FlatBufferBuilder builder_1 = FlatbufUtils.newBuilder();
         builder_1.finish(MessageStore.getSampleMsg(builder_1));
         ByteBuffer byteBuffer = builder_1.dataBuffer();
         Message message_1 = Message.getRootAsMessage(byteBuffer);
 
-        FlatBufferBuilder builder_2 = new FlatBufferBuilder();
+        FlatBufferBuilder builder_2 = FlatbufUtils.newBuilder();
         String msgId = UUID.randomUUID().toString();
         int messageId = builder_2.createString(msgId);
         int groupId = builder_2.createString(msgId);
@@ -82,12 +83,12 @@ public class MessageStoreTest {
 
     @Test
     public void shouldConstructMessageSet_FromExistingBuiltFlatBuffMessage() {
-        FlatBufferBuilder builder_1 = new FlatBufferBuilder();
+        FlatBufferBuilder builder_1 = FlatbufUtils.newBuilder();
         builder_1.finish(MessageStore.getSampleMsg(builder_1));
         ByteBuffer byteBuffer_1 = builder_1.dataBuffer();
         Message message_1 = Message.getRootAsMessage(byteBuffer_1);
 
-        FlatBufferBuilder builder_2 = new FlatBufferBuilder();
+        FlatBufferBuilder builder_2 = FlatbufUtils.newBuilder();
 
         int[] messageOffsets = new int[1];
         //messageOffsets[0] = builder_2.createByteVector(ByteBufUtils.getBytes(byteBuffer_1));

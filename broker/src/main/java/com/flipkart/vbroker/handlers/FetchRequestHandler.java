@@ -8,6 +8,7 @@ import com.flipkart.vbroker.services.TopicService;
 import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.flipkart.vbroker.subscribers.PartSubscriber;
 import com.flipkart.vbroker.subscribers.QType;
+import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.flipkart.vbroker.wrappers.Subscription;
 import com.flipkart.vbroker.wrappers.Topic;
 import com.google.common.primitives.Ints;
@@ -39,7 +40,7 @@ public class FetchRequestHandler implements RequestHandler {
         assert nonNull(fetchRequest);
 
         return CompletableFuture.supplyAsync(() -> {
-            FlatBufferBuilder builder = new FlatBufferBuilder();
+            FlatBufferBuilder builder = FlatbufUtils.newBuilder();
             int fetchResponse = buildFetchResponse(fetchRequest, builder);
             int vResponse = VResponse.createVResponse(builder,
                 vRequest.correlationId(),

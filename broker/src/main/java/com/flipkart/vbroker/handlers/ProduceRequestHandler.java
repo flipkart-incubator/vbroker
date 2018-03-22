@@ -5,6 +5,7 @@ import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.flatbuf.*;
 import com.flipkart.vbroker.services.ProducerService;
 import com.flipkart.vbroker.services.TopicService;
+import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.flipkart.vbroker.wrappers.Topic;
 import com.google.common.primitives.Ints;
 import com.google.common.util.concurrent.ListeningExecutorService;
@@ -34,7 +35,7 @@ public class ProduceRequestHandler implements RequestHandler {
         ProduceRequest produceRequest = (ProduceRequest) vRequest.requestMessage(new ProduceRequest());
         assert nonNull(produceRequest);
 
-        FlatBufferBuilder builder = new FlatBufferBuilder();
+        FlatBufferBuilder builder = FlatbufUtils.newBuilder();
         Map<Integer, List<Integer>> topicPartitionResponseMap = new HashMap<>();
         List<TopicPartMessage> messagesToProduce = new LinkedList<>();
 

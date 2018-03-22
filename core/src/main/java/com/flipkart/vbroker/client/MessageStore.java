@@ -5,6 +5,7 @@ import com.flipkart.vbroker.flatbuf.HttpHeader;
 import com.flipkart.vbroker.flatbuf.HttpMethod;
 import com.flipkart.vbroker.flatbuf.Message;
 import com.flipkart.vbroker.utils.ByteBufUtils;
+import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,14 +33,14 @@ public class MessageStore {
     }
 
     public static ByteBuffer encodeSampleMsg() {
-        FlatBufferBuilder builder = new FlatBufferBuilder();
+        FlatBufferBuilder builder = FlatbufUtils.newBuilder();
         int sampleMsg = getSampleMsg(builder);
         builder.finish(sampleMsg);
         return builder.dataBuffer();
     }
 
     public static Message getRandomMsg(String groupId) {
-        FlatBufferBuilder builder = new FlatBufferBuilder();
+        FlatBufferBuilder builder = FlatbufUtils.newBuilder();
         ByteBuffer sampleByteBuffer = getSampleByteBuffer();
         int sampleMsg = getSampleMsg(builder,
             builder.createString(UUID.randomUUID().toString()),
