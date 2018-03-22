@@ -7,17 +7,17 @@ import com.flipkart.vbroker.utils.DummyEntities;
 import com.flipkart.vbroker.wrappers.Subscription;
 import com.flipkart.vbroker.wrappers.Topic;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 import com.xebialabs.restito.builder.verify.VerifySequenced;
 import lombok.extern.slf4j.Slf4j;
 import org.glassfish.grizzly.http.Method;
 import org.testng.annotations.Test;
+import org.testng.collections.Maps;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
@@ -46,16 +46,31 @@ public class MessageFlowIntegrationTest extends AbstractVBrokerBaseTest {
     }
 
     @Test
-    public void shouldProduceMessages_SidelineThem_ThenPollSidelinedMessages() throws Exception {
+    public void shouldProduceMessages_SidelineThem_ThenPollSidelinedMessages_MultipleGroups() throws Exception {
         int noOfRecords = 3;
+        int noOfGroups = 5;
+
         Topic topic = createTopic(true);
         Subscription subscription = createSubscription(true);
 
-        List<ProducerRecord> producedRecords = IntStream.range(0, noOfRecords)
-            .mapToObj(i -> newProducerRecord(topic, "group_0", MockURI.URI_404, getMsgBody(payloadPrefix, i).getBytes()))
-            .collect(Collectors.toList());
-        produceRecords(producedRecords);
+        List<ProducerRecord> producedRecords = Lists.newArrayList();
+        Map<String, Queue<String>> groupMessagesQueueMap = Maps.newHashMap();
 
+        IntStream.range(0, noOfGroups)
+            .forEachOrdered(i -> {
+                String group = "group_" + i;
+                Queue<String> messageQueue = Queues.newArrayDeque();
+                List<ProducerRecord> groupRecords = IntStream.range(0, noOfRecords)
+                    .mapToObj(j -> newProducerRecord(topic, group, MockURI.URI_404, getMsgBody(payloadPrefix, j).getBytes()))
+                    .collect(Collectors.toList());
+                producedRecords.addAll(groupRecords);
+
+                groupRecords.forEach(record -> messageQueue.add(record.getMessageId()));
+                groupMessagesQueueMap.put(group, messageQueue);
+            });
+
+        //produce all groups now
+        produceRecords(producedRecords);
         Set<String> messageIds = producedRecords.stream()
             .map(ProducerRecord::getMessageId)
             .collect(Collectors.toSet());
@@ -66,15 +81,17 @@ public class MessageFlowIntegrationTest extends AbstractVBrokerBaseTest {
         try {
             consumer.subscribe(subscriptions);
 
-            int timeoutMs = Integer.MAX_VALUE;
-            CompletionStage<List<ConsumerRecord>> polledRecordsStage = consumer.poll(noOfRecords, timeoutMs);
+            int timeoutMs = 5000;
+            CompletionStage<List<ConsumerRecord>> polledRecordsStage = consumer.poll(producedRecords.size(), timeoutMs);
             polledRecordsStage.thenAccept(consumerRecords -> {
-                assertEquals(consumerRecords.size(), producedRecords.size());
                 log.info("No of records consumed are: {}", consumerRecords.size());
+                assertEquals(consumerRecords.size(), producedRecords.size());
                 consumerRecords.forEach(consumerRecord -> {
                     log.info("Consumed record with msg_id: {} and grp_id: {}",
                         consumerRecord.getMessageId(), consumerRecord.getGroupId());
+
                     assertTrue(messageIds.contains(consumerRecord.getMessageId()));
+                    assertEquals(groupMessagesQueueMap.get(consumerRecord.getGroupId()).poll(), consumerRecord.getMessageId());
                 });
             }).toCompletableFuture().join();
         } finally {
