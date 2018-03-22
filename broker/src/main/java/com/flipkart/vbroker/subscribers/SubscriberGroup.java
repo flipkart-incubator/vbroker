@@ -38,6 +38,7 @@ public class SubscriberGroup {
     private volatile QType qType = QType.MAIN;
     @Getter
     private volatile AtomicBoolean locked = new AtomicBoolean(false);
+    private volatile AtomicBoolean hasLastMsgSucceeded = new AtomicBoolean(true);
 
     private SubscriberGroup(MessageGroup messageGroup,
                             PartSubscription partSubscription,
@@ -93,20 +94,35 @@ public class SubscriberGroup {
 
     /**
      * method to both unlock the group and advance the iterator for the qType
+     * advance only in case the message succeeded
+     * if the message failed (ex: in case of http 4xx/5xx) don't increment the iterator as it should be processed again
      * this is required to handle the case where QType is changed while unlocking
      */
     public void advanceIteratorAndUnlockGroup() {
         synchronized (qTypeChangeMonitor) {
-            advanceIterator();
+            if (hasLastMsgSucceeded.get()) {
+                advanceIterator();
+            }
             forceUnlock();
         }
     }
 
     public void setQType(QType qType) {
         synchronized (qTypeChangeMonitor) {
+            if (QType.MAIN.equals(qType)) {
+                hasLastMsgSucceeded.set(true);
+            } else {
+                hasLastMsgSucceeded.set(false);
+            }
             this.qType = qType;
         }
     }
+
+//    public void setLastMsgSuccess(boolean success) {
+//        synchronized (qTypeChangeMonitor) {
+//            hasLastMsgSucceeded.set(success);
+//        }
+//    }
 
     /**
      * advance the seqNo to the next message
@@ -154,6 +170,7 @@ public class SubscriberGroup {
     }
 
     public SubscriberGroupIterator<IterableMessage> newIterator(QType qType, int seqNoFrom) {
+        log.info("Creating new iterator for SubscriberGroup {} for qType {} from seqNo {}", getGroupId(), qType, seqNoFrom);
         return new SubscriberGroupIteratorImpl(qType, this, seqNoFrom);
     }
 
@@ -197,7 +214,7 @@ public class SubscriberGroup {
         @Override
         public GroupedIterableMessage peek() {
             Message msg = groupIterator.peek();
-            log.debug("Peeking msg {}", msg.messageId());
+            log.debug("Peeking msg {} for group {}", msg.messageId(), msg.groupId());
             return GroupedIterableMessage.newInstance(msg, subscriberGroup);
         }
 

@@ -17,6 +17,7 @@ import com.flipkart.vbroker.services.ProducerService;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
 import com.flipkart.vbroker.subscribers.IterableMessage;
+import com.flipkart.vbroker.subscribers.QType;
 import com.flipkart.vbroker.wrappers.Subscription;
 import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
@@ -158,10 +159,13 @@ public class HttpMessageProcessor implements MessageProcessor {
     }
 
     private CompletionStage<Void> sideline(IterableMessage iterableMessage) {
+        iterableMessage.setQType(QType.SIDELINE);
         return subPartDataManager.sideline(iterableMessage.getPartSubscription(), iterableMessage);
     }
 
     private CompletionStage<Void> retry(IterableMessage iterableMessage) {
+        QType destinationQType = MessageUtils.getNextRetryQType(iterableMessage.getQType());
+        iterableMessage.setQType(destinationQType); //caution! mutation here
         return subPartDataManager.retry(iterableMessage.getPartSubscription(), iterableMessage);
     }
 

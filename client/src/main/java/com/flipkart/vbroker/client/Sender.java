@@ -3,6 +3,7 @@ package com.flipkart.vbroker.client;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.flatbuf.*;
 import com.flipkart.vbroker.utils.FlatBuffers;
+import com.flipkart.vbroker.utils.RandomUtils;
 import com.google.common.primitives.Ints;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.AllArgsConstructor;
@@ -12,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -168,7 +168,7 @@ public class Sender implements Runnable {
         int[] topicRequests = Ints.toArray(topicOffsetList);
         int topicRequestsVector = ProduceRequest.createTopicRequestsVector(builder, topicRequests);
         int produceRequest = ProduceRequest.createProduceRequest(builder, topicRequestsVector);
-        int correlationId = Math.abs(new Random(10000).nextInt());
+        int correlationId = RandomUtils.generateRandomCorrelationId();
         int vRequest = VRequest.createVRequest(builder,
             (byte) 1,
             correlationId,

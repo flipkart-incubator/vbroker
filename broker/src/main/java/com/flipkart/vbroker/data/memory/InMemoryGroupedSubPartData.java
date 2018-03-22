@@ -109,15 +109,20 @@ public class InMemoryGroupedSubPartData implements SubPartData {
     public List<IterableMessage> poll(QType qType, int maxRecords, long pollTimeMs) {
         DataIterator<IterableMessage> iterator = new DataIteratorImpl(qType, true);
         List<IterableMessage> iterableMessages = new ArrayList<>();
-
         int noOfRecords = 0;
         long startTimeMs = System.currentTimeMillis();
-        while ((noOfRecords < maxRecords) &&
-            ((System.currentTimeMillis() - startTimeMs) >= pollTimeMs) &&
-            iterator.hasNext()) {
-            //success
-            iterableMessages.add(iterator.next());
-            noOfRecords++;
+
+        while (true) {
+            long elapsedTimeMs = System.currentTimeMillis() - startTimeMs;
+            if ((noOfRecords < maxRecords) && (elapsedTimeMs <= pollTimeMs) && iterator.hasNext()) {
+                //success
+                iterableMessages.add(iterator.next());
+                noOfRecords++;
+            } else {
+                log.info("ElapsedTimeMs: {}; pollTimeMs: {}; noOfRecords: {}; maxRecords: {}; iteratorHasNext: {}",
+                    elapsedTimeMs, pollTimeMs, noOfRecords, maxRecords, iterator.hasNext());
+                break;
+            }
         }
 
         return iterableMessages;

@@ -20,6 +20,7 @@ public class Accumulator {
     private final VBClientConfig config;
     private final Partitioner partitioner;
     private final Multimap<Node, RecordBatch> nodeRecordBatchMap = HashMultimap.create();
+    //TODO: clear the below map once done
     private final Map<RecordBatch, CompletionStage<VResponse>> batchResponseStageMap = new HashMap<>();
     private Metadata metadata;
 

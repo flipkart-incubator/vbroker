@@ -42,7 +42,7 @@ public class FetchRequestHandler implements RequestHandler {
             FlatBufferBuilder builder = new FlatBufferBuilder();
             int fetchResponse = buildFetchResponse(fetchRequest, builder);
             int vResponse = VResponse.createVResponse(builder,
-                1001,
+                vRequest.correlationId(),
                 ResponseMessage.FetchResponse,
                 fetchResponse);
             builder.finish(vResponse);
@@ -100,12 +100,13 @@ public class FetchRequestHandler implements RequestHandler {
                                                  TopicPartitionFetchRequest topicPartitionFetchRequest) {
         int noOfMessagesToFetch = topicPartitionFetchRequest.noOfMessages();
         int partitionId = topicPartitionFetchRequest.partitionId();
-        log.info("Handling FetchRequest for {} messages for topic {} and partition {}",
-            noOfMessagesToFetch, topic.id(), partitionId);
+        QType qType = getQType(topicPartitionFetchRequest.qType());
+        log.info("Handling FetchRequest for {} messages for topic {} and partition {} and qType {}",
+            noOfMessagesToFetch, topic.id(), partitionId, qType);
 
         int[] messages = buildMessages(builder,
             partSubscription,
-            getQType(topicPartitionFetchRequest.qType()),
+            qType,
             noOfMessagesToFetch,
             topicPartitionFetchRequest.timeOutMs());
         log.debug("Writing {} messages for topic {} and partition {} in FetchResponse",
@@ -133,6 +134,8 @@ public class FetchRequestHandler implements RequestHandler {
         PartSubscriber partSubscriber = subscriptionService.getPartSubscriber(partSubscription).toCompletableFuture().join();
         int actualPollTimeoutMs = getPollTimeoutMs(reqPollTimeoutMs);
         List<IterableMessage> iterableMessages = partSubscriber.poll(qType, noOfMessagesToFetch, actualPollTimeoutMs);
+        log.info("No of polled messages are {}", iterableMessages.size());
+        log.info("PartSubscriberOffset for group_0 is {}", partSubscriber.getOffset("group_0").toCompletableFuture().join());
         List<Integer> messagePosList = iterableMessages.stream()
             .map(iterableMessage -> buildMessage(builder, iterableMessage.getMessage()))
             .collect(Collectors.toList());

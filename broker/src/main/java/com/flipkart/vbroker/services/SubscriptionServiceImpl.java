@@ -39,7 +39,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public CompletionStage<Subscription> createSubscription(Subscription subscription) {
-        short id = IdGenerator.randomId();
+        int id = IdGenerator.randomSubscriptionId();
         String path = config.getAdminTasksPath() + "/create_subscription" + "/" + id;
         Subscription subWithId = new Subscription(subscription.fromSubscription().setId(id).build());
         log.info("Creating subscription with id {} for topicId {} with uri {}", id, subscription.topicId(),

@@ -2,6 +2,7 @@ package com.flipkart.vbroker.client;
 
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.flatbuf.*;
+import com.flipkart.vbroker.utils.RandomUtils;
 import com.flipkart.vbroker.wrappers.Subscription;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
@@ -75,7 +76,7 @@ public class VBrokerConsumer implements Consumer {
         int fetchRequest = FetchRequest.createFetchRequest(builder, topicRequestsVector);
         int vRequestPos = VRequest.createVRequest(builder,
             (byte) 1,
-            1001,
+            RandomUtils.generateRandomCorrelationId(),
             RequestMessage.FetchRequest,
             fetchRequest);
         builder.finish(vRequestPos);

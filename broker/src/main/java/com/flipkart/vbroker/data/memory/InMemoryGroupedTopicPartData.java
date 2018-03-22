@@ -64,6 +64,7 @@ public class InMemoryGroupedTopicPartData implements TopicPartData {
     public void close() throws Exception {
         isQueueRunning = false;
         queueRunningLatch.await();
+        log.info("Closed {} instance successfully", this.getClass());
     }
 
     public CompletionStage<MessageMetadata> addMessage(Message message) {
@@ -87,6 +88,15 @@ public class InMemoryGroupedTopicPartData implements TopicPartData {
     }
 
     public DataIterator<Message> iteratorFrom(String group, int seqNoFrom) {
+        if (log.isDebugEnabled()) {
+            List<String> groupMessageIds = topicPartitionData.get(group)
+                .stream()
+                .map(Message::messageId)
+                .collect(Collectors.toList());
+            log.debug("Creating new iterator for group {} from seqNo {} having message_ids {}",
+                group, seqNoFrom, groupMessageIds);
+        }
+
         return new DataIterator<Message>() {
             AtomicInteger index = new AtomicInteger(seqNoFrom);
 
@@ -98,7 +108,7 @@ public class InMemoryGroupedTopicPartData implements TopicPartData {
             @Override
             public Message peek() {
                 Message message = topicPartitionData.get(group).get(index.get());
-                log.info("Group {} messages: {}", message.groupId(),
+                log.debug("Group {} messages: {}", message.groupId(),
                     topicPartitionData.get(group).stream()
                         .map(Message::messageId).collect(Collectors.toList())
                 );

@@ -4,8 +4,10 @@ import com.flipkart.vbroker.app.MockHttp.MockURI;
 import com.flipkart.vbroker.client.*;
 import com.flipkart.vbroker.flatbuf.Message;
 import com.flipkart.vbroker.utils.DummyEntities;
+import com.flipkart.vbroker.wrappers.Subscription;
 import com.flipkart.vbroker.wrappers.Topic;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.xebialabs.restito.builder.verify.VerifySequenced;
 import lombok.extern.slf4j.Slf4j;
 import org.glassfish.grizzly.http.Method;
@@ -15,6 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
@@ -25,10 +28,11 @@ import static com.flipkart.vbroker.app.MockHttp.MockURI.URI_200;
 import static com.flipkart.vbroker.app.MockHttp.MockURI.URI_201;
 import static com.xebialabs.restito.builder.verify.VerifyHttp.verifyHttp;
 import static com.xebialabs.restito.semantics.Condition.*;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 @Slf4j
-public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
+public class MessageFlowIntegrationTest extends AbstractVBrokerBaseTest {
     private static final String payloadPrefix = "SampleMsg_";
 
     @Test(invocationCount = 1)
@@ -39,6 +43,44 @@ public class VBrokerProducerTest extends AbstractVBrokerBaseTest {
     @Test
     public void shouldProduceAndConsumeMessage_InOrderForSameGroup_WithSlowDestinations() throws InterruptedException, MalformedURLException {
         produceAndConsumeMessages_ValidateConsumingSequence(MockURI.SLEEP_200, 6000);
+    }
+
+    @Test
+    public void shouldProduceMessages_SidelineThem_ThenPollSidelinedMessages() throws Exception {
+        int noOfRecords = 3;
+        Topic topic = createTopic(true);
+        Subscription subscription = createSubscription(true);
+
+        List<ProducerRecord> producedRecords = IntStream.range(0, noOfRecords)
+            .mapToObj(i -> newProducerRecord(topic, "group_0", MockURI.URI_404, getMsgBody(payloadPrefix, i).getBytes()))
+            .collect(Collectors.toList());
+        produceRecords(producedRecords);
+
+        Set<String> messageIds = producedRecords.stream()
+            .map(ProducerRecord::getMessageId)
+            .collect(Collectors.toSet());
+
+        Set<Subscription> subscriptions = Sets.newHashSet(subscription);
+        VBClientConfig config = getVbClientConfig();
+        VBrokerConsumer consumer = new VBrokerConsumer(config);
+        try {
+            consumer.subscribe(subscriptions);
+
+            int timeoutMs = Integer.MAX_VALUE;
+            CompletionStage<List<ConsumerRecord>> polledRecordsStage = consumer.poll(noOfRecords, timeoutMs);
+            polledRecordsStage.thenAccept(consumerRecords -> {
+                assertEquals(consumerRecords.size(), producedRecords.size());
+                log.info("No of records consumed are: {}", consumerRecords.size());
+                consumerRecords.forEach(consumerRecord -> {
+                    log.info("Consumed record with msg_id: {} and grp_id: {}",
+                        consumerRecord.getMessageId(), consumerRecord.getGroupId());
+                    assertTrue(messageIds.contains(consumerRecord.getMessageId()));
+                });
+            }).toCompletableFuture().join();
+        } finally {
+            consumer.unSubscribe(subscriptions);
+            consumer.close();
+        }
     }
 
     private void produceAndConsumeMessages_ValidateConsumingSequence(MockURI mockURI, int sleepTimeMs) throws InterruptedException, MalformedURLException {

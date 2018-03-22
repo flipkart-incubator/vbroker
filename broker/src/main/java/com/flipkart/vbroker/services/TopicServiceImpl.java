@@ -28,7 +28,7 @@ public class TopicServiceImpl implements TopicService {
         if (!validateCreateTopic(topic)) {
             throw new TopicValidationException("Topic create validation failed");
         }
-        short id = IdGenerator.randomId();
+        int id = IdGenerator.randomTopicId();
         log.info("creating topic request with generated id {}, name {}, rf {}, grouped {}", id, topic.name(), topic.replicationFactor(),
             topic.grouped());
         String topicPath = config.getAdminTasksPath() + "/create_topic" + "/" + id;

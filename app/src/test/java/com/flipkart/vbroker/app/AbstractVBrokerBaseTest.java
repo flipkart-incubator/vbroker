@@ -10,6 +10,8 @@ import com.flipkart.vbroker.proto.ProtoTopic;
 import com.flipkart.vbroker.proto.TopicCategory;
 import com.flipkart.vbroker.server.VBrokerServer;
 import com.flipkart.vbroker.utils.DummyEntities;
+import com.flipkart.vbroker.utils.RandomUtils;
+import com.flipkart.vbroker.wrappers.Subscription;
 import com.flipkart.vbroker.wrappers.Topic;
 import com.xebialabs.restito.semantics.Action;
 import com.xebialabs.restito.server.StubServer;
@@ -21,7 +23,10 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 import static com.flipkart.vbroker.app.MockHttp.*;
@@ -144,9 +149,16 @@ public class AbstractVBrokerBaseTest {
         return DummyEntities.unGroupedTopic;
     }
 
+    public Subscription createSubscription(boolean grouped) {
+        if (grouped) {
+            return DummyEntities.groupedSubscription;
+        }
+        return DummyEntities.unGroupedSubscription;
+    }
+
     public Topic createRandomTopic(boolean grouped) {
         ProtoTopic protoTopic = ProtoTopic.newBuilder()
-            .setId(new Random().nextInt())
+            .setId(RandomUtils.generateRandomTopicId())
             .setName(UUID.randomUUID().toString())
             .setGrouped(grouped)
             .setTopicCategory(TopicCategory.TOPIC)
