@@ -1,12 +1,34 @@
-* Varadhi Broker
+* VBroker
 
-*** Generating Flatbuffers schema
-    (this is already generated)
+An elastic message broker designed from scratch to solve Flipkart-specific use-cases of PUSH-based messaging at a very high throughput efficiently.
+
+** Project Modules
+*** core
+- Contains all the basic models, utils, protocol schema.etc. required by other modules
+*** broker
+- Contains the main broker code - including protocol handling, data layer, message flow logic, controller.etc.
+- The consumers run directly within the broker to forward messages in case of PUSH based messaging
+*** client
+- User-facing library that makes protocol requests to the broker
+- This is used by the users to create topics/subscriptions/queues, produce and consume messages.etc.
+*** rest-api
+- Provides a RESTful layer which underneath uses the client
+*** app
+- Primarily for testing purposes and to run integration test suite
+
+** Dev Guide
+- Our primary stack is Netty and JDK8 CompletableFuture
+- *Almost* all of the code is non-blocking
+- We use flatbuffers for the message flow path and protobuf3 for the control path.
+- Protobuf is primarily used as a lot of boilerplate code is required for flatbuffers and for control path protobuf efficiency is good enough
+
+*** Generating Flatbuffers classes
+    - This is already generated. Please download flatc compiler and put in your PATH
     - From root directory of the project, run:
-      /code/src/oss/flatbuffers/flatc -o ./core/src/main/java/ --java schema/message.fbs
-    - The above should put the Message.java file under the project src/main/java directory
+      flatc -o ./core/src/main/java/ --java schema/protocol.fbs
+    - The above should put the protocol schema files under the project core/src/main/java directory
 
-*** Generating Protobuf classes
+*** Generating Protobuf3 classes
     - Ensure that you have protoc version 3.5.1. If not, get it from [[https://github.com/google/protobuf/releases/tag/v3.5.1][here]]
     - From root directory run:
      protoc -I schema --java_out=core/src/main/java/ schema/entities.proto schema/requests.proto schema/responses.proto
@@ -16,7 +38,7 @@
     ./gradlew build
 
 *** Running the server
-    From IntelliJ, run VBrokerServer
+    From IntelliJ, run VBrokerApp
 
-*** Sending message from a client and getting response
-    From IntelliJ, run VBrokerClient - it sends a sample message and gets it
+*** Message Flow example
+    From IntelliJ, run MessageFlowIntegrationTest - it has all the e2e tests like sending a message, pushing it to destination, polling of messages.etc.
