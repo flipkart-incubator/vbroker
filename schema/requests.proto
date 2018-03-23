@@ -23,6 +23,9 @@ message ProtoRequest {
         GetAllQueuesRequest getAllQueuesRequest = 9;
         GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;
         GetClusterMetadataRequest getClusterMetadataRequest = 11;
+        UnsidelineRequests unsidelineRequests = 12;
+        SetSubscriptionsOffsetsRequest setSubscriptionsOffsetsRequest = 13;
+        GetSubscriptionsOffsetsRequest getSubscriptionsOffsetsRequest = 14;
     }
 }
 
@@ -81,7 +84,54 @@ message GetSubscriptionLagsRequest {
     repeated SubscriptionLagRequest subscriptionLagRequests = 1;
 }
 
-
+// cluster metadata request
 message GetClusterMetadataRequest {
     repeated int32 topicIds = 1;
+}
+
+// unsideline
+message UnsidelineRequest {
+    TopicSubscription topicSubscription = 1;
+    repeated string groupIds = 2;
+}
+
+message UnsidelineRequests {
+    repeated UnsidelineRequest unsidelineRequests = 1;
+}
+
+
+// set offset
+message GroupOffset {
+    string groupId = 1;
+    int32 offset = 2;
+}
+
+message SetPartSubscriptionOffsetsRequest {
+    int32 partitionId = 1;
+    repeated GroupOffset groupOffsets = 2;
+}
+
+message SetSubscriptionOffsetsRequest {
+    TopicSubscription topicSubscription = 1;
+    repeated SetPartSubscriptionOffsetsRequest setPartSubscriptionOffsetsRequests = 2;
+}
+
+//this is different from above - its a list of SetSubscriptionOffsetsRequest
+message SetSubscriptionsOffsetsRequest {
+    repeated SetSubscriptionOffsetsRequest setSubscriptionOffsetsRequests = 1;
+}
+
+// get offset
+message GetPartSubscriptionOffsetsRequest {
+    int32 partitionId = 1;
+    repeated string groupIds = 2;
+}
+
+message GetSubscriptionOffsetsRequest {
+    TopicSubscription topicSubscription = 1;
+    repeated GetPartSubscriptionOffsetsRequest getPartSubscriptionOffsetsRequests = 2;
+}
+
+message GetSubscriptionsOffsetsRequest {
+    repeated GetSubscriptionOffsetsRequest getSubscriptionOffsetsRequests = 1;
 }

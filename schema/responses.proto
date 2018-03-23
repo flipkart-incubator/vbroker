@@ -28,6 +28,9 @@ message ProtoResponse {
         GetAllSubscriptionsForTopicsResponse getAllSubscriptionsForTopicsResponse = 9;
         GetSubscriptionLagsResponse getSubscriptionLagsResponse = 10;
         GetClusterMetadataResponse getClusterMetadataResponse = 11;
+        SetSubscriptionsOffsetsResponse setSubscriptionsOffsetsResponse = 12;
+        GetSubscriptionsOffsetsResponse getSubscriptionsOffsetsResponse = 13;
+        UnsidelineResponses unsidelineResponses = 14;
     }
 }
 
@@ -132,4 +135,62 @@ message GetSubscriptionLagsResponse {
 message GetClusterMetadataResponse {
     ClusterMetadata clusterMetadata = 1;
     VStatus status = 2;
+}
+
+// unsideline
+message UnsidelineGroupResponse {
+    string groupId = 1;
+    VStatus status = 2;
+}
+
+message UnsidelineResponse {
+    TopicSubscription topicSubscription = 1;
+    repeated UnsidelineGroupResponse unsidelineGroupResponses = 2;
+}
+
+message UnsidelineResponses {
+    repeated UnsidelineResponse unsidelineResponses = 1;
+}
+
+
+// set offset
+message GroupOffsetResponse {
+    string groupId = 1;
+    VStatus status = 2;
+}
+
+message SetPartSubscriptionOffsetsResponse {
+    int32 partitionId = 1;
+    repeated GroupOffsetResponse groupOffsetResponses = 2;
+}
+
+message SetSubscriptionOffsetsResponse {
+    TopicSubscription topicSubscription = 1;
+    repeated SetPartSubscriptionOffsetsResponse setPartSubscriptionOffsetsResponses = 2;
+}
+
+message SetSubscriptionsOffsetsResponse {
+    repeated SetSubscriptionOffsetsResponse setSubscriptionOffsetsResponses = 1;
+}
+
+// get offset
+message GetGroupOffsetResponse {
+    string groupId = 1;
+    int32 offset = 2;
+    VStatus status = 3;
+}
+
+message GetPartSubscriptionOffsetsResponse {
+    int32 partitionId = 1;
+    repeated GetGroupOffsetResponse getGroupOffsetResponses = 2;
+
+}
+
+message GetSubscriptionOffsetsResponse {
+    TopicSubscription topicSubscription = 1;
+    repeated GetPartSubscriptionOffsetsResponse getPartSubscriptionOffsetsResponses = 2;
+}
+
+message GetSubscriptionsOffsetsResponse {
+    repeated GetSubscriptionOffsetsResponse getSubscriptionOffsetsResponses = 1;
 }

@@ -99,9 +99,22 @@ message PartitionMetadata {
     repeated int32 replicas = 4;
 }
 
+message PartSubscriptionMetadata {
+    int32 id = 1;
+    int32 subscriptionId = 2;
+    int32 topicId = 3;
+    int32 topicPartitionId = 4;
+}
+
+message SubscriptionMetadata {
+    ProtoSubscription subscription = 1;
+    repeated PartSubscriptionMetadata partSubscriptionMetadatas = 2;
+}
+
 message TopicMetadata {
     ProtoTopic topic = 1;
     repeated PartitionMetadata partitionMetadatas = 2;
+    repeated SubscriptionMetadata subscriptionMetadatas = 3;
 }
 
 message ClusterMetadata {
