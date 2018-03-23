@@ -34,7 +34,6 @@ public final class Node extends
     private volatile java.lang.Object hostIp_;
     private int hostPort_;
     private byte memoizedIsInitialized = -1;
-
     // Use Node.newBuilder() to construct.
     private Node(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);

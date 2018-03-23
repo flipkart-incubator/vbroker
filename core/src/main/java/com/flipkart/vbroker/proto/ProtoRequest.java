@@ -28,6 +28,9 @@ public final class ProtoRequest extends
 
     ;
     public static final int GETCLUSTERMETADATAREQUEST_FIELD_NUMBER = 11;
+    public static final int UNSIDELINEREQUESTS_FIELD_NUMBER = 12;
+    public static final int SETSUBSCRIPTIONSOFFSETSREQUEST_FIELD_NUMBER = 13;
+    public static final int GETSUBSCRIPTIONSOFFSETSREQUEST_FIELD_NUMBER = 14;
     private static final long serialVersionUID = 0L;
     // @@protoc_insertion_point(class_scope:proto.ProtoRequest)
     private static final com.flipkart.vbroker.proto.ProtoRequest DEFAULT_INSTANCE;
@@ -235,6 +238,48 @@ public final class ProtoRequest extends
                             protoRequest_ = subBuilder.buildPartial();
                         }
                         protoRequestCase_ = 11;
+                        break;
+                    }
+                    case 98: {
+                        com.flipkart.vbroker.proto.UnsidelineRequests.Builder subBuilder = null;
+                        if (protoRequestCase_ == 12) {
+                            subBuilder = ((com.flipkart.vbroker.proto.UnsidelineRequests) protoRequest_).toBuilder();
+                        }
+                        protoRequest_ =
+                            input.readMessage(com.flipkart.vbroker.proto.UnsidelineRequests.parser(), extensionRegistry);
+                        if (subBuilder != null) {
+                            subBuilder.mergeFrom((com.flipkart.vbroker.proto.UnsidelineRequests) protoRequest_);
+                            protoRequest_ = subBuilder.buildPartial();
+                        }
+                        protoRequestCase_ = 12;
+                        break;
+                    }
+                    case 106: {
+                        com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest.Builder subBuilder = null;
+                        if (protoRequestCase_ == 13) {
+                            subBuilder = ((com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest) protoRequest_).toBuilder();
+                        }
+                        protoRequest_ =
+                            input.readMessage(com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest.parser(), extensionRegistry);
+                        if (subBuilder != null) {
+                            subBuilder.mergeFrom((com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest) protoRequest_);
+                            protoRequest_ = subBuilder.buildPartial();
+                        }
+                        protoRequestCase_ = 13;
+                        break;
+                    }
+                    case 114: {
+                        com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest.Builder subBuilder = null;
+                        if (protoRequestCase_ == 14) {
+                            subBuilder = ((com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest) protoRequest_).toBuilder();
+                        }
+                        protoRequest_ =
+                            input.readMessage(com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest.parser(), extensionRegistry);
+                        if (subBuilder != null) {
+                            subBuilder.mergeFrom((com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest) protoRequest_);
+                            protoRequest_ = subBuilder.buildPartial();
+                        }
+                        protoRequestCase_ = 14;
                         break;
                     }
                 }
@@ -668,6 +713,87 @@ public final class ProtoRequest extends
         return com.flipkart.vbroker.proto.GetClusterMetadataRequest.getDefaultInstance();
     }
 
+    /**
+     * <code>.proto.UnsidelineRequests unsidelineRequests = 12;</code>
+     */
+    public boolean hasUnsidelineRequests() {
+        return protoRequestCase_ == 12;
+    }
+
+    /**
+     * <code>.proto.UnsidelineRequests unsidelineRequests = 12;</code>
+     */
+    public com.flipkart.vbroker.proto.UnsidelineRequests getUnsidelineRequests() {
+        if (protoRequestCase_ == 12) {
+            return (com.flipkart.vbroker.proto.UnsidelineRequests) protoRequest_;
+        }
+        return com.flipkart.vbroker.proto.UnsidelineRequests.getDefaultInstance();
+    }
+
+    /**
+     * <code>.proto.UnsidelineRequests unsidelineRequests = 12;</code>
+     */
+    public com.flipkart.vbroker.proto.UnsidelineRequestsOrBuilder getUnsidelineRequestsOrBuilder() {
+        if (protoRequestCase_ == 12) {
+            return (com.flipkart.vbroker.proto.UnsidelineRequests) protoRequest_;
+        }
+        return com.flipkart.vbroker.proto.UnsidelineRequests.getDefaultInstance();
+    }
+
+    /**
+     * <code>.proto.SetSubscriptionsOffsetsRequest setSubscriptionsOffsetsRequest = 13;</code>
+     */
+    public boolean hasSetSubscriptionsOffsetsRequest() {
+        return protoRequestCase_ == 13;
+    }
+
+    /**
+     * <code>.proto.SetSubscriptionsOffsetsRequest setSubscriptionsOffsetsRequest = 13;</code>
+     */
+    public com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest getSetSubscriptionsOffsetsRequest() {
+        if (protoRequestCase_ == 13) {
+            return (com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest) protoRequest_;
+        }
+        return com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest.getDefaultInstance();
+    }
+
+    /**
+     * <code>.proto.SetSubscriptionsOffsetsRequest setSubscriptionsOffsetsRequest = 13;</code>
+     */
+    public com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequestOrBuilder getSetSubscriptionsOffsetsRequestOrBuilder() {
+        if (protoRequestCase_ == 13) {
+            return (com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest) protoRequest_;
+        }
+        return com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest.getDefaultInstance();
+    }
+
+    /**
+     * <code>.proto.GetSubscriptionsOffsetsRequest getSubscriptionsOffsetsRequest = 14;</code>
+     */
+    public boolean hasGetSubscriptionsOffsetsRequest() {
+        return protoRequestCase_ == 14;
+    }
+
+    /**
+     * <code>.proto.GetSubscriptionsOffsetsRequest getSubscriptionsOffsetsRequest = 14;</code>
+     */
+    public com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest getGetSubscriptionsOffsetsRequest() {
+        if (protoRequestCase_ == 14) {
+            return (com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest) protoRequest_;
+        }
+        return com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest.getDefaultInstance();
+    }
+
+    /**
+     * <code>.proto.GetSubscriptionsOffsetsRequest getSubscriptionsOffsetsRequest = 14;</code>
+     */
+    public com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequestOrBuilder getGetSubscriptionsOffsetsRequestOrBuilder() {
+        if (protoRequestCase_ == 14) {
+            return (com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest) protoRequest_;
+        }
+        return com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest.getDefaultInstance();
+    }
+
     public final boolean isInitialized() {
         byte isInitialized = memoizedIsInitialized;
         if (isInitialized == 1) return true;
@@ -711,6 +837,15 @@ public final class ProtoRequest extends
         }
         if (protoRequestCase_ == 11) {
             output.writeMessage(11, (com.flipkart.vbroker.proto.GetClusterMetadataRequest) protoRequest_);
+        }
+        if (protoRequestCase_ == 12) {
+            output.writeMessage(12, (com.flipkart.vbroker.proto.UnsidelineRequests) protoRequest_);
+        }
+        if (protoRequestCase_ == 13) {
+            output.writeMessage(13, (com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest) protoRequest_);
+        }
+        if (protoRequestCase_ == 14) {
+            output.writeMessage(14, (com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest) protoRequest_);
         }
         unknownFields.writeTo(output);
     }
@@ -763,6 +898,18 @@ public final class ProtoRequest extends
         if (protoRequestCase_ == 11) {
             size += com.google.protobuf.CodedOutputStream
                 .computeMessageSize(11, (com.flipkart.vbroker.proto.GetClusterMetadataRequest) protoRequest_);
+        }
+        if (protoRequestCase_ == 12) {
+            size += com.google.protobuf.CodedOutputStream
+                .computeMessageSize(12, (com.flipkart.vbroker.proto.UnsidelineRequests) protoRequest_);
+        }
+        if (protoRequestCase_ == 13) {
+            size += com.google.protobuf.CodedOutputStream
+                .computeMessageSize(13, (com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest) protoRequest_);
+        }
+        if (protoRequestCase_ == 14) {
+            size += com.google.protobuf.CodedOutputStream
+                .computeMessageSize(14, (com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest) protoRequest_);
         }
         size += unknownFields.getSerializedSize();
         memoizedSize = size;
@@ -828,6 +975,18 @@ public final class ProtoRequest extends
                 result = result && getGetClusterMetadataRequest()
                     .equals(other.getGetClusterMetadataRequest());
                 break;
+            case 12:
+                result = result && getUnsidelineRequests()
+                    .equals(other.getUnsidelineRequests());
+                break;
+            case 13:
+                result = result && getSetSubscriptionsOffsetsRequest()
+                    .equals(other.getSetSubscriptionsOffsetsRequest());
+                break;
+            case 14:
+                result = result && getGetSubscriptionsOffsetsRequest()
+                    .equals(other.getGetSubscriptionsOffsetsRequest());
+                break;
             case 0:
             default:
         }
@@ -887,6 +1046,18 @@ public final class ProtoRequest extends
                 hash = (37 * hash) + GETCLUSTERMETADATAREQUEST_FIELD_NUMBER;
                 hash = (53 * hash) + getGetClusterMetadataRequest().hashCode();
                 break;
+            case 12:
+                hash = (37 * hash) + UNSIDELINEREQUESTS_FIELD_NUMBER;
+                hash = (53 * hash) + getUnsidelineRequests().hashCode();
+                break;
+            case 13:
+                hash = (37 * hash) + SETSUBSCRIPTIONSOFFSETSREQUEST_FIELD_NUMBER;
+                hash = (53 * hash) + getSetSubscriptionsOffsetsRequest().hashCode();
+                break;
+            case 14:
+                hash = (37 * hash) + GETSUBSCRIPTIONSOFFSETSREQUEST_FIELD_NUMBER;
+                hash = (53 * hash) + getGetSubscriptionsOffsetsRequest().hashCode();
+                break;
             case 0:
             default:
         }
@@ -933,6 +1104,9 @@ public final class ProtoRequest extends
         GETALLQUEUESREQUEST(9),
         GETSUBSCRIPTIONLAGSREQUEST(10),
         GETCLUSTERMETADATAREQUEST(11),
+        UNSIDELINEREQUESTS(12),
+        SETSUBSCRIPTIONSOFFSETSREQUEST(13),
+        GETSUBSCRIPTIONSOFFSETSREQUEST(14),
         PROTOREQUEST_NOT_SET(0);
         private final int value;
 
@@ -972,6 +1146,12 @@ public final class ProtoRequest extends
                     return GETSUBSCRIPTIONLAGSREQUEST;
                 case 11:
                     return GETCLUSTERMETADATAREQUEST;
+                case 12:
+                    return UNSIDELINEREQUESTS;
+                case 13:
+                    return SETSUBSCRIPTIONSOFFSETSREQUEST;
+                case 14:
+                    return GETSUBSCRIPTIONSOFFSETSREQUEST;
                 case 0:
                     return PROTOREQUEST_NOT_SET;
                 default:
@@ -1020,6 +1200,12 @@ public final class ProtoRequest extends
             com.flipkart.vbroker.proto.GetSubscriptionLagsRequest, com.flipkart.vbroker.proto.GetSubscriptionLagsRequest.Builder, com.flipkart.vbroker.proto.GetSubscriptionLagsRequestOrBuilder> getSubscriptionLagsRequestBuilder_;
         private com.google.protobuf.SingleFieldBuilderV3<
             com.flipkart.vbroker.proto.GetClusterMetadataRequest, com.flipkart.vbroker.proto.GetClusterMetadataRequest.Builder, com.flipkart.vbroker.proto.GetClusterMetadataRequestOrBuilder> getClusterMetadataRequestBuilder_;
+        private com.google.protobuf.SingleFieldBuilderV3<
+            com.flipkart.vbroker.proto.UnsidelineRequests, com.flipkart.vbroker.proto.UnsidelineRequests.Builder, com.flipkart.vbroker.proto.UnsidelineRequestsOrBuilder> unsidelineRequestsBuilder_;
+        private com.google.protobuf.SingleFieldBuilderV3<
+            com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest, com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest.Builder, com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequestOrBuilder> setSubscriptionsOffsetsRequestBuilder_;
+        private com.google.protobuf.SingleFieldBuilderV3<
+            com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest, com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest.Builder, com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequestOrBuilder> getSubscriptionsOffsetsRequestBuilder_;
 
         // Construct using com.flipkart.vbroker.proto.ProtoRequest.newBuilder()
         private Builder() {
@@ -1153,6 +1339,27 @@ public final class ProtoRequest extends
                     result.protoRequest_ = getClusterMetadataRequestBuilder_.build();
                 }
             }
+            if (protoRequestCase_ == 12) {
+                if (unsidelineRequestsBuilder_ == null) {
+                    result.protoRequest_ = protoRequest_;
+                } else {
+                    result.protoRequest_ = unsidelineRequestsBuilder_.build();
+                }
+            }
+            if (protoRequestCase_ == 13) {
+                if (setSubscriptionsOffsetsRequestBuilder_ == null) {
+                    result.protoRequest_ = protoRequest_;
+                } else {
+                    result.protoRequest_ = setSubscriptionsOffsetsRequestBuilder_.build();
+                }
+            }
+            if (protoRequestCase_ == 14) {
+                if (getSubscriptionsOffsetsRequestBuilder_ == null) {
+                    result.protoRequest_ = protoRequest_;
+                } else {
+                    result.protoRequest_ = getSubscriptionsOffsetsRequestBuilder_.build();
+                }
+            }
             result.protoRequestCase_ = protoRequestCase_;
             onBuilt();
             return result;
@@ -1246,6 +1453,18 @@ public final class ProtoRequest extends
                     mergeGetClusterMetadataRequest(other.getGetClusterMetadataRequest());
                     break;
                 }
+                case UNSIDELINEREQUESTS: {
+                    mergeUnsidelineRequests(other.getUnsidelineRequests());
+                    break;
+                }
+                case SETSUBSCRIPTIONSOFFSETSREQUEST: {
+                    mergeSetSubscriptionsOffsetsRequest(other.getSetSubscriptionsOffsetsRequest());
+                    break;
+                }
+                case GETSUBSCRIPTIONSOFFSETSREQUEST: {
+                    mergeGetSubscriptionsOffsetsRequest(other.getGetSubscriptionsOffsetsRequest());
+                    break;
+                }
                 case PROTOREQUEST_NOT_SET: {
                     break;
                 }
@@ -1317,6 +1536,21 @@ public final class ProtoRequest extends
         /**
          * <code>.proto.CreateTopicsRequest createTopicsRequest = 1;</code>
          */
+        public Builder setCreateTopicsRequest(
+            com.flipkart.vbroker.proto.CreateTopicsRequest.Builder builderForValue) {
+            if (createTopicsRequestBuilder_ == null) {
+                protoRequest_ = builderForValue.build();
+                onChanged();
+            } else {
+                createTopicsRequestBuilder_.setMessage(builderForValue.build());
+            }
+            protoRequestCase_ = 1;
+            return this;
+        }
+
+        /**
+         * <code>.proto.CreateTopicsRequest createTopicsRequest = 1;</code>
+         */
         public Builder setCreateTopicsRequest(com.flipkart.vbroker.proto.CreateTopicsRequest value) {
             if (createTopicsRequestBuilder_ == null) {
                 if (value == null) {
@@ -1326,21 +1560,6 @@ public final class ProtoRequest extends
                 onChanged();
             } else {
                 createTopicsRequestBuilder_.setMessage(value);
-            }
-            protoRequestCase_ = 1;
-            return this;
-        }
-
-        /**
-         * <code>.proto.CreateTopicsRequest createTopicsRequest = 1;</code>
-         */
-        public Builder setCreateTopicsRequest(
-            com.flipkart.vbroker.proto.CreateTopicsRequest.Builder builderForValue) {
-            if (createTopicsRequestBuilder_ == null) {
-                protoRequest_ = builderForValue.build();
-                onChanged();
-            } else {
-                createTopicsRequestBuilder_.setMessage(builderForValue.build());
             }
             protoRequestCase_ = 1;
             return this;
@@ -1460,6 +1679,21 @@ public final class ProtoRequest extends
         /**
          * <code>.proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
          */
+        public Builder setCreateSubscriptionsRequest(
+            com.flipkart.vbroker.proto.CreateSubscriptionsRequest.Builder builderForValue) {
+            if (createSubscriptionsRequestBuilder_ == null) {
+                protoRequest_ = builderForValue.build();
+                onChanged();
+            } else {
+                createSubscriptionsRequestBuilder_.setMessage(builderForValue.build());
+            }
+            protoRequestCase_ = 2;
+            return this;
+        }
+
+        /**
+         * <code>.proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
+         */
         public Builder setCreateSubscriptionsRequest(com.flipkart.vbroker.proto.CreateSubscriptionsRequest value) {
             if (createSubscriptionsRequestBuilder_ == null) {
                 if (value == null) {
@@ -1469,21 +1703,6 @@ public final class ProtoRequest extends
                 onChanged();
             } else {
                 createSubscriptionsRequestBuilder_.setMessage(value);
-            }
-            protoRequestCase_ = 2;
-            return this;
-        }
-
-        /**
-         * <code>.proto.CreateSubscriptionsRequest createSubscriptionsRequest = 2;</code>
-         */
-        public Builder setCreateSubscriptionsRequest(
-            com.flipkart.vbroker.proto.CreateSubscriptionsRequest.Builder builderForValue) {
-            if (createSubscriptionsRequestBuilder_ == null) {
-                protoRequest_ = builderForValue.build();
-                onChanged();
-            } else {
-                createSubscriptionsRequestBuilder_.setMessage(builderForValue.build());
             }
             protoRequestCase_ = 2;
             return this;
@@ -1603,6 +1822,21 @@ public final class ProtoRequest extends
         /**
          * <code>.proto.CreateQueuesRequest createQueuesRequest = 3;</code>
          */
+        public Builder setCreateQueuesRequest(
+            com.flipkart.vbroker.proto.CreateQueuesRequest.Builder builderForValue) {
+            if (createQueuesRequestBuilder_ == null) {
+                protoRequest_ = builderForValue.build();
+                onChanged();
+            } else {
+                createQueuesRequestBuilder_.setMessage(builderForValue.build());
+            }
+            protoRequestCase_ = 3;
+            return this;
+        }
+
+        /**
+         * <code>.proto.CreateQueuesRequest createQueuesRequest = 3;</code>
+         */
         public Builder setCreateQueuesRequest(com.flipkart.vbroker.proto.CreateQueuesRequest value) {
             if (createQueuesRequestBuilder_ == null) {
                 if (value == null) {
@@ -1612,21 +1846,6 @@ public final class ProtoRequest extends
                 onChanged();
             } else {
                 createQueuesRequestBuilder_.setMessage(value);
-            }
-            protoRequestCase_ = 3;
-            return this;
-        }
-
-        /**
-         * <code>.proto.CreateQueuesRequest createQueuesRequest = 3;</code>
-         */
-        public Builder setCreateQueuesRequest(
-            com.flipkart.vbroker.proto.CreateQueuesRequest.Builder builderForValue) {
-            if (createQueuesRequestBuilder_ == null) {
-                protoRequest_ = builderForValue.build();
-                onChanged();
-            } else {
-                createQueuesRequestBuilder_.setMessage(builderForValue.build());
             }
             protoRequestCase_ = 3;
             return this;
@@ -1746,6 +1965,21 @@ public final class ProtoRequest extends
         /**
          * <code>.proto.GetTopicsRequest getTopicsRequest = 4;</code>
          */
+        public Builder setGetTopicsRequest(
+            com.flipkart.vbroker.proto.GetTopicsRequest.Builder builderForValue) {
+            if (getTopicsRequestBuilder_ == null) {
+                protoRequest_ = builderForValue.build();
+                onChanged();
+            } else {
+                getTopicsRequestBuilder_.setMessage(builderForValue.build());
+            }
+            protoRequestCase_ = 4;
+            return this;
+        }
+
+        /**
+         * <code>.proto.GetTopicsRequest getTopicsRequest = 4;</code>
+         */
         public Builder setGetTopicsRequest(com.flipkart.vbroker.proto.GetTopicsRequest value) {
             if (getTopicsRequestBuilder_ == null) {
                 if (value == null) {
@@ -1755,21 +1989,6 @@ public final class ProtoRequest extends
                 onChanged();
             } else {
                 getTopicsRequestBuilder_.setMessage(value);
-            }
-            protoRequestCase_ = 4;
-            return this;
-        }
-
-        /**
-         * <code>.proto.GetTopicsRequest getTopicsRequest = 4;</code>
-         */
-        public Builder setGetTopicsRequest(
-            com.flipkart.vbroker.proto.GetTopicsRequest.Builder builderForValue) {
-            if (getTopicsRequestBuilder_ == null) {
-                protoRequest_ = builderForValue.build();
-                onChanged();
-            } else {
-                getTopicsRequestBuilder_.setMessage(builderForValue.build());
             }
             protoRequestCase_ = 4;
             return this;
@@ -1889,6 +2108,21 @@ public final class ProtoRequest extends
         /**
          * <code>.proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
          */
+        public Builder setGetAllTopicsRequest(
+            com.flipkart.vbroker.proto.GetAllTopicsRequest.Builder builderForValue) {
+            if (getAllTopicsRequestBuilder_ == null) {
+                protoRequest_ = builderForValue.build();
+                onChanged();
+            } else {
+                getAllTopicsRequestBuilder_.setMessage(builderForValue.build());
+            }
+            protoRequestCase_ = 5;
+            return this;
+        }
+
+        /**
+         * <code>.proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
+         */
         public Builder setGetAllTopicsRequest(com.flipkart.vbroker.proto.GetAllTopicsRequest value) {
             if (getAllTopicsRequestBuilder_ == null) {
                 if (value == null) {
@@ -1898,21 +2132,6 @@ public final class ProtoRequest extends
                 onChanged();
             } else {
                 getAllTopicsRequestBuilder_.setMessage(value);
-            }
-            protoRequestCase_ = 5;
-            return this;
-        }
-
-        /**
-         * <code>.proto.GetAllTopicsRequest getAllTopicsRequest = 5;</code>
-         */
-        public Builder setGetAllTopicsRequest(
-            com.flipkart.vbroker.proto.GetAllTopicsRequest.Builder builderForValue) {
-            if (getAllTopicsRequestBuilder_ == null) {
-                protoRequest_ = builderForValue.build();
-                onChanged();
-            } else {
-                getAllTopicsRequestBuilder_.setMessage(builderForValue.build());
             }
             protoRequestCase_ = 5;
             return this;
@@ -2032,6 +2251,21 @@ public final class ProtoRequest extends
         /**
          * <code>.proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
          */
+        public Builder setGetSubscriptionsRequest(
+            com.flipkart.vbroker.proto.GetSubscriptionsRequest.Builder builderForValue) {
+            if (getSubscriptionsRequestBuilder_ == null) {
+                protoRequest_ = builderForValue.build();
+                onChanged();
+            } else {
+                getSubscriptionsRequestBuilder_.setMessage(builderForValue.build());
+            }
+            protoRequestCase_ = 6;
+            return this;
+        }
+
+        /**
+         * <code>.proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
+         */
         public Builder setGetSubscriptionsRequest(com.flipkart.vbroker.proto.GetSubscriptionsRequest value) {
             if (getSubscriptionsRequestBuilder_ == null) {
                 if (value == null) {
@@ -2041,21 +2275,6 @@ public final class ProtoRequest extends
                 onChanged();
             } else {
                 getSubscriptionsRequestBuilder_.setMessage(value);
-            }
-            protoRequestCase_ = 6;
-            return this;
-        }
-
-        /**
-         * <code>.proto.GetSubscriptionsRequest getSubscriptionsRequest = 6;</code>
-         */
-        public Builder setGetSubscriptionsRequest(
-            com.flipkart.vbroker.proto.GetSubscriptionsRequest.Builder builderForValue) {
-            if (getSubscriptionsRequestBuilder_ == null) {
-                protoRequest_ = builderForValue.build();
-                onChanged();
-            } else {
-                getSubscriptionsRequestBuilder_.setMessage(builderForValue.build());
             }
             protoRequestCase_ = 6;
             return this;
@@ -2175,6 +2394,21 @@ public final class ProtoRequest extends
         /**
          * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
          */
+        public Builder setGetAllSubscriptionsForTopicsRequest(
+            com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest.Builder builderForValue) {
+            if (getAllSubscriptionsForTopicsRequestBuilder_ == null) {
+                protoRequest_ = builderForValue.build();
+                onChanged();
+            } else {
+                getAllSubscriptionsForTopicsRequestBuilder_.setMessage(builderForValue.build());
+            }
+            protoRequestCase_ = 7;
+            return this;
+        }
+
+        /**
+         * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
+         */
         public Builder setGetAllSubscriptionsForTopicsRequest(com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest value) {
             if (getAllSubscriptionsForTopicsRequestBuilder_ == null) {
                 if (value == null) {
@@ -2184,21 +2418,6 @@ public final class ProtoRequest extends
                 onChanged();
             } else {
                 getAllSubscriptionsForTopicsRequestBuilder_.setMessage(value);
-            }
-            protoRequestCase_ = 7;
-            return this;
-        }
-
-        /**
-         * <code>.proto.GetAllSubscriptionsForTopicsRequest getAllSubscriptionsForTopicsRequest = 7;</code>
-         */
-        public Builder setGetAllSubscriptionsForTopicsRequest(
-            com.flipkart.vbroker.proto.GetAllSubscriptionsForTopicsRequest.Builder builderForValue) {
-            if (getAllSubscriptionsForTopicsRequestBuilder_ == null) {
-                protoRequest_ = builderForValue.build();
-                onChanged();
-            } else {
-                getAllSubscriptionsForTopicsRequestBuilder_.setMessage(builderForValue.build());
             }
             protoRequestCase_ = 7;
             return this;
@@ -2318,6 +2537,21 @@ public final class ProtoRequest extends
         /**
          * <code>.proto.GetQueuesRequest getQueuesRequest = 8;</code>
          */
+        public Builder setGetQueuesRequest(
+            com.flipkart.vbroker.proto.GetQueuesRequest.Builder builderForValue) {
+            if (getQueuesRequestBuilder_ == null) {
+                protoRequest_ = builderForValue.build();
+                onChanged();
+            } else {
+                getQueuesRequestBuilder_.setMessage(builderForValue.build());
+            }
+            protoRequestCase_ = 8;
+            return this;
+        }
+
+        /**
+         * <code>.proto.GetQueuesRequest getQueuesRequest = 8;</code>
+         */
         public Builder setGetQueuesRequest(com.flipkart.vbroker.proto.GetQueuesRequest value) {
             if (getQueuesRequestBuilder_ == null) {
                 if (value == null) {
@@ -2327,21 +2561,6 @@ public final class ProtoRequest extends
                 onChanged();
             } else {
                 getQueuesRequestBuilder_.setMessage(value);
-            }
-            protoRequestCase_ = 8;
-            return this;
-        }
-
-        /**
-         * <code>.proto.GetQueuesRequest getQueuesRequest = 8;</code>
-         */
-        public Builder setGetQueuesRequest(
-            com.flipkart.vbroker.proto.GetQueuesRequest.Builder builderForValue) {
-            if (getQueuesRequestBuilder_ == null) {
-                protoRequest_ = builderForValue.build();
-                onChanged();
-            } else {
-                getQueuesRequestBuilder_.setMessage(builderForValue.build());
             }
             protoRequestCase_ = 8;
             return this;
@@ -2461,6 +2680,21 @@ public final class ProtoRequest extends
         /**
          * <code>.proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
          */
+        public Builder setGetAllQueuesRequest(
+            com.flipkart.vbroker.proto.GetAllQueuesRequest.Builder builderForValue) {
+            if (getAllQueuesRequestBuilder_ == null) {
+                protoRequest_ = builderForValue.build();
+                onChanged();
+            } else {
+                getAllQueuesRequestBuilder_.setMessage(builderForValue.build());
+            }
+            protoRequestCase_ = 9;
+            return this;
+        }
+
+        /**
+         * <code>.proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
+         */
         public Builder setGetAllQueuesRequest(com.flipkart.vbroker.proto.GetAllQueuesRequest value) {
             if (getAllQueuesRequestBuilder_ == null) {
                 if (value == null) {
@@ -2470,21 +2704,6 @@ public final class ProtoRequest extends
                 onChanged();
             } else {
                 getAllQueuesRequestBuilder_.setMessage(value);
-            }
-            protoRequestCase_ = 9;
-            return this;
-        }
-
-        /**
-         * <code>.proto.GetAllQueuesRequest getAllQueuesRequest = 9;</code>
-         */
-        public Builder setGetAllQueuesRequest(
-            com.flipkart.vbroker.proto.GetAllQueuesRequest.Builder builderForValue) {
-            if (getAllQueuesRequestBuilder_ == null) {
-                protoRequest_ = builderForValue.build();
-                onChanged();
-            } else {
-                getAllQueuesRequestBuilder_.setMessage(builderForValue.build());
             }
             protoRequestCase_ = 9;
             return this;
@@ -2604,6 +2823,21 @@ public final class ProtoRequest extends
         /**
          * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
          */
+        public Builder setGetSubscriptionLagsRequest(
+            com.flipkart.vbroker.proto.GetSubscriptionLagsRequest.Builder builderForValue) {
+            if (getSubscriptionLagsRequestBuilder_ == null) {
+                protoRequest_ = builderForValue.build();
+                onChanged();
+            } else {
+                getSubscriptionLagsRequestBuilder_.setMessage(builderForValue.build());
+            }
+            protoRequestCase_ = 10;
+            return this;
+        }
+
+        /**
+         * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
+         */
         public Builder setGetSubscriptionLagsRequest(com.flipkart.vbroker.proto.GetSubscriptionLagsRequest value) {
             if (getSubscriptionLagsRequestBuilder_ == null) {
                 if (value == null) {
@@ -2613,21 +2847,6 @@ public final class ProtoRequest extends
                 onChanged();
             } else {
                 getSubscriptionLagsRequestBuilder_.setMessage(value);
-            }
-            protoRequestCase_ = 10;
-            return this;
-        }
-
-        /**
-         * <code>.proto.GetSubscriptionLagsRequest getSubscriptionLagsRequest = 10;</code>
-         */
-        public Builder setGetSubscriptionLagsRequest(
-            com.flipkart.vbroker.proto.GetSubscriptionLagsRequest.Builder builderForValue) {
-            if (getSubscriptionLagsRequestBuilder_ == null) {
-                protoRequest_ = builderForValue.build();
-                onChanged();
-            } else {
-                getSubscriptionLagsRequestBuilder_.setMessage(builderForValue.build());
             }
             protoRequestCase_ = 10;
             return this;
@@ -2747,6 +2966,21 @@ public final class ProtoRequest extends
         /**
          * <code>.proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
          */
+        public Builder setGetClusterMetadataRequest(
+            com.flipkart.vbroker.proto.GetClusterMetadataRequest.Builder builderForValue) {
+            if (getClusterMetadataRequestBuilder_ == null) {
+                protoRequest_ = builderForValue.build();
+                onChanged();
+            } else {
+                getClusterMetadataRequestBuilder_.setMessage(builderForValue.build());
+            }
+            protoRequestCase_ = 11;
+            return this;
+        }
+
+        /**
+         * <code>.proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
+         */
         public Builder setGetClusterMetadataRequest(com.flipkart.vbroker.proto.GetClusterMetadataRequest value) {
             if (getClusterMetadataRequestBuilder_ == null) {
                 if (value == null) {
@@ -2756,21 +2990,6 @@ public final class ProtoRequest extends
                 onChanged();
             } else {
                 getClusterMetadataRequestBuilder_.setMessage(value);
-            }
-            protoRequestCase_ = 11;
-            return this;
-        }
-
-        /**
-         * <code>.proto.GetClusterMetadataRequest getClusterMetadataRequest = 11;</code>
-         */
-        public Builder setGetClusterMetadataRequest(
-            com.flipkart.vbroker.proto.GetClusterMetadataRequest.Builder builderForValue) {
-            if (getClusterMetadataRequestBuilder_ == null) {
-                protoRequest_ = builderForValue.build();
-                onChanged();
-            } else {
-                getClusterMetadataRequestBuilder_.setMessage(builderForValue.build());
             }
             protoRequestCase_ = 11;
             return this;
@@ -2861,6 +3080,435 @@ public final class ProtoRequest extends
             onChanged();
             ;
             return getClusterMetadataRequestBuilder_;
+        }
+
+        /**
+         * <code>.proto.UnsidelineRequests unsidelineRequests = 12;</code>
+         */
+        public boolean hasUnsidelineRequests() {
+            return protoRequestCase_ == 12;
+        }
+
+        /**
+         * <code>.proto.UnsidelineRequests unsidelineRequests = 12;</code>
+         */
+        public com.flipkart.vbroker.proto.UnsidelineRequests getUnsidelineRequests() {
+            if (unsidelineRequestsBuilder_ == null) {
+                if (protoRequestCase_ == 12) {
+                    return (com.flipkart.vbroker.proto.UnsidelineRequests) protoRequest_;
+                }
+                return com.flipkart.vbroker.proto.UnsidelineRequests.getDefaultInstance();
+            } else {
+                if (protoRequestCase_ == 12) {
+                    return unsidelineRequestsBuilder_.getMessage();
+                }
+                return com.flipkart.vbroker.proto.UnsidelineRequests.getDefaultInstance();
+            }
+        }
+
+        /**
+         * <code>.proto.UnsidelineRequests unsidelineRequests = 12;</code>
+         */
+        public Builder setUnsidelineRequests(
+            com.flipkart.vbroker.proto.UnsidelineRequests.Builder builderForValue) {
+            if (unsidelineRequestsBuilder_ == null) {
+                protoRequest_ = builderForValue.build();
+                onChanged();
+            } else {
+                unsidelineRequestsBuilder_.setMessage(builderForValue.build());
+            }
+            protoRequestCase_ = 12;
+            return this;
+        }
+
+        /**
+         * <code>.proto.UnsidelineRequests unsidelineRequests = 12;</code>
+         */
+        public Builder setUnsidelineRequests(com.flipkart.vbroker.proto.UnsidelineRequests value) {
+            if (unsidelineRequestsBuilder_ == null) {
+                if (value == null) {
+                    throw new NullPointerException();
+                }
+                protoRequest_ = value;
+                onChanged();
+            } else {
+                unsidelineRequestsBuilder_.setMessage(value);
+            }
+            protoRequestCase_ = 12;
+            return this;
+        }
+
+        /**
+         * <code>.proto.UnsidelineRequests unsidelineRequests = 12;</code>
+         */
+        public Builder mergeUnsidelineRequests(com.flipkart.vbroker.proto.UnsidelineRequests value) {
+            if (unsidelineRequestsBuilder_ == null) {
+                if (protoRequestCase_ == 12 &&
+                    protoRequest_ != com.flipkart.vbroker.proto.UnsidelineRequests.getDefaultInstance()) {
+                    protoRequest_ = com.flipkart.vbroker.proto.UnsidelineRequests.newBuilder((com.flipkart.vbroker.proto.UnsidelineRequests) protoRequest_)
+                        .mergeFrom(value).buildPartial();
+                } else {
+                    protoRequest_ = value;
+                }
+                onChanged();
+            } else {
+                if (protoRequestCase_ == 12) {
+                    unsidelineRequestsBuilder_.mergeFrom(value);
+                }
+                unsidelineRequestsBuilder_.setMessage(value);
+            }
+            protoRequestCase_ = 12;
+            return this;
+        }
+
+        /**
+         * <code>.proto.UnsidelineRequests unsidelineRequests = 12;</code>
+         */
+        public Builder clearUnsidelineRequests() {
+            if (unsidelineRequestsBuilder_ == null) {
+                if (protoRequestCase_ == 12) {
+                    protoRequestCase_ = 0;
+                    protoRequest_ = null;
+                    onChanged();
+                }
+            } else {
+                if (protoRequestCase_ == 12) {
+                    protoRequestCase_ = 0;
+                    protoRequest_ = null;
+                }
+                unsidelineRequestsBuilder_.clear();
+            }
+            return this;
+        }
+
+        /**
+         * <code>.proto.UnsidelineRequests unsidelineRequests = 12;</code>
+         */
+        public com.flipkart.vbroker.proto.UnsidelineRequests.Builder getUnsidelineRequestsBuilder() {
+            return getUnsidelineRequestsFieldBuilder().getBuilder();
+        }
+
+        /**
+         * <code>.proto.UnsidelineRequests unsidelineRequests = 12;</code>
+         */
+        public com.flipkart.vbroker.proto.UnsidelineRequestsOrBuilder getUnsidelineRequestsOrBuilder() {
+            if ((protoRequestCase_ == 12) && (unsidelineRequestsBuilder_ != null)) {
+                return unsidelineRequestsBuilder_.getMessageOrBuilder();
+            } else {
+                if (protoRequestCase_ == 12) {
+                    return (com.flipkart.vbroker.proto.UnsidelineRequests) protoRequest_;
+                }
+                return com.flipkart.vbroker.proto.UnsidelineRequests.getDefaultInstance();
+            }
+        }
+
+        /**
+         * <code>.proto.UnsidelineRequests unsidelineRequests = 12;</code>
+         */
+        private com.google.protobuf.SingleFieldBuilderV3<
+            com.flipkart.vbroker.proto.UnsidelineRequests, com.flipkart.vbroker.proto.UnsidelineRequests.Builder, com.flipkart.vbroker.proto.UnsidelineRequestsOrBuilder>
+        getUnsidelineRequestsFieldBuilder() {
+            if (unsidelineRequestsBuilder_ == null) {
+                if (!(protoRequestCase_ == 12)) {
+                    protoRequest_ = com.flipkart.vbroker.proto.UnsidelineRequests.getDefaultInstance();
+                }
+                unsidelineRequestsBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+                    com.flipkart.vbroker.proto.UnsidelineRequests, com.flipkart.vbroker.proto.UnsidelineRequests.Builder, com.flipkart.vbroker.proto.UnsidelineRequestsOrBuilder>(
+                    (com.flipkart.vbroker.proto.UnsidelineRequests) protoRequest_,
+                    getParentForChildren(),
+                    isClean());
+                protoRequest_ = null;
+            }
+            protoRequestCase_ = 12;
+            onChanged();
+            ;
+            return unsidelineRequestsBuilder_;
+        }
+
+        /**
+         * <code>.proto.SetSubscriptionsOffsetsRequest setSubscriptionsOffsetsRequest = 13;</code>
+         */
+        public boolean hasSetSubscriptionsOffsetsRequest() {
+            return protoRequestCase_ == 13;
+        }
+
+        /**
+         * <code>.proto.SetSubscriptionsOffsetsRequest setSubscriptionsOffsetsRequest = 13;</code>
+         */
+        public com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest getSetSubscriptionsOffsetsRequest() {
+            if (setSubscriptionsOffsetsRequestBuilder_ == null) {
+                if (protoRequestCase_ == 13) {
+                    return (com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest) protoRequest_;
+                }
+                return com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest.getDefaultInstance();
+            } else {
+                if (protoRequestCase_ == 13) {
+                    return setSubscriptionsOffsetsRequestBuilder_.getMessage();
+                }
+                return com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest.getDefaultInstance();
+            }
+        }
+
+        /**
+         * <code>.proto.SetSubscriptionsOffsetsRequest setSubscriptionsOffsetsRequest = 13;</code>
+         */
+        public Builder setSetSubscriptionsOffsetsRequest(
+            com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest.Builder builderForValue) {
+            if (setSubscriptionsOffsetsRequestBuilder_ == null) {
+                protoRequest_ = builderForValue.build();
+                onChanged();
+            } else {
+                setSubscriptionsOffsetsRequestBuilder_.setMessage(builderForValue.build());
+            }
+            protoRequestCase_ = 13;
+            return this;
+        }
+
+        /**
+         * <code>.proto.SetSubscriptionsOffsetsRequest setSubscriptionsOffsetsRequest = 13;</code>
+         */
+        public Builder setSetSubscriptionsOffsetsRequest(com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest value) {
+            if (setSubscriptionsOffsetsRequestBuilder_ == null) {
+                if (value == null) {
+                    throw new NullPointerException();
+                }
+                protoRequest_ = value;
+                onChanged();
+            } else {
+                setSubscriptionsOffsetsRequestBuilder_.setMessage(value);
+            }
+            protoRequestCase_ = 13;
+            return this;
+        }
+
+        /**
+         * <code>.proto.SetSubscriptionsOffsetsRequest setSubscriptionsOffsetsRequest = 13;</code>
+         */
+        public Builder mergeSetSubscriptionsOffsetsRequest(com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest value) {
+            if (setSubscriptionsOffsetsRequestBuilder_ == null) {
+                if (protoRequestCase_ == 13 &&
+                    protoRequest_ != com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest.getDefaultInstance()) {
+                    protoRequest_ = com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest.newBuilder((com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest) protoRequest_)
+                        .mergeFrom(value).buildPartial();
+                } else {
+                    protoRequest_ = value;
+                }
+                onChanged();
+            } else {
+                if (protoRequestCase_ == 13) {
+                    setSubscriptionsOffsetsRequestBuilder_.mergeFrom(value);
+                }
+                setSubscriptionsOffsetsRequestBuilder_.setMessage(value);
+            }
+            protoRequestCase_ = 13;
+            return this;
+        }
+
+        /**
+         * <code>.proto.SetSubscriptionsOffsetsRequest setSubscriptionsOffsetsRequest = 13;</code>
+         */
+        public Builder clearSetSubscriptionsOffsetsRequest() {
+            if (setSubscriptionsOffsetsRequestBuilder_ == null) {
+                if (protoRequestCase_ == 13) {
+                    protoRequestCase_ = 0;
+                    protoRequest_ = null;
+                    onChanged();
+                }
+            } else {
+                if (protoRequestCase_ == 13) {
+                    protoRequestCase_ = 0;
+                    protoRequest_ = null;
+                }
+                setSubscriptionsOffsetsRequestBuilder_.clear();
+            }
+            return this;
+        }
+
+        /**
+         * <code>.proto.SetSubscriptionsOffsetsRequest setSubscriptionsOffsetsRequest = 13;</code>
+         */
+        public com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest.Builder getSetSubscriptionsOffsetsRequestBuilder() {
+            return getSetSubscriptionsOffsetsRequestFieldBuilder().getBuilder();
+        }
+
+        /**
+         * <code>.proto.SetSubscriptionsOffsetsRequest setSubscriptionsOffsetsRequest = 13;</code>
+         */
+        public com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequestOrBuilder getSetSubscriptionsOffsetsRequestOrBuilder() {
+            if ((protoRequestCase_ == 13) && (setSubscriptionsOffsetsRequestBuilder_ != null)) {
+                return setSubscriptionsOffsetsRequestBuilder_.getMessageOrBuilder();
+            } else {
+                if (protoRequestCase_ == 13) {
+                    return (com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest) protoRequest_;
+                }
+                return com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest.getDefaultInstance();
+            }
+        }
+
+        /**
+         * <code>.proto.SetSubscriptionsOffsetsRequest setSubscriptionsOffsetsRequest = 13;</code>
+         */
+        private com.google.protobuf.SingleFieldBuilderV3<
+            com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest, com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest.Builder, com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequestOrBuilder>
+        getSetSubscriptionsOffsetsRequestFieldBuilder() {
+            if (setSubscriptionsOffsetsRequestBuilder_ == null) {
+                if (!(protoRequestCase_ == 13)) {
+                    protoRequest_ = com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest.getDefaultInstance();
+                }
+                setSubscriptionsOffsetsRequestBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+                    com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest, com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest.Builder, com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequestOrBuilder>(
+                    (com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest) protoRequest_,
+                    getParentForChildren(),
+                    isClean());
+                protoRequest_ = null;
+            }
+            protoRequestCase_ = 13;
+            onChanged();
+            ;
+            return setSubscriptionsOffsetsRequestBuilder_;
+        }
+
+        /**
+         * <code>.proto.GetSubscriptionsOffsetsRequest getSubscriptionsOffsetsRequest = 14;</code>
+         */
+        public boolean hasGetSubscriptionsOffsetsRequest() {
+            return protoRequestCase_ == 14;
+        }
+
+        /**
+         * <code>.proto.GetSubscriptionsOffsetsRequest getSubscriptionsOffsetsRequest = 14;</code>
+         */
+        public com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest getGetSubscriptionsOffsetsRequest() {
+            if (getSubscriptionsOffsetsRequestBuilder_ == null) {
+                if (protoRequestCase_ == 14) {
+                    return (com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest) protoRequest_;
+                }
+                return com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest.getDefaultInstance();
+            } else {
+                if (protoRequestCase_ == 14) {
+                    return getSubscriptionsOffsetsRequestBuilder_.getMessage();
+                }
+                return com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest.getDefaultInstance();
+            }
+        }
+
+        /**
+         * <code>.proto.GetSubscriptionsOffsetsRequest getSubscriptionsOffsetsRequest = 14;</code>
+         */
+        public Builder setGetSubscriptionsOffsetsRequest(
+            com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest.Builder builderForValue) {
+            if (getSubscriptionsOffsetsRequestBuilder_ == null) {
+                protoRequest_ = builderForValue.build();
+                onChanged();
+            } else {
+                getSubscriptionsOffsetsRequestBuilder_.setMessage(builderForValue.build());
+            }
+            protoRequestCase_ = 14;
+            return this;
+        }
+
+        /**
+         * <code>.proto.GetSubscriptionsOffsetsRequest getSubscriptionsOffsetsRequest = 14;</code>
+         */
+        public Builder setGetSubscriptionsOffsetsRequest(com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest value) {
+            if (getSubscriptionsOffsetsRequestBuilder_ == null) {
+                if (value == null) {
+                    throw new NullPointerException();
+                }
+                protoRequest_ = value;
+                onChanged();
+            } else {
+                getSubscriptionsOffsetsRequestBuilder_.setMessage(value);
+            }
+            protoRequestCase_ = 14;
+            return this;
+        }
+
+        /**
+         * <code>.proto.GetSubscriptionsOffsetsRequest getSubscriptionsOffsetsRequest = 14;</code>
+         */
+        public Builder mergeGetSubscriptionsOffsetsRequest(com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest value) {
+            if (getSubscriptionsOffsetsRequestBuilder_ == null) {
+                if (protoRequestCase_ == 14 &&
+                    protoRequest_ != com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest.getDefaultInstance()) {
+                    protoRequest_ = com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest.newBuilder((com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest) protoRequest_)
+                        .mergeFrom(value).buildPartial();
+                } else {
+                    protoRequest_ = value;
+                }
+                onChanged();
+            } else {
+                if (protoRequestCase_ == 14) {
+                    getSubscriptionsOffsetsRequestBuilder_.mergeFrom(value);
+                }
+                getSubscriptionsOffsetsRequestBuilder_.setMessage(value);
+            }
+            protoRequestCase_ = 14;
+            return this;
+        }
+
+        /**
+         * <code>.proto.GetSubscriptionsOffsetsRequest getSubscriptionsOffsetsRequest = 14;</code>
+         */
+        public Builder clearGetSubscriptionsOffsetsRequest() {
+            if (getSubscriptionsOffsetsRequestBuilder_ == null) {
+                if (protoRequestCase_ == 14) {
+                    protoRequestCase_ = 0;
+                    protoRequest_ = null;
+                    onChanged();
+                }
+            } else {
+                if (protoRequestCase_ == 14) {
+                    protoRequestCase_ = 0;
+                    protoRequest_ = null;
+                }
+                getSubscriptionsOffsetsRequestBuilder_.clear();
+            }
+            return this;
+        }
+
+        /**
+         * <code>.proto.GetSubscriptionsOffsetsRequest getSubscriptionsOffsetsRequest = 14;</code>
+         */
+        public com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest.Builder getGetSubscriptionsOffsetsRequestBuilder() {
+            return getGetSubscriptionsOffsetsRequestFieldBuilder().getBuilder();
+        }
+
+        /**
+         * <code>.proto.GetSubscriptionsOffsetsRequest getSubscriptionsOffsetsRequest = 14;</code>
+         */
+        public com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequestOrBuilder getGetSubscriptionsOffsetsRequestOrBuilder() {
+            if ((protoRequestCase_ == 14) && (getSubscriptionsOffsetsRequestBuilder_ != null)) {
+                return getSubscriptionsOffsetsRequestBuilder_.getMessageOrBuilder();
+            } else {
+                if (protoRequestCase_ == 14) {
+                    return (com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest) protoRequest_;
+                }
+                return com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest.getDefaultInstance();
+            }
+        }
+
+        /**
+         * <code>.proto.GetSubscriptionsOffsetsRequest getSubscriptionsOffsetsRequest = 14;</code>
+         */
+        private com.google.protobuf.SingleFieldBuilderV3<
+            com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest, com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest.Builder, com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequestOrBuilder>
+        getGetSubscriptionsOffsetsRequestFieldBuilder() {
+            if (getSubscriptionsOffsetsRequestBuilder_ == null) {
+                if (!(protoRequestCase_ == 14)) {
+                    protoRequest_ = com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest.getDefaultInstance();
+                }
+                getSubscriptionsOffsetsRequestBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+                    com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest, com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest.Builder, com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequestOrBuilder>(
+                    (com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest) protoRequest_,
+                    getParentForChildren(),
+                    isClean());
+                protoRequest_ = null;
+            }
+            protoRequestCase_ = 14;
+            onChanged();
+            ;
+            return getSubscriptionsOffsetsRequestBuilder_;
         }
 
         public final Builder setUnknownFields(

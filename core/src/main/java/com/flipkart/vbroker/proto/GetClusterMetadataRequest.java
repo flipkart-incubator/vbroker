@@ -4,6 +4,10 @@
 package com.flipkart.vbroker.proto;
 
 /**
+ * <pre>
+ * cluster metadata request
+ * </pre>
+ * <p>
  * Protobuf type {@code proto.GetClusterMetadataRequest}
  */
 public final class GetClusterMetadataRequest extends
@@ -31,7 +35,6 @@ public final class GetClusterMetadataRequest extends
     private java.util.List<java.lang.Integer> topicIds_;
     private int topicIdsMemoizedSerializedSize = -1;
     private byte memoizedIsInitialized = -1;
-
     // Use GetClusterMetadataRequest.newBuilder() to construct.
     private GetClusterMetadataRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
@@ -346,6 +349,10 @@ public final class GetClusterMetadataRequest extends
     }
 
     /**
+     * <pre>
+     * cluster metadata request
+     * </pre>
+     * <p>
      * Protobuf type {@code proto.GetClusterMetadataRequest}
      */
     public static final class Builder extends

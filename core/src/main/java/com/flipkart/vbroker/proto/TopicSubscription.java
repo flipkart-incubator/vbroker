@@ -42,7 +42,6 @@ public final class TopicSubscription extends
         subscriptionId_ = 0;
         topicId_ = 0;
     }
-
     private TopicSubscription(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)

@@ -35,7 +35,6 @@ public final class GetTopicsResponse extends
     private GetTopicsResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
     }
-
     private GetTopicsResponse() {
         topicResponses_ = java.util.Collections.emptyList();
     }

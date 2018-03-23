@@ -172,5 +172,50 @@ public interface ProtoRequestOrBuilder extends
      */
     com.flipkart.vbroker.proto.GetClusterMetadataRequestOrBuilder getGetClusterMetadataRequestOrBuilder();
 
+    /**
+     * <code>.proto.UnsidelineRequests unsidelineRequests = 12;</code>
+     */
+    boolean hasUnsidelineRequests();
+
+    /**
+     * <code>.proto.UnsidelineRequests unsidelineRequests = 12;</code>
+     */
+    com.flipkart.vbroker.proto.UnsidelineRequests getUnsidelineRequests();
+
+    /**
+     * <code>.proto.UnsidelineRequests unsidelineRequests = 12;</code>
+     */
+    com.flipkart.vbroker.proto.UnsidelineRequestsOrBuilder getUnsidelineRequestsOrBuilder();
+
+    /**
+     * <code>.proto.SetSubscriptionsOffsetsRequest setSubscriptionsOffsetsRequest = 13;</code>
+     */
+    boolean hasSetSubscriptionsOffsetsRequest();
+
+    /**
+     * <code>.proto.SetSubscriptionsOffsetsRequest setSubscriptionsOffsetsRequest = 13;</code>
+     */
+    com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequest getSetSubscriptionsOffsetsRequest();
+
+    /**
+     * <code>.proto.SetSubscriptionsOffsetsRequest setSubscriptionsOffsetsRequest = 13;</code>
+     */
+    com.flipkart.vbroker.proto.SetSubscriptionsOffsetsRequestOrBuilder getSetSubscriptionsOffsetsRequestOrBuilder();
+
+    /**
+     * <code>.proto.GetSubscriptionsOffsetsRequest getSubscriptionsOffsetsRequest = 14;</code>
+     */
+    boolean hasGetSubscriptionsOffsetsRequest();
+
+    /**
+     * <code>.proto.GetSubscriptionsOffsetsRequest getSubscriptionsOffsetsRequest = 14;</code>
+     */
+    com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequest getGetSubscriptionsOffsetsRequest();
+
+    /**
+     * <code>.proto.GetSubscriptionsOffsetsRequest getSubscriptionsOffsetsRequest = 14;</code>
+     */
+    com.flipkart.vbroker.proto.GetSubscriptionsOffsetsRequestOrBuilder getGetSubscriptionsOffsetsRequestOrBuilder();
+
     public com.flipkart.vbroker.proto.ProtoRequest.ProtoRequestCase getProtoRequestCase();
 }

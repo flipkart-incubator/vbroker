@@ -172,5 +172,50 @@ public interface ProtoResponseOrBuilder extends
      */
     com.flipkart.vbroker.proto.GetClusterMetadataResponseOrBuilder getGetClusterMetadataResponseOrBuilder();
 
+    /**
+     * <code>.proto.SetSubscriptionsOffsetsResponse setSubscriptionsOffsetsResponse = 12;</code>
+     */
+    boolean hasSetSubscriptionsOffsetsResponse();
+
+    /**
+     * <code>.proto.SetSubscriptionsOffsetsResponse setSubscriptionsOffsetsResponse = 12;</code>
+     */
+    com.flipkart.vbroker.proto.SetSubscriptionsOffsetsResponse getSetSubscriptionsOffsetsResponse();
+
+    /**
+     * <code>.proto.SetSubscriptionsOffsetsResponse setSubscriptionsOffsetsResponse = 12;</code>
+     */
+    com.flipkart.vbroker.proto.SetSubscriptionsOffsetsResponseOrBuilder getSetSubscriptionsOffsetsResponseOrBuilder();
+
+    /**
+     * <code>.proto.GetSubscriptionsOffsetsResponse getSubscriptionsOffsetsResponse = 13;</code>
+     */
+    boolean hasGetSubscriptionsOffsetsResponse();
+
+    /**
+     * <code>.proto.GetSubscriptionsOffsetsResponse getSubscriptionsOffsetsResponse = 13;</code>
+     */
+    com.flipkart.vbroker.proto.GetSubscriptionsOffsetsResponse getGetSubscriptionsOffsetsResponse();
+
+    /**
+     * <code>.proto.GetSubscriptionsOffsetsResponse getSubscriptionsOffsetsResponse = 13;</code>
+     */
+    com.flipkart.vbroker.proto.GetSubscriptionsOffsetsResponseOrBuilder getGetSubscriptionsOffsetsResponseOrBuilder();
+
+    /**
+     * <code>.proto.UnsidelineResponses unsidelineResponses = 14;</code>
+     */
+    boolean hasUnsidelineResponses();
+
+    /**
+     * <code>.proto.UnsidelineResponses unsidelineResponses = 14;</code>
+     */
+    com.flipkart.vbroker.proto.UnsidelineResponses getUnsidelineResponses();
+
+    /**
+     * <code>.proto.UnsidelineResponses unsidelineResponses = 14;</code>
+     */
+    com.flipkart.vbroker.proto.UnsidelineResponsesOrBuilder getUnsidelineResponsesOrBuilder();
+
     public com.flipkart.vbroker.proto.ProtoResponse.ProtoResponseCase getProtoResponseCase();
 }

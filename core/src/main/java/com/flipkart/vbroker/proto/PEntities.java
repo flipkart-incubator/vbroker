@@ -50,6 +50,16 @@ public final class PEntities {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internal_static_proto_PartitionMetadata_fieldAccessorTable;
     static final com.google.protobuf.Descriptors.Descriptor
+        internal_static_proto_PartSubscriptionMetadata_descriptor;
+    static final
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internal_static_proto_PartSubscriptionMetadata_fieldAccessorTable;
+    static final com.google.protobuf.Descriptors.Descriptor
+        internal_static_proto_SubscriptionMetadata_descriptor;
+    static final
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internal_static_proto_SubscriptionMetadata_fieldAccessorTable;
+    static final com.google.protobuf.Descriptors.Descriptor
         internal_static_proto_TopicMetadata_descriptor;
     static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -91,19 +101,26 @@ public final class PEntities {
                 "kerId\030\001 \001(\005\022\016\n\006hostIp\030\002 \001(\t\022\020\n\010hostPort\030" +
                 "\003 \001(\005\"T\n\021PartitionMetadata\022\n\n\002id\030\001 \001(\005\022\017" +
                 "\n\007topicId\030\002 \001(\005\022\020\n\010leaderId\030\003 \001(\005\022\020\n\010rep" +
-                "licas\030\004 \003(\005\"g\n\rTopicMetadata\022 \n\005topic\030\001 " +
-                "\001(\0132\021.proto.ProtoTopic\0224\n\022partitionMetad" +
-                "atas\030\002 \003(\0132\030.proto.PartitionMetadata\"[\n\017" +
-                "ClusterMetadata\022,\n\016topicMetadatas\030\001 \003(\0132" +
-                "\024.proto.TopicMetadata\022\032\n\005nodes\030\002 \003(\0132\013.p" +
-                "roto.Node*%\n\rTopicCategory\022\t\n\005QUEUE\020\000\022\t\n" +
-                "\005TOPIC\020\001*6\n\nHttpMethod\022\010\n\004POST\020\000\022\007\n\003PUT\020" +
-                "\001\022\n\n\006DELETE\020\002\022\t\n\005PATCH\020\003*+\n\020Subscription" +
-                "Type\022\n\n\006STATIC\020\000\022\013\n\007DYNAMIC\020\001*+\n\025Subscri" +
-                "ptionMechanism\022\010\n\004PUSH\020\000\022\010\n\004PULL\020\001*+\n\016Fi" +
-                "lterOperator\022\006\n\002OR\020\000\022\007\n\003NOR\020\001\022\010\n\004NAND\020\002B" +
-                ")\n\032com.flipkart.vbroker.protoB\tPEntities" +
-                "P\001b\006proto3"
+                "licas\030\004 \003(\005\"i\n\030PartSubscriptionMetadata\022" +
+                "\n\n\002id\030\001 \001(\005\022\026\n\016subscriptionId\030\002 \001(\005\022\017\n\007t" +
+                "opicId\030\003 \001(\005\022\030\n\020topicPartitionId\030\004 \001(\005\"\212" +
+                "\001\n\024SubscriptionMetadata\022.\n\014subscription\030" +
+                "\001 \001(\0132\030.proto.ProtoSubscription\022B\n\031partS" +
+                "ubscriptionMetadatas\030\002 \003(\0132\037.proto.PartS" +
+                "ubscriptionMetadata\"\243\001\n\rTopicMetadata\022 \n" +
+                "\005topic\030\001 \001(\0132\021.proto.ProtoTopic\0224\n\022parti" +
+                "tionMetadatas\030\002 \003(\0132\030.proto.PartitionMet" +
+                "adata\022:\n\025subscriptionMetadatas\030\003 \003(\0132\033.p" +
+                "roto.SubscriptionMetadata\"[\n\017ClusterMeta" +
+                "data\022,\n\016topicMetadatas\030\001 \003(\0132\024.proto.Top" +
+                "icMetadata\022\032\n\005nodes\030\002 \003(\0132\013.proto.Node*%" +
+                "\n\rTopicCategory\022\t\n\005QUEUE\020\000\022\t\n\005TOPIC\020\001*6\n" +
+                "\nHttpMethod\022\010\n\004POST\020\000\022\007\n\003PUT\020\001\022\n\n\006DELETE" +
+                "\020\002\022\t\n\005PATCH\020\003*+\n\020SubscriptionType\022\n\n\006STA" +
+                "TIC\020\000\022\013\n\007DYNAMIC\020\001*+\n\025SubscriptionMechan" +
+                "ism\022\010\n\004PUSH\020\000\022\010\n\004PULL\020\001*+\n\016FilterOperato" +
+                "r\022\006\n\002OR\020\000\022\007\n\003NOR\020\001\022\010\n\004NAND\020\002B)\n\032com.flip" +
+                "kart.vbroker.protoB\tPEntitiesP\001b\006proto3"
         };
         com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
             new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -171,20 +188,31 @@ public final class PEntities {
             com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_proto_PartitionMetadata_descriptor,
             new java.lang.String[]{"Id", "TopicId", "LeaderId", "Replicas",});
-        internal_static_proto_TopicMetadata_descriptor =
+        internal_static_proto_PartSubscriptionMetadata_descriptor =
             getDescriptor().getMessageTypes().get(9);
+        internal_static_proto_PartSubscriptionMetadata_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_proto_PartSubscriptionMetadata_descriptor,
+            new java.lang.String[]{"Id", "SubscriptionId", "TopicId", "TopicPartitionId",});
+        internal_static_proto_SubscriptionMetadata_descriptor =
+            getDescriptor().getMessageTypes().get(10);
+        internal_static_proto_SubscriptionMetadata_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_proto_SubscriptionMetadata_descriptor,
+            new java.lang.String[]{"Subscription", "PartSubscriptionMetadatas",});
+        internal_static_proto_TopicMetadata_descriptor =
+            getDescriptor().getMessageTypes().get(11);
         internal_static_proto_TopicMetadata_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_proto_TopicMetadata_descriptor,
-            new java.lang.String[]{"Topic", "PartitionMetadatas",});
+            new java.lang.String[]{"Topic", "PartitionMetadatas", "SubscriptionMetadatas",});
         internal_static_proto_ClusterMetadata_descriptor =
-            getDescriptor().getMessageTypes().get(10);
+            getDescriptor().getMessageTypes().get(12);
         internal_static_proto_ClusterMetadata_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_proto_ClusterMetadata_descriptor,
             new java.lang.String[]{"TopicMetadatas", "Nodes",});
     }
-
     private PEntities() {
     }
 

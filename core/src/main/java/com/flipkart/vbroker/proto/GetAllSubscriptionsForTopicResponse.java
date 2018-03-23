@@ -35,7 +35,6 @@ public final class GetAllSubscriptionsForTopicResponse extends
     private com.flipkart.vbroker.proto.VStatus status_;
     private java.util.List<com.flipkart.vbroker.proto.ProtoSubscription> subscriptions_;
     private byte memoizedIsInitialized = -1;
-
     // Use GetAllSubscriptionsForTopicResponse.newBuilder() to construct.
     private GetAllSubscriptionsForTopicResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
@@ -669,6 +668,21 @@ public final class GetAllSubscriptionsForTopicResponse extends
         /**
          * <code>.proto.VStatus status = 2;</code>
          */
+        public Builder setStatus(
+            com.flipkart.vbroker.proto.VStatus.Builder builderForValue) {
+            if (statusBuilder_ == null) {
+                status_ = builderForValue.build();
+                onChanged();
+            } else {
+                statusBuilder_.setMessage(builderForValue.build());
+            }
+
+            return this;
+        }
+
+        /**
+         * <code>.proto.VStatus status = 2;</code>
+         */
         public Builder setStatus(com.flipkart.vbroker.proto.VStatus value) {
             if (statusBuilder_ == null) {
                 if (value == null) {
@@ -678,21 +692,6 @@ public final class GetAllSubscriptionsForTopicResponse extends
                 onChanged();
             } else {
                 statusBuilder_.setMessage(value);
-            }
-
-            return this;
-        }
-
-        /**
-         * <code>.proto.VStatus status = 2;</code>
-         */
-        public Builder setStatus(
-            com.flipkart.vbroker.proto.VStatus.Builder builderForValue) {
-            if (statusBuilder_ == null) {
-                status_ = builderForValue.build();
-                onChanged();
-            } else {
-                statusBuilder_.setMessage(builderForValue.build());
             }
 
             return this;

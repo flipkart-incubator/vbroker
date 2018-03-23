@@ -49,4 +49,32 @@ public interface TopicMetadataOrBuilder extends
      */
     com.flipkart.vbroker.proto.PartitionMetadataOrBuilder getPartitionMetadatasOrBuilder(
         int index);
+
+    /**
+     * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+     */
+    java.util.List<com.flipkart.vbroker.proto.SubscriptionMetadata>
+    getSubscriptionMetadatasList();
+
+    /**
+     * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+     */
+    com.flipkart.vbroker.proto.SubscriptionMetadata getSubscriptionMetadatas(int index);
+
+    /**
+     * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+     */
+    int getSubscriptionMetadatasCount();
+
+    /**
+     * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+     */
+    java.util.List<? extends com.flipkart.vbroker.proto.SubscriptionMetadataOrBuilder>
+    getSubscriptionMetadatasOrBuilderList();
+
+    /**
+     * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+     */
+    com.flipkart.vbroker.proto.SubscriptionMetadataOrBuilder getSubscriptionMetadatasOrBuilder(
+        int index);
 }

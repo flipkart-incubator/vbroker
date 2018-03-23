@@ -39,7 +39,6 @@ public final class PartitionLagRequest extends
     private PartitionLagRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
     }
-
     private PartitionLagRequest() {
         partitionId_ = 0;
     }

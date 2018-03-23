@@ -78,7 +78,6 @@ public final class ProtoSubscription extends
         filterOperator_ = 0;
         filterKeyValuesList_ = java.util.Collections.emptyList();
     }
-
     private ProtoSubscription(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -1840,6 +1839,21 @@ public final class ProtoSubscription extends
         /**
          * <code>.proto.CallbackConfig callbackConfig = 14;</code>
          */
+        public Builder setCallbackConfig(
+            com.flipkart.vbroker.proto.CallbackConfig.Builder builderForValue) {
+            if (callbackConfigBuilder_ == null) {
+                callbackConfig_ = builderForValue.build();
+                onChanged();
+            } else {
+                callbackConfigBuilder_.setMessage(builderForValue.build());
+            }
+
+            return this;
+        }
+
+        /**
+         * <code>.proto.CallbackConfig callbackConfig = 14;</code>
+         */
         public Builder setCallbackConfig(com.flipkart.vbroker.proto.CallbackConfig value) {
             if (callbackConfigBuilder_ == null) {
                 if (value == null) {
@@ -1849,21 +1863,6 @@ public final class ProtoSubscription extends
                 onChanged();
             } else {
                 callbackConfigBuilder_.setMessage(value);
-            }
-
-            return this;
-        }
-
-        /**
-         * <code>.proto.CallbackConfig callbackConfig = 14;</code>
-         */
-        public Builder setCallbackConfig(
-            com.flipkart.vbroker.proto.CallbackConfig.Builder builderForValue) {
-            if (callbackConfigBuilder_ == null) {
-                callbackConfig_ = builderForValue.build();
-                onChanged();
-            } else {
-                callbackConfigBuilder_.setMessage(builderForValue.build());
             }
 
             return this;

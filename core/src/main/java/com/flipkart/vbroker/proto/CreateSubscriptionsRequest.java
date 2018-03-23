@@ -39,7 +39,6 @@ public final class CreateSubscriptionsRequest extends
     private CreateSubscriptionsRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
     }
-
     private CreateSubscriptionsRequest() {
         subscriptions_ = java.util.Collections.emptyList();
     }

@@ -12,6 +12,7 @@ public final class TopicMetadata extends
     TopicMetadataOrBuilder {
     public static final int TOPIC_FIELD_NUMBER = 1;
     public static final int PARTITIONMETADATAS_FIELD_NUMBER = 2;
+    public static final int SUBSCRIPTIONMETADATAS_FIELD_NUMBER = 3;
     private static final long serialVersionUID = 0L;
     // @@protoc_insertion_point(class_scope:proto.TopicMetadata)
     private static final com.flipkart.vbroker.proto.TopicMetadata DEFAULT_INSTANCE;
@@ -32,6 +33,7 @@ public final class TopicMetadata extends
     private int bitField0_;
     private com.flipkart.vbroker.proto.ProtoTopic topic_;
     private java.util.List<com.flipkart.vbroker.proto.PartitionMetadata> partitionMetadatas_;
+    private java.util.List<com.flipkart.vbroker.proto.SubscriptionMetadata> subscriptionMetadatas_;
     private byte memoizedIsInitialized = -1;
 
     // Use TopicMetadata.newBuilder() to construct.
@@ -41,8 +43,8 @@ public final class TopicMetadata extends
 
     private TopicMetadata() {
         partitionMetadatas_ = java.util.Collections.emptyList();
+        subscriptionMetadatas_ = java.util.Collections.emptyList();
     }
-
     private TopicMetadata(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -91,6 +93,15 @@ public final class TopicMetadata extends
                             input.readMessage(com.flipkart.vbroker.proto.PartitionMetadata.parser(), extensionRegistry));
                         break;
                     }
+                    case 26: {
+                        if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+                            subscriptionMetadatas_ = new java.util.ArrayList<com.flipkart.vbroker.proto.SubscriptionMetadata>();
+                            mutable_bitField0_ |= 0x00000004;
+                        }
+                        subscriptionMetadatas_.add(
+                            input.readMessage(com.flipkart.vbroker.proto.SubscriptionMetadata.parser(), extensionRegistry));
+                        break;
+                    }
                 }
             }
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -101,6 +112,9 @@ public final class TopicMetadata extends
         } finally {
             if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
                 partitionMetadatas_ = java.util.Collections.unmodifiableList(partitionMetadatas_);
+            }
+            if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+                subscriptionMetadatas_ = java.util.Collections.unmodifiableList(subscriptionMetadatas_);
             }
             this.unknownFields = unknownFields.build();
             makeExtensionsImmutable();
@@ -280,6 +294,43 @@ public final class TopicMetadata extends
         return partitionMetadatas_.get(index);
     }
 
+    /**
+     * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+     */
+    public java.util.List<com.flipkart.vbroker.proto.SubscriptionMetadata> getSubscriptionMetadatasList() {
+        return subscriptionMetadatas_;
+    }
+
+    /**
+     * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+     */
+    public java.util.List<? extends com.flipkart.vbroker.proto.SubscriptionMetadataOrBuilder>
+    getSubscriptionMetadatasOrBuilderList() {
+        return subscriptionMetadatas_;
+    }
+
+    /**
+     * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+     */
+    public int getSubscriptionMetadatasCount() {
+        return subscriptionMetadatas_.size();
+    }
+
+    /**
+     * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+     */
+    public com.flipkart.vbroker.proto.SubscriptionMetadata getSubscriptionMetadatas(int index) {
+        return subscriptionMetadatas_.get(index);
+    }
+
+    /**
+     * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+     */
+    public com.flipkart.vbroker.proto.SubscriptionMetadataOrBuilder getSubscriptionMetadatasOrBuilder(
+        int index) {
+        return subscriptionMetadatas_.get(index);
+    }
+
     public final boolean isInitialized() {
         byte isInitialized = memoizedIsInitialized;
         if (isInitialized == 1) return true;
@@ -297,6 +348,9 @@ public final class TopicMetadata extends
         for (int i = 0; i < partitionMetadatas_.size(); i++) {
             output.writeMessage(2, partitionMetadatas_.get(i));
         }
+        for (int i = 0; i < subscriptionMetadatas_.size(); i++) {
+            output.writeMessage(3, subscriptionMetadatas_.get(i));
+        }
         unknownFields.writeTo(output);
     }
 
@@ -312,6 +366,10 @@ public final class TopicMetadata extends
         for (int i = 0; i < partitionMetadatas_.size(); i++) {
             size += com.google.protobuf.CodedOutputStream
                 .computeMessageSize(2, partitionMetadatas_.get(i));
+        }
+        for (int i = 0; i < subscriptionMetadatas_.size(); i++) {
+            size += com.google.protobuf.CodedOutputStream
+                .computeMessageSize(3, subscriptionMetadatas_.get(i));
         }
         size += unknownFields.getSerializedSize();
         memoizedSize = size;
@@ -336,6 +394,8 @@ public final class TopicMetadata extends
         }
         result = result && getPartitionMetadatasList()
             .equals(other.getPartitionMetadatasList());
+        result = result && getSubscriptionMetadatasList()
+            .equals(other.getSubscriptionMetadatasList());
         result = result && unknownFields.equals(other.unknownFields);
         return result;
     }
@@ -354,6 +414,10 @@ public final class TopicMetadata extends
         if (getPartitionMetadatasCount() > 0) {
             hash = (37 * hash) + PARTITIONMETADATAS_FIELD_NUMBER;
             hash = (53 * hash) + getPartitionMetadatasList().hashCode();
+        }
+        if (getSubscriptionMetadatasCount() > 0) {
+            hash = (37 * hash) + SUBSCRIPTIONMETADATAS_FIELD_NUMBER;
+            hash = (53 * hash) + getSubscriptionMetadatasList().hashCode();
         }
         hash = (29 * hash) + unknownFields.hashCode();
         memoizedHashCode = hash;
@@ -400,6 +464,10 @@ public final class TopicMetadata extends
             java.util.Collections.emptyList();
         private com.google.protobuf.RepeatedFieldBuilderV3<
             com.flipkart.vbroker.proto.PartitionMetadata, com.flipkart.vbroker.proto.PartitionMetadata.Builder, com.flipkart.vbroker.proto.PartitionMetadataOrBuilder> partitionMetadatasBuilder_;
+        private java.util.List<com.flipkart.vbroker.proto.SubscriptionMetadata> subscriptionMetadatas_ =
+            java.util.Collections.emptyList();
+        private com.google.protobuf.RepeatedFieldBuilderV3<
+            com.flipkart.vbroker.proto.SubscriptionMetadata, com.flipkart.vbroker.proto.SubscriptionMetadata.Builder, com.flipkart.vbroker.proto.SubscriptionMetadataOrBuilder> subscriptionMetadatasBuilder_;
 
         // Construct using com.flipkart.vbroker.proto.TopicMetadata.newBuilder()
         private Builder() {
@@ -428,6 +496,7 @@ public final class TopicMetadata extends
             if (com.google.protobuf.GeneratedMessageV3
                 .alwaysUseFieldBuilders) {
                 getPartitionMetadatasFieldBuilder();
+                getSubscriptionMetadatasFieldBuilder();
             }
         }
 
@@ -444,6 +513,12 @@ public final class TopicMetadata extends
                 bitField0_ = (bitField0_ & ~0x00000002);
             } else {
                 partitionMetadatasBuilder_.clear();
+            }
+            if (subscriptionMetadatasBuilder_ == null) {
+                subscriptionMetadatas_ = java.util.Collections.emptyList();
+                bitField0_ = (bitField0_ & ~0x00000004);
+            } else {
+                subscriptionMetadatasBuilder_.clear();
             }
             return this;
         }
@@ -482,6 +557,15 @@ public final class TopicMetadata extends
                 result.partitionMetadatas_ = partitionMetadatas_;
             } else {
                 result.partitionMetadatas_ = partitionMetadatasBuilder_.build();
+            }
+            if (subscriptionMetadatasBuilder_ == null) {
+                if (((bitField0_ & 0x00000004) == 0x00000004)) {
+                    subscriptionMetadatas_ = java.util.Collections.unmodifiableList(subscriptionMetadatas_);
+                    bitField0_ = (bitField0_ & ~0x00000004);
+                }
+                result.subscriptionMetadatas_ = subscriptionMetadatas_;
+            } else {
+                result.subscriptionMetadatas_ = subscriptionMetadatasBuilder_.build();
             }
             result.bitField0_ = to_bitField0_;
             onBuilt();
@@ -560,6 +644,32 @@ public final class TopicMetadata extends
                     }
                 }
             }
+            if (subscriptionMetadatasBuilder_ == null) {
+                if (!other.subscriptionMetadatas_.isEmpty()) {
+                    if (subscriptionMetadatas_.isEmpty()) {
+                        subscriptionMetadatas_ = other.subscriptionMetadatas_;
+                        bitField0_ = (bitField0_ & ~0x00000004);
+                    } else {
+                        ensureSubscriptionMetadatasIsMutable();
+                        subscriptionMetadatas_.addAll(other.subscriptionMetadatas_);
+                    }
+                    onChanged();
+                }
+            } else {
+                if (!other.subscriptionMetadatas_.isEmpty()) {
+                    if (subscriptionMetadatasBuilder_.isEmpty()) {
+                        subscriptionMetadatasBuilder_.dispose();
+                        subscriptionMetadatasBuilder_ = null;
+                        subscriptionMetadatas_ = other.subscriptionMetadatas_;
+                        bitField0_ = (bitField0_ & ~0x00000004);
+                        subscriptionMetadatasBuilder_ =
+                            com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                                getSubscriptionMetadatasFieldBuilder() : null;
+                    } else {
+                        subscriptionMetadatasBuilder_.addAllMessages(other.subscriptionMetadatas_);
+                    }
+                }
+            }
             this.mergeUnknownFields(other.unknownFields);
             onChanged();
             return this;
@@ -608,6 +718,21 @@ public final class TopicMetadata extends
         /**
          * <code>.proto.ProtoTopic topic = 1;</code>
          */
+        public Builder setTopic(
+            com.flipkart.vbroker.proto.ProtoTopic.Builder builderForValue) {
+            if (topicBuilder_ == null) {
+                topic_ = builderForValue.build();
+                onChanged();
+            } else {
+                topicBuilder_.setMessage(builderForValue.build());
+            }
+
+            return this;
+        }
+
+        /**
+         * <code>.proto.ProtoTopic topic = 1;</code>
+         */
         public Builder setTopic(com.flipkart.vbroker.proto.ProtoTopic value) {
             if (topicBuilder_ == null) {
                 if (value == null) {
@@ -617,21 +742,6 @@ public final class TopicMetadata extends
                 onChanged();
             } else {
                 topicBuilder_.setMessage(value);
-            }
-
-            return this;
-        }
-
-        /**
-         * <code>.proto.ProtoTopic topic = 1;</code>
-         */
-        public Builder setTopic(
-            com.flipkart.vbroker.proto.ProtoTopic.Builder builderForValue) {
-            if (topicBuilder_ == null) {
-                topic_ = builderForValue.build();
-                onChanged();
-            } else {
-                topicBuilder_.setMessage(builderForValue.build());
             }
 
             return this;
@@ -961,6 +1071,260 @@ public final class TopicMetadata extends
                 partitionMetadatas_ = null;
             }
             return partitionMetadatasBuilder_;
+        }
+
+        private void ensureSubscriptionMetadatasIsMutable() {
+            if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+                subscriptionMetadatas_ = new java.util.ArrayList<com.flipkart.vbroker.proto.SubscriptionMetadata>(subscriptionMetadatas_);
+                bitField0_ |= 0x00000004;
+            }
+        }
+
+        /**
+         * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+         */
+        public java.util.List<com.flipkart.vbroker.proto.SubscriptionMetadata> getSubscriptionMetadatasList() {
+            if (subscriptionMetadatasBuilder_ == null) {
+                return java.util.Collections.unmodifiableList(subscriptionMetadatas_);
+            } else {
+                return subscriptionMetadatasBuilder_.getMessageList();
+            }
+        }
+
+        /**
+         * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+         */
+        public int getSubscriptionMetadatasCount() {
+            if (subscriptionMetadatasBuilder_ == null) {
+                return subscriptionMetadatas_.size();
+            } else {
+                return subscriptionMetadatasBuilder_.getCount();
+            }
+        }
+
+        /**
+         * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+         */
+        public com.flipkart.vbroker.proto.SubscriptionMetadata getSubscriptionMetadatas(int index) {
+            if (subscriptionMetadatasBuilder_ == null) {
+                return subscriptionMetadatas_.get(index);
+            } else {
+                return subscriptionMetadatasBuilder_.getMessage(index);
+            }
+        }
+
+        /**
+         * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+         */
+        public Builder setSubscriptionMetadatas(
+            int index, com.flipkart.vbroker.proto.SubscriptionMetadata value) {
+            if (subscriptionMetadatasBuilder_ == null) {
+                if (value == null) {
+                    throw new NullPointerException();
+                }
+                ensureSubscriptionMetadatasIsMutable();
+                subscriptionMetadatas_.set(index, value);
+                onChanged();
+            } else {
+                subscriptionMetadatasBuilder_.setMessage(index, value);
+            }
+            return this;
+        }
+
+        /**
+         * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+         */
+        public Builder setSubscriptionMetadatas(
+            int index, com.flipkart.vbroker.proto.SubscriptionMetadata.Builder builderForValue) {
+            if (subscriptionMetadatasBuilder_ == null) {
+                ensureSubscriptionMetadatasIsMutable();
+                subscriptionMetadatas_.set(index, builderForValue.build());
+                onChanged();
+            } else {
+                subscriptionMetadatasBuilder_.setMessage(index, builderForValue.build());
+            }
+            return this;
+        }
+
+        /**
+         * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+         */
+        public Builder addSubscriptionMetadatas(com.flipkart.vbroker.proto.SubscriptionMetadata value) {
+            if (subscriptionMetadatasBuilder_ == null) {
+                if (value == null) {
+                    throw new NullPointerException();
+                }
+                ensureSubscriptionMetadatasIsMutable();
+                subscriptionMetadatas_.add(value);
+                onChanged();
+            } else {
+                subscriptionMetadatasBuilder_.addMessage(value);
+            }
+            return this;
+        }
+
+        /**
+         * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+         */
+        public Builder addSubscriptionMetadatas(
+            int index, com.flipkart.vbroker.proto.SubscriptionMetadata value) {
+            if (subscriptionMetadatasBuilder_ == null) {
+                if (value == null) {
+                    throw new NullPointerException();
+                }
+                ensureSubscriptionMetadatasIsMutable();
+                subscriptionMetadatas_.add(index, value);
+                onChanged();
+            } else {
+                subscriptionMetadatasBuilder_.addMessage(index, value);
+            }
+            return this;
+        }
+
+        /**
+         * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+         */
+        public Builder addSubscriptionMetadatas(
+            com.flipkart.vbroker.proto.SubscriptionMetadata.Builder builderForValue) {
+            if (subscriptionMetadatasBuilder_ == null) {
+                ensureSubscriptionMetadatasIsMutable();
+                subscriptionMetadatas_.add(builderForValue.build());
+                onChanged();
+            } else {
+                subscriptionMetadatasBuilder_.addMessage(builderForValue.build());
+            }
+            return this;
+        }
+
+        /**
+         * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+         */
+        public Builder addSubscriptionMetadatas(
+            int index, com.flipkart.vbroker.proto.SubscriptionMetadata.Builder builderForValue) {
+            if (subscriptionMetadatasBuilder_ == null) {
+                ensureSubscriptionMetadatasIsMutable();
+                subscriptionMetadatas_.add(index, builderForValue.build());
+                onChanged();
+            } else {
+                subscriptionMetadatasBuilder_.addMessage(index, builderForValue.build());
+            }
+            return this;
+        }
+
+        /**
+         * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+         */
+        public Builder addAllSubscriptionMetadatas(
+            java.lang.Iterable<? extends com.flipkart.vbroker.proto.SubscriptionMetadata> values) {
+            if (subscriptionMetadatasBuilder_ == null) {
+                ensureSubscriptionMetadatasIsMutable();
+                com.google.protobuf.AbstractMessageLite.Builder.addAll(
+                    values, subscriptionMetadatas_);
+                onChanged();
+            } else {
+                subscriptionMetadatasBuilder_.addAllMessages(values);
+            }
+            return this;
+        }
+
+        /**
+         * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+         */
+        public Builder clearSubscriptionMetadatas() {
+            if (subscriptionMetadatasBuilder_ == null) {
+                subscriptionMetadatas_ = java.util.Collections.emptyList();
+                bitField0_ = (bitField0_ & ~0x00000004);
+                onChanged();
+            } else {
+                subscriptionMetadatasBuilder_.clear();
+            }
+            return this;
+        }
+
+        /**
+         * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+         */
+        public Builder removeSubscriptionMetadatas(int index) {
+            if (subscriptionMetadatasBuilder_ == null) {
+                ensureSubscriptionMetadatasIsMutable();
+                subscriptionMetadatas_.remove(index);
+                onChanged();
+            } else {
+                subscriptionMetadatasBuilder_.remove(index);
+            }
+            return this;
+        }
+
+        /**
+         * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+         */
+        public com.flipkart.vbroker.proto.SubscriptionMetadata.Builder getSubscriptionMetadatasBuilder(
+            int index) {
+            return getSubscriptionMetadatasFieldBuilder().getBuilder(index);
+        }
+
+        /**
+         * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+         */
+        public com.flipkart.vbroker.proto.SubscriptionMetadataOrBuilder getSubscriptionMetadatasOrBuilder(
+            int index) {
+            if (subscriptionMetadatasBuilder_ == null) {
+                return subscriptionMetadatas_.get(index);
+            } else {
+                return subscriptionMetadatasBuilder_.getMessageOrBuilder(index);
+            }
+        }
+
+        /**
+         * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+         */
+        public java.util.List<? extends com.flipkart.vbroker.proto.SubscriptionMetadataOrBuilder>
+        getSubscriptionMetadatasOrBuilderList() {
+            if (subscriptionMetadatasBuilder_ != null) {
+                return subscriptionMetadatasBuilder_.getMessageOrBuilderList();
+            } else {
+                return java.util.Collections.unmodifiableList(subscriptionMetadatas_);
+            }
+        }
+
+        /**
+         * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+         */
+        public com.flipkart.vbroker.proto.SubscriptionMetadata.Builder addSubscriptionMetadatasBuilder() {
+            return getSubscriptionMetadatasFieldBuilder().addBuilder(
+                com.flipkart.vbroker.proto.SubscriptionMetadata.getDefaultInstance());
+        }
+
+        /**
+         * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+         */
+        public com.flipkart.vbroker.proto.SubscriptionMetadata.Builder addSubscriptionMetadatasBuilder(
+            int index) {
+            return getSubscriptionMetadatasFieldBuilder().addBuilder(
+                index, com.flipkart.vbroker.proto.SubscriptionMetadata.getDefaultInstance());
+        }
+
+        /**
+         * <code>repeated .proto.SubscriptionMetadata subscriptionMetadatas = 3;</code>
+         */
+        public java.util.List<com.flipkart.vbroker.proto.SubscriptionMetadata.Builder>
+        getSubscriptionMetadatasBuilderList() {
+            return getSubscriptionMetadatasFieldBuilder().getBuilderList();
+        }
+
+        private com.google.protobuf.RepeatedFieldBuilderV3<
+            com.flipkart.vbroker.proto.SubscriptionMetadata, com.flipkart.vbroker.proto.SubscriptionMetadata.Builder, com.flipkart.vbroker.proto.SubscriptionMetadataOrBuilder>
+        getSubscriptionMetadatasFieldBuilder() {
+            if (subscriptionMetadatasBuilder_ == null) {
+                subscriptionMetadatasBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+                    com.flipkart.vbroker.proto.SubscriptionMetadata, com.flipkart.vbroker.proto.SubscriptionMetadata.Builder, com.flipkart.vbroker.proto.SubscriptionMetadataOrBuilder>(
+                    subscriptionMetadatas_,
+                    ((bitField0_ & 0x00000004) == 0x00000004),
+                    getParentForChildren(),
+                    isClean());
+                subscriptionMetadatas_ = null;
+            }
+            return subscriptionMetadatasBuilder_;
         }
 
         public final Builder setUnknownFields(

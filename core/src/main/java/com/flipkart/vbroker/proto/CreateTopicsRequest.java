@@ -39,7 +39,6 @@ public final class CreateTopicsRequest extends
     private CreateTopicsRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
     }
-
     private CreateTopicsRequest() {
         topics_ = java.util.Collections.emptyList();
     }

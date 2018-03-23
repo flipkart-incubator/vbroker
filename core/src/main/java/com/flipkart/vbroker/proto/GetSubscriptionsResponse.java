@@ -35,7 +35,6 @@ public final class GetSubscriptionsResponse extends
     private GetSubscriptionsResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
     }
-
     private GetSubscriptionsResponse() {
         subscriptionResponses_ = java.util.Collections.emptyList();
     }
