@@ -187,14 +187,14 @@ public class SubscriberGroup {
         private final QType qType;
         private final SubscriberGroup subscriberGroup;
         private final DataIterator<Message> groupIterator;
-        private final boolean manualSeqNoManagement;
+        private final boolean autoSeqNoManagement;
 
         SubscriberGroupIteratorImpl(QType qType, SubscriberGroup subscriberGroup) {
             log.trace("Creating new subscriberGroupIterator for qType {} and group {}", qType, subscriberGroup.getGroupId());
             this.qType = qType;
             this.subscriberGroup = subscriberGroup;
             this.groupIterator = topicPartDataManager.getIterator(topicPartition, getGroupId(), getCurrSeqNo(qType));
-            this.manualSeqNoManagement = false;
+            this.autoSeqNoManagement = false;
         }
 
         SubscriberGroupIteratorImpl(QType qType, SubscriberGroup subscriberGroup, int seqNoFrom) {
@@ -202,7 +202,7 @@ public class SubscriberGroup {
             this.qType = qType;
             this.subscriberGroup = subscriberGroup;
             this.groupIterator = topicPartDataManager.getIterator(topicPartition, getGroupId(), seqNoFrom);
-            this.manualSeqNoManagement = true;
+            this.autoSeqNoManagement = true;
         }
 
         @Override
@@ -222,7 +222,7 @@ public class SubscriberGroup {
         public GroupedIterableMessage next() {
             log.debug("Moving to next message");
             GroupedIterableMessage messageWithGroup = GroupedIterableMessage.newInstance(groupIterator.next(), subscriberGroup);
-            if (manualSeqNoManagement) {
+            if (autoSeqNoManagement) {
                 incrementCurrSeqNo(qType);
                 log.info("Incremented seqNo for group {} to {}", subscriberGroup.getGroupId(), getCurrSeqNo(qType));
             }
