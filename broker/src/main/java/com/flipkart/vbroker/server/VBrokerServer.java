@@ -42,6 +42,7 @@ import static java.util.Objects.nonNull;
 public class VBrokerServer extends AbstractExecutionThreadService {
 
     private final VBrokerConfig config;
+    private final MetricRegistry metricRegistry;
 
     private final CountDownLatch mainLatch = new CountDownLatch(1);
     private Channel serverChannel;
@@ -54,8 +55,9 @@ public class VBrokerServer extends AbstractExecutionThreadService {
 
     private CuratorFramework curatorClient;
 
-    public VBrokerServer(VBrokerConfig config) {
+    public VBrokerServer(VBrokerConfig config, MetricRegistry metricRegistry) {
         this.config = config;
+        this.metricRegistry = metricRegistry;
     }
 
     private void startServer() {
@@ -67,7 +69,6 @@ public class VBrokerServer extends AbstractExecutionThreadService {
         AsyncCuratorFramework asyncZkClient = AsyncCuratorFramework.wrap(curatorClient);
         CuratorService curatorService = new CuratorService(asyncZkClient);
 
-        MetricRegistry metricRegistry = new MetricRegistry();
         EventLoopGroup bossGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("server_boss"));
         EventLoopGroup workerGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("server_worker"));
         EventLoopGroup localGroup = new DefaultEventLoopGroup(1, new DefaultThreadFactory("server_local"));
@@ -146,7 +147,7 @@ public class VBrokerServer extends AbstractExecutionThreadService {
             serverBootstrap.group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
                 .handler(new LoggingHandler(LogLevel.INFO))
-                .childHandler(new VBrokerServerInitializer(requestHandlerFactory));
+                .childHandler(new VBrokerServerInitializer(requestHandlerFactory, metricRegistry));
 
             ExecutorService remoteServerExecutor = Executors.newSingleThreadExecutor();
             remoteServerExecutor.submit(() -> {

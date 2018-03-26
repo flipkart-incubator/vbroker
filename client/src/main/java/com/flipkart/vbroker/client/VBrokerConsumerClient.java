@@ -1,5 +1,6 @@
 package com.flipkart.vbroker.client;
 
+import com.codahale.metrics.MetricRegistry;
 import com.flipkart.vbroker.utils.DummyEntities;
 import com.flipkart.vbroker.wrappers.Subscription;
 import com.google.common.collect.Sets;
@@ -16,13 +17,16 @@ public class VBrokerConsumerClient {
         VBClientConfig config = VBClientConfig.newConfig("client.properties");
         log.info("Configs: ", config);
 
-        VBrokerProducerClient.produceDummyMessages(
-            config,
-            DummyEntities.groupedTopic,
-            "http://localhost:12000/errors/404");
+        if (true) {
+            throw new RuntimeException("Produce messages here to consume");
+        }
+//        VBrokerProducerBenchmark.produceDummyMessages(
+//            config,
+//            DummyEntities.groupedTopic,
+//            "http://localhost:12000/errors/404");
 
         Set<Subscription> subscriptions = Sets.newHashSet(DummyEntities.groupedSubscription);
-        VBrokerConsumer consumer = new VBrokerConsumer(config);
+        VBrokerConsumer consumer = new VBrokerConsumer(config, new MetricRegistry());
         try {
             consumer.subscribe(subscriptions);
 

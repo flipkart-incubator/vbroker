@@ -77,7 +77,7 @@ public class MessageFlowIntegrationTest extends AbstractVBrokerBaseTest {
 
         Set<Subscription> subscriptions = Sets.newHashSet(subscription);
         VBClientConfig config = getVbClientConfig();
-        VBrokerConsumer consumer = new VBrokerConsumer(config);
+        VBrokerConsumer consumer = new VBrokerConsumer(config, metricRegistry);
         try {
             consumer.subscribe(subscriptions);
 
@@ -181,7 +181,7 @@ public class MessageFlowIntegrationTest extends AbstractVBrokerBaseTest {
     }
 
     @Test
-    public void shouldProduceAndConsumeMessages_WithCallback() throws InterruptedException {
+    public void shouldProduceAndConsumeMessages_WithCallback() {
         int noOfRecords = 3;
         Topic topic = createTopic(true);
 

@@ -1,8 +1,13 @@
 package com.flipkart.vbroker.client;
 
+import com.codahale.metrics.Counter;
+import com.codahale.metrics.Histogram;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.flatbuf.*;
 import com.flipkart.vbroker.utils.FlatbufUtils;
+import com.flipkart.vbroker.utils.MetricUtils;
 import com.flipkart.vbroker.utils.RandomUtils;
 import com.google.common.primitives.Ints;
 import com.google.flatbuffers.FlatBufferBuilder;
@@ -26,14 +31,20 @@ public class Sender implements Runnable {
     private final NetworkClient client;
     private final CountDownLatch runningLatch;
     private volatile boolean running;
+    private final Timer batchSendTimer;
+    private final Counter sendErrorCounter;
+    private final Histogram batchMessageCountHistogram;
 
     public Sender(Accumulator accumulator,
                   Metadata metadata,
-                  NetworkClient client) {
+                  NetworkClient client,
+                  MetricRegistry metricRegistry) {
         this.accumulator = accumulator;
         this.metadata = metadata;
         this.client = client;
-
+        this.batchSendTimer = metricRegistry.timer(MetricUtils.clientFullMetricName("batch.send"));
+        this.sendErrorCounter = metricRegistry.counter(MetricUtils.clientFullMetricName("batch.send.errors"));
+        this.batchMessageCountHistogram = metricRegistry.histogram(MetricUtils.clientFullMetricName("batch.messages.count"));
         running = true;
         runningLatch = new CountDownLatch(1);
     }
@@ -71,6 +82,8 @@ public class Sender implements Runnable {
             Optional<RecordBatch> readyRecordBatchOpt = accumulator.getReadyRecordBatch(node);
             readyRecordBatchOpt.ifPresent(recordBatch -> {
                 log.info("Records ready to be send for node {}", node);
+                batchMessageCountHistogram.update(recordBatch.getTotalNoOfRecords());
+
                 sendReadyBatch(node, recordBatch);
             });
         });
@@ -80,16 +93,21 @@ public class Sender implements Runnable {
         int totalNoOfRecords = recordBatch.getTotalNoOfRecords();
         log.info("Total no of records in batch for Node {} are {}", node.getBrokerId(), totalNoOfRecords);
         VRequest vRequest = newVRequest(recordBatch);
+
+        Timer.Context context = batchSendTimer.time();
         CompletionStage<VResponse> responseStage = client.send(node, vRequest);
         responseStage
             .thenAccept(vResponse -> {
+                long timeTakenNs = context.stop();
                 recordBatch.setState(RecordBatch.BatchState.DONE_SUCCESS);
-                log.info("Received vResponse with correlationId {}", vResponse.correlationId());
+                log.info("Received vResponse for batch request with correlationId {} in {}ms", vResponse.correlationId(),
+                    timeTakenNs / Math.pow(10, 6));
 
                 parseProduceResponse(vResponse, recordBatch);
                 log.info("Done parsing VResponse with correlationId {}", vResponse.correlationId());
             })
             .exceptionally(throwable -> {
+                sendErrorCounter.inc();
                 log.error("Exception in executing request {}: {}", vRequest.correlationId(), throwable.getMessage());
                 recordBatch.setState(RecordBatch.BatchState.DONE_FAILURE);
                 return null;
@@ -103,13 +121,12 @@ public class Sender implements Runnable {
         for (int i = 0; i < produceResponse.topicResponsesLength(); i++) {
             TopicProduceResponse topicProduceResponse = produceResponse.topicResponses(i);
             int topicId = topicProduceResponse.topicId();
-            log.info("Handling ProduceResponse for topic {} with {} partition responses", topicId, topicProduceResponse.partitionResponsesLength());
+            log.debug("Handling ProduceResponse for topic {} with {} partition responses", topicId, topicProduceResponse.partitionResponsesLength());
             for (int j = 0; j < topicProduceResponse.partitionResponsesLength(); j++) {
                 TopicPartitionProduceResponse partitionProduceResponse = topicProduceResponse.partitionResponses(j);
                 //log.info("ProduceResponse for topic {} at partition {}", topicId, partitionProduceResponse);
-                log.info("Response code for handling produceRequest for topic {} and partition {} is {}",
-                    topicId, partitionProduceResponse.partitionId(), partitionProduceResponse.status().statusCode());
-
+                log.debug("Response code for handling produceRequest with correlationId {} for topic {} and partition {} is {}",
+                    vResponse.correlationId(), topicId, partitionProduceResponse.partitionId(), partitionProduceResponse.status().statusCode());
 
                 TopicPartition topicPartition = metadata.getTopicPartition(topicProduceResponse.topicId(), partitionProduceResponse.partitionId());
                 recordBatch.setResponse(topicPartition, partitionProduceResponse.status());

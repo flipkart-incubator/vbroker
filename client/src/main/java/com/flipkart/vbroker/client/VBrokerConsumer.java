@@ -1,5 +1,6 @@
 package com.flipkart.vbroker.client;
 
+import com.codahale.metrics.MetricRegistry;
 import com.flipkart.vbroker.core.PartSubscription;
 import com.flipkart.vbroker.flatbuf.*;
 import com.flipkart.vbroker.utils.FlatbufUtils;
@@ -30,8 +31,8 @@ public class VBrokerConsumer implements Consumer {
         this.metadata = metadata;
     }
 
-    public VBrokerConsumer(VBClientConfig config) {
-        this(new NetworkClientImpl(), new MetadataImpl(config));
+    public VBrokerConsumer(VBClientConfig config, MetricRegistry metricRegistry) {
+        this(new NetworkClientImpl(metricRegistry), new MetadataImpl(config));
     }
 
     @Override

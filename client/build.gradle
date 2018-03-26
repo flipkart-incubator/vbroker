@@ -12,6 +12,17 @@ def nettyVersion = "4.1.21.Final"
 def restitoVersion = "0.9.3"
 def testNgVersion = "6.14.2"
 
+task copyLibs(type: Copy) {
+    into "$buildDir/dependencies/"
+    from configurations.runtime
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "com.flipkart.vbroker.client.VBrokerProducerBenchmark"
+    }
+}
+
 dependencies {
     //networking
     compile "io.netty:netty-all:${nettyVersion}"

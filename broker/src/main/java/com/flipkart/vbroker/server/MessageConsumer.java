@@ -6,6 +6,7 @@ import com.flipkart.vbroker.exceptions.LockFailedException;
 import com.flipkart.vbroker.flatbuf.Message;
 import com.flipkart.vbroker.iterators.SubscriberIterator;
 import com.flipkart.vbroker.subscribers.IterableMessage;
+import com.flipkart.vbroker.utils.MetricUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,7 +24,7 @@ public class MessageConsumer {
                             MetricRegistry metricRegistry) {
         this.subscriberIterator = subscriberIterator;
         this.messageProcessor = messageProcessor;
-        msgConsumeTimer = metricRegistry.timer(MetricRegistry.name(MessageConsumer.class, "total.msg.consuming.time"));
+        msgConsumeTimer = metricRegistry.timer(MetricUtils.brokerFullMetricName("total.msg.consumed"));
     }
 
     public static MessageConsumer newInstance(SubscriberIterator subscriberIterator,
@@ -36,8 +37,8 @@ public class MessageConsumer {
      * @return true if consumed successfully, false if unable to acquire lock
      */
     public boolean consume() {
-        Timer.Context context = msgConsumeTimer.time();
         if (subscriberIterator.hasNext()) {
+            Timer.Context context = msgConsumeTimer.time();
             IterableMessage iterableMessage = subscriberIterator.peek();
             Message message = iterableMessage.getMessage();
             //lock the subscriberGroup and process the message

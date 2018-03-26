@@ -43,6 +43,7 @@ subprojects {
 
         //metrics
         compile "io.dropwizard.metrics:metrics-core:${metricsVersion}"
+        compile "io.dropwizard.metrics:metrics-jmx:${metricsVersion}"
 
         //testing
         //testCompile "junit:junit:${jUnitVersion}"

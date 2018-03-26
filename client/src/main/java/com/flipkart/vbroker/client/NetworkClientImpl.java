@@ -1,11 +1,14 @@
 package com.flipkart.vbroker.client;
 
+import com.codahale.metrics.Histogram;
+import com.codahale.metrics.MetricRegistry;
 import com.flipkart.vbroker.exceptions.BrokerUnAvailableException;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.flatbuf.VRequest;
 import com.flipkart.vbroker.flatbuf.VResponse;
 import com.flipkart.vbroker.protocol.Request;
 import com.flipkart.vbroker.protocol.codecs.VBrokerClientCodec;
+import com.flipkart.vbroker.utils.MetricUtils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -34,19 +37,23 @@ public class NetworkClientImpl implements NetworkClient {
 
     private final Map<Node, Channel> nodeChannelMap = new ConcurrentHashMap<>();
     private final Map<Integer, CompletableFuture<VResponse>> responseFutureMap = new ConcurrentHashMap<>();
+    private final Histogram requestBytesHistogram;
 
-    public NetworkClientImpl() {
+    public NetworkClientImpl(MetricRegistry metricRegistry) {
         eventLoopGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("network_client_impl"));
         bootstrap = new Bootstrap()
             .group(eventLoopGroup)
             .channel(NioSocketChannel.class)
             .handler(new ResponseChannelInitializer());
+        this.requestBytesHistogram = metricRegistry.histogram(MetricUtils.clientFullMetricName("request.bytes"));
     }
 
     @Override
     public CompletionStage<VResponse> send(Node node, VRequest vRequest) {
         ByteBuf byteBuf = Unpooled.wrappedBuffer(vRequest.getByteBuffer());
         Request request = new Request(byteBuf.readableBytes(), byteBuf);
+        //update the no of bytes metric
+        requestBytesHistogram.update(request.getRequestLength());
 
         CompletableFuture<VResponse> responseFuture = new CompletableFuture<>();
         responseFutureMap.put(vRequest.correlationId(), responseFuture);
@@ -146,7 +153,9 @@ public class NetworkClientImpl implements NetworkClient {
                         log.error("Error in completing future {}", ex.getMessage());
                         respFuture.completeExceptionally(ex);
                     }
+
                     log.info("RespFuture completion status {}", respFuture);
+                    responseFutureMap.remove(vResponse.correlationId());
                 }
             });
         }

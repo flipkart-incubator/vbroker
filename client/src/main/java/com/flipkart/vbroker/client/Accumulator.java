@@ -96,7 +96,7 @@ public class Accumulator {
      * @return the CompletionStage with promised MessageMetadata
      */
     public synchronized CompletionStage<MessageMetadata> accumulateRecord(ProducerRecord record) {
-        log.info("Adding record {} to accumulator", record.getMessageId());
+        log.debug("Adding record {} to accumulator", record.getMessageId());
         Metadata metadata = fetchMetadata();
         TopicPartition partition = partitioner.partition(metadata.getTopic(record.getTopicId()), record);
         TopicPartition topicPartition = metadata.getTopicPartition(record.getTopicId(), partition.getId());

@@ -1,5 +1,7 @@
 package com.flipkart.vbroker.app;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jmx.JmxReporter;
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.client.MetadataImpl;
 import com.flipkart.vbroker.client.NetworkClientImpl;
@@ -46,6 +48,13 @@ public class AbstractVBrokerBaseTest {
     private static VBrokerServer server;
     private static boolean cleanedUpDone = false;
     protected StubServer httpServer;
+    protected final MetricRegistry metricRegistry = new MetricRegistry();
+
+    AbstractVBrokerBaseTest() {
+        log.info("Starting JMX reporter");
+        JmxReporter reporter = JmxReporter.forRegistry(metricRegistry).build();
+        reporter.start();
+    }
 
     @AfterClass
     public static void tearDown() {
@@ -72,7 +81,7 @@ public class AbstractVBrokerBaseTest {
         String configFile = "test-broker.properties";
         VBrokerConfig config = VBrokerConfig.newConfig(configFile);
         BROKER_PORT = config.getBrokerPort();
-        server = new VBrokerServer(config);
+        server = new VBrokerServer(config, metricRegistry);
         server.startAsync().awaitRunning();
     }
 
@@ -167,7 +176,7 @@ public class AbstractVBrokerBaseTest {
             .build();
         Topic topic = new Topic(protoTopic);
 
-        TopicClient topicClient = new TopicClient(new NetworkClientImpl(), new MetadataImpl(getVbClientConfig()));
+        TopicClient topicClient = new TopicClient(new NetworkClientImpl(metricRegistry), new MetadataImpl(getVbClientConfig()));
         List<CreateTopicResponse> createTopicResponses = topicClient.createTopics(Collections.singletonList(topic)).toCompletableFuture().join();
         return topic;
     }

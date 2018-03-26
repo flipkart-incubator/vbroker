@@ -50,8 +50,9 @@ public class RecordBatch {
     }
 
     public CompletableFuture<TopicPartMetadata> addRecord(TopicPartition topicPartition, ProducerRecord record) {
-        log.info("Adding record {} into topic partition {}", record.getMessageId(), topicPartition);
+        log.debug("Adding record {} into topic partition {}", record.getMessageId(), topicPartition);
         partRecordsMap.put(topicPartition, record);
+
         topicPartResponseFutureMap.putIfAbsent(topicPartition, new CompletableFuture<>());
         return topicPartResponseFutureMap.get(topicPartition);
     }

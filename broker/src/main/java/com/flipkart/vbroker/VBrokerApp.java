@@ -1,5 +1,7 @@
 package com.flipkart.vbroker;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jmx.JmxReporter;
 import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.server.VBrokerServer;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,12 @@ public class VBrokerApp {
     public static void main(String args[]) throws IOException {
         log.info("== Starting VBrokerApp ==");
 
+        MetricRegistry metricRegistry = new MetricRegistry();
+
+        log.info("Starting JmxReporter for metrics");
+        JmxReporter reporter = JmxReporter.forRegistry(metricRegistry).build();
+        reporter.start();
+
         if (args.length < 1) {
             throw new VBrokerException("Please specify the properties file as the first argument");
         }
@@ -23,7 +31,7 @@ public class VBrokerApp {
         VBrokerConfig config = VBrokerConfig.newConfig(configFile);
         log.info("Configs: {}", config);
 
-        VBrokerServer server = new VBrokerServer(config);
+        VBrokerServer server = new VBrokerServer(config, metricRegistry);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             log.info("Got shutdown hook. Triggering stop and await termination of the server");

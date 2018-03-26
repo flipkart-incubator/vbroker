@@ -1,35 +1,51 @@
 package com.flipkart.vbroker.handlers;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
+import com.flipkart.vbroker.flatbuf.RequestMessage;
 import com.flipkart.vbroker.flatbuf.ResponseMessage;
 import com.flipkart.vbroker.flatbuf.VRequest;
 import com.flipkart.vbroker.flatbuf.VResponse;
 import com.flipkart.vbroker.protocol.Response;
+import com.flipkart.vbroker.utils.MetricUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.CompletionStage;
 
 @Slf4j
-@AllArgsConstructor
 public class VBrokerRequestHandler extends SimpleChannelInboundHandler<VRequest> {
 
     private final RequestHandlerFactory requestHandlerFactory;
+    private final MetricRegistry metricRegistry;
+
+    public VBrokerRequestHandler(RequestHandlerFactory requestHandlerFactory,
+                                 MetricRegistry metricRegistry) {
+        this.requestHandlerFactory = requestHandlerFactory;
+        this.metricRegistry = metricRegistry;
+    }
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, VRequest vRequest) {
         log.info("== Received VRequest with correlationId {} and type {} ==", vRequest.correlationId(), vRequest.requestMessageType());
         RequestHandler requestHandler = requestHandlerFactory.getRequestHandler(vRequest);
 
+        String requestTypeName = RequestMessage.name(vRequest.requestMessageType());
+        Timer timer = metricRegistry.timer(MetricRegistry.name(MetricUtils.brokerFullMetricName(requestTypeName)));
+        Timer.Context context = timer.time();
+
         CompletionStage<VResponse> vResponseFuture = requestHandler.handle(vRequest);
         vResponseFuture.thenAccept(vResponse -> {
-            log.info("Handled request processing of VRequest {} with correlationId {}",
-                vRequest.requestMessageType(), vRequest.correlationId());
+            long timeTakenNs = context.stop();
+            double timeTakenMs = timeTakenNs / Math.pow(10, 6);
+            log.info("Handled request processing of VRequestType {} with correlationId {} in {}ms",
+                requestTypeName, vRequest.correlationId(), timeTakenMs);
+
             ByteBuf responseByteBuf = Unpooled.wrappedBuffer(vResponse.getByteBuffer());
             Response response = new Response(responseByteBuf.readableBytes(), responseByteBuf);
 

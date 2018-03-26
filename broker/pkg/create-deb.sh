@@ -3,6 +3,7 @@
 set -e
 
 pkg_name=vbroker-broker
+#pkg_env=nfrch
 pkg_version=0.1
 pkg_release=1
 pkg_arch=amd64
@@ -27,6 +28,12 @@ mkdir -p ${local_file_dir}/config
 cp -r build/dependencies/* ${local_file_dir}/libs/dependencies/
 cp -r build/libs/* ${local_file_dir}/libs/
 cp -r src/main/resources/* ${local_file_dir}/config/
+
+# cp -r src/main/resources/${pkg_env}.* ${local_file_dir}/config/
+# find ${local_file_dir}/config/ -type f -name "${pkg_env}.*" | while read f; do
+#     fname=$(echo $f | sed "s/${pkg_env}.//g")
+#     mv ${f} ${fname}
+# done
 
 meta_dir=deb/DEBIAN
 mkdir -p $meta_dir
