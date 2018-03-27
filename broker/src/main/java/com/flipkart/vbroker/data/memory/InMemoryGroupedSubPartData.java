@@ -250,7 +250,7 @@ public class InMemoryGroupedSubPartData implements SubPartData {
         public boolean hasNext() {
             if (!hasNext2()) {
                 iteratorOpt = fetchIterator(qType, manualSeqNoManagement);
-                iteratorOpt.ifPresent(it -> log.info("Changed iterator to {}", it.name()));
+                iteratorOpt.ifPresent(it -> log.debug("Changed iterator to {}", it.name()));
             }
             return hasNext2();
         }

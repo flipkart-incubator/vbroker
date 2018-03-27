@@ -3,6 +3,7 @@ package com.flipkart.vbroker.data.memory;
 import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.data.TopicPartData;
 import com.flipkart.vbroker.exceptions.NotImplementedException;
+import com.flipkart.vbroker.exceptions.VBrokerException;
 import com.flipkart.vbroker.flatbuf.Message;
 import com.flipkart.vbroker.iterators.DataIterator;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,7 @@ import static java.util.Objects.nonNull;
 public class InMemoryGroupedTopicPartData implements TopicPartData {
     private final ConcurrentMap<String, List<Message>> topicPartitionData = new ConcurrentHashMap<>();
 
-    private final BlockingQueue<MessageWithFuture> incomingMsgQueue = new ArrayBlockingQueue<>(10000);
+    private final BlockingQueue<MessageWithFuture> incomingMsgQueue = new ArrayBlockingQueue<>(100000);
     private final CountDownLatch queueRunningLatch = new CountDownLatch(1);
     private volatile boolean isQueueRunning = true;
 
@@ -33,7 +34,7 @@ public class InMemoryGroupedTopicPartData implements TopicPartData {
             while (isQueueRunning) {
                 while (nonNull(messageWithFuture = incomingMsgQueue.peek())) {
                     Message message = messageWithFuture.getMessage();
-                    log.info("En-queued up message with msg_id {} and group_id {} to the map", message.messageId(), message.groupId());
+                    log.debug("En-queued up message with msg_id {} and group_id {} to the map", message.messageId(), message.groupId());
                     try {
                         MessageMetadata messageMetadata = addMessageBlocking(message);
                         messageWithFuture.getFuture().complete(messageMetadata);
@@ -62,14 +63,22 @@ public class InMemoryGroupedTopicPartData implements TopicPartData {
 
     public CompletionStage<MessageMetadata> addMessage(Message message) {
         MessageWithFuture messageWithFuture = new MessageWithFuture(message, new CompletableFuture<>());
-        incomingMsgQueue.offer(messageWithFuture);
-        log.info("En-queued up message with msg_id {} and group_id {} to the map", message.messageId(), message.groupId());
+        try {
+            boolean success = incomingMsgQueue.offer(messageWithFuture, 1, TimeUnit.SECONDS);
+            if (!success) {
+                messageWithFuture.getFuture().completeExceptionally(
+                    new VBrokerException("Queue has reached capacity to en-queue message: " + message.messageId() + " with group: " + message.groupId()));
+            }
+        } catch (InterruptedException e) {
+            messageWithFuture.getFuture().completeExceptionally(e);
+        }
+        log.debug("En-queued up message with msg_id {} and group_id {} to the map", message.messageId(), message.groupId());
         return messageWithFuture.getFuture();
     }
 
     private MessageMetadata addMessageBlocking(Message message) {
         getMessages(message.groupId()).add(message);
-        log.info("Added message with msg_id {} and group_id {} to the map", message.messageId(), message.groupId());
+        log.debug("Added message with msg_id {} and group_id {} to the map", message.messageId(), message.groupId());
         return new MessageMetadata(message.messageId(),
             message.topicId(),
             message.partitionId(),
@@ -105,7 +114,7 @@ public class InMemoryGroupedTopicPartData implements TopicPartData {
                     topicPartitionData.get(group).stream()
                         .map(Message::messageId).collect(Collectors.toList())
                 );
-                log.info("Peeking message {} with group {} at seqNo {}", message.messageId(), message.groupId(), index);
+                log.debug("Peeking message {} with group {} at seqNo {}", message.messageId(), message.groupId(), index);
                 return message;
             }
 

@@ -1,12 +1,13 @@
 package com.flipkart.vbroker.handlers;
 
-import com.flipkart.vbroker.core.TopicPartMessage;
+import com.flipkart.vbroker.client.MessageMetadata;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.flatbuf.*;
 import com.flipkart.vbroker.services.ProducerService;
 import com.flipkart.vbroker.services.TopicService;
 import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.flipkart.vbroker.wrappers.Topic;
+import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.flatbuffers.FlatBufferBuilder;
@@ -14,11 +15,12 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static java.util.Objects.nonNull;
 
@@ -36,72 +38,86 @@ public class ProduceRequestHandler implements RequestHandler {
         assert nonNull(produceRequest);
 
         FlatBufferBuilder builder = FlatbufUtils.newBuilder();
-        Map<Integer, List<Integer>> topicPartitionResponseMap = new HashMap<>();
-        List<TopicPartMessage> messagesToProduce = new LinkedList<>();
+        Map<Integer, List<CompletableFuture<Integer>>> topicResponseMap = new HashMap<>();
+        log.info("Handling ProduceRequest for {} topic requests", produceRequest.topicRequestsLength());
 
-        return CompletableFuture.supplyAsync(() -> {
-            log.info("Handling ProduceRequest for {} topic requests", produceRequest.topicRequestsLength());
-            for (int i = 0; i < produceRequest.topicRequestsLength(); i++) {
-                TopicProduceRequest topicProduceRequest = produceRequest.topicRequests(i);
-                log.info("Received ProduceRequest for topic {}", topicProduceRequest.topicId());
-                Topic topic = topicService.getTopic(topicProduceRequest.topicId()).toCompletableFuture().join();
+        for (int i = 0; i < produceRequest.topicRequestsLength(); i++) {
+            TopicProduceRequest topicProduceRequest = produceRequest.topicRequests(i);
+            log.info("Received ProduceRequest for topic {} having {} partition requests",
+                topicProduceRequest.topicId(), topicProduceRequest.partitionRequestsLength());
+            Topic topic = topicService.getTopic(topicProduceRequest.topicId()).toCompletableFuture().join();
+            List<CompletableFuture<Integer>> topicPartFutureList = Lists.newArrayList();
 
-                for (int j = 0; j < topicProduceRequest.partitionRequestsLength(); j++) {
-                    TopicPartitionProduceRequest topicPartitionProduceRequest = topicProduceRequest.partitionRequests(j);
-                    TopicPartition topicPartition = topicService
-                        .getTopicPartition(topic, topicPartitionProduceRequest.partitionId())
-                        .toCompletableFuture().join();
+            for (int j = 0; j < topicProduceRequest.partitionRequestsLength(); j++) {
+                TopicPartitionProduceRequest topicPartitionProduceRequest = topicProduceRequest.partitionRequests(j);
+                TopicPartition topicPartition = topicService
+                    .getTopicPartition(topic, topicPartitionProduceRequest.partitionId())
+                    .toCompletableFuture().join();
 
-                    MessageSet messageSet = topicPartitionProduceRequest.messageSet();
-                    log.info("MessageSet for topic {} and partition {} has {} messages",
-                        topic.id(), topicPartitionProduceRequest.partitionId(), messageSet.messagesLength());
+                MessageSet messageSet = topicPartitionProduceRequest.messageSet();
+                log.info("MessageSet for topic {} and partition {} has {} messages",
+                    topic.id(), topicPartitionProduceRequest.partitionId(), messageSet.messagesLength());
 
-                    for (int m = 0; m < messageSet.messagesLength(); m++) {
-                        Message message = messageSet.messages(m);
-                        messagesToProduce.add(TopicPartMessage.newInstance(topicPartition, message));
-                    }
-                }
+                List<Message> messages = IntStream.range(0, messageSet.messagesLength())
+                    .mapToObj(messageSet::messages)
+                    .collect(Collectors.toList());
+
+                CompletionStage<List<MessageMetadata>> stage = producerService.produceMessages(topicPartition, messages);
+                CompletionStage<Integer> topicPartStage = stage.thenApply(messageMetadataList -> {
+                    log.info("Done producing {} messages to topic-partition {}", messages.size(), topicPartition);
+                    int vStatus = VStatus.createVStatus(builder, StatusCode.ProduceSuccess_NoError, builder.createString(""));
+                    return TopicPartitionProduceResponse.createTopicPartitionProduceResponse(
+                        builder,
+                        topicPartition.getId(),
+                        vStatus);
+                });
+
+                topicPartFutureList.add(topicPartStage.toCompletableFuture());
             }
+            topicResponseMap.put(topic.id(), topicPartFutureList);
+        }
 
-            //below call can block
-            producerService.produceMessages(messagesToProduce);
+        List<CompletableFuture<Integer>> topicProduceResponseFutureList = Lists.newArrayList();
+        topicResponseMap.forEach((topicId, futureList) -> {
+            log.info("Topic {} has {} partFutures", topicId, futureList.size());
+            CompletableFuture[] topicPartFuturesArr = futureList.toArray(new CompletableFuture[futureList.size()]);
 
-            for (TopicPartMessage topicPartMessage : messagesToProduce) {
-                int vStatus = VStatus.createVStatus(builder, StatusCode.ProduceSuccess_NoError, builder.createString(""));
-                int topicPartitionProduceResponse = TopicPartitionProduceResponse.createTopicPartitionProduceResponse(
-                    builder,
-                    topicPartMessage.getTopicPartition().getId(),
-                    vStatus);
-                topicPartitionResponseMap.computeIfAbsent(topicPartMessage.getTopicPartition().getTopicId(),
-                    o -> new LinkedList<>())
-                    .add(topicPartitionProduceResponse);
-            }
-
-            int noOfTopics = topicPartitionResponseMap.keySet().size();
-            int[] topicProduceResponses = new int[noOfTopics];
-            int i = 0;
-            for (Map.Entry<Integer, List<Integer>> entry : topicPartitionResponseMap.entrySet()) {
-                Integer topicId = entry.getKey();
-                List<Integer> partitionResponsesList = entry.getValue();
-                int[] partitionResponses = Ints.toArray(partitionResponsesList);
-
-                int partitionResponsesVector = TopicProduceResponse.createPartitionResponsesVector(builder, partitionResponses);
-                int topicProduceResponse = TopicProduceResponse.createTopicProduceResponse(
-                    builder,
-                    topicId,
-                    partitionResponsesVector);
-                topicProduceResponses[i++] = topicProduceResponse;
-            }
-
-            int topicResponsesVector = ProduceResponse.createTopicResponsesVector(builder, topicProduceResponses);
-            int produceResponse = ProduceResponse.createProduceResponse(builder, topicResponsesVector);
-            int vResponse = VResponse.createVResponse(builder,
-                vRequest.correlationId(),
-                ResponseMessage.ProduceResponse,
-                produceResponse);
-            builder.finish(vResponse);
-
-            return VResponse.getRootAsVResponse(builder.dataBuffer());
+            CompletableFuture<Integer> topicProduceResponseFuture = CompletableFuture.allOf(topicPartFuturesArr)
+                .thenApply(aVoid -> {
+                    List<Integer> partitionResponseList = futureList
+                        .stream()
+                        .map(CompletableFuture::join)
+                        .collect(Collectors.toList());
+                    int[] partitionResponses = Ints.toArray(partitionResponseList);
+                    int partitionResponsesVector = TopicProduceResponse.createPartitionResponsesVector(builder, partitionResponses);
+                    return TopicProduceResponse.createTopicProduceResponse(
+                        builder,
+                        topicId,
+                        partitionResponsesVector);
+                });
+            topicProduceResponseFutureList.add(topicProduceResponseFuture);
         });
+
+        CompletableFuture[] topicProduceResponseFutures = topicProduceResponseFutureList.toArray(new CompletableFuture[topicProduceResponseFutureList.size()]);
+        log.info("TopicProduceResponse futures are {}", topicProduceResponseFutures.length);
+
+        return CompletableFuture.allOf(topicProduceResponseFutures)
+            .thenApply(aVoid -> {
+                List<Integer> topicResponses = topicProduceResponseFutureList.stream()
+                    .map(CompletableFuture::join)
+                    .collect(Collectors.toList());
+                int[] topicProduceResponses = Ints.toArray(topicResponses);
+                log.info("TopicResponses are {}", topicProduceResponses.length);
+
+                int topicResponsesVector = ProduceResponse.createTopicResponsesVector(builder, topicProduceResponses);
+                int produceResponse = ProduceResponse.createProduceResponse(builder, topicResponsesVector);
+                int vResponse = VResponse.createVResponse(builder,
+                    vRequest.correlationId(),
+                    ResponseMessage.ProduceResponse,
+                    produceResponse);
+                builder.finish(vResponse);
+
+                return VResponse.getRootAsVResponse(builder.dataBuffer());
+            });
     }
 }

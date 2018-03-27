@@ -43,7 +43,7 @@ public class MessageConsumer {
             Message message = iterableMessage.getMessage();
             //lock the subscriberGroup and process the message
             if (iterableMessage.lock()) {
-                log.info("Consuming message with msg_id: {} and group_id: {}", message.messageId(), message.groupId());
+                log.debug("Consuming message with msg_id: {} and group_id: {}", message.messageId(), message.groupId());
                 messageProcessor.process(iterableMessage)
                     .thenAccept(aVoid -> {
                         iterableMessage.unlock();

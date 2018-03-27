@@ -61,7 +61,7 @@ public class SubscriberGroup {
      * false if already locked
      */
     public boolean lock() {
-        log.info("Locking the subscriberGroup {} for topic-partition {}", getGroupId(), topicPartition);
+        log.debug("Locking the subscriberGroup {} for topic-partition {}", getGroupId(), topicPartition);
         return locked.compareAndSet(false, true);
     }
 
@@ -77,7 +77,7 @@ public class SubscriberGroup {
      * forcefully set the state as unlocked
      */
     private void forceUnlock() {
-        log.info("Forcefully unlocking the subscriberGroup {} for topic-partition {}", getGroupId(), topicPartition);
+        log.debug("Forcefully unlocking the subscriberGroup {} for topic-partition {}", getGroupId(), topicPartition);
         locked.set(false);
     }
 
@@ -130,7 +130,7 @@ public class SubscriberGroup {
      */
     private void advanceIterator() {
         //TODO: there can be a case where qType gets mutated when iterator next is about to be performed. Validate it
-        log.info("Advancing iterator to next for group {} and QType {}", getGroupId(), qType);
+        log.debug("Advancing iterator to next for group {} and QType {}", getGroupId(), qType);
         iterator(qType).next();
     }
 
@@ -170,7 +170,7 @@ public class SubscriberGroup {
     }
 
     public SubscriberGroupIterator<IterableMessage> newIterator(QType qType, int seqNoFrom) {
-        log.info("Creating new iterator for SubscriberGroup {} for qType {} from seqNo {}", getGroupId(), qType, seqNoFrom);
+        log.debug("Creating new iterator for SubscriberGroup {} for qType {} from seqNo {}", getGroupId(), qType, seqNoFrom);
         return new SubscriberGroupIteratorImpl(qType, this, seqNoFrom);
     }
 
@@ -224,7 +224,7 @@ public class SubscriberGroup {
             GroupedIterableMessage messageWithGroup = GroupedIterableMessage.newInstance(groupIterator.next(), subscriberGroup);
             if (autoSeqNoManagement) {
                 incrementCurrSeqNo(qType);
-                log.info("Incremented seqNo for group {} to {}", subscriberGroup.getGroupId(), getCurrSeqNo(qType));
+                log.debug("Incremented seqNo for group {} to {}", subscriberGroup.getGroupId(), getCurrSeqNo(qType));
             }
             return messageWithGroup;
         }

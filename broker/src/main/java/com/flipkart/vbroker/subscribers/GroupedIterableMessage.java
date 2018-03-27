@@ -26,13 +26,13 @@ public class GroupedIterableMessage implements IterableMessage {
 
     @Override
     public boolean lock() {
-        log.info("Locking the group {}", subscriberGroup.getGroupId());
+        log.debug("Locking the group {}", subscriberGroup.getGroupId());
         return subscriberGroup.lock();
     }
 
     @Override
     public void unlock() {
-        log.info("Unlocking the group {}", subscriberGroup.getGroupId());
+        log.debug("Unlocking the group {}", subscriberGroup.getGroupId());
         subscriberGroup.advanceIteratorAndUnlockGroup();
     }
 

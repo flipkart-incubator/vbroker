@@ -25,7 +25,7 @@ public class InMemoryTopicPartDataManager extends DefaultTopicPartDataManager {
             } else {
                 topicPartData = new InMemoryUnGroupedTopicPartData();
             }
-            log.info("TopicPartData: {} for TopicPartition: {}", topicPartData, topicPartition1);
+            log.trace("TopicPartData: {} for TopicPartition: {}", topicPartData, topicPartition1);
             return topicPartData;
         });
         future.complete(allPartitionsDataMap.get(topicPartition));

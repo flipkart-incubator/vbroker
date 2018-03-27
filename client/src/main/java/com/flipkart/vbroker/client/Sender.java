@@ -81,7 +81,7 @@ public class Sender implements Runnable {
         clusterNodes.forEach(node -> {
             Optional<RecordBatch> readyRecordBatchOpt = accumulator.getReadyRecordBatch(node);
             readyRecordBatchOpt.ifPresent(recordBatch -> {
-                log.info("Records ready to be send for node {}", node);
+                log.info("{} records are ready to be send for node {}", recordBatch.getTotalNoOfRecords(), node);
                 batchMessageCountHistogram.update(recordBatch.getTotalNoOfRecords());
 
                 sendReadyBatch(node, recordBatch);
@@ -90,11 +90,12 @@ public class Sender implements Runnable {
     }
 
     private void sendReadyBatch(Node node, RecordBatch recordBatch) {
-        int totalNoOfRecords = recordBatch.getTotalNoOfRecords();
-        log.info("Total no of records in batch for Node {} are {}", node.getBrokerId(), totalNoOfRecords);
+        long totalNoOfRecords = recordBatch.getTotalNoOfRecords();
+        log.debug("Total no of records in batch for Node {} are {}", node.getBrokerId(), totalNoOfRecords);
         VRequest vRequest = newVRequest(recordBatch);
-
         Timer.Context context = batchSendTimer.time();
+
+        recordBatch.setState(RecordBatch.BatchState.IN_FLIGHT);
         CompletionStage<VResponse> responseStage = client.send(node, vRequest);
         responseStage
             .thenAccept(vResponse -> {
@@ -103,12 +104,17 @@ public class Sender implements Runnable {
                 log.info("Received vResponse for batch request with correlationId {} in {}ms", vResponse.correlationId(),
                     timeTakenNs / Math.pow(10, 6));
 
-                parseProduceResponse(vResponse, recordBatch);
+                try {
+                    parseProduceResponse(vResponse, recordBatch);
+                } catch (Throwable throwable) {
+                    log.error("Exception in parsing vResponse with correlationId {}", vResponse.correlationId(), throwable);
+                    throw throwable;
+                }
                 log.info("Done parsing VResponse with correlationId {}", vResponse.correlationId());
             })
             .exceptionally(throwable -> {
-                sendErrorCounter.inc();
                 log.error("Exception in executing request {}: {}", vRequest.correlationId(), throwable.getMessage());
+                sendErrorCounter.inc();
                 recordBatch.setState(RecordBatch.BatchState.DONE_FAILURE);
                 return null;
             });
@@ -121,15 +127,19 @@ public class Sender implements Runnable {
         for (int i = 0; i < produceResponse.topicResponsesLength(); i++) {
             TopicProduceResponse topicProduceResponse = produceResponse.topicResponses(i);
             int topicId = topicProduceResponse.topicId();
-            log.debug("Handling ProduceResponse for topic {} with {} partition responses", topicId, topicProduceResponse.partitionResponsesLength());
+            log.info("Handling ProduceResponse for topic {} with {} topicResponses and {} partitionResponses",
+                topicId, produceResponse.topicResponsesLength(), topicProduceResponse.partitionResponsesLength());
             for (int j = 0; j < topicProduceResponse.partitionResponsesLength(); j++) {
                 TopicPartitionProduceResponse partitionProduceResponse = topicProduceResponse.partitionResponses(j);
                 //log.info("ProduceResponse for topic {} at partition {}", topicId, partitionProduceResponse);
-                log.debug("Response code for handling produceRequest with correlationId {} for topic {} and partition {} is {}",
+                log.info("Response code for handling produceRequest with correlationId {} for topic {} and partition {} is {}",
                     vResponse.correlationId(), topicId, partitionProduceResponse.partitionId(), partitionProduceResponse.status().statusCode());
 
                 TopicPartition topicPartition = metadata.getTopicPartition(topicProduceResponse.topicId(), partitionProduceResponse.partitionId());
+                log.info("Got topicPartition {}", topicPartition);
+
                 recordBatch.setResponse(topicPartition, partitionProduceResponse.status());
+                log.info("Done setting RecordBatch response status to {}", partitionProduceResponse.status().statusCode());
             }
         }
     }

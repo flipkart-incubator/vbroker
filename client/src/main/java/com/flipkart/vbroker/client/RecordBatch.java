@@ -2,20 +2,17 @@ package com.flipkart.vbroker.client;
 
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.flatbuf.VStatus;
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * A set of records going to a particular node in the cluster
@@ -28,8 +25,12 @@ public class RecordBatch {
     private final Node node;
     private final long lingerTimeMs;
     private final long createdTimeMs;
-    private final Multimap<TopicPartition, ProducerRecord> partRecordsMap = ArrayListMultimap.create();
-    private final Map<TopicPartition, CompletableFuture<TopicPartMetadata>> topicPartResponseFutureMap = new HashMap<>();
+
+    //private final Multimap<TopicPartition, ProducerRecord> partRecordsMap = ArrayListMultimap.create();
+    //private final ConcurrentMap<TopicPartition, CompletableFuture<TopicPartMetadata>> topicPartResponseFutureMap = new ConcurrentHashMap<>();
+
+    private final ConcurrentMap<TopicPartition, FutureWithRecords> topicPartFuturesMap = new ConcurrentHashMap<>();
+
     //map which stores the responses for the batch sent
     private final Map<TopicPartition, VStatus> statusMap = new HashMap<>();
     @Setter
@@ -49,12 +50,27 @@ public class RecordBatch {
         return new RecordBatch(node, lingerTimeMs);
     }
 
+
+    @Getter
+    private class FutureWithRecords {
+        private final CompletableFuture<TopicPartMetadata> future = new CompletableFuture<>();
+        private final List<ProducerRecord> producerRecords = new ArrayList<>();
+
+        void addRecord(ProducerRecord producerRecord) {
+            producerRecords.add(producerRecord);
+        }
+    }
+
     public CompletableFuture<TopicPartMetadata> addRecord(TopicPartition topicPartition, ProducerRecord record) {
         log.debug("Adding record {} into topic partition {}", record.getMessageId(), topicPartition);
-        partRecordsMap.put(topicPartition, record);
+        topicPartFuturesMap
+            .computeIfAbsent(topicPartition, topicPartition1 -> new FutureWithRecords())
+            .addRecord(record);
+        return topicPartFuturesMap.get(topicPartition).getFuture();
 
-        topicPartResponseFutureMap.putIfAbsent(topicPartition, new CompletableFuture<>());
-        return topicPartResponseFutureMap.get(topicPartition);
+        //partRecordsMap.put(topicPartition, record);
+        //topicPartResponseFutureMap.putIfAbsent(topicPartition, new CompletableFuture<>());
+        //return topicPartResponseFutureMap.get(topicPartition);
     }
 
     /**
@@ -62,7 +78,8 @@ public class RecordBatch {
      */
     private boolean isFull() {
         //TODO: validate this and fix this
-        return partRecordsMap.values().size() >= Integer.MAX_VALUE;
+        return getTotalNoOfRecords() >= Integer.MAX_VALUE;
+        //return partRecordsMap.values().size() >= Integer.MAX_VALUE;
     }
 
     /**
@@ -74,7 +91,7 @@ public class RecordBatch {
      * @return true if above satisfied
      */
     public boolean isReady() {
-        return !isDone() && (isFull() || hasExpired());
+        return !isDone() && !isInFlight() && (isFull() || hasExpired());
     }
 
     /**
@@ -84,6 +101,10 @@ public class RecordBatch {
         return BatchState.DONE_FAILURE.equals(state) || BatchState.DONE_SUCCESS.equals(state);
     }
 
+    private boolean isInFlight() {
+        return BatchState.IN_FLIGHT.equals(state);
+    }
+
     /**
      * @return true if accumulation time of the batch is breached
      */
@@ -91,16 +112,22 @@ public class RecordBatch {
         return (System.currentTimeMillis() - createdTimeMs) > lingerTimeMs;
     }
 
-    public int getTotalNoOfRecords() {
-        return partRecordsMap.values().size();
+    public long getTotalNoOfRecords() {
+        return topicPartFuturesMap.values()
+            .stream()
+            .mapToInt(futureWithRecords -> futureWithRecords.getProducerRecords().size())
+            .sum();
+        //return partRecordsMap.values().size();
     }
 
     public List<ProducerRecord> getRecords(TopicPartition topicPartition) {
-        return Lists.newArrayList(partRecordsMap.get(topicPartition));
+        //return Lists.newArrayList(partRecordsMap.get(topicPartition));
+        return Lists.newArrayList(topicPartFuturesMap.get(topicPartition).getProducerRecords());
     }
 
     public Set<TopicPartition> getTopicPartitionsWithRecords() {
-        return partRecordsMap.keySet();
+        return topicPartFuturesMap.keySet();
+        //return partRecordsMap.keySet();
     }
 
     public void setResponse(TopicPartition topicPartition, VStatus status) {
@@ -110,7 +137,13 @@ public class RecordBatch {
         statusMap.put(topicPartition, status);
         TopicPartMetadata topicPartMetadata =
             new TopicPartMetadata(topicPartition.getId(), status.statusCode());
-        topicPartResponseFutureMap.get(topicPartition).complete(topicPartMetadata);
+
+        //topicPartResponseFutureMap.get(topicPartition).complete(topicPartMetadata);
+
+        CompletableFuture<TopicPartMetadata> future = topicPartFuturesMap.get(topicPartition).getFuture();
+        log.info("Completing TopicPartFuture {} for topicPartition {} with metadata {}",
+            future, topicPartition, topicPartMetadata);
+        future.complete(topicPartMetadata);
     }
 
     public VStatus getStatus(TopicPartition topicPartition) {
@@ -118,11 +151,12 @@ public class RecordBatch {
     }
 
     public enum BatchState {
-        QUEUED, SENT, DONE_SUCCESS, DONE_FAILURE
+        QUEUED, IN_FLIGHT, SENT, DONE_SUCCESS, DONE_FAILURE
     }
 
     @AllArgsConstructor
     @Getter
+    @ToString
     public class TopicPartMetadata {
         int partitionId;
         int statusCode;

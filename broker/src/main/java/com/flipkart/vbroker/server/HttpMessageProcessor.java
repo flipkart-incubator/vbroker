@@ -18,6 +18,7 @@ import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
 import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.flipkart.vbroker.subscribers.QType;
+import com.flipkart.vbroker.utils.MetricUtils;
 import com.flipkart.vbroker.wrappers.Subscription;
 import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
@@ -35,7 +36,6 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeoutException;
 
-import static com.codahale.metrics.MetricRegistry.name;
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 
@@ -66,8 +66,7 @@ public class HttpMessageProcessor implements MessageProcessor {
         this.subPartDataManager = subPartDataManager;
         this.callbackExecutor = callbackExecutor;
         //this.metricRegistry = metricRegistry;
-
-        this.httpResponseTimer = metricRegistry.timer(name(HttpMessageProcessor.class, "response.time"));
+        this.httpResponseTimer = metricRegistry.timer(MetricUtils.brokerFullMetricName("destination.response.time"));
     }
 
     @Override
@@ -91,7 +90,7 @@ public class HttpMessageProcessor implements MessageProcessor {
 
         Timer.Context context = httpResponseTimer.time();
         Request request = requestBuilder.build();
-        log.info("Making httpRequest to httpUri: {} and httpMethod: {}",
+        log.debug("Making httpRequest to httpUri: {} and httpMethod: {}",
             httpUri,
             HttpMethod.name(message.httpMethod()));
 
@@ -100,8 +99,8 @@ public class HttpMessageProcessor implements MessageProcessor {
         return reqFuture
             .thenApply(response -> {
                 long httpResponseTimeNs = context.stop();
-                log.info("Time taken to make httpUrl {} call is {}ms",
-                    message.httpUri(), httpResponseTimeNs / Math.pow(10, 6));
+                log.info("Time taken for message {} with group {} to make destination httpUrl {} call is {}ms and statusCode is {}",
+                    message.messageId(), message.groupId(), message.httpUri(), httpResponseTimeNs / Math.pow(10, 6), response.getStatusCode());
                 return handleResponse(response, iterableMessage).toCompletableFuture();
             })
             .exceptionally(throwable -> {
@@ -109,7 +108,7 @@ public class HttpMessageProcessor implements MessageProcessor {
                 if (throwable instanceof TimeoutException) {
                     return retry(iterableMessage).toCompletableFuture();
                 } else {
-                    log.info("Sidelining the message {}", iterableMessage.getMessage().messageId());
+                    log.debug("Sidelining the message {}", iterableMessage.getMessage().messageId());
                     return sideline(iterableMessage).toCompletableFuture();
                 }
             })
@@ -120,12 +119,12 @@ public class HttpMessageProcessor implements MessageProcessor {
         int statusCode = response.getStatusCode();
         CompletionStage<Void> completionStage = CompletableFuture.completedFuture(null);
         if (statusCode >= 200 && statusCode < 300) {
-            log.info("Response code is {}. Success in making httpRequest. Message processing now complete", statusCode);
+            log.debug("Response code is {}. Success in making httpRequest. Message processing now complete", statusCode);
         } else if (statusCode >= 400 && statusCode < 500) {
-            log.info("Response is 4xx. Sidelining the message");
+            log.debug("Response is 4xx. Sidelining the message");
             completionStage = sideline(iterableMessage);
         } else if (statusCode >= 500 && statusCode < 600) {
-            log.info("Response is 5xx. Retrying the message");
+            log.debug("Response is 5xx. Retrying the message");
             completionStage = retry(iterableMessage);
         }
 
@@ -137,7 +136,7 @@ public class HttpMessageProcessor implements MessageProcessor {
             .getSubscription(iterableMessage.getTopicId(), iterableMessage.subscriptionId());
         return subscriptionStage.thenAcceptAsync(subscription -> {
             if (isCallbackRequired(statusCode, iterableMessage.getMessage(), subscription)) {
-                log.info("Callback is enabled for this message {}", iterableMessage.getMessage().messageId());
+                log.debug("Callback is enabled for this message {}", iterableMessage.getMessage().messageId());
                 makeCallback(iterableMessage, response)
                     .handleAsync(((messageMetadata, throwable) -> {
                         if (nonNull(throwable)) {
@@ -153,7 +152,7 @@ public class HttpMessageProcessor implements MessageProcessor {
                         return null;
                     }), callbackExecutor);
             } else {
-                log.info("Callback is NOT enabled for this message {}", iterableMessage.getMessage().messageId());
+                log.debug("Callback is NOT enabled for this message {}", iterableMessage.getMessage().messageId());
             }
         }, callbackExecutor);
     }
@@ -216,7 +215,8 @@ public class HttpMessageProcessor implements MessageProcessor {
         return topicService
             .getTopic(callbackMsg.topicId())
             .thenComposeAsync(topic -> {
-                log.info("Producing callback for message to {} queue", topic.id());
+                log.info("Producing callback for message {} and group {} to {} queue",
+                    callbackMsg.messageId(), callbackMsg.groupId(), topic.id());
                 TopicPartition topicPartition = new TopicPartition(callbackMsg.partitionId(), topic.id(), topic.grouped());
                 TopicPartMessage topicPartMessage =
                     TopicPartMessage.newInstance(topicPartition, callbackMsg);

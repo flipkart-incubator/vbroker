@@ -105,7 +105,7 @@ public class Accumulator {
         RecordBatch recordBatch = getRecordBatch(leaderNode);
         CompletableFuture<RecordBatch.TopicPartMetadata> future = recordBatch.addRecord(topicPartition, record);
 
-        return future.thenApply(topicPartMetadata ->
+        return future.thenApplyAsync(topicPartMetadata ->
             new MessageMetadata(
                 record.getMessageId(),
                 record.getTopicId(),

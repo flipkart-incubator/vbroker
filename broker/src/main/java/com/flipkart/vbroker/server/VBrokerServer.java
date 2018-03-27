@@ -75,7 +75,7 @@ public class VBrokerServer extends AbstractExecutionThreadService {
 
         //TopicService topicService = new TopicServiceImpl(config, curatorService);
         ThreadFactory coordinatorThreadFactory = new ThreadFactoryBuilder().setNameFormat("coordinator_pool-%d").build();
-        coordinatorExecutor = Executors.newCachedThreadPool(coordinatorThreadFactory);
+        coordinatorExecutor = Executors.newFixedThreadPool(1, coordinatorThreadFactory);
         TopicService topicService = new InMemoryTopicService(coordinatorExecutor);
 
         DataManagerFactory dataManagerFactory = new DataManagerFactory(config, workerGroup);
@@ -123,7 +123,7 @@ public class VBrokerServer extends AbstractExecutionThreadService {
 
         DefaultAsyncHttpClientConfig httpClientConfig = new DefaultAsyncHttpClientConfig
             .Builder()
-            //.setEventLoopGroup(workerGroup) //using same worker group event loop
+            .setEventLoopGroup(workerGroup) //using same worker group event loop
             //.setThreadFactory(new DefaultThreadFactory("async_http_client"))
             .setThreadFactory(new ThreadFactoryBuilder().setNameFormat("async_http_client-%d").build())
             .build();

@@ -7,6 +7,7 @@ import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.flatbuf.Message;
 import com.flipkart.vbroker.utils.TopicUtils;
 import com.flipkart.vbroker.wrappers.Topic;
+import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,7 +24,7 @@ public class ProducerService {
     public CompletionStage<MessageMetadata> produceMessage(TopicPartMessage topicPartMessage) {
         Message message = topicPartMessage.getMessage();
         TopicPartition topicPartition = topicPartMessage.getTopicPartition();
-        log.info("Producing message with msg_id: {} and group_id: {} to topic {} and partition {}",
+        log.debug("Producing message with msg_id: {} and group_id: {} to topic {} and partition {}",
             message.messageId(), message.groupId(), topicPartition.getTopicId(), topicPartition.getId());
         return topicPartDataManager.addMessage(topicPartition, message);
     }
@@ -32,7 +33,17 @@ public class ProducerService {
         topicPartMessages.forEach(topicPartMessage -> {
             Message message = topicPartMessage.getMessage();
             TopicPartition topicPartition = topicPartMessage.getTopicPartition();
-            log.info("BulkProducing message with msg_id: {} and group_id: {} to topic {} and partition {}",
+            log.debug("BulkProducing message with msg_id: {} and group_id: {} to topic {} and partition {}",
+                message.messageId(), message.groupId(), topicPartition.getTopicId(), topicPartition.getId());
+        });
+        return topicPartDataManager.addMessages(topicPartMessages);
+    }
+
+    public CompletionStage<List<MessageMetadata>> produceMessages(TopicPartition topicPartition, List<Message> messages) {
+        List<TopicPartMessage> topicPartMessages = Lists.newArrayList();
+        messages.forEach(message -> {
+            topicPartMessages.add(TopicPartMessage.newInstance(topicPartition, message));
+            log.debug("BulkProducing message with msg_id: {} and group_id: {} to topic {} and partition {}",
                 message.messageId(), message.groupId(), topicPartition.getTopicId(), topicPartition.getId());
         });
         return topicPartDataManager.addMessages(topicPartMessages);
