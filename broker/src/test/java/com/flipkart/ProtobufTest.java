@@ -113,6 +113,14 @@ public class ProtobufTest {
         //? No setters in topic, only getters
     }
 
+    @Test
+    public void testJSONvsBytesSize(){
+        Topic topic = getSampleTopic(1);
+        String topicJson = topic.toJson();
+        byte[] topicBytes = topic.toBytes();
+        log.info("Size as JSON : {}, Size as bytes : {}", topicJson.getBytes().length, topicBytes.length);
+    }
+
     private Topic getSampleTopic(int id) {
         ProtoTopic.Builder topicBuilder = ProtoTopic.newBuilder();
         topicBuilder.setId(id);

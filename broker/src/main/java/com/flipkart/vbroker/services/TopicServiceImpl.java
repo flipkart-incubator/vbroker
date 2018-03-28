@@ -4,7 +4,6 @@ import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.exceptions.*;
 import com.flipkart.vbroker.utils.IdGenerator;
-import com.flipkart.vbroker.utils.TopicUtils;
 import com.flipkart.vbroker.wrappers.Topic;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -110,12 +109,6 @@ public class TopicServiceImpl implements TopicService {
                 return Topic.fromBytes(data);
             }
         });
-    }
-
-
-    @Override
-    public List<TopicPartition> getPartitions(Topic topic) {
-        return TopicUtils.getTopicPartitions(topic);
     }
 
     @Override

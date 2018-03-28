@@ -14,6 +14,7 @@ import java.util.Properties;
 @ToString
 public class VBrokerConfig {
     private final Properties properties;
+    private Integer brokerId;
     private String brokerHost;
     private int brokerPort;
     private String zookeeperUrl;
@@ -24,6 +25,7 @@ public class VBrokerConfig {
     private String topicsPath;
     private String queuesPath;
     private String controllerPath;
+    private String brokersPath;
     private int controllerQueueSize;
     private int controllerQueuePollTimeMs;
     private String adminTasksPath;
@@ -48,6 +50,7 @@ public class VBrokerConfig {
     public void reloadConfigs() {
         this.brokerHost = properties.getProperty("broker.host");
         this.brokerPort = Ints.tryParse(properties.getProperty("broker.port"));
+        this.brokerId = Ints.tryParse(properties.getProperty("broker.id"));
         this.zookeeperUrl = properties.getProperty("zookeeper.url");
         this.consumerPort = Ints.tryParse(properties.getProperty("consumer.port"));
         this.subscriberPollTimeMs = Ints.tryParse(properties.getProperty("subscriber.poll.time.ms"));
@@ -57,6 +60,7 @@ public class VBrokerConfig {
         this.topicsPath = properties.getProperty("topics.path");
         this.queuesPath = properties.getProperty("queues.path");
         this.controllerPath = properties.getProperty("controller.path");
+        this.brokersPath = properties.getProperty("brokers.path");
         this.controllerQueueSize = Ints.tryParse(properties.getProperty("controller.queue.size"));
         this.controllerQueuePollTimeMs = Ints.tryParse(properties.getProperty("controller.queue.poll.time.ms"));
         this.adminTasksPath = properties.getProperty("admin.tasks.path");

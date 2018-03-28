@@ -19,6 +19,7 @@ public abstract class DefaultTopicPartDataManager implements TopicPartDataManage
 
     @Override
     public CompletionStage<MessageMetadata> addMessage(TopicPartition topicPartition, Message message) {
+        //TODO check whether this broker is in fact the leader?
         return getTopicPartData(topicPartition)
             .thenCompose(topicPartData -> topicPartData.addMessage(message));
     }

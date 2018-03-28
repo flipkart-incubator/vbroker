@@ -2,7 +2,6 @@ package com.flipkart.vbroker.services;
 
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.exceptions.TopicValidationException;
-import com.flipkart.vbroker.utils.TopicUtils;
 import com.flipkart.vbroker.wrappers.Topic;
 
 import java.util.ArrayList;
@@ -41,11 +40,6 @@ public class InMemoryTopicService implements TopicService {
     @Override
     public CompletionStage<Topic> getTopic(int topicId) {
         return CompletableFuture.supplyAsync(() -> topicsMap.get(topicId), executorService);
-    }
-
-    @Override
-    public List<TopicPartition> getPartitions(Topic topic) {
-        return TopicUtils.getTopicPartitions(topic);
     }
 
     @Override

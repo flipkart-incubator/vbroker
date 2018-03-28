@@ -7,6 +7,7 @@ import com.flipkart.vbroker.data.DataManagerFactory;
 import com.flipkart.vbroker.data.SubPartDataManager;
 import com.flipkart.vbroker.data.TopicPartDataManager;
 import com.flipkart.vbroker.handlers.RequestHandlerFactory;
+import com.flipkart.vbroker.proto.Node;
 import com.flipkart.vbroker.services.*;
 import com.flipkart.vbroker.utils.DummyEntities;
 import com.flipkart.vbroker.wrappers.Subscription;
@@ -89,7 +90,7 @@ public class VBrokerServer extends AbstractExecutionThreadService {
             coordinatorExecutor);
 
         QueueService queueService = null;
-        ClusterMetadataService clusterMetadataService = null;
+        ClusterMetadataService clusterMetadataService = new ClusterMetadataServiceImpl(curatorService, config, topicService, subscriptionService);
 
         //global broker controller
         brokerController = new VBrokerController(curatorService, topicService, subscriptionService, config);
@@ -156,7 +157,22 @@ public class VBrokerServer extends AbstractExecutionThreadService {
                     log.info("Broker now listening on port {}", config.getBrokerPort());
 
                     //the broker can now startServer accepting new requests
-                    //TODO: declare broker as healthy by registering in /brokers/ids for example now that everything is validated
+                    //Wait until node is registered
+                    Node node = Node.newBuilder()
+                        .setBrokerId(config.getBrokerId())
+                        .setHostIp(config.getBrokerHost())
+                        .setHostPort(config.getBrokerPort())
+                        .build();
+                    boolean registered = false;
+                    while(!registered) {
+                        try {
+                            log.info("Trying to register self at broker id {}", node.getBrokerId());
+                            clusterMetadataService.registerNode(node).toCompletableFuture().join();
+                            registered = true;
+                        } catch (Exception ignored){
+                            log.error("Failure in registering broker", ignored);
+                        }
+                    }
 
                     log.info("Starting subscriber");
                     ThreadFactory subscriberThreadFactory = new ThreadFactoryBuilder().setNameFormat("subscriber_pool-%d").build();
