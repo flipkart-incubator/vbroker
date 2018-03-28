@@ -110,11 +110,12 @@ public class InMemoryGroupedTopicPartData implements TopicPartData {
             @Override
             public Message peek() {
                 Message message = topicPartitionData.get(group).get(index.get());
-                log.debug("Group {} messages: {}", message.groupId(),
-                    topicPartitionData.get(group).stream()
-                        .map(Message::messageId).collect(Collectors.toList())
-                );
-                log.debug("Peeking message {} with group {} at seqNo {}", message.messageId(), message.groupId(), index);
+                if (log.isDebugEnabled()) {
+                    log.debug("Group {} messages: {}", message.groupId(),
+                        topicPartitionData.get(group).stream()
+                            .map(Message::messageId).collect(Collectors.toList()));
+                    log.debug("Peeking message {} with group {} at seqNo {}", message.messageId(), message.groupId(), index);
+                }
                 return message;
             }
 

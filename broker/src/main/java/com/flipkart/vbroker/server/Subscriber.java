@@ -77,7 +77,7 @@ public class Subscriber implements Runnable {
                             }
                         }
                     } catch (Exception e) {
-                        log.error("Exception in consuming the message {}. Sleeping for {} ms", e, pollTimeMs);
+                        log.error("Exception in consuming the message. Sleeping for {} ms", pollTimeMs, e);
                         Thread.sleep(pollTimeMs);
                     }
                 }

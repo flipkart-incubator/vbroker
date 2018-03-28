@@ -22,8 +22,10 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Slf4j
 public class InMemoryGroupedSubPartData implements SubPartData {
@@ -101,7 +103,7 @@ public class InMemoryGroupedSubPartData implements SubPartData {
 
     @Override
     public DataIterator<IterableMessage> getIterator(QType qType) {
-        //Optional<SubscriberGroup.SubscriberGroupIteratorImpl> iteratorOpt = fetchIterator(qType);
+        //Optional<SubscriberGroup.SubscriberGroupIteratorImpl> iteratorOpt = fetchIterators(qType);
         return new DataIteratorImpl(qType, false);
     }
 
@@ -153,36 +155,31 @@ public class InMemoryGroupedSubPartData implements SubPartData {
         });
     }
 
-    private Optional<SubscriberGroupIterator<IterableMessage>> fetchIterator(QType qType,
-                                                                             boolean manualSeqNoManagement) {
+    private List<SubscriberGroupIterator<IterableMessage>> fetchIterators(QType qType,
+                                                                          boolean manualSeqNoManagement) {
         log.debug("Re-fetching iterator for qType {}", qType);
-        CompletionStage<List<String>> values;
+        Stream<String> values;
         switch (qType) {
             case MAIN:
-                values = CompletableFuture.supplyAsync(() -> subscriberGroupsMap.values()
+                values = subscriberGroupsMap.values()
                     .stream()
-                    .map(SubscriberGroup::getGroupId)
-                    .collect(Collectors.toList()));
+                    .map(SubscriberGroup::getGroupId);
                 break;
             default:
-                values = getFailedGroups(qType);
+                //reviewed - this is a blocking call but mostly safe
+                values = getFailedGroups(qType).toCompletableFuture().join().stream();
                 break;
         }
 
-        //reviewed - this is a blocking call but mostly safe
-        List<String> valuesComputed = values.toCompletableFuture().join();
         if (log.isDebugEnabled()) {
-            List<String> groupIds = valuesComputed //FIX this!!
-                .stream()
+            List<String> groupIds = values
                 .map(subscriberGroupsMap::get)
                 .map(SubscriberGroup::getGroupId)
                 .collect(Collectors.toList());
             log.debug("SubscriberGroupsMap values for qType {} are: {}", qType, Collections.singletonList(groupIds));
         }
 
-        return valuesComputed
-            .stream()
-            .map(subscriberGroupsMap::get)
+        return values.map(subscriberGroupsMap::get)
             .filter(SubscriberGroup::isUnlocked)
             .filter(group -> qType.equals(group.getQType()))
             .filter(group -> groupQTypeIteratorTable.contains(group, qType))
@@ -192,8 +189,8 @@ public class InMemoryGroupedSubPartData implements SubPartData {
                 }
                 return groupQTypeIteratorTable.get(subscriberGroup, qType);
             })
-            .filter(iterator -> iterator.hasNext() && iterator.isUnlocked())
-            .findFirst();
+            .filter(iterator -> nonNull(iterator) && iterator.hasNext() && iterator.isUnlocked())
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -216,12 +213,13 @@ public class InMemoryGroupedSubPartData implements SubPartData {
     private class DataIteratorImpl implements DataIterator<IterableMessage> {
         private final QType qType;
         private final boolean manualSeqNoManagement;
-        private Optional<SubscriberGroupIterator<IterableMessage>> iteratorOpt;
+        private Optional<SubscriberGroupIterator<IterableMessage>> iteratorOpt = Optional.empty();
         private IterableMessage lastPeekedMsg;
+        private final Queue<SubscriberGroupIterator<IterableMessage>> iteratorQueue = new ArrayDeque<>();
 
         DataIteratorImpl(QType qType, boolean manualSeqNoManagement) {
             this.qType = qType;
-            iteratorOpt = fetchIterator(qType, manualSeqNoManagement);
+            //fetchIterators(qType, manualSeqNoManagement).forEach(iteratorQueue::offer);
             this.manualSeqNoManagement = manualSeqNoManagement;
         }
 
@@ -249,9 +247,24 @@ public class InMemoryGroupedSubPartData implements SubPartData {
         @Override
         public boolean hasNext() {
             if (!hasNext2()) {
-                iteratorOpt = fetchIterator(qType, manualSeqNoManagement);
+                if (iteratorQueue.isEmpty()) {
+                    fetchIterators(qType, manualSeqNoManagement).forEach(iteratorQueue::offer);
+                }
+
+                while (!iteratorQueue.isEmpty()) {
+                    SubscriberGroupIterator<IterableMessage> headIterator = iteratorQueue.peek();
+                    if (headIterator.isUnlocked() && headIterator.hasNext()) {
+                        iteratorOpt = Optional.of(headIterator);
+                        iteratorQueue.poll();
+                        break;
+                    } else {
+                        iteratorQueue.offer(iteratorQueue.poll());
+                    }
+                }
+                //iteratorOpt = fetchIterators(qType, manualSeqNoManagement);
                 iteratorOpt.ifPresent(it -> log.debug("Changed iterator to {}", it.name()));
             }
+            //recompute again
             return hasNext2();
         }
 

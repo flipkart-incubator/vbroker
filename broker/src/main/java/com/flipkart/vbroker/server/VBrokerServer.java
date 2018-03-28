@@ -74,8 +74,8 @@ public class VBrokerServer extends AbstractExecutionThreadService {
         EventLoopGroup localGroup = new DefaultEventLoopGroup(1, new DefaultThreadFactory("server_local"));
 
         //TopicService topicService = new TopicServiceImpl(config, curatorService);
-        ThreadFactory coordinatorThreadFactory = new ThreadFactoryBuilder().setNameFormat("coordinator_pool-%d").build();
-        coordinatorExecutor = Executors.newFixedThreadPool(1, coordinatorThreadFactory);
+        //ThreadFactory coordinatorThreadFactory = new ThreadFactoryBuilder().setNameFormat("coordinator_pool-%d").build();
+        coordinatorExecutor = Executors.newWorkStealingPool(1);
         TopicService topicService = new InMemoryTopicService(coordinatorExecutor);
 
         DataManagerFactory dataManagerFactory = new DataManagerFactory(config, workerGroup);
