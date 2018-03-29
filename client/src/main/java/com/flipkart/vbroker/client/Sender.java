@@ -15,44 +15,64 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static java.util.Objects.nonNull;
 
 @Slf4j
 public class Sender implements Runnable {
 
     private final Accumulator accumulator;
-    private final Metadata metadata;
+    private Metadata metadata;
     private final NetworkClient client;
     private final CountDownLatch runningLatch;
     private volatile boolean running;
+    private final Partitioner partitioner;
+    private final VBClientConfig config;
     private final Timer batchSendTimer;
     private final Counter sendErrorCounter;
     private final Histogram batchMessageCountHistogram;
 
+    private final Object fetchMetadataMonitor = new Object();
+    private volatile boolean isMetadataFetchInProgress = false;
+
+    private final ConcurrentHashMap<Node, RecordBatch> nodeRecordBatchMap = new ConcurrentHashMap<>();
+    private final Map<Node, Queue<RecordBatch>> nodeReadyRecordBatchMap = new HashMap<>();
+
     public Sender(Accumulator accumulator,
-                  Metadata metadata,
                   NetworkClient client,
+                  Partitioner partitioner,
+                  VBClientConfig config,
                   MetricRegistry metricRegistry) {
         this.accumulator = accumulator;
-        this.metadata = metadata;
         this.client = client;
+        this.partitioner = partitioner;
+        this.config = config;
         this.batchSendTimer = metricRegistry.timer(MetricUtils.clientFullMetricName("batch.send"));
         this.sendErrorCounter = metricRegistry.counter(MetricUtils.clientFullMetricName("batch.send.errors"));
         this.batchMessageCountHistogram = metricRegistry.histogram(MetricUtils.clientFullMetricName("batch.messages.count"));
         running = true;
         runningLatch = new CountDownLatch(1);
+
+        forceRefreshMetadata();
     }
 
     @Override
     public void run() {
         while (running) {
             try {
+                metadata = fetchMetadata();
+
+                metadata.getClusterNodes()
+                    .forEach(node -> {
+                        markReadyOldAndCreateNewBatch(node);
+                    });
+                prepareRecordBatches();
                 send();
                 Thread.sleep(200);
             } catch (InterruptedException ex) {
@@ -62,6 +82,83 @@ public class Sender implements Runnable {
             }
         }
         runningLatch.countDown();
+    }
+
+    private Metadata fetchMetadata() {
+        if (metadata.aliveTimeMs() > config.getMetadataExpiryTimeMs()) {
+            log.info("Metadata alive since {}ms and is greater than expiry time {}ms",
+                metadata.aliveTimeMs(), config.getMetadataExpiryTimeMs());
+            forceRefreshMetadata();
+        }
+        return metadata;
+    }
+
+    /**
+     * this call blocks to fetch metadata
+     */
+    private void forceRefreshMetadata() {
+        if (!isMetadataFetchInProgress) {
+            synchronized (fetchMetadataMonitor) {
+                //double check this multiple threads would have entered the first if condition
+                if (!isMetadataFetchInProgress) {
+                    isMetadataFetchInProgress = true;
+                    log.info("Force populating Metadata");
+                    metadata = new MetadataImpl(config);
+                    isMetadataFetchInProgress = false;
+                }
+            }
+        }
+    }
+
+    private void prepareRecordBatches() {
+        //TODO: also add a throughput config parameter which can decide how many records in total to prepare before send
+        while (accumulator.hasNext()) {
+            Accumulator.RecordWithFuture recordWithFuture = accumulator.peek();
+            ProducerRecord record = recordWithFuture.getProducerRecord();
+
+            TopicPartition partition = partitioner.partition(metadata.getTopic(record.getTopicId()), record);
+            TopicPartition topicPartition = metadata.getTopicPartition(record.getTopicId(), partition.getId());
+            Node leaderNode = metadata.getLeaderNode(topicPartition);
+
+            RecordBatch recordBatch = markReadyOldAndCreateNewBatch(leaderNode);
+            recordBatch.addRecord(topicPartition, record)
+                .thenAccept(topicPartMetadata -> {
+                    MessageMetadata messageMetadata = new MessageMetadata(record.getMessageId(),
+                        record.getTopicId(),
+                        topicPartMetadata.getPartitionId(),
+                        -1);
+                    recordWithFuture.getFuture().complete(messageMetadata);
+                })
+                .exceptionally(throwable -> {
+                    recordWithFuture.getFuture().completeExceptionally(throwable);
+                    return null;
+                });
+        }
+    }
+
+    private RecordBatch markReadyOldAndCreateNewBatch(Node leaderNode) {
+        RecordBatch recordBatch = nodeRecordBatchMap
+            .computeIfAbsent(leaderNode, leaderNode1 -> newRecordBatch(leaderNode));
+        if (nonNull(recordBatch) && recordBatch.isReady()) {
+            log.info("RecordBatch for node {} isReady with {} records", leaderNode, recordBatch.getTotalNoOfRecords());
+            nodeReadyRecordBatchMap
+                .computeIfAbsent(leaderNode, node1 -> new ArrayDeque<>())
+                .offer(recordBatch);
+
+            recordBatch = newRecordBatch(leaderNode);
+            nodeRecordBatchMap.put(leaderNode, recordBatch);
+        }
+
+        return recordBatch;
+    }
+
+    private RecordBatch newRecordBatch(Node leaderNode) {
+        RecordBatch recordBatch;
+        recordBatch = RecordBatch.newInstance(leaderNode,
+            config.getLingerTimeMs(),
+            config.getMaxBatchRecords(),
+            config.getMaxBatchSizeBytes());
+        return recordBatch;
     }
 
     /*
@@ -79,13 +176,16 @@ public class Sender implements Runnable {
         log.debug("ClusterNodes: {}", clusterNodes);
 
         clusterNodes.forEach(node -> {
-            Optional<RecordBatch> readyRecordBatchOpt = accumulator.getReadyRecordBatch(node);
-            readyRecordBatchOpt.ifPresent(recordBatch -> {
-                log.info("{} records are ready to be send for node {}", recordBatch.getTotalNoOfRecords(), node);
-                batchMessageCountHistogram.update(recordBatch.getTotalNoOfRecords());
-
-                sendReadyBatch(node, recordBatch);
-            });
+            Queue<RecordBatch> recordBatchQueue =
+                nodeReadyRecordBatchMap.computeIfAbsent(node, node1 -> new ArrayDeque<>());
+            while (!recordBatchQueue.isEmpty()) {
+                RecordBatch recordBatch = recordBatchQueue.poll();
+                if (nonNull(recordBatch)) {
+                    log.info("{} records are ready to be send for node {}", recordBatch.getTotalNoOfRecords(), node);
+                    batchMessageCountHistogram.update(recordBatch.getTotalNoOfRecords());
+                    sendReadyBatch(node, recordBatch);
+                }
+            }
         });
     }
 
@@ -162,8 +262,8 @@ public class Sender implements Runnable {
                 .stream()
                 .map(topicPartition -> {
                     List<Integer> msgOffsets =
-                        recordBatch.getRecords(topicPartition)
-                            .stream()
+                        recordBatch.getRecordStream(topicPartition)
+                            //.stream()
                             .filter(record -> recordBatch.isReady())
                             .map(record -> RecordUtils.flatBuffMsgOffset(builder, record, topicPartition.getId()))
                             .collect(Collectors.toList());

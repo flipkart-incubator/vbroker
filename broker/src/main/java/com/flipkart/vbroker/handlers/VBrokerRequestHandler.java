@@ -3,7 +3,6 @@ package com.flipkart.vbroker.handlers;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.flipkart.vbroker.flatbuf.RequestMessage;
-import com.flipkart.vbroker.flatbuf.ResponseMessage;
 import com.flipkart.vbroker.flatbuf.VRequest;
 import com.flipkart.vbroker.flatbuf.VResponse;
 import com.flipkart.vbroker.protocol.Response;
@@ -11,7 +10,6 @@ import com.flipkart.vbroker.utils.MetricUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -50,10 +48,11 @@ public class VBrokerRequestHandler extends SimpleChannelInboundHandler<VRequest>
             Response response = new Response(responseByteBuf.readableBytes(), responseByteBuf);
 
             ChannelFuture channelFuture = ctx.writeAndFlush(response);
-            if (vResponse.responseMessageType() == ResponseMessage.ProduceResponse) {
-                //for now, we want to close the channel for produce request when response is written
-                channelFuture.addListener(ChannelFutureListener.CLOSE);
-            }
+            //if (vResponse.responseMessageType() == ResponseMessage.ProduceResponse) {
+            //for now, we want to close the channel for produce request when response is written
+            //log.info("Not closing channel for ProduceResponse");
+            //channelFuture.addListener(ChannelFutureListener.CLOSE);
+            //}
         });
     }
 

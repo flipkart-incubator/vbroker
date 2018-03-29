@@ -144,8 +144,11 @@ public class AbstractVBrokerBaseTest {
 
         properties.setProperty("broker.host", "localhost");
         properties.setProperty("broker.port", BROKER_PORT + "");
-        properties.setProperty("batch.size", "10240");
         properties.setProperty("linger.time.ms", String.valueOf(10));
+
+        properties.setProperty("max.batch.size.bytes", "10240");
+        properties.setProperty("max.batch.records", "10000");
+        properties.setProperty("max.accumulator.records", "10000");
         properties.setProperty("metadata.expiry.time.ms", "6000");
 
         return new VBClientConfig(properties);
