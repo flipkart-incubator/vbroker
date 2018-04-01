@@ -2,17 +2,17 @@ package com.flipkart.vbroker.client;
 
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.flatbuf.VStatus;
-import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.*;
+import java.util.stream.Stream;
 
 /**
  * A set of records going to a particular node in the cluster
@@ -22,64 +22,59 @@ import java.util.concurrent.ConcurrentMap;
 @Slf4j
 @ToString
 public class RecordBatch {
+    @Getter
     private final Node node;
     private final long lingerTimeMs;
+    private final int maxBatchRecords;
+    private final int maxBatchSizeBytes;
     private final long createdTimeMs;
 
-    //private final Multimap<TopicPartition, ProducerRecord> partRecordsMap = ArrayListMultimap.create();
-    //private final ConcurrentMap<TopicPartition, CompletableFuture<TopicPartMetadata>> topicPartResponseFutureMap = new ConcurrentHashMap<>();
-
     private final ConcurrentMap<TopicPartition, FutureWithRecords> topicPartFuturesMap = new ConcurrentHashMap<>();
-
     //map which stores the responses for the batch sent
     private final Map<TopicPartition, VStatus> statusMap = new HashMap<>();
     @Setter
     @Getter
     private BatchState state;
 
-    private RecordBatch(Node node, long lingerTimeMs) {
+    private RecordBatch(Node node,
+                        long lingerTimeMs,
+                        int maxBatchRecords,
+                        int maxBatchSizeBytes) {
         this.node = node;
         this.lingerTimeMs = lingerTimeMs;
+        this.maxBatchRecords = maxBatchRecords;
+        this.maxBatchSizeBytes = maxBatchSizeBytes;
         this.createdTimeMs = System.currentTimeMillis();
 
         this.state = BatchState.QUEUED;
     }
 
-    public static RecordBatch newInstance(Node node, long lingerTimeMs) {
+    public static RecordBatch newInstance(Node node,
+                                          long lingerTimeMs,
+                                          int maxBatchRecords,
+                                          int maxBatchSizeBytes) {
         log.info("Creating new RecordBatch for node {}", node);
-        return new RecordBatch(node, lingerTimeMs);
-    }
-
-
-    @Getter
-    private class FutureWithRecords {
-        private final CompletableFuture<TopicPartMetadata> future = new CompletableFuture<>();
-        private final List<ProducerRecord> producerRecords = new ArrayList<>();
-
-        void addRecord(ProducerRecord producerRecord) {
-            producerRecords.add(producerRecord);
-        }
+        return new RecordBatch(node, lingerTimeMs, maxBatchRecords, maxBatchSizeBytes);
     }
 
     public CompletableFuture<TopicPartMetadata> addRecord(TopicPartition topicPartition, ProducerRecord record) {
-        log.debug("Adding record {} into topic partition {}", record.getMessageId(), topicPartition);
+        log.debug("Adding record {} into topic partition {} in RecordBatch", record.getMessageId(), topicPartition);
         topicPartFuturesMap
             .computeIfAbsent(topicPartition, topicPartition1 -> new FutureWithRecords())
             .addRecord(record);
         return topicPartFuturesMap.get(topicPartition).getFuture();
-
-        //partRecordsMap.put(topicPartition, record);
-        //topicPartResponseFutureMap.putIfAbsent(topicPartition, new CompletableFuture<>());
-        //return topicPartResponseFutureMap.get(topicPartition);
     }
 
     /**
      * @return true if batch size configured is reached
      */
-    private boolean isFull() {
+    public boolean isFull() {
         //TODO: validate this and fix this
-        return getTotalNoOfRecords() >= Integer.MAX_VALUE;
-        //return partRecordsMap.values().size() >= Integer.MAX_VALUE;
+        return getTotalNoOfRecords() >= maxBatchRecords;
+    }
+
+    public boolean isEmpty() {
+        return getTotalNoOfRecords() == 0;
     }
 
     /**
@@ -91,7 +86,18 @@ public class RecordBatch {
      * @return true if above satisfied
      */
     public boolean isReady() {
-        return !isDone() && !isInFlight() && (isFull() || hasExpired());
+        return !isDone() && !isInFlight() && !isEmpty() && (isFull() || hasExpired());
+    }
+
+    public void printStates() {
+        boolean isDone = isDone();
+        boolean isInFlight = isInFlight();
+        boolean isEmpty = isEmpty();
+        boolean isFull = isFull();
+        boolean hasExpired = hasExpired();
+
+        log.debug("RecordBatch isDone: {}; isInFlight: {}; isEmpty: {}; isFull: {}; hasExpired: {}",
+            isDone, isInFlight, isEmpty, isFull, hasExpired);
     }
 
     /**
@@ -117,28 +123,20 @@ public class RecordBatch {
             .stream()
             .mapToInt(futureWithRecords -> futureWithRecords.getProducerRecords().size())
             .sum();
-        //return partRecordsMap.values().size();
     }
 
-    public List<ProducerRecord> getRecords(TopicPartition topicPartition) {
-        //return Lists.newArrayList(partRecordsMap.get(topicPartition));
-        return Lists.newArrayList(topicPartFuturesMap.get(topicPartition).getProducerRecords());
+    public Stream<ProducerRecord> getRecordStream(TopicPartition topicPartition) {
+        return topicPartFuturesMap.get(topicPartition).getProducerRecords().stream();
     }
 
     public Set<TopicPartition> getTopicPartitionsWithRecords() {
         return topicPartFuturesMap.keySet();
-        //return partRecordsMap.keySet();
     }
 
     public void setResponse(TopicPartition topicPartition, VStatus status) {
-//        if (status.statusCode() >= 0) {
-//            throw new VBrokerException("dummy exception");
-//        }
         statusMap.put(topicPartition, status);
         TopicPartMetadata topicPartMetadata =
             new TopicPartMetadata(topicPartition.getId(), status.statusCode());
-
-        //topicPartResponseFutureMap.get(topicPartition).complete(topicPartMetadata);
 
         CompletableFuture<TopicPartMetadata> future = topicPartFuturesMap.get(topicPartition).getFuture();
         log.info("Completing TopicPartFuture {} for topicPartition {} with metadata {}",
@@ -161,4 +159,15 @@ public class RecordBatch {
         int partitionId;
         int statusCode;
     }
+
+    @Getter
+    private class FutureWithRecords {
+        private final CompletableFuture<TopicPartMetadata> future = new CompletableFuture<>();
+        private final BlockingQueue<ProducerRecord> producerRecords = new ArrayBlockingQueue<>(maxBatchRecords);
+
+        void addRecord(ProducerRecord producerRecord) {
+            producerRecords.offer(producerRecord);
+        }
+    }
+
 }

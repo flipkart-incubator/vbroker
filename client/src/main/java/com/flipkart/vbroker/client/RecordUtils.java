@@ -3,10 +3,12 @@ package com.flipkart.vbroker.client;
 import com.flipkart.vbroker.exceptions.InvalidMessageException;
 import com.flipkart.vbroker.flatbuf.HttpHeader;
 import com.flipkart.vbroker.flatbuf.Message;
+import com.flipkart.vbroker.utils.ByteBufUtils;
 import com.google.common.base.Strings;
 import com.google.common.primitives.Ints;
 import com.google.flatbuffers.FlatBufferBuilder;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,6 +77,25 @@ public class RecordUtils {
             .topicId(message.topicId())
             .attributes(message.attributes())
             .payload(message.bodyPayloadAsByteBuffer())
+            .build();
+    }
+
+    public static ProducerRecord newProducerRecord(Message message) {
+        return ProducerRecord.builder()
+            .groupId(message.groupId())
+            .messageId(message.messageId())
+            .crc((byte) 1)
+            .version((byte) 1)
+            .seqNo(1)
+            .topicId(message.topicId())
+            .attributes(201)
+            .httpUri(message.httpUri())
+            .httpMethod(ProducerRecord.HttpMethod.POST)
+            .callbackTopicId(message.callbackTopicId())
+            .callbackHttpUri(message.callbackHttpUri())
+            .callbackHttpMethod(ProducerRecord.HttpMethod.POST)
+            .headers(new HashMap<>())
+            .payload(ByteBufUtils.getBytes(message.bodyPayloadAsByteBuffer()))
             .build();
     }
 }

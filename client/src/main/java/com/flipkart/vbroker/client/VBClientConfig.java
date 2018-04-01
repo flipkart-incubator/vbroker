@@ -21,7 +21,9 @@ public class VBClientConfig {
     private int brokerPort;
 
     //producer
-    private long batchSize;
+    private int maxAccumulatorRecords;
+    private int maxBatchSizeBytes;
+    private int maxBatchRecords;
     private long lingerTimeMs;
 
     //metadata
@@ -41,12 +43,14 @@ public class VBClientConfig {
         return new VBClientConfig(properties);
     }
 
-    public void reloadConfigs() {
+    private void reloadConfigs() {
         this.brokerHost = properties.getProperty("broker.host");
         this.brokerPort = Ints.tryParse(properties.getProperty("broker.port"));
 
-        this.batchSize = Longs.tryParse(properties.getProperty("batch.size"));
+        this.maxBatchSizeBytes = Ints.tryParse(properties.getProperty("max.batch.size.bytes"));
+        this.maxBatchRecords = Ints.tryParse(properties.getProperty("max.batch.records"));
         this.lingerTimeMs = Longs.tryParse(properties.getProperty("linger.time.ms"));
+        this.maxAccumulatorRecords = Ints.tryParse(properties.getProperty("max.accumulator.records"));
 
         this.metadataExpiryTimeMs = Longs.tryParse(properties.getProperty("metadata.expiry.time.ms"));
     }

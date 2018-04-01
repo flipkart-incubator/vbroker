@@ -31,7 +31,7 @@ public class VBrokerProducer implements Producer {
         this.config = config;
         log.info("Configs: ", config);
         networkClient = new NetworkClientImpl(metricRegistry);
-        sender = new Sender(accumulator, accumulator.fetchMetadata(), networkClient, metricRegistry);
+        sender = new Sender(accumulator, networkClient, new DefaultPartitioner(), config, metricRegistry);
         senderExecutor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1));
         senderCallbackExecutor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(1));
         ListenableFuture<?> senderFuture = senderExecutor.submit(sender);
@@ -42,13 +42,18 @@ public class VBrokerProducer implements Producer {
         this.produceMsgEnqueueTimer = metricRegistry.timer(MetricUtils.clientFullMetricName("produce.msg.enqueue.time"));
     }
 
+    public VBrokerProducer(VBClientConfig config, MetricRegistry metricRegistry) {
+        this(config, new Accumulator(config.getMaxAccumulatorRecords(), metricRegistry), metricRegistry);
+    }
+
     public VBrokerProducer(VBClientConfig config) {
-        this(config, new Accumulator(config, new DefaultPartitioner()), new MetricRegistry());
+        this(config, new MetricRegistry());
     }
 
     @Override
     public CompletionStage<MessageMetadata> produce(ProducerRecord record) {
         try (Timer.Context ignored = produceMsgEnqueueTimer.time()) {
+            log.trace("Producing record with msg_id {} and group_id {}", record.getMessageId(), record.getGroupId());
             return accumulator.accumulateRecord(record);
         }
     }
