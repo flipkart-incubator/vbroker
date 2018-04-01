@@ -58,7 +58,7 @@ public class RecordBatch {
     }
 
     public CompletableFuture<TopicPartMetadata> addRecord(TopicPartition topicPartition, ProducerRecord record) {
-        log.debug("Adding record {} into topic partition {}", record.getMessageId(), topicPartition);
+        log.debug("Adding record {} into topic partition {} in RecordBatch", record.getMessageId(), topicPartition);
         topicPartFuturesMap
             .computeIfAbsent(topicPartition, topicPartition1 -> new FutureWithRecords())
             .addRecord(record);
@@ -87,6 +87,17 @@ public class RecordBatch {
      */
     public boolean isReady() {
         return !isDone() && !isInFlight() && !isEmpty() && (isFull() || hasExpired());
+    }
+
+    public void printStates() {
+        boolean isDone = isDone();
+        boolean isInFlight = isInFlight();
+        boolean isEmpty = isEmpty();
+        boolean isFull = isFull();
+        boolean hasExpired = hasExpired();
+
+        log.debug("RecordBatch isDone: {}; isInFlight: {}; isEmpty: {}; isFull: {}; hasExpired: {}",
+            isDone, isInFlight, isEmpty, isFull, hasExpired);
     }
 
     /**

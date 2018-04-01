@@ -14,6 +14,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
+import static java.util.Objects.nonNull;
+
 @Slf4j
 public class Accumulator implements PeekingIterator<Accumulator.RecordWithFuture> {
 
@@ -52,6 +54,10 @@ public class Accumulator implements PeekingIterator<Accumulator.RecordWithFuture
         return future;
     }
 
+    public int size() {
+        return recordsQueue.size();
+    }
+
     @Override
     public RecordWithFuture peek() {
         return recordsQueue.peek();
@@ -59,7 +65,7 @@ public class Accumulator implements PeekingIterator<Accumulator.RecordWithFuture
 
     @Override
     public boolean hasNext() {
-        return !recordsQueue.isEmpty();
+        return nonNull(recordsQueue.peek());
     }
 
     @Override

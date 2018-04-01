@@ -67,11 +67,8 @@ public class Sender implements Runnable {
         while (running) {
             try {
                 metadata = fetchMetadata();
-
                 metadata.getClusterNodes()
-                    .forEach(node -> {
-                        markReadyOldAndCreateNewBatch(node);
-                    });
+                    .forEach(this::markReadyOldAndCreateNewBatch);
                 prepareRecordBatches();
                 send();
                 Thread.sleep(200);
@@ -112,6 +109,7 @@ public class Sender implements Runnable {
 
     private void prepareRecordBatches() {
         //TODO: also add a throughput config parameter which can decide how many records in total to prepare before send
+        log.info("Accumulator has {} records", accumulator.size());
         while (accumulator.hasNext()) {
             Accumulator.RecordWithFuture recordWithFuture = accumulator.peek();
             ProducerRecord record = recordWithFuture.getProducerRecord();
@@ -133,18 +131,19 @@ public class Sender implements Runnable {
                     recordWithFuture.getFuture().completeExceptionally(throwable);
                     return null;
                 });
+
+            accumulator.next();
         }
     }
 
     private RecordBatch markReadyOldAndCreateNewBatch(Node leaderNode) {
         RecordBatch recordBatch = nodeRecordBatchMap
             .computeIfAbsent(leaderNode, leaderNode1 -> newRecordBatch(leaderNode));
-        if (nonNull(recordBatch) && recordBatch.isReady()) {
-            log.info("RecordBatch for node {} isReady with {} records", leaderNode, recordBatch.getTotalNoOfRecords());
-            nodeReadyRecordBatchMap
-                .computeIfAbsent(leaderNode, node1 -> new ArrayDeque<>())
-                .offer(recordBatch);
-
+        if (recordBatch.isReady()) {
+            recordBatch.printStates();
+            log.info("RecordBatch {} for node {} isReady with {} records",
+                recordBatch.hashCode(), leaderNode, recordBatch.getTotalNoOfRecords());
+            getRecordBatchQueue(leaderNode).offer(recordBatch);
             recordBatch = newRecordBatch(leaderNode);
             nodeRecordBatchMap.put(leaderNode, recordBatch);
         }
@@ -153,12 +152,15 @@ public class Sender implements Runnable {
     }
 
     private RecordBatch newRecordBatch(Node leaderNode) {
-        RecordBatch recordBatch;
-        recordBatch = RecordBatch.newInstance(leaderNode,
+        return RecordBatch.newInstance(leaderNode,
             config.getLingerTimeMs(),
             config.getMaxBatchRecords(),
             config.getMaxBatchSizeBytes());
-        return recordBatch;
+    }
+
+    private Queue<RecordBatch> getRecordBatchQueue(Node node) {
+        return nodeReadyRecordBatchMap
+            .computeIfAbsent(node, node1 -> new ArrayDeque<>());
     }
 
     /*
@@ -176,8 +178,7 @@ public class Sender implements Runnable {
         log.debug("ClusterNodes: {}", clusterNodes);
 
         clusterNodes.forEach(node -> {
-            Queue<RecordBatch> recordBatchQueue =
-                nodeReadyRecordBatchMap.computeIfAbsent(node, node1 -> new ArrayDeque<>());
+            Queue<RecordBatch> recordBatchQueue = getRecordBatchQueue(node);
             while (!recordBatchQueue.isEmpty()) {
                 RecordBatch recordBatch = recordBatchQueue.poll();
                 if (nonNull(recordBatch)) {
@@ -260,25 +261,8 @@ public class Sender implements Runnable {
         List<TopicPartReq> topicPartReqs =
             recordBatch.getTopicPartitionsWithRecords()
                 .stream()
-                .map(topicPartition -> {
-                    List<Integer> msgOffsets =
-                        recordBatch.getRecordStream(topicPartition)
-                            //.stream()
-                            .filter(record -> recordBatch.isReady())
-                            .map(record -> RecordUtils.flatBuffMsgOffset(builder, record, topicPartition.getId()))
-                            .collect(Collectors.toList());
-                    int[] messages = Ints.toArray(msgOffsets);
-
-                    int messagesVector = MessageSet.createMessagesVector(builder, messages);
-                    int messageSet = MessageSet.createMessageSet(builder, messagesVector);
-                    int topicPartitionProduceRequest = TopicPartitionProduceRequest.createTopicPartitionProduceRequest(
-                        builder,
-                        topicPartition.getId(),
-                        (short) 1,
-                        messageSet);
-
-                    return new TopicPartReq(topicPartition.getTopicId(), topicPartitionProduceRequest);
-                }).collect(Collectors.toList());
+                .map(topicPartition -> getTopicPartReq(recordBatch, builder, topicPartition))
+                .collect(Collectors.toList());
 
         Map<Integer, List<TopicPartReq>> perTopicReqs = topicPartReqs.stream()
             .collect(Collectors.groupingBy(TopicPartReq::getTopicId));
@@ -304,6 +288,28 @@ public class Sender implements Runnable {
         builder.finish(vRequest);
 
         return VRequest.getRootAsVRequest(builder.dataBuffer());
+    }
+
+    private TopicPartReq getTopicPartReq(RecordBatch recordBatch,
+                                         FlatBufferBuilder builder,
+                                         TopicPartition topicPartition) {
+        List<Integer> msgOffsets =
+            recordBatch.getRecordStream(topicPartition)
+                //.stream()
+                .filter(record -> recordBatch.isReady())
+                .map(record -> RecordUtils.flatBuffMsgOffset(builder, record, topicPartition.getId()))
+                .collect(Collectors.toList());
+        int[] messages = Ints.toArray(msgOffsets);
+
+        int messagesVector = MessageSet.createMessagesVector(builder, messages);
+        int messageSet = MessageSet.createMessageSet(builder, messagesVector);
+        int topicPartitionProduceRequest = TopicPartitionProduceRequest.createTopicPartitionProduceRequest(
+            builder,
+            topicPartition.getId(),
+            (short) 1,
+            messageSet);
+
+        return new TopicPartReq(topicPartition.getTopicId(), topicPartitionProduceRequest);
     }
 
     @AllArgsConstructor

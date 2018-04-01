@@ -142,7 +142,7 @@ public class MessageFlowIntegrationTest extends AbstractVBrokerBaseTest {
         return String.format("%s_msg_%s", payloadPrefix, i);
     }
 
-    @Test(invocationCount = 1)
+    @Test(invocationCount = 10)
     public void shouldProduceAndConsumeMessages_MultipleMessagesOfSameTopic_MultipleGroups() throws InterruptedException {
         int noOfRecords = 10;
         int noOfGroups = 50;
@@ -161,7 +161,7 @@ public class MessageFlowIntegrationTest extends AbstractVBrokerBaseTest {
             });
 
         produceRecords(allRecords);
-        Thread.sleep(4 * 1000);
+        Thread.sleep(2 * 1000);
 
         IntStream.range(0, noOfGroups)
             .forEachOrdered(groupIdx -> {

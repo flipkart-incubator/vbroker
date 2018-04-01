@@ -148,6 +148,7 @@ public class AbstractVBrokerBaseTest {
 
         properties.setProperty("max.batch.size.bytes", "10240");
         properties.setProperty("max.batch.records", "10000");
+        //properties.setProperty("max.batch.records", "1");
         properties.setProperty("max.accumulator.records", "10000");
         properties.setProperty("metadata.expiry.time.ms", "6000");
 
