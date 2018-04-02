@@ -65,7 +65,7 @@ public class NetworkClientImpl implements NetworkClient {
             responseFuture.completeExceptionally(ex);
         } else {
             channel.writeAndFlush(request).addListener((ChannelFutureListener) future1 -> {
-                log.info("Finished writing request {} to channel", vRequest.correlationId());
+                log.info("Finished writing vRequest {} to channel", vRequest.correlationId());
             });
         }
 

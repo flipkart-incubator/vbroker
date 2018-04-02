@@ -24,7 +24,7 @@ public class Accumulator implements PeekingIterator<Accumulator.RecordWithFuture
     public Accumulator(int capacity,
                        MetricRegistry metricRegistry) {
         this.recordsQueue = new ArrayBlockingQueue<>(capacity);
-        metricRegistry.gauge(MetricUtils.clientFullMetricName("accumulator.records"), () -> recordsQueue::size);
+        metricRegistry.gauge(MetricUtils.clientFullMetricName("accumulator.records"), () -> this::size);
     }
 
     @AllArgsConstructor
@@ -45,7 +45,7 @@ public class Accumulator implements PeekingIterator<Accumulator.RecordWithFuture
      * @return the CompletionStage with promised MessageMetadata
      */
     public CompletionStage<MessageMetadata> accumulateRecord(ProducerRecord record) {
-        log.info("Adding record {} to accumulator", record.getMessageId());
+        log.debug("Adding record {} to accumulator", record.getMessageId());
         CompletableFuture<MessageMetadata> future = new CompletableFuture<>();
         RecordWithFuture recordWithFuture = new RecordWithFuture(record, future);
         if (!recordsQueue.offer(recordWithFuture)) {

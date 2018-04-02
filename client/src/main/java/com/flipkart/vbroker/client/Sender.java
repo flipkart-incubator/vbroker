@@ -10,16 +10,14 @@ import com.flipkart.vbroker.utils.FlatbufUtils;
 import com.flipkart.vbroker.utils.MetricUtils;
 import com.flipkart.vbroker.utils.RandomUtils;
 import com.google.common.primitives.Ints;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
@@ -43,6 +41,8 @@ public class Sender implements Runnable {
 
     private final ConcurrentHashMap<Node, RecordBatch> nodeRecordBatchMap = new ConcurrentHashMap<>();
     private final Map<Node, Queue<RecordBatch>> nodeReadyRecordBatchMap = new HashMap<>();
+
+    private final ExecutorService executorService = Executors.newFixedThreadPool(1);
 
     public Sender(Accumulator accumulator,
                   NetworkClient client,
@@ -120,13 +120,13 @@ public class Sender implements Runnable {
 
             RecordBatch recordBatch = markReadyOldAndCreateNewBatch(leaderNode);
             recordBatch.addRecord(topicPartition, record)
-                .thenAccept(topicPartMetadata -> {
+                .thenAcceptAsync(topicPartMetadata -> {
                     MessageMetadata messageMetadata = new MessageMetadata(record.getMessageId(),
                         record.getTopicId(),
                         topicPartMetadata.getPartitionId(),
                         -1);
                     recordWithFuture.getFuture().complete(messageMetadata);
-                })
+                }, executorService)
                 .exceptionally(throwable -> {
                     recordWithFuture.getFuture().completeExceptionally(throwable);
                     return null;
@@ -202,8 +202,8 @@ public class Sender implements Runnable {
             .thenAccept(vResponse -> {
                 long timeTakenNs = context.stop();
                 recordBatch.setState(RecordBatch.BatchState.DONE_SUCCESS);
-                log.info("Received vResponse for batch request with correlationId {} in {}ms", vResponse.correlationId(),
-                    timeTakenNs / Math.pow(10, 6));
+                log.info("Received vResponse for batch request of {} records with correlationId {} in {}ms",
+                    totalNoOfRecords, vResponse.correlationId(), timeTakenNs / Math.pow(10, 6));
 
                 try {
                     parseProduceResponse(vResponse, recordBatch);
@@ -233,14 +233,14 @@ public class Sender implements Runnable {
             for (int j = 0; j < topicProduceResponse.partitionResponsesLength(); j++) {
                 TopicPartitionProduceResponse partitionProduceResponse = topicProduceResponse.partitionResponses(j);
                 //log.info("ProduceResponse for topic {} at partition {}", topicId, partitionProduceResponse);
-                log.info("Response code for handling produceRequest with correlationId {} for topic {} and partition {} is {}",
+                log.debug("Response code for handling produceRequest with correlationId {} for topic {} and partition {} is {}",
                     vResponse.correlationId(), topicId, partitionProduceResponse.partitionId(), partitionProduceResponse.status().statusCode());
 
                 TopicPartition topicPartition = metadata.getTopicPartition(topicProduceResponse.topicId(), partitionProduceResponse.partitionId());
-                log.info("Got topicPartition {}", topicPartition);
+                log.debug("Got topicPartition {}", topicPartition);
 
                 recordBatch.setResponse(topicPartition, partitionProduceResponse.status());
-                log.info("Done setting RecordBatch response status to {}", partitionProduceResponse.status().statusCode());
+                log.debug("Done setting RecordBatch response status to {}", partitionProduceResponse.status().statusCode());
             }
         }
     }
@@ -250,8 +250,10 @@ public class Sender implements Runnable {
 
         try {
             runningLatch.await(5000, TimeUnit.MILLISECONDS);
+            MoreExecutors.shutdownAndAwaitTermination(executorService, 2000, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             log.error("Killing Sender as time elapsed");
+            executorService.shutdownNow(); //even this is not fool-proof
         }
     }
 
@@ -261,7 +263,7 @@ public class Sender implements Runnable {
         List<TopicPartReq> topicPartReqs =
             recordBatch.getTopicPartitionsWithRecords()
                 .stream()
-                .map(topicPartition -> getTopicPartReq(recordBatch, builder, topicPartition))
+                .map(topicPartition -> getTopicPartReq(builder, recordBatch, topicPartition))
                 .collect(Collectors.toList());
 
         Map<Integer, List<TopicPartReq>> perTopicReqs = topicPartReqs.stream()
@@ -290,8 +292,8 @@ public class Sender implements Runnable {
         return VRequest.getRootAsVRequest(builder.dataBuffer());
     }
 
-    private TopicPartReq getTopicPartReq(RecordBatch recordBatch,
-                                         FlatBufferBuilder builder,
+    private TopicPartReq getTopicPartReq(FlatBufferBuilder builder,
+                                         RecordBatch recordBatch,
                                          TopicPartition topicPartition) {
         List<Integer> msgOffsets =
             recordBatch.getRecordStream(topicPartition)
