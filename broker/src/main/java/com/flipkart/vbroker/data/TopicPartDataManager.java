@@ -22,7 +22,7 @@ public interface TopicPartDataManager {
 
     DataIterator<Message> getIterator(TopicPartition topicPartition, String group, int seqNoFrom);
 
-    DataIterator<Message> getIterator(TopicPartition topicPartition, int seqNoFrom);
+    DataIterator<Message> getIterator(TopicPartition topicPartition, int seqNoFrom); //TODO: change to getUnGroupedIterator(...)
 
     CompletionStage<Integer> getCurrentOffset(TopicPartition topicPartition, String group);
 

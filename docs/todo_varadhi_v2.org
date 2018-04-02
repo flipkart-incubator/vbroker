@@ -1,0 +1,19 @@
+
+** April 2nd Meet with Giri
+
+*** Move to JIRA for milestones
+*** Broker protocol documentation of all good/error cases
+*** Physical deployment diagram and configuration
+*** Operationalisation checklist (standardise on a process)
+**** code walkthrough/KT - validate the design structure with peers/architects
+**** document the concurrency model - review it
+**** alerts for fault cases
+**** run books
+**** JIRA queue
+**** SLAs for actions
+**** metrics exposed from service - internal/users
+**** backups
+**** recovery from failure.etc.
+
+*** Test plan - document it and review it with the team
+*** Do both Functional and non-functional test plans

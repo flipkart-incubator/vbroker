@@ -13,11 +13,11 @@ public interface TopicPartData extends AutoCloseable {
 
     CompletionStage<Set<String>> getUniqueGroups();
 
-    DataIterator<Message> iteratorFrom(String group, int seqNoFrom);
+    DataIterator<Message> iteratorFrom(String group, int seqNoFrom); //TODO: name this unGroupedIteratorFrom(...)
 
     CompletionStage<Integer> getCurrentOffset(String group);
 
-    DataIterator<Message> iteratorFrom(int seqNoFrom);
+    DataIterator<Message> iteratorFrom(int seqNoFrom);//TODO: name this groupedIteratorFrom(...)
 
     CompletionStage<Integer> getCurrentOffset();
 
