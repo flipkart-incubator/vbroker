@@ -71,7 +71,7 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public CompletionStage<Boolean> isTopicPresent(short topicId) {
+    public CompletionStage<Boolean> isTopicPresent(int topicId) {
         return this.getTopic(topicId).handleAsync((data, exception) -> {
             if (exception != null) {
                 if (exception.getCause() instanceof TopicNotFoundException) {
@@ -150,7 +150,7 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public CompletionStage<Topic> createTopicAdmin(short id, Topic topic) throws TopicValidationException {
+    public CompletionStage<Topic> createTopicAdmin(int id, Topic topic) throws TopicValidationException {
         log.info("creating topic entity in /topics with id {}, name {}, rf {}, grouped {}", id, topic.name(), topic.replicationFactor(),
             topic.grouped());
         String topicPath = config.getTopicsPath() + "/" + id;

@@ -34,7 +34,7 @@ public class InMemoryTopicService implements TopicService {
     }
 
     @Override
-    public CompletionStage<Boolean> isTopicPresent(short topicId) {
+    public CompletionStage<Boolean> isTopicPresent(int topicId) {
         return CompletableFuture.supplyAsync(() -> topicsMap.containsKey(topicId), executorService);
     }
 
@@ -54,7 +54,7 @@ public class InMemoryTopicService implements TopicService {
     }
 
     @Override
-    public CompletionStage<Topic> createTopicAdmin(short id, Topic topic) throws TopicValidationException {
+    public CompletionStage<Topic> createTopicAdmin(int id, Topic topic) throws TopicValidationException {
         // TODO Auto-generated method stub
         return null;
     }

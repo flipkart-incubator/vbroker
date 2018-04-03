@@ -245,7 +245,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public CompletionStage<Subscription> createSubscriptionAdmin(short id, Subscription subscription) {
+    public CompletionStage<Subscription> createSubscriptionAdmin(int id, Subscription subscription) {
         log.info("Call from controller to create subscription with id {} name {}", id, subscription.name());
         String path = config.getTopicsPath() + "/" + subscription.topicId() + "/subscriptions/" + id;
         Subscription subWithId = new Subscription(subscription.fromSubscription().setId(id).build());

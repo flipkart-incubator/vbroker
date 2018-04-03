@@ -133,7 +133,7 @@ public class VBrokerController extends AbstractExecutionThreadService {
     }
 
     private void handleSubscriptionCreation(String fullPath, String child) {
-        short subscriptionId = Short.valueOf(child);
+        int subscriptionId = Integer.valueOf(child);
         curatorService.getData(fullPath).thenComposeAsync(bytes -> subscriptionService
             .createSubscriptionAdmin(subscriptionId, Subscription.fromBytes(bytes)))
             .toCompletableFuture().join();
@@ -141,7 +141,7 @@ public class VBrokerController extends AbstractExecutionThreadService {
     }
 
     private void handleTopicCreation(String fullPath, String nodeName) {
-        short topicId = Short.valueOf(nodeName);
+        int topicId = Integer.valueOf(nodeName);
         topicService.isTopicPresent(topicId).thenAcceptAsync(isPresent -> {
             if (isPresent) {
                 log.error("Topic with id {} already present. Cannot create again. Ignoring", topicId);

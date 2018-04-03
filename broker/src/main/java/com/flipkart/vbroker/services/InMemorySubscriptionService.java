@@ -100,7 +100,7 @@ public class InMemorySubscriptionService implements SubscriptionService {
     }
 
     @Override
-    public CompletionStage<Subscription> createSubscriptionAdmin(short id, Subscription subscription) {
+    public CompletionStage<Subscription> createSubscriptionAdmin(int id, Subscription subscription) {
         // TODO Auto-generated method stub
         return null;
     }

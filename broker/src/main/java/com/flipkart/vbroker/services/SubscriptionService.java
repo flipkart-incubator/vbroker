@@ -24,7 +24,7 @@ public interface SubscriptionService {
      * @param subscription subscription entity to create
      * @return
      */
-    public CompletionStage<Subscription> createSubscriptionAdmin(short id, Subscription subscription);
+    public CompletionStage<Subscription> createSubscriptionAdmin(int id, Subscription subscription);
 
     /**
      * @param topicId        id of the topic to which the subscription belongs
