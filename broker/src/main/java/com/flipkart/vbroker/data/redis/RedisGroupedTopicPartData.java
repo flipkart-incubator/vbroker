@@ -53,7 +53,6 @@ public class RedisGroupedTopicPartData extends RedisTopicPartData implements Top
             .exceptionally(exception -> {
                 throw new VBrokerException("Unable to add message to redis : " + exception.getMessage());
             });
-
     }
 
     @Override

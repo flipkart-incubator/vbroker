@@ -32,8 +32,8 @@ public class TopicServiceImpl implements TopicService {
             throw new TopicValidationException("Topic create validation failed");
         }
         int id = IdGenerator.randomTopicId();
-        log.info("creating topic request with generated id {}, name {}, rf {}, grouped {}", id, topic.name(), topic.replicationFactor(),
-            topic.grouped());
+        log.info("creating topic request with generated id {}, name {}, rf {}, grouped {}",
+            id, topic.name(), topic.replicationFactor(), topic.grouped());
         String topicPath = config.getAdminTasksPath() + "/create_topic" + "/" + id;
         Topic topicWithId = new Topic(topic.fromTopic().setId(id).build());
         return curatorService

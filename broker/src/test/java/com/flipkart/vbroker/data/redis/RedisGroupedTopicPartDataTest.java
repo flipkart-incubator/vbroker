@@ -14,7 +14,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.CompletionStage;
 
@@ -28,7 +27,7 @@ public class RedisGroupedTopicPartDataTest {
     private String groupId;
 
     @BeforeClass
-    public void setUp() throws IOException {
+    public void setUp() {
         TestRedisUtils.startRedisServer();
         topicPartition = TopicUtils.getTopicPartition(DummyEntities.groupedTopic, 0);
         redissonClient = Redisson.create(getRedissonConfig(false));
@@ -36,9 +35,8 @@ public class RedisGroupedTopicPartDataTest {
         groupId = "group_0";
     }
 
-
     @Test
-    public void shouldAddMessage_validateInRedis() throws IOException {
+    public void shouldAddMessage_validateInRedis() {
         Message message = MessageStore.getRandomMsg(groupId);
         CompletionStage<MessageMetadata> stage = topicPartData.addMessage(message);
         MessageMetadata messageMetadata = stage.toCompletableFuture().join();
@@ -70,13 +68,12 @@ public class RedisGroupedTopicPartDataTest {
         Set<String> groups = groupsFuture.toCompletableFuture().join();
         assertNotNull(groups);
         assertTrue(groups.contains(groupId));
-        assertTrue(groups.size() == 1);
+        assertEquals(1, groups.size());
     }
 
     @AfterClass
     public void tearDown() {
         TestRedisUtils.stopRedisServer();
-
+        redissonClient.shutdown();
     }
-
 }
