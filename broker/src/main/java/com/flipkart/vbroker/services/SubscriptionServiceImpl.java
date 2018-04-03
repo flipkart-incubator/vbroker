@@ -59,11 +59,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     @Override
     public CompletionStage<List<Subscription>> getAllSubscriptions() {
         List<Subscription> subs = new ArrayList<>();
-        CompletionStage<Object> com = topicService.getAllTopics().thenCompose((topics) -> {
+        CompletionStage<Object> com = topicService.getAllTopics().thenComposeAsync((topics) -> {
             List<CompletableFuture> subStages = new ArrayList<CompletableFuture>();
             for (Topic topic : topics) {
                 CompletionStage<List<Subscription>> subStage = this.getSubscriptionsForTopic(topic.id());
-                CompletionStage<List<Subscription>> subComStage = subStage.thenCompose((subData) -> {
+                CompletionStage<List<Subscription>> subComStage = subStage.thenComposeAsync((subData) -> {
                     subs.addAll(subData);
                     return CompletableFuture.completedFuture(subData);
                 }).exceptionally((throwable) -> {
@@ -214,7 +214,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     public CompletionStage<List<Subscription>> getSubscriptionsForTopic(int topicId) {
         String path = config.getTopicsPath() + "/" + topicId + "/subscriptions";
 
-        return curatorService.getChildren(path).thenCompose((children) -> {
+        return curatorService.getChildren(path).thenComposeAsync((children) -> {
             List<CompletionStage<Subscription>> subscriptionsStages = children.stream()
                 .map(child -> getSubscription(topicId, Short.valueOf(child)).exceptionally(throwable -> {
                     log.error("Exception while fetching subscription data for {}", child);

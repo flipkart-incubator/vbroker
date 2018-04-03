@@ -15,4 +15,6 @@ public interface QueueService {
     public CompletionStage<List<Queue>> getAllQueues();
 
     public CompletionStage<Queue> createQueue(Queue queue);
+
+    public CompletionStage<Queue> createQueueAdmin(Queue queue);
 }

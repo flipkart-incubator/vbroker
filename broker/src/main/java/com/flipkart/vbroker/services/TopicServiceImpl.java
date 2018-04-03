@@ -2,7 +2,10 @@ package com.flipkart.vbroker.services;
 
 import com.flipkart.vbroker.VBrokerConfig;
 import com.flipkart.vbroker.core.TopicPartition;
-import com.flipkart.vbroker.exceptions.*;
+import com.flipkart.vbroker.exceptions.TopicCreationException;
+import com.flipkart.vbroker.exceptions.TopicException;
+import com.flipkart.vbroker.exceptions.TopicNotFoundException;
+import com.flipkart.vbroker.exceptions.TopicValidationException;
 import com.flipkart.vbroker.utils.IdGenerator;
 import com.flipkart.vbroker.utils.TopicUtils;
 import com.flipkart.vbroker.wrappers.Topic;
@@ -75,7 +78,7 @@ public class TopicServiceImpl implements TopicService {
                     return false;
                 }
                 log.error("Error while fetchig topic with id {} - {}", topicId, exception);
-                throw new VBrokerException(exception.getMessage());
+                throw new TopicException(exception.getMessage());
             } else if (data != null) {
                 return true;
             }
@@ -87,7 +90,7 @@ public class TopicServiceImpl implements TopicService {
     public CompletionStage<Boolean> isTopicPresent(String name) {
         return this.getAllTopics().handleAsync((topics, exception) -> {
             if (exception != null) {
-                throw new VBrokerException("Error while fetching topics");
+                throw new TopicException("Error while fetching topics");
             } else {
                 return checkIfPresent(topics, name);
             }
@@ -105,7 +108,7 @@ public class TopicServiceImpl implements TopicService {
                     }
                 }
                 log.error("Error while fethcing topic with id {} - {}", topicId, exception);
-                throw new VBrokerException(exception.getMessage());
+                throw new TopicException(exception.getMessage());
             } else {
                 return Topic.fromBytes(data);
             }
@@ -121,7 +124,7 @@ public class TopicServiceImpl implements TopicService {
     @Override
     public CompletionStage<List<Topic>> getAllTopics() {
         List<Topic> topics = new ArrayList<Topic>();
-        CompletionStage<Object> combinedStage = curatorService.getChildren(config.getTopicsPath()).thenCompose((topicIds) -> {
+        CompletionStage<Object> combinedStage = curatorService.getChildren(config.getTopicsPath()).thenComposeAsync((topicIds) -> {
             List<CompletableFuture> topicStages = new ArrayList<CompletableFuture>();
             for (String id : topicIds) {
                 CompletionStage<Topic> topicStage = this.getTopic(Short.valueOf(id));

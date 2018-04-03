@@ -9,4 +9,8 @@ public class IdGenerator {
     public static int randomSubscriptionId() {
         return RandomUtils.generateRandomSubscriptionId();
     }
+    
+    public static int randomQueueId() {
+        return RandomUtils.generateRandomTopicId();
+    }
 }

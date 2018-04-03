@@ -77,5 +77,10 @@ public class Queue {
     public byte[] toBytes() {
         return protoQueue.toByteArray();
     }
+    
+    public ProtoQueue.Builder fromQueue() {
+        return protoQueue.toBuilder();
+    }
+
 
 }

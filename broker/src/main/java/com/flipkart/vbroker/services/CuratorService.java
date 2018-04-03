@@ -2,6 +2,7 @@ package com.flipkart.vbroker.services;
 
 import lombok.AllArgsConstructor;
 import org.apache.curator.framework.api.transaction.CuratorOp;
+import org.apache.curator.framework.api.transaction.CuratorTransactionResult;
 import org.apache.curator.x.async.AsyncCuratorFramework;
 import org.apache.curator.x.async.AsyncStage;
 import org.apache.curator.x.async.api.CreateOption;
@@ -14,6 +15,8 @@ import java.util.Set;
 import java.util.concurrent.CompletionStage;
 
 import static java.util.EnumSet.of;
+
+import java.util.ArrayList;
 
 @AllArgsConstructor
 public class CuratorService {
@@ -115,9 +118,17 @@ public class CuratorService {
         return asyncZkClient.getChildren().forPath(path);
     }
 
-    public void transaction() {
-        CuratorOp p1 = asyncZkClient.transactionOp().create().forPath("p1");
-        CuratorOp p2 = asyncZkClient.transactionOp().create().forPath("p2");
-        asyncZkClient.transaction();
+    /**
+     * Invokes the set of create operations on zookeeper as a transaction.
+     *
+     * @param curatorCreateOps The list of create operations, to be done in a transaction.
+     * @return completionStage with result being the list of curator transaction
+     * results.
+     */
+    public CompletionStage<List<CuratorTransactionResult>> createInTransaction(List<CuratorCreateOp> curatorCreateOps) {
+        List<CuratorOp> curatorOps = new ArrayList<>();
+        curatorCreateOps.forEach(
+            op -> curatorOps.add(asyncZkClient.transactionOp().create().withMode(CreateMode.PERSISTENT).forPath(op.getPath(), op.getData())));
+        return asyncZkClient.transaction().forOperations(curatorOps);
     }
 }
