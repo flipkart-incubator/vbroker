@@ -1,5 +1,6 @@
 package com.flipkart.vbroker.controller;
 
+import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.services.CuratorService;
 import com.flipkart.vbroker.services.SubscriptionService;
 import com.flipkart.vbroker.services.TopicService;
@@ -10,6 +11,7 @@ import org.apache.zookeeper.CreateMode;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
+import java.util.function.Consumer;
 
 /**
  * @author govind.ajith
@@ -25,18 +27,22 @@ public class DummyAllocationStrategy implements AllocationStrategy {
 
     @Override
     public void allocate() {
-        //writes subscriptions allocation to coordinator. Assigns everything to broker 1 for now.
+        //writes topics/subscriptions allocation to coordinator. Assigns everything to broker 1 for now.
         log.info("Dummy allocation ongoing...");
-        String path = "/brokers/" + BROKER_ID + "/subscriptions/";
+        String subPath = "/brokers/" + BROKER_ID + "/subscriptions/";
         CompletionStage<List<Topic>> topicStage = topicService.getAllTopics();
         topicStage.thenAcceptAsync(topics -> {
             topics.forEach(topic -> {
-                subscriptionService.getSubscriptionsForTopic(topic.id()).thenAcceptAsync(subscriptions -> {
-                    subscriptions.forEach(subscription -> {
-                        String nodePath = path + topic.id() + "-" + subscription.id();
-                        curatorService.createNodeAndSetData(nodePath, CreateMode.PERSISTENT, "".getBytes(), true);
-                    });
+                topicService.getPartitions(topic).stream().forEach(topicPartition -> {
+                    String path = "/topics/" + Integer.toString(topic.id()) + "/partitions/" + Integer.toString(topicPartition.getId());
+                    curatorService.createNodeAndSetData(path, CreateMode.PERSISTENT, BROKER_ID.getBytes(), true);
                 });
+//                subscriptionService.getSubscriptionsForTopic(topic.id()).thenAcceptAsync(subscriptions -> {
+//                    subscriptions.forEach(subscription -> {
+//                        String nodePath = subPath + topic.id() + "-" + subscription.id();
+//                        curatorService.createNodeAndSetData(nodePath, CreateMode.PERSISTENT, "".getBytes(), true);
+//                    });
+//                });
             });
         });
     }

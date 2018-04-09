@@ -61,6 +61,14 @@ public interface TopicService {
     public CompletionStage<Topic> getTopic(int topicId);
 
     /**
+     * Get topic partitions list for the topic
+     *
+     * @param topic Topic to get partitions for
+     * @return
+     */
+    public List<TopicPartition> getPartitions(Topic topic);
+
+    /**
      * Get all topics
      *
      * @return CompletionStage with list of topics as result

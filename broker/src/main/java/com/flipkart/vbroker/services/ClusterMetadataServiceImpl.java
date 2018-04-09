@@ -1,8 +1,11 @@
 package com.flipkart.vbroker.services;
 
 import com.flipkart.vbroker.VBrokerConfig;
+import com.flipkart.vbroker.core.PartSubscription;
+import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.proto.*;
 import com.flipkart.vbroker.utils.CompletionStageUtils;
+import com.flipkart.vbroker.wrappers.Subscription;
 import com.flipkart.vbroker.wrappers.Topic;
 import com.google.protobuf.InvalidProtocolBufferException;
 import lombok.AllArgsConstructor;
@@ -25,7 +28,10 @@ public class ClusterMetadataServiceImpl implements ClusterMetadataService {
 
     //TODO think about caching here as well
     public CompletionStage<ClusterMetadata> getClusterMetadata() {
-        return null;
+        return getNodes()
+            .thenApply(nodes -> ClusterMetadata.newBuilder().addAllNodes(nodes))
+            .thenCompose(builderCompletionStageFunction -> getTopicsMetadata()
+                .thenApply(topicMetadata -> builderCompletionStageFunction.addAllTopicMetadatas(topicMetadata).build()));
     }
 
     @Override
@@ -71,17 +77,13 @@ public class ClusterMetadataServiceImpl implements ClusterMetadataService {
                     }
                 })
                 //Add the partition metadata to the builders
-                .map(builder -> {
-                    Topic t = new Topic(builder.getTopic());
-                    return getTopicPartitionsMetadata(t)
-                        .thenApply(builder::addAllPartitionMetadatas);
-                })
+                .map(builder ->
+                    getTopicPartitionsMetadata(new Topic(builder.getTopic()))
+                        .thenApply(builder::addAllPartitionMetadatas))
                 //Add the subscriptions metadata to the builders
-                .map(builderStage -> builderStage.thenCompose(builder -> {
-                    Topic t = new Topic(builder.getTopic());
-                    return getTopicSubscriptionsMetadata(t)
-                        .thenApply(builder::addAllSubscriptionMetadatas);
-                }))
+                .map(builderStage -> builderStage.thenCompose(builder ->
+                    getTopicSubscriptionsMetadata(new Topic(builder.getTopic()))
+                        .thenApply(builder::addAllSubscriptionMetadatas)))
                 //Finish the builders
                 .map(builderStage -> builderStage.thenApply(TopicMetadata.Builder::build))
                 .collect(Collectors.toList());
@@ -89,15 +91,61 @@ public class ClusterMetadataServiceImpl implements ClusterMetadataService {
         });
     }
 
-    private CompletionStage<List<PartitionMetadata>> getTopicPartitionsMetadata(Topic topic){
-        return null;
+    private CompletionStage<List<PartitionMetadata>> getTopicPartitionsMetadata(Topic topic) {
+        return CompletionStageUtils.listOfStagesToStageOfList(
+            topicService.getPartitions(topic).stream()
+                .map(topicPartition -> getPartitionLeader(topicPartition).thenApply(integer -> PartitionMetadata.newBuilder()
+                    .setId(topicPartition.getId())
+                    .setTopicId(topicPartition.getTopicId())
+                    .setLeaderId(integer)
+                    .build())
+                ).collect(Collectors.toList())
+        );
     }
 
-    private CompletionStage<List<SubscriptionMetadata>> getTopicSubscriptionsMetadata(Topic topic){
-        return null;
+    private CompletionStage<Integer> getPartitionLeader(TopicPartition topicPartition) {
+        String path = config.getTopicsPath() + "/" + Integer.toString(topicPartition.getTopicId()) + "/partitions/" + Integer.toString(topicPartition.getId());
+        return curatorService.getData(path).thenApply(bytes -> Integer.parseInt(new String(bytes)));
     }
 
-    private String getBrokerPath(int id){
+    private CompletionStage<List<SubscriptionMetadata>> getTopicSubscriptionsMetadata(Topic topic) {
+        return subscriptionService.getSubscriptionsForTopic(topic.id())
+            .thenCompose(subscriptions -> CompletionStageUtils.listOfStagesToStageOfList(
+                subscriptions.stream()
+                    .map(this::startBuilder)
+                    .map(this::addPartSubscriptionMetadataAndBuild)
+                    .collect(Collectors.toList())));
+    }
+
+    private SubscriptionMetadata.Builder startBuilder(Subscription subscription) {
+        try {
+            return SubscriptionMetadata.newBuilder()
+                .setSubscription(ProtoSubscription.parseFrom(subscription.toBytes()));
+        } catch (InvalidProtocolBufferException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private CompletionStage<SubscriptionMetadata> addPartSubscriptionMetadataAndBuild(SubscriptionMetadata.Builder builder) {
+        return subscriptionService.getPartSubscriptions(new Subscription(builder.getSubscription()))
+            .thenApply(partSubscriptions -> {
+                return builder.addAllPartSubscriptionMetadatas(getPartSubscriptionsMetadata(partSubscriptions))
+                    .build();
+            });
+    }
+
+    private List<PartSubscriptionMetadata> getPartSubscriptionsMetadata(List<PartSubscription> partSubscriptions) {
+        return partSubscriptions.stream()
+            .map(partSubscription -> PartSubscriptionMetadata.newBuilder()
+                .setId(partSubscription.getId())
+                .setSubscriptionId(partSubscription.getSubscriptionId())
+                .setTopicId(partSubscription.getTopicPartition().getTopicId())
+                .setTopicPartitionId(partSubscription.getTopicPartition().getId()).build()
+            )
+            .collect(Collectors.toList());
+    }
+
+    private String getBrokerPath(int id) {
         return config.getBrokersPath().concat("/").concat(Integer.toString(id));
     }
 }

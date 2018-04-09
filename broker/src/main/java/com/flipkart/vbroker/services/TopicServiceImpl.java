@@ -1,9 +1,11 @@
 package com.flipkart.vbroker.services;
 
 import com.flipkart.vbroker.VBrokerConfig;
+import com.flipkart.vbroker.controller.AllocationContext;
 import com.flipkart.vbroker.core.TopicPartition;
 import com.flipkart.vbroker.exceptions.*;
 import com.flipkart.vbroker.utils.IdGenerator;
+import com.flipkart.vbroker.utils.TopicUtils;
 import com.flipkart.vbroker.wrappers.Topic;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,7 @@ public class TopicServiceImpl implements TopicService {
 
     private final VBrokerConfig config;
     private final CuratorService curatorService;
+    private final AllocationContext allocationContext;
 
     @Override
     public CompletionStage<Topic> createTopic(Topic topic) throws TopicValidationException {
@@ -111,6 +114,12 @@ public class TopicServiceImpl implements TopicService {
         });
     }
 
+
+    @Override
+    public List<TopicPartition> getPartitions(Topic topic) {
+        return TopicUtils.getTopicPartitions(topic);
+    }
+
     @Override
     public CompletionStage<List<Topic>> getAllTopics() {
         List<Topic> topics = new ArrayList<Topic>();
@@ -153,6 +162,8 @@ public class TopicServiceImpl implements TopicService {
                     throw new TopicCreationException(exception.getMessage());
                 } else {
                     log.info("Created topic entity");
+                    //TODO currently allocated everything from scratch, change to only allocate the current one.
+                    allocationContext.allocate();
                     return topicWithId;
                 }
             });
