@@ -1,0 +1,6 @@
+@startuml
+Producer -> Varadhi : Sync Message
+Varadhi -> Destination : Message Call
+Destination -> Varadhi : Response
+Varadhi -> Producer : Forwarded Response of destination
+@enduml

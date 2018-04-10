@@ -1,0 +1,9 @@
+@startuml
+Producer -> Varadhi : Async Message
+Varadhi --> Varadhi : Produce the message
+Varadhi -> Producer : Ack message (202 Accepted)
+Varadhi --> Varadhi : Consume message
+Varadhi -> Consumer : Message Call
+Consumer -> Varadhi : Response
+Varadhi -> Producer : Callback (optional)
+@enduml

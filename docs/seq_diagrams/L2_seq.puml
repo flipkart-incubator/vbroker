@@ -1,0 +1,27 @@
+@startuml
+title L2 message flow
+group Produce
+Producer -> SocketBufIn : Accept message
+box "VBroker" #LightBlue
+    participant SocketBufIn
+    participant UserSpace
+    participant SocketBufOut
+end box
+SocketBufIn -> UserSpace : Copy message
+UserSpace -> UserSpace : Write to DataLayer
+SocketBufIn -> Producer : Return 202 Accepted
+end
+group Consume
+UserSpace -> UserSpace : Construct HTTP Req
+UserSpace -> SocketBufOut : Copy HTTP Req
+SocketBufOut -> Destination : HTTP Call
+Destination -> SocketBufOut : HTTP Response
+SocketBufOut -> UserSpace : Read response
+UserSpace -> UserSpace : Process response (Sideline/Success etc)
+    group optional callback
+    UserSpace -> UserSpace : Construct callback
+    UserSpace -> SocketBufIn : Copy callback
+    SocketBufIn -> Producer : Send callback
+    end
+end
+@enduml

@@ -1,0 +1,16 @@
+@startuml
+title L1 message flow
+Producer -> SocketBufIn : Accept message
+box "VBroker" #LightBlue
+    participant SocketBufIn
+    participant UserSpace
+    participant SocketBufOut
+end box
+SocketBufIn -> UserSpace : Read metadata to user space
+SocketBufIn -> SocketBufOut : Splice Request Payload
+SocketBufOut -> Destination : HTTP Call
+Destination -> SocketBufOut : HTTP Response
+SocketBufOut -> UserSpace : Read metadata to user space
+SocketBufOut -> SocketBufIn : Splice Response Payload
+SocketBufIn -> Producer : Forward HTTP Response
+@enduml
