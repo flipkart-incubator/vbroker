@@ -1,26 +1,33 @@
 @startuml
-title L2 message flow
+title L2/L3 message flow
 group Produce
 Producer -> SocketBufIn : Accept message
 box "VBroker" #LightBlue
     participant SocketBufIn
-    participant UserSpace
+    participant Acceptor
+    participant "DataLayer(L2 in memory/L3 on disk)"
+    participant Subscriber
     participant SocketBufOut
 end box
-SocketBufIn -> UserSpace : Copy message
-UserSpace -> UserSpace : Write to DataLayer
+SocketBufIn --> Acceptor : Copy message
+Acceptor -> "DataLayer(L2 in memory/L3 on disk)" : Produce message
+"DataLayer(L2 in memory/L3 on disk)" -> Acceptor : Ack
+Acceptor --> SocketBufIn : Write response
 SocketBufIn -> Producer : Return 202 Accepted
 end
 group Consume
-UserSpace -> UserSpace : Construct HTTP Req
-UserSpace -> SocketBufOut : Copy HTTP Req
+Subscriber -> "DataLayer(L2 in memory/L3 on disk)" : Fetch message
+"DataLayer(L2 in memory/L3 on disk)" -> Subscriber : Copy message
+
+Subscriber --> Subscriber : Construct HTTP Req
+Subscriber --> SocketBufOut : Copy HTTP Req
 SocketBufOut -> Destination : HTTP Call
 Destination -> SocketBufOut : HTTP Response
-SocketBufOut -> UserSpace : Read response
-UserSpace -> UserSpace : Process response (Sideline/Success etc)
+SocketBufOut --> Subscriber : Read response
+Subscriber --> Subscriber : Process response (Sideline/Success etc)
     group optional callback
-    UserSpace -> UserSpace : Construct callback
-    UserSpace -> SocketBufIn : Copy callback
+    Subscriber --> Subscriber : Construct callback
+    Subscriber --> SocketBufIn : Copy callback
     SocketBufIn -> Producer : Send callback
     end
 end
