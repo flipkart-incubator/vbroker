@@ -1,0 +1,12 @@
+@startuml
+L2 -> L2 : Check capacity usage > 70%
+L2 -> Acceptor : Alert
+Acceptor -> Acceptor : Switch to L3 for future groups
+
+L2 -> L2 : Capacity still got filled
+L2 -> L2 : take lock on existing group to downgrade
+L2 -> L2 : Block producing for the group
+L2 -> L3 : Downgrade the existing group
+L2 -> L2 : Unblock group
+L2 -> L2 : release lock
+@enduml

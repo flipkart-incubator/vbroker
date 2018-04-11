@@ -1,0 +1,26 @@
+@startuml
+start
+:Receive message;
+if () then (Capacity < 70%)
+    :Produce to L2;
+    stop
+else (Capacity > 70%)
+    if () then (Capacity < 90%)
+        if () then (Existing Group)
+            :Produce to L2;
+            stop
+        else (New Group)
+            :Produce to L3;
+            stop
+        endif
+    else (Capacity > 90%)
+        if () then (Existing Group)
+            :Move existing messages to L3;
+            :Produce to L3;
+            stop
+        else (New Group)
+            :Produce to L3;
+            stop
+        endif
+endif
+@enduml
