@@ -42,3 +42,8 @@ An elastic message broker designed from scratch to solve Flipkart-specific use-c
 
 *** Message Flow example
     From IntelliJ, run MessageFlowIntegrationTest - it has all the e2e tests like sending a message, pushing it to destination, polling of messages.etc.
+
+*** Generating UML diagrams of message flows
+    - We use plantuml to draw UML diagrams in a markup schema format and generate images out of it
+    - To generate the UML diagram images, run from the root dir:
+      :plantuml docs/seq_diagrams/* -output images/
