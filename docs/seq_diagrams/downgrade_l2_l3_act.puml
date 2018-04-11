@@ -1,26 +1,40 @@
 @startuml
 start
-:Receive message;
-if () then (Capacity < 70%)
+
+if () then (Buffer Usage < 70%)
     :Produce to L2;
     stop
-else (Capacity > 70%)
-    if () then (Capacity < 90%)
-        if () then (Existing Group)
-            :Produce to L2;
-            stop
-        else (New Group)
-            :Produce to L3;
-            stop
-        endif
-    else (Capacity > 90%)
-        if () then (Existing Group)
-            :Move existing messages to L3;
-            :Produce to L3;
-            stop
-        else (New Group)
-            :Produce to L3;
-            stop
-        endif
+else (Buffer Usage > 70%)
+    if () then (Buffer Usage < 90%)
+        :Start donwgrade stream;
+        note left
+           Downgrade stream
+           is essentially a subscription
+           that "consumes" messages by
+           dumping to L3.
+
+           It starts consuming from the lowest
+           unconsumed offset in a group among all
+           subscriber offsets.
+
+           Potentially it can skip some
+           groups if the offsets for them
+           are almost caught up.
+
+        end note
+        :Switch slow subscriptions to L3;
+        :Produce to L2;
+        stop
+    else (Buffer Usage > 90%)
+        note right
+            This happens only
+            when the producing rate is
+            faster than the rate at which
+            we can dump messages to disk
+        end note
+        :Block producing;
+        :Wait until downgrade stream catches up;
+        :Produce to L2;
+        stop
 endif
 @enduml
