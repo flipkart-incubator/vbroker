@@ -1,16 +1,20 @@
 @startuml
 title L1 message flow
-Producer -> SocketBufIn : Accept message
+Producer -> SocketIn : Accept message
 box "VBroker" #LightBlue
-    participant SocketBufIn
+    participant SocketIn
+    participant KPipe
+    participant SubscriberPipe
     participant UserSpace
-    participant SocketBufOut
+    participant SocketOut
 end box
-SocketBufIn -> UserSpace : Read metadata to user space
-SocketBufIn -> SocketBufOut : Splice Request Payload
-SocketBufOut -> Destination : HTTP Call
-Destination -> SocketBufOut : HTTP Response
-SocketBufOut -> UserSpace : Read metadata to user space
-SocketBufOut -> SocketBufIn : Splice Response Payload
-SocketBufIn -> Producer : Forward HTTP Response
+SocketIn -> UserSpace : Read metadata to user space
+SocketIn -> KPipe : Splice Data
+KPipe -> SubscriberPipe : Tee Data
+SubscriberPipe -> SocketOut : Splice Request Payload
+SocketOut -> Destination : HTTP Call
+Destination -> SocketOut : HTTP Response
+SocketOut -> UserSpace : Read metadata to user space
+SocketOut -> SocketIn : Splice Response Payload
+SocketIn -> Producer : Forward HTTP Response
 @enduml

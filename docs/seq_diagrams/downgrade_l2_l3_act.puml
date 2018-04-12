@@ -26,14 +26,16 @@ else (Buffer Usage > 70%)
         :Produce to L2;
         stop
     else (Buffer Usage > 90%)
-        note right
-            This happens only
-            when the producing rate is
-            faster than the rate at which
-            we can dump messages to disk
-        end note
         :Block producing;
+                note right
+                    This happens only
+                    when the producing rate is
+                    faster than the rate at which
+                    we can dump messages to disk
+                end note
+
         :Wait until downgrade stream catches up;
+        :Unblock producing;
         :Produce to L2;
         stop
 endif
