@@ -7,14 +7,14 @@ import com.flipkart.vbroker.iterators.SubscriberGroupIterator;
 import com.flipkart.vbroker.subscribers.IterableMessage;
 import com.flipkart.vbroker.subscribers.QType;
 import com.flipkart.vbroker.subscribers.SubscriberGroup;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -24,8 +24,8 @@ public class InMemoryGroupedSubPartData extends DefaultGroupedSubPartData {
     private final PartSubscription partSubscription;
     private final Map<String, SubscriberGroup> subscriberGroupsMap = new LinkedHashMap<>();
     private final Map<QType, List<String>> failedGroups = new LinkedHashMap<>();
-    private final Table<SubscriberGroup, QType, SubscriberGroupIterator<IterableMessage>> groupQTypeIteratorTable
-        = HashBasedTable.create();
+    private final ConcurrentMap<SubscriberGroup, SubscriberGroupIterator<IterableMessage>> groupIteratorMap
+        = new ConcurrentHashMap<>();
 
     public InMemoryGroupedSubPartData(PartSubscription partSubscription) {
         this.partSubscription = partSubscription;
@@ -38,12 +38,12 @@ public class InMemoryGroupedSubPartData extends DefaultGroupedSubPartData {
 
     @Override
     public SubscriberGroupIterator<IterableMessage> getIterator(SubscriberGroup subscriberGroup, QType qType) {
-        return groupQTypeIteratorTable.get(subscriberGroup, qType);
+        return groupIteratorMap.get(subscriberGroup);
     }
 
     @Override
     public boolean containsIteratorFor(SubscriberGroup subscriberGroup, QType qType) {
-        return groupQTypeIteratorTable.contains(subscriberGroup, qType);
+        return groupIteratorMap.containsKey(subscriberGroup);
     }
 
     @Override
@@ -54,10 +54,8 @@ public class InMemoryGroupedSubPartData extends DefaultGroupedSubPartData {
     @Override
     public CompletionStage<MessageMetadata> addGroup(SubscriberGroup subscriberGroup) {
         return CompletableFuture.supplyAsync(() -> {
-            subscriberGroupsMap.put(subscriberGroup.getGroupId(), subscriberGroup);
-            //subscriberGroupIteratorMap.put(subscriberGroup, subscriberGroup.iterator());
-            groupQTypeIteratorTable.put(subscriberGroup, QType.MAIN, subscriberGroup.iterator(QType.MAIN));
-
+            subscriberGroupsMap.putIfAbsent(subscriberGroup.getGroupId(), subscriberGroup);
+            groupIteratorMap.putIfAbsent(subscriberGroup, subscriberGroup.iterator());
             //TODO: we should ideally set msg_id
             return new MessageMetadata(subscriberGroup.getGroupId(), subscriberGroup.getTopicPartition().getTopicId(),
                 subscriberGroup.getTopicPartition().getId(), new Random().nextInt());
@@ -88,9 +86,8 @@ public class InMemoryGroupedSubPartData extends DefaultGroupedSubPartData {
             failedGroups.put(qType, fGroups);
 
             SubscriberGroup subscriberGroup = getSubscriberGroup(iterableMessage.getGroupId());
-            if (!groupQTypeIteratorTable.contains(subscriberGroup, qType)) {
-                //don't create a new iterator if already failed iterator exists
-                groupQTypeIteratorTable.put(subscriberGroup, qType, subscriberGroup.iterator(qType));
+            if (!groupIteratorMap.containsKey(subscriberGroup)) {
+                groupIteratorMap.putIfAbsent(subscriberGroup, subscriberGroup.iterator());
             }
         });
     }

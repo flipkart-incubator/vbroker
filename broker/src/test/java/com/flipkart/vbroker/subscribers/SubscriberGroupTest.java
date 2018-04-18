@@ -43,7 +43,7 @@ public class SubscriberGroupTest {
 
     @Test(invocationCount = 20)
     public void shouldIterateMessages_ForSameGroup_CheckConsistencyOverMultipleRuns() {
-        MsgIterator<IterableMessage> iterator = subscriberGroup.iterator(QType.MAIN);
+        MsgIterator<IterableMessage> iterator = subscriberGroup.iterator();
         int count = 0;
         while (iterator.hasNext()) {
             iterator.next();
