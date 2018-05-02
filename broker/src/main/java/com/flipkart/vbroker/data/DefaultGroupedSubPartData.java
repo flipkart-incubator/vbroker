@@ -137,7 +137,7 @@ public abstract class DefaultGroupedSubPartData implements SubPartData {
             .filter(group -> containsIteratorFor(group, qType))
             .map(subscriberGroup -> {
                 if (manualSeqNoManagement) {
-                    return subscriberGroup.newIterator(qType, subscriberGroup.getOffset());
+                    return subscriberGroup.newIterator(subscriberGroup.getOffset());
                 }
                 return getIterator(subscriberGroup, qType);
             })
